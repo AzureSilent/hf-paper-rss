@@ -1,0 +1,48 @@
+name: Update Hugging Face Papers RSS Feed
+
+on:
+  schedule:
+    # Run every 2 hours starting at 01:50 UTC
+    - cron: '50 1,3,5,7,9,11,13,15,17,19,21,23 * * *'
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  update-feed:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache processed papers
+        uses: actions/cache@v4
+        with:
+          path: .processed_papers.json
+          key: ${{ runner.os }}-processed-papers-v2
+          restore-keys: |
+            ${{ runner.os }}-processed-papers-
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+          cache: 'pip'  # Enable pip caching
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run RSS generator
+        env:
+          RSS_FEED_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/feed.xml
+          RSS_TITLE: Hugging Face Papers RSS
+          RSS_DESCRIPTION: Latest AI research papers from Hugging Face
+        run: |
+          python generate_rss.py
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.DEPLOY_TOKEN }}
+          publish_dir: ./docs
