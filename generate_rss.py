@@ -9,7 +9,7 @@ import requests
 from html.parser import HTMLParser
 import re
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import xml.etree.ElementTree as ET
 import xml.dom.minidom as minidom
 import logging
@@ -28,7 +28,7 @@ MAX_WORKERS = int(os.environ.get("MAX_WORKERS", "5"))
 # Incremental update configuration
 PROCESSED_PAPERS_FILE = os.environ.get("PROCESSED_PAPERS_FILE", ".processed_papers.json")
 MAX_PROCESSED_RECORDS = int(os.environ.get("MAX_PROCESSED_RECORDS", "500"))  # Keep at most 500 records
-CACHE_VERSION = int(os.environ.get("CACHE_VERSION", "3"))  # Cache format version (v3 stores full paper info)
+CACHE_VERSION = int(os.environ.get("CACHE_VERSION", "1"))  # Cache format version (v3 stores full paper info)
 
 # Translation configuration (target language list, supports multiple languages)
 # Format: zh-CN,es,fr (comma-separated)
@@ -93,6 +93,7 @@ def save_processed_papers(papers, processed_dict, paper_cache):
                 'arxiv_abs': paper.get('arxiv_abs'),
                 'arxiv_pdf': paper.get('arxiv_pdf'),
                 'authors': paper.get('authors', []),
+                'pub_date': paper.get('pub_date'),  # Save the first discovered time
                 # Save translated content
                 'translations': {
                     'descriptions': {lang: paper.get(f'description_{lang}', '') for lang in TARGET_LANGUAGES},
@@ -301,7 +302,7 @@ def process_paper(paper: dict, processed_dict: dict = None, paper_cache: dict = 
                 'arxiv_abs': cached_paper.get('arxiv_abs'),
                 'arxiv_pdf': cached_paper.get('arxiv_pdf'),
                 'authors': cached_paper.get('authors', []),
-                'pub_date': datetime.now(timezone.utc).strftime('%a, %d %b %Y %H:%M:%S GMT')
+                'pub_date': paper.get('pub_date', cached_paper.get('pub_date', datetime.now(timezone.utc).strftime('%a, %d %b %Y %H:%M:%S GMT')))
             }
             # Restore translated content
             translations = cached_paper.get('translations', {})
@@ -322,8 +323,7 @@ def process_paper(paper: dict, processed_dict: dict = None, paper_cache: dict = 
             'abstract_short': details['abstract_short'],
             'arxiv_abs': details['arxiv_abs'],
             'arxiv_pdf': details['arxiv_pdf'],
-            'authors': details['authors'],
-            'pub_date': datetime.now(timezone.utc).strftime('%a, %d %b %Y %H:%M:%S GMT')
+            'authors': details['authors']
         })
         
         # Translate description and abstractFull
@@ -347,7 +347,6 @@ def process_paper(paper: dict, processed_dict: dict = None, paper_cache: dict = 
         logger.error(f"Failed: {paper['title'][:50]}: {e}")
         paper['abstract'] = f"[Error: {str(e)}]"
         paper['abstract_short'] = paper['abstract']
-        paper['pub_date'] = datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')
         return paper
 
 # ============= Main Scraping Function =============
@@ -382,6 +381,19 @@ def scrape_papers(processed_dict=None, paper_cache=None):
     new_papers = [p for p in papers if processed_dict is None or p['url'] not in processed_dict]
     if processed_dict:
         logger.info(f"🆕 New papers: {len(new_papers)}, Cached: {len(papers) - len(new_papers)}")
+
+    # Pre-generate pub_date for new papers to avoid concurrency issues
+    base_time = datetime.now(timezone.utc)
+    for i, paper in enumerate(papers):
+        if processed_dict is None or paper['url'] not in processed_dict:
+            # New paper: generate time based on position (newest first)
+            paper_time = base_time + timedelta(seconds=i)
+            paper['pub_date'] = paper_time.strftime('%a, %d %b %Y %H:%M:%S GMT')
+        else:
+            # Cached paper: get pub_date from cache
+            cached_paper = paper_cache.get(paper['url'])
+            if cached_paper and 'pub_date' in cached_paper:
+                paper['pub_date'] = cached_paper['pub_date']
 
     # Process paper details concurrently
     logger.info(f"📚 Processing {len(papers)} papers...")

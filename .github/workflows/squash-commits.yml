@@ -1,0 +1,283 @@
+name: Squash gh-pages Commits
+
+on:
+  schedule:
+    # Run every Monday at 2:00 AM UTC
+    - cron: '0 2 * * 1'
+  workflow_dispatch:  # Allow manual trigger for testing
+    inputs:
+      threshold:
+        description: 'Commit count threshold for squashing'
+        required: false
+        default: '50'
+        type: choice
+        options:
+          - '5'
+          - '10'
+          - '20'
+          - '50'
+
+jobs:
+  squash-commits:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch full history for all branches
+          token: ${{ secrets.DEPLOY_TOKEN }}
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Validate threshold input
+        run: |
+          echo "🔍 Validating threshold input..."
+          SQUASH_THRESHOLD="${{ github.event.inputs.threshold }}"
+
+          # 如果是手动触发且未提供阈值，使用默认值
+          if [ -z "$SQUASH_THRESHOLD" ]; then
+            SQUASH_THRESHOLD=10
+          fi
+
+          # Validate that threshold is a positive integer (POSIX compatible)
+          case "$SQUASH_THRESHOLD" in
+            ''|*[!0-9]*)
+              echo "❌ Error: Invalid threshold value '$SQUASH_THRESHOLD'. Must be a positive integer."
+              exit 1
+              ;;
+          esac
+
+          if [ "$SQUASH_THRESHOLD" -le 0 ]; then
+            echo "❌ Error: Invalid threshold value '$SQUASH_THRESHOLD'. Must be a positive integer."
+            exit 1
+          fi
+
+          # Validate reasonable range (1-1000)
+          if [ "$SQUASH_THRESHOLD" -gt 1000 ]; then
+            echo "❌ Error: Threshold value '$SQUASH_THRESHOLD' exceeds maximum allowed value of 1000."
+            exit 1
+          fi
+
+          echo "✅ Threshold validated: $SQUASH_THRESHOLD"
+          echo "SQUASH_THRESHOLD=$SQUASH_THRESHOLD" >> $GITHUB_ENV
+
+      - name: Check gh-pages branch and commit count
+        id: check-gh-pages
+        run: |
+          echo "🔍 Checking gh-pages branch..."
+          
+          # Use threshold from environment (validated in previous step)
+          SQUASH_THRESHOLD=${{ env.SQUASH_THRESHOLD }}
+          echo "threshold=$SQUASH_THRESHOLD" >> $GITHUB_OUTPUT
+          
+          # Check if gh-pages branch exists
+          if ! git ls-remote --heads origin gh-pages | grep -q .; then
+            echo "❌ Error: gh-pages branch does not exist. Please deploy to gh-pages first."
+            echo "branch_exists=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+          
+          # Fetch gh-pages branch with history
+          if ! git fetch origin gh-pages --depth=100; then
+            echo "❌ Error: Failed to fetch gh-pages branch"
+            echo "branch_exists=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+          
+          # Get commit count and original SHA
+          commit_count=$(git rev-list --count origin/gh-pages)
+          original_sha=$(git rev-parse origin/gh-pages)
+          
+          echo "branch_exists=true" >> $GITHUB_OUTPUT
+          echo "commit_count=$commit_count" >> $GITHUB_OUTPUT
+          echo "original_sha=$original_sha" >> $GITHUB_OUTPUT
+          
+          echo "📊 Current gh-pages commits: $commit_count"
+          echo "🔖 Original SHA: $original_sha"
+          
+          # Skip if empty or not enough commits
+          if [ "$commit_count" -eq 0 ]; then
+            echo "⚠️  gh-pages branch is empty, nothing to squash"
+            echo "should_squash=false" >> $GITHUB_OUTPUT
+            exit 0
+          elif [ "$commit_count" -le "$SQUASH_THRESHOLD" ]; then
+            echo "⏭️  Skipping squash: only $commit_count commits (threshold: $SQUASH_THRESHOLD)"
+            echo "should_squash=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          echo "should_squash=true" >> $GITHUB_OUTPUT
+
+      - name: Squash commits
+        id: squash
+        timeout-minutes: 10
+        if: steps.check-gh-pages.outputs.should_squash == 'true'
+        run: |
+          commit_count=${{ steps.check-gh-pages.outputs.commit_count }}
+          original_sha=${{ steps.check-gh-pages.outputs.original_sha }}
+          echo "🔧 Squashing $commit_count commits..."
+          
+          # Use unique branch name based on run ID to avoid conflicts
+          TEMP_BRANCH="gh-pages-squash-${GITHUB_RUN_ID}"
+          echo "📋 Temporary branch: $TEMP_BRANCH"
+          
+          # Checkout gh-pages branch
+          git checkout -b "$TEMP_BRANCH" origin/gh-pages
+          
+          # Get root commit and reset
+          root_sha=$(git rev-list --max-parents=0 HEAD)
+          git reset --soft "$root_sha"
+          
+          # Verify working tree state
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "✓ Working tree has staged changes as expected"
+          else
+            echo "❌ Error: No changes staged after reset"
+            exit 1
+          fi
+          
+          # Create new commit with proper timestamp
+          commit_date=$(date -u +'%Y-%m-%d %H:%M:%S')
+          commit_msg="Squash: Weekly update ${commit_date}"$'\n'"Squashed $commit_count commits into one"$'\n'"Date: ${commit_date} UTC"
+
+          git commit -m "$commit_msg"
+          
+          # Verify commit was created
+          new_commit_sha=$(git rev-parse HEAD)
+          echo "📝 New commit SHA: $new_commit_sha"
+          
+          # Force push with retry
+          max_retries=3
+          retry_count=0
+          while [ $retry_count -lt $max_retries ]; do
+            if git push origin "$TEMP_BRANCH:gh-pages" --force; then
+              echo "✅ Push successful"
+              break
+            else
+              retry_count=$((retry_count + 1))
+              if [ $retry_count -lt $max_retries ]; then
+                echo "⚠️  Push failed, retrying ($retry_count/$max_retries)..."
+                sleep 5
+              else
+                echo "❌ Push failed after $max_retries attempts"
+                exit 1
+              fi
+            fi
+          done
+          
+          new_sha=$(git rev-parse HEAD)
+          echo "✅ Squashed $commit_count commits into 1 commit"
+          echo "📝 New SHA: $new_sha"
+          echo "temp_branch=$TEMP_BRANCH" >> $GITHUB_OUTPUT
+
+      - name: Verify squash result
+        if: steps.squash.outcome == 'success'
+        run: |
+          echo "🔍 Verifying squash result..."
+          
+          # Fetch latest gh-pages
+          git fetch origin gh-pages
+          new_count=$(git rev-list --count origin/gh-pages)
+          echo "📊 Current commit count: $new_count"
+          
+          # Verify commit count
+          if [ "$new_count" -ne 1 ]; then
+            echo "❌ Error: Expected 1 commit, got $new_count"
+            exit 1
+          fi
+          
+          echo "✅ Commit count verified"
+          
+          # Checkout gh-pages to verify file contents
+          git checkout gh-pages
+          
+          # Verify feed.xml exists
+          if [ ! -f "docs/feed.xml" ]; then
+            echo "❌ Critical error: feed.xml missing after squash"
+            exit 1
+          fi
+          
+          # Verify feed.xml is not empty and has valid XML structure
+          file_size=$(stat -c%s "docs/feed.xml" 2>/dev/null)
+          if [ "$file_size" -lt 100 ]; then
+            echo "❌ Error: feed.xml is too small ($file_size bytes), possibly corrupted"
+            exit 1
+          fi
+          
+          # Verify XML is well-formed (if xmllint available)
+          if command -v xmllint &> /dev/null; then
+            if ! xmllint --noout "docs/feed.xml" 2>/dev/null; then
+              echo "⚠️  Warning: feed.xml may have XML structure issues, but proceeding"
+            fi
+          fi
+          
+          echo "✅ File verification successful"
+          echo "📄 feed.xml size: $file_size bytes"
+
+      - name: Cleanup temporary branches
+        if: always()
+        run: |
+          echo "🧹 Cleaning up temporary branches..."
+          
+          # Ensure we have latest remote info
+          git fetch origin --prune
+          
+          # Delete the temporary branch created by this workflow run
+          TEMP_BRANCH="${{ steps.squash.outputs.temp_branch }}"
+          if [ -n "$TEMP_BRANCH" ]; then
+            if git ls-remote --heads origin "$TEMP_BRANCH" 2>/dev/null | grep -q .; then
+              echo "  Deleting $TEMP_BRANCH..."
+              if git push origin --delete "$TEMP_BRANCH" 2>/dev/null; then
+                echo "  ✅ $TEMP_BRANCH deleted"
+              else
+                echo "  ⚠️  Could not delete $TEMP_BRANCH (may not exist)"
+              fi
+            else
+              echo "  ℹ️  $TEMP_BRANCH does not exist, skipping"
+            fi
+          fi
+          
+          # Clean up old temporary branches (older than 7 days)
+          echo "  Checking for old temporary branches..."
+          OLD_BRANCHES=$(git ls-remote --heads origin | grep 'gh-pages-squash-' | awk '{print $2}' | sed 's|refs/heads/||')
+          
+          if [ -n "$OLD_BRANCHES" ]; then
+            for branch in $OLD_BRANCHES; do
+              # Skip current run's branch
+              if [ "$branch" == "$TEMP_BRANCH" ]; then
+                continue
+              fi
+              
+              # Get last commit date
+              commit_date=$(git log -1 --format=%ct origin/"$branch" 2>/dev/null)
+              
+              # Check if branch is older than 7 days (604800 seconds)
+              if [ -n "$commit_date" ] && [ $(( $(date +%s) - commit_date )) -gt 604800 ]; then
+                echo "  Deleting old branch: $branch"
+                git push origin --delete "$branch" 2>/dev/null && echo "    ✅ Deleted" || echo "    ⚠️  Failed to delete"
+              fi
+            done
+          fi
+          
+          echo "✅ Cleanup completed"
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "📋 Summary:"
+          if [ "${{ steps.check-gh-pages.outputs.branch_exists }}" != "true" ]; then
+            echo "   - ❌ gh-pages branch does not exist or could not be fetched"
+          elif [ "${{ steps.check-gh-pages.outputs.should_squash }}" != "true" ]; then
+            if [ "${{ steps.check-gh-pages.outputs.commit_count }}" == "0" ]; then
+              echo "   - ℹ️  gh-pages branch is empty"
+            else
+              echo "   - ℹ️  No squash needed: ${{ steps.check-gh-pages.outputs.commit_count }} commits (threshold: ${{ steps.check-gh-pages.outputs.threshold }})"
+            fi
+          else
+            echo "   - ✅ Squash completed: ${{ steps.check-gh-pages.outputs.commit_count }} → 1 commit"
+          fi
