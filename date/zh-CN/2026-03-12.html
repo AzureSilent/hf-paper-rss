@@ -1,0 +1,1789 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hugging Face Papers - 2026-03-12 (zh-CN)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .date {
+            font-size: 1.2em;
+            color: #a0a0a0;
+        }
+        
+        .stats {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #888;
+        }
+        
+        .paper-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .paper-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(102, 126, 234, 0.5);
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.2);
+        }
+        
+        .paper-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        
+        .paper-title a {
+            color: #e0e0e0;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .paper-title a:hover {
+            color: #667eea;
+        }
+        
+        .paper-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            color: #a0a0a0;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .meta-label {
+            color: #888;
+        }
+        
+        .links {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .link-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .link-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .link-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .abstract-section {
+            margin-top: 15px;
+        }
+        
+        .abstract-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .abstract-header:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .abstract-toggle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+            transition: transform 0.3s;
+        }
+        
+        .abstract-toggle.expanded {
+            transform: rotate(180deg);
+        }
+        
+        .abstract-label {
+            font-weight: 500;
+            color: #667eea;
+        }
+        
+        .abstract-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding: 0 15px;
+        }
+        
+        .abstract-content.expanded {
+            max-height: 2000px;
+            padding: 15px;
+        }
+        
+        .abstract-text {
+            line-height: 1.7;
+            color: #c0c0c0;
+        }
+        
+        .summary-box {
+            background: rgba(102, 126, 234, 0.1);
+            border-left: 3px solid #667eea;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .summary-label {
+            font-size: 0.8em;
+            color: #667eea;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .summary-text {
+            color: #b0b0b0;
+            line-height: 1.5;
+        }
+        
+        .translation-box {
+            background: rgba(118, 75, 162, 0.1);
+            border-left: 3px solid #764ba2;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .translation-label {
+            font-size: 0.8em;
+            color: #764ba2;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .translation-text {
+            color: #b0b0b0;
+            line-height: 1.5;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding: 0 10px;
+        }
+        
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .nav-btn.disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: #666;
+            pointer-events: none;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .paper-title {
+                font-size: 1.1em;
+            }
+            
+            .links {
+                flex-wrap: wrap;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-btn {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Hugging Face Papers</h1>
+            <div class="date">2026-03-12</div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number">29</div>
+                    <div class="stat-label">Papers</div>
+                </div>
+            </div>
+        </header>
+        
+        <main>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.10165" target="_blank">OpenClaw-RL: Train Any Agent Simply by Talking</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Princeton AI Lab</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yinjie Wang, Xuyang Chen, Xiaolong Jin, Mengdi Wang, Ling Yang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.10165" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.10165" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.10165.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract OpenClaw-RL framework enables policy learning from diverse next-state signals across multiple interaction modalities using asynchronous training with PRM judges and hindsight-guided distillation. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 OpenClaw-RL 框架使用 PRM 法官的异步训练和后见之明引导的蒸馏，可以跨多种交互方式从不同的下一状态信号中进行策略学习。 
+					AI 生成的摘要</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Every agent interaction generates a next-state signal, namely the user reply, tool output, terminal or GUI state change that follows each action, yet no existing agentic RL system recovers it as a live, online learning source. We present OpenClaw-RL, a framework built on a simple observation: next-state signals are universal, and policy can learn from all of them simultaneously. Personal conversations, terminal executions, GUI interactions, SWE tasks, and tool-call traces are not separate training problems. They are all interactions that can be used to train the same policy in the same loop. Next-state signals encode two forms of information: evaluative signals, which indicate how well the action performed and are extracted as scalar rewards via a PRM judge; and directive signals, which indicate how the action should have been different and are recovered through Hindsight-Guided On-Policy Distillation (OPD). We extract textual hints from the next state, construct an enhanced teacher context, and provide token-level directional advantage supervision that is richer than any scalar reward. Due to the asynchronous design, the model serves live requests, the PRM judges ongoing interactions, and the trainer updates the policy at the same time, with zero coordination overhead between them. Applied to personal agents, OpenClaw-RL enables an agent to improve simply by being used, recovering conversational signals from user re-queries, corrections, and explicit feedback. Applied to general agents, the same infrastructure supports scalable RL across terminal, GUI, SWE, and tool-call settings, where we additionally demonstrate the utility of process rewards. Code: https://github.com/Gen-Verse/OpenClaw-RL</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">每个代理交互都会生成一个下一个状态信号，即每个操作之后的用户回复、工具输出、终端或 GUI 状态更改，但现有的代理强化学习系统无法将其恢复为实时在线学习源。我们提出了 OpenClaw-RL，这是一个基于简单观察的框架：下一状态信号是通用的，政策可以同时从所有这些信号中学习。个人对话、终端执行、GUI 交互、SWE 任务和工具调用跟踪不是单独的训练问题。它们都是可用于在同一循环中训练相同策略的交互。下一状态信号对两种形式的信息进行编码：评估信号，指示操作的执行情况，并通过 PRM 判断提取为标量奖励；指示信号，指示行动应该如何不同，并通过事后引导的政策蒸馏 (OPD) 来恢复。我们从下一个状态中提取文本提示，构建增强的教师上下文，并提供比任何标量奖励更丰富的令牌级定向优势监督。由于采用异步设计，模型服务实时请求，PRM 判断正在进行的交互，训练器同时更新策略，它们之间的协调开销为零。应用于个人代理时，OpenClaw-RL 使代理能够通过使用、从用户重新查询、更正和明确反馈中恢复对话信号来进行改进。应用于一般代理时，相同的基础设施支持跨终端、GUI、SWE 和工具调用设置的可扩展 RL，我们还展示了流程奖励的实用性。代码：https://github.com/Gen-Verse/OpenClaw-RL</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.09229" target="_blank">Flash-KMeans: Fast and Memory-Efficient Exact K-Means</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>UC Berkeley</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>andy-yang, Shuo Yang, Haocheng Xi, Yilong Zhao, Muyang Li</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.09229" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.09229" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.09229.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Flash-kmeans enables efficient online k-means clustering on GPUs through novel kernel-level optimizations that eliminate I/O bottlenecks and atomic write contention. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 Flash-kmeans 通过新颖的内核级优化消除 I/O 瓶颈和原子写入争用，从而在 GPU 上实现高效的在线 k-means 集群。 
+					AI 生成的摘要</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">k-means has historically been positioned primarily as an offline processing primitive, typically used for dataset organization or embedding preprocessing rather than as a first-class component in online systems. In this work, we revisit this classical algorithm under the lens of modern AI system design and enable k-means as an online primitive. We point out that existing GPU implementations of k-means remain fundamentally bottlenecked by low-level system constraints rather than theoretical algorithmic complexity. Specifically, the assignment stage suffers from a severe IO bottleneck due to the massive explicit materialization of the N times K distance matrix in High Bandwidth Memory (HBM). Simultaneously, the centroid update stage is heavily penalized by hardware-level atomic write contention caused by irregular, scatter-style token aggregations. To bridge this performance gap, we propose flash-kmeans, an IO-aware and contention-free k-means implementation for modern GPU workloads. Flash-kmeans introduces two core kernel-level innovations: (1) FlashAssign, which fuses distance computation with an online argmin to completely bypass intermediate memory materialization; (2) sort-inverse update, which explicitly constructs an inverse mapping to transform high-contention atomic scatters into high-bandwidth, segment-level localized reductions. Furthermore, we integrate algorithm-system co-designs, including chunked-stream overlap and cache-aware compile heuristics, to ensure practical deployability. Extensive evaluations on NVIDIA H200 GPUs demonstrate that flash-kmeans achieves up to 17.9times end-to-end speedup over best baselines, while outperforming industry-standard libraries like cuML and FAISS by 33times and over 200times, respectively.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">k-means 历史上主要被定位为离线处理原语，通常用于数据集组织或嵌入预处理，而不是作为在线系统中的一流组件。在这项工作中，我们在现代人工智能系统设计的视角下重新审视这一经典算法，并将 k 均值作为在线原语。我们指出，现有的 k 均值 GPU 实现从根本上仍然受到低级系统约束而不是理论算法复杂性的瓶颈。具体来说，由于高带宽内存（HBM）中 N 乘 K 距离矩阵的大量显式具体化，分配阶段遇到了严重的 IO 瓶颈。同时，质心更新阶段因不规则的分散式令牌聚合引起的硬件级原子写入争用而受到严重惩罚。为了弥补这一性能差距，我们提出了 flash-kmeans，这是一种适用于现代 GPU 工作负载的 IO 感知和无争用 k-means 实现。 Flash-kmeans 引入了两项核心内核级创新：（1）FlashAssign，它将距离计算与在线 argmin 融合在一起，完全绕过中间内存实现； (2)排序逆更新，显式构造逆映射，将高竞争原子分散转换为高带宽、段级局部减少。此外，我们集成了算法系统协同设计，包括分块流重叠和缓存感知编译启发式，以确保实际的可部署性。对 NVIDIA H200 GPU 的广泛评估表明，flash-kmeans 的端到端加速比最佳基准高出 17.9 倍，同时性能分别比 cuML 和 FAISS 等行业标准库高出 33 倍和超过 200 倍。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.09827" target="_blank">MA-EgoQA: Question Answering over Egocentric Videos from Multiple Embodied Agents</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>KAIST AI</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Kangsan Kim, Yanlai Yang, Suji Kim, Woongyeong Yeo, Youngwan Lee</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.09827" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.09827" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.09827.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Multi-agent systems require understanding multiple long-horizon egocentric videos simultaneously, necessitating new benchmarks and models for system-level comprehension. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 多智能体系统需要同时理解多个长视界自我中心视频，因此需要新的基准和模型来进行系统级理解。 
+					AI 生成的摘要</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">As embodied models become powerful, humans will collaborate with multiple embodied AI agents at their workplace or home in the future. To ensure better communication between human users and the multi-agent system, it is crucial to interpret incoming information from agents in parallel and refer to the appropriate context for each query. Existing challenges include effectively compressing and communicating high volumes of individual sensory inputs in the form of video and correctly aggregating multiple egocentric videos to construct system-level memory. In this work, we first formally define a novel problem of understanding multiple long-horizon egocentric videos simultaneously collected from embodied agents. To facilitate research in this direction, we introduce MultiAgent-EgoQA (MA-EgoQA), a benchmark designed to systemically evaluate existing models in our scenario. MA-EgoQA provides 1.7k questions unique to multiple egocentric streams, spanning five categories: social interaction, task coordination, theory-of-mind, temporal reasoning, and environmental interaction. We further propose a simple baseline model for MA-EgoQA named EgoMAS, which leverages shared memory across embodied agents and agent-wise dynamic retrieval. Through comprehensive evaluation across diverse baselines and EgoMAS on MA-EgoQA, we find that current approaches are unable to effectively handle multiple egocentric streams, highlighting the need for future advances in system-level understanding across the agents. The code and benchmark are available at https://ma-egoqa.github.io.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">随着具身模型变得强大，未来人类将在工作场所或家里与多个具身人工智能代理进行协作。为了确保人类用户和多代理系统之间更好的通信，并行解释来自代理的传入信息并为每个查询引用适当的上下文至关重要。现有的挑战包括以视频形式有效压缩和传达大量的单独感官输入，以及正确聚合多个以自我为中心的视频以构建系统级记忆。在这项工作中，我们首先正式定义了一个新问题，即理解同时从实体代理收集的多个长期自我中心视频。为了促进这个方向的研究，我们引入了 MultiAgent-EgoQA (MA-EgoQA)，这是一个旨在系统评估我们场景中现有模型的基准。 MA-EgoQA 提供了多个自我中心流特有的 1,700 个问题，涵盖五个类别：社交互动、任务协调、心理理论、时间推理和环境交互。我们进一步为 MA-EgoQA 提出了一个名为 EgoMAS 的简单基线模型，它利用跨具体代理和智能代理动态检索的共享内存。通过对 MA-EgoQA 上不同基线和 EgoMAS 的综合评估，我们发现当前的方法无法有效处理多个以自我为中心的流，这凸显了未来在跨代理的系统级理解方面取得进展的需要。代码和基准可在 https://ma-egoqa.github.io 上获取。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.10913" target="_blank">LLM2Vec-Gen: Generative Embeddings from Large Language Models</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>McGill NLP Group</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Parishad BehnamGhader, Vaibhav Adlakha, Fabian David Schmidt, Nicolas Chapados, Marius Mosbach</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.10913" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.10913" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.10913.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract LLM2Vec-Gen introduces a self-supervised method for text embedding that represents model responses through trainable special tokens, achieving superior performance on MTEB while reducing harmful content and improving reasoning capabilities. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 LLM2Vec-Gen 引入了一种自监督的文本嵌入方法，通过可训练的特殊标记表示模型响应，在 MTEB 上实现卓越性能，同时减少有害内容并提高推理能力。 
+					AI 生成的摘要</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">LLM-based text embedders typically encode the semantic content of their input. However, embedding tasks require mapping diverse inputs to similar outputs. Typically, this input-output is addressed by training embedding models with paired data using contrastive learning. In this work, we propose a novel self-supervised approach, LLM2Vec-Gen, which adopts a different paradigm: rather than encoding the input, we learn to represent the model's potential response. Specifically, we add trainable special tokens to the LLM's vocabulary, append them to input, and optimize them to represent the LLM's response in a fixed-length sequence. Training is guided by the LLM's own completion for the query, along with an unsupervised embedding teacher that provides distillation targets. This formulation helps to bridge the input-output gap and transfers LLM capabilities such as safety alignment and reasoning to embedding tasks. Crucially, the LLM backbone remains frozen and training requires only unlabeled queries. LLM2Vec-Gen achieves state-of-the-art self-supervised performance on the Massive Text Embedding Benchmark (MTEB), improving by 9.3% over the best unsupervised embedding teacher. We also observe up to 43.2% reduction in harmful content retrieval and 29.3% improvement in reasoning capabilities for embedding tasks. Finally, the learned embeddings are interpretable and can be decoded into text to reveal their semantic content.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">基于 LLM 的文本嵌入器通常对其输入的语义内容进行编码。然而，嵌入任务需要将不同的输入映射到相似的输出。通常，这种输入输出是通过使用对比学习用配对数据训练嵌入模型来解决的。在这项工作中，我们提出了一种新颖的自监督方法 LLM2Vec-Gen，它采用不同的范式：我们不是对输入进行编码，而是学习表示模型的潜在响应。具体来说，我们将可训练的特殊标记添加到 LLM 的词汇表中，将它们附加到输入中，并优化它们以以固定长度的序列表示 LLM 的响应。培训由法学硕士自己完成查询以及提供蒸馏目标的无监督嵌入教师指导。这种表述有助于弥合输入-输出差距，并将法学硕士的能力（例如安全对齐和推理）转移到嵌入任务中。至关重要的是，LLM 主干仍然处于冻结状态，训练只需要未标记的查询。 LLM2Vec-Gen 在大规模文本嵌入基准 (MTEB) 上实现了最先进的自监督性能，比最好的无监督嵌入教师提高了 9.3%。我们还观察到有害内容检索减少了 43.2%，嵌入任务的推理能力提高了 29.3%。最后，学习到的嵌入是可解释的，可以解码为文本以揭示其语义内容。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.10160" target="_blank">ReMix: Reinforcement routing for mixtures of LoRAs in LLM finetuning</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Meta Research</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Ruizhong Qiu, Hanqing Zeng, Yinglong Xia, Yiwen Meng, Ren Chen</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.10160" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.10160" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.10160.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Researchers address imbalance in routing weights of Mixture-of-LoRAs models by proposing Reinforcement Routing (ReMix), which uses non-learnable weights and reinforcement learning techniques to improve model expressiveness and performance. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 研究人员通过提出强化路由 (ReMix) 来解决 Mixture-of-LoRAs 模型的路由权重不平衡问题，该路由使用不可学习的权重和强化学习技术来提高模型的表达能力和性能。 
+					AI 生成的摘要</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Low-rank adapters (LoRAs) are a parameter-efficient finetuning technique that injects trainable low-rank matrices into pretrained models to adapt them to new tasks. Mixture-of-LoRAs models expand neural networks efficiently by routing each layer input to a small subset of specialized LoRAs of the layer. Existing Mixture-of-LoRAs routers assign a learned routing weight to each LoRA to enable end-to-end training of the router. Despite their empirical promise, we observe that the routing weights are typically extremely imbalanced across LoRAs in practice, where only one or two LoRAs often dominate the routing weights. This essentially limits the number of effective LoRAs and thus severely hinders the expressive power of existing Mixture-of-LoRAs models. In this work, we attribute this weakness to the nature of learnable routing weights and rethink the fundamental design of the router. To address this critical issue, we propose a new router designed that we call Reinforcement Routing for Mixture-of-LoRAs (ReMix). Our key idea is using non-learnable routing weights to ensure all active LoRAs to be equally effective, with no LoRA dominating the routing weights. However, our routers cannot be trained directly via gradient descent due to our non-learnable routing weights. Hence, we further propose an unbiased gradient estimator for the router by employing the reinforce leave-one-out (RLOO) technique, where we regard the supervision loss as the reward and the router as the policy in reinforcement learning. Our gradient estimator also enables to scale up training compute to boost the predictive performance of our ReMix. Extensive experiments demonstrate that our proposed ReMix significantly outperform state-of-the-art parameter-efficient finetuning methods under a comparable number of activated parameters.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">低秩适配器 (LoRA) 是一种参数高效的微调技术，它将可训练的低秩矩阵注入到预训练的模型中，以使其适应新任务。 LoRA 混合模型通过将每个层输入路由到该层的专门 LoRA 的一个小子集来有效扩展神经网络。现有的 LoRA 混合路由器为每个 LoRA 分配学习路由权重，以实现路由器的端到端训练。尽管他们的经验承诺，我们观察到，在实践中，LoRA 之间的路由权重通常极其不平衡，其中通常只有一两个 LoRA 主导路由权重。这本质上限制了有效 LoRA 的数量，从而严重阻碍了现有 LoRA 混合模型的表达能力。在这项工作中，我们将这一弱点归因于可学习路由权重的本质，并重新思考路由器的基本设计。为了解决这个关键问题，我们提出了一种新的路由器设计，我们称之为 LoRA 混合强化路由 (ReMix)。我们的关键思想是使用不可学习的路由权重来确保所有活动的 LoRA 同等有效，并且没有 LoRA 主导路由权重。然而，由于我们的路由权重不可学习，我们的路由器无法直接通过梯度下降进行训练。因此，我们通过采用强化留一法（RLOO）技术进一步提出了一种用于路由器的无偏梯度估计器，其中我们将监督损失视为强化学习中的奖励，将路由器视为强化学习中的策略。我们的梯度估计器还能够扩大训练计算规模，以提高 ReMix 的预测性能。大量实验表明，在相当数量的激活参数下，我们提出的 ReMix 显着优于最先进的参数高效微调方法。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.08068" target="_blank">In-Context Reinforcement Learning for Tool Use in Large Language Models</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yaoqi Ye, Yiran Zhao, Keyu Duan, Zeyu Zheng, Kenji Kawaguchi</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.08068" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.08068" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.08068.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract In-Context Reinforcement Learning (ICRL) enables large language models to effectively use external tools through a reinforcement learning-only framework that eliminates the need for costly supervised fine-tuning by gradually reducing in-context examples during training. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 上下文强化学习（ICRL）使大型语言模型能够通过仅强化学习的框架有效地使用外部工具，该框架通过在训练期间逐渐减少上下文示例来消除昂贵的监督微调的需要。 
+					AI 生成的摘要</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">While large language models (LLMs) exhibit strong reasoning abilities, their performance on complex tasks is often constrained by the limitations of their internal knowledge. A compelling approach to overcome this challenge is to augment these models with external tools -- such as Python interpreters for mathematical computations or search engines for retrieving factual information. However, enabling models to use these tools effectively remains a significant challenge. Existing methods typically rely on cold-start pipelines that begin with supervised fine-tuning (SFT), followed by reinforcement learning (RL). These approaches often require substantial amounts of labeled data for SFT, which is expensive to annotate or synthesize. In this work, we propose In-Context Reinforcement Learning (ICRL), an RL-only framework that eliminates the need for SFT by leveraging few-shot prompting during the rollout stage of RL. Specifically, ICRL introduces in-context examples within the rollout prompts to teach the model how to invoke external tools. Furthermore, as training progresses, the number of in-context examples is gradually reduced, eventually reaching a zero-shot setting where the model learns to call tools independently. We conduct extensive experiments across a range of reasoning and tool-use benchmarks. Results show that ICRL achieves state-of-the-art performance, demonstrating its effectiveness as a scalable, data-efficient alternative to traditional SFT-based pipelines.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">虽然大型语言模型（LLM）表现出强大的推理能力，但它们在复杂任务上的表现往往受到其内部知识的限制。克服这一挑战的一个令人信服的方法是使用外部工具来增强这些模型，例如用于数学计算的 Python 解释器或用于检索事实信息的搜索引擎。然而，使模型能够有效地使用这些工具仍然是一个重大挑战。现有方法通常依赖于冷启动管道，该管道从监督微调（SFT）开始，然后是强化学习（RL）。这些方法通常需要大量的 SFT 标记数据，而注释或合成的成本很高。在这项工作中，我们提出了上下文强化学习（ICRL），这是一种仅用于 RL 的框架，它通过在 RL 推出阶段利用少样本提示来消除对 SFT 的需求。具体来说，ICRL 在推出提示中引入了上下文示例，以教导模型如何调用外部工具。此外，随着训练的进行，上下文示例的数量逐渐减少，最终达到零样本设置，模型学会独立调用工具。我们对一系列推理和工具使用基准进行了广泛的实验。结果表明，ICRL 实现了最先进的性能，证明了其作为传统基于 SFT 的管道的可扩展、数据高效替代方案的有效性。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.08982" target="_blank">SVG-EAR: Parameter-Free Linear Compensation for Sparse Video Generation via Error-aware Routing</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>UC Berkeley</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Xuanyi Zhou, Qiuyang Mang, andy-yang, Shuo Yang, Haocheng Xi</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.08982" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.08982" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.08982.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract SVG-EAR introduces a parameter-free method for video diffusion transformers that recovers missing attention contributions through centroid-based approximation and error-aware routing for improved efficiency. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 SVG-EAR 引入了一种用于视频扩散变换器的无参数方法，该方法通过基于质心的近似和错误感知路由来恢复丢失的注意力贡献，以提高效率。 
+					AI 生成的摘要</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Diffusion Transformers (DiTs) have become a leading backbone for video generation, yet their quadratic attention cost remains a major bottleneck. Sparse attention reduces this cost by computing only a subset of attention blocks. However, prior methods often either drop the remaining blocks, which incurs information loss, or rely on learned predictors to approximate them, introducing training overhead and potential output distribution shifting. In this paper, we show that the missing contributions can be recovered without training: after semantic clustering, keys and values within each block exhibit strong similarity and can be well summarized by a small set of cluster centroids. Based on this observation, we introduce SVG-EAR, a parameter-free linear compensation branch that uses the centroid to approximate skipped blocks and recover their contributions. While centroid compensation is accurate for most blocks, it can fail on a small subset. Standard sparsification typically selects blocks by attention scores, which indicate where the model places its attention mass, but not where the approximation error would be largest. SVG-EAR therefore performs error-aware routing: a lightweight probe estimates the compensation error for each block, and we compute exactly the blocks with the highest error-to-cost ratio while compensating for skipped blocks. We provide theoretical guarantees that relate attention reconstruction error to clustering quality, and empirically show that SVG-EAR improves the quality-efficiency trade-off and increases throughput at the same generation fidelity on video diffusion tasks. Overall, SVG-EAR establishes a clear Pareto frontier over prior approaches, achieving up to 1.77times and 1.93times speedups while maintaining PSNRs of up to 29.759 and 31.043 on Wan2.2 and HunyuanVideo, respectively.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">扩散变压器（DiT）已成为视频生成的主要支柱，但其二次注意力成本仍然是主要瓶颈。稀疏注意力通过仅计算注意力块的子集来降低这种成本。然而，现有的方法通常要么丢弃剩余的块，这会导致信息丢失，要么依赖学习的预测器来近似它们，从而引入训练开销和潜在的输出分布偏移。在本文中，我们表明可以在不训练的情况下恢复缺失的贡献：在语义聚类之后，每个块内的键和值表现出很强的相似性，并且可以通过一小组聚类质心很好地概括。基于这一观察，我们引入了 SVG-EAR，这是一种无参数线性补偿分支，它使用质心来近似跳过的块并恢复它们的贡献。虽然质心补偿对于大多数块来说是准确的，但在一小部分块上可能会失败。标准稀疏化通常通过注意力分数来选择块，注意力分数指示模型将注意力集中在何处，但不是近似误差最大的位置。因此，SVG-EAR 执行错误感知路由：轻量级探针估计每个块的补偿误差，我们精确计算具有最高错误成本比的块，同时补偿跳过的块。我们提供了将注意力重建误差与聚类质量联系起来的理论保证，并凭经验证明 SVG-EAR 改善了质量效率权衡，并在视频扩散任务的同一代保真度下提高了吞吐量。总体而言，SVG-EAR 与之前的方法相比建立了清晰的帕累托前沿，在 Wan2.2 和 HunyuanVideo 上分别实现了高达 1.77 倍和 1.93 倍的加速，同时保持高达 29.759 和 31.043 的 PSNR。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.07392" target="_blank">Can Large Language Models Keep Up? Benchmarking Online Adaptation to Continual Knowledge Streams</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>KAIST AI</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>jiyeonkim, Jiyeon Kim, Hyunji Lee, Dylan Zhou, Sue Hyun Park</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.07392" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.07392" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.07392.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Online Adaptation to Continual Knowledge Streams (OAKS) benchmark evaluates how well language models adapt to dynamically changing information in real-time contexts through streaming datasets with evolving facts. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要在线适应持续知识流 (OAKS) 基准评估语言模型如何通过具有不断变化的事实的流数据集来适应实时上下文中动态变化的信息。 
+					AI 生成的摘要</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">LLMs operating in dynamic real-world contexts often encounter knowledge that evolves continuously or emerges incrementally. To remain accurate and effective, models must adapt to newly arriving information on the fly. We introduce Online Adaptation to Continual Knowledge Streams(OAKS) to evaluate this capability, establishing a benchmark for online adaptation over streaming, continually updating knowledge. Specifically, the benchmark is structured as a sequence of fine-grained context chunks where facts change dynamically across time intervals. OAKS comprises two datasets: OAKS-BABI and OAKS-Novel, where individual facts evolve multiple times across context chunks. These datasets include dense annotations to measure whether models track changes accurately. Evaluating 14 models with varied inference approaches, we observe significant limitations in current methodologies. Both state-of-the-art models and agentic memory systems fail to adapt robustly on OAKS, demonstrating delays in state-tracking and susceptibility to distraction within streaming environments.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">在动态的现实世界环境中工作的法学硕士经常会遇到不断发展或增量出现的知识。为了保持准确和有效，模型必须动态适应新到达的信息。我们引入在线适应持续知识流（OAKS）来评估这种能力，建立在线适应流的基准，不断更新知识。具体来说，基准被构造为一系列细粒度的上下文块，其中事实随时间间隔动态变化。 OAKS 包含两个数据集：OAKS-BABI 和 OAKS-Novel，其中各个事实在上下文块中多次演变。这些数据集包含密集的注释，以衡量模型是否准确跟踪变化。通过评估 14 个具有不同推理方法的模型，我们观察到当前方法的显着局限性。最先进的模型和代理记忆系统都无法在 OAKS 上稳健地适应，这表明状态跟踪存在延迟，并且在流环境中容易分散注意力。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.10256" target="_blank">ID-LoRA: Identity-Driven Audio-Video Personalization with In-Context LoRA</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Tel Aviv University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Aviad Dahan, Moran Yanuka, Noa Kraicer, Lior Wolf, Raja Giryes</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.10256" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.10256" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.10256.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract ID-LoRA enables joint generation of visual appearance and voice using a single model, improving personalization through identity-driven in-context LoRA adaptation and identity guidance techniques. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 ID-LoRA 能够使用单一模型联合生成视觉外观和语音，通过身份驱动的上下文 LoRA 适应和身份引导技术来改善个性化。 
+					AI 生成的摘要</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Existing video personalization methods preserve visual likeness but treat video and audio separately. Without access to the visual scene, audio models cannot synchronize sounds with on-screen actions; and because classical voice-cloning models condition only on a reference recording, a text prompt cannot redirect speaking style or acoustic environment. We propose ID-LoRA (Identity-Driven In-Context LoRA), which jointly generates a subject's appearance and voice in a single model, letting a text prompt, a reference image, and a short audio clip govern both modalities together. ID-LoRA adapts the LTX-2 joint audio-video diffusion backbone via parameter-efficient In-Context LoRA and, to our knowledge, is the first method to personalize visual appearance and voice in a single generative pass. Two challenges arise. Reference and generation tokens share the same positional-encoding space, making them hard to distinguish; we address this with negative temporal positions, placing reference tokens in a disjoint RoPE region while preserving their internal temporal structure. Speaker characteristics also tend to be diluted during denoising; we introduce identity guidance, a classifier-free guidance variant that amplifies speaker-specific features by contrasting predictions with and without the reference signal. In human preference studies, ID-LoRA is preferred over Kling 2.6 Pro by 73% of annotators for voice similarity and 65% for speaking style. On cross-environment settings, speaker similarity improves by 24% over Kling, with the gap widening as conditions diverge. A preliminary user study further suggests that joint generation provides a useful inductive bias for physically grounded sound synthesis. ID-LoRA achieves these results with only ~3K training pairs on a single GPU. Code, models, and data will be released.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">现有的视频个性化方法保留视觉相似性，但单独处理视频和音频。如果无法访问视觉场景，音频模型就无法将声音与屏幕上的动作同步；而且由于经典的语音克隆模型仅以参考录音为条件，因此文本提示无法重定向说话风格或声学环境。我们提出了 ID-LoRA（身份驱动的上下文 LoRA），它在单个模型中联合生成主体的外观和声音，让文本提示、参考图像和简短的音频剪辑一起控制这两种模式。 ID-LoRA 通过参数高效的上下文 LoRA 来适应 LTX-2 联合音频-视频扩散骨干网，据我们所知，这是第一种在单次生成过程中个性化视觉外观和语音的方法。出现了两个挑战。引用和生成标记共享相同的位置编码空间，使得它们难以区分；我们用负时间位置来解决这个问题，将参考标记放置在不相交的 RoPE 区域中，同时保留其内部时间结构。扬声器特性在降噪过程中也往往会被淡化；我们引入了身份引导，这是一种无分类器的引导变体，它通过对比有参考信号和没有参考信号的预测来放大特定于说话者的特征。在人类偏好研究中，73% 的注释者在语音相似性方面更喜欢 ID-LoRA，在说话风格方面更喜欢 ID-LoRA，65% 的注释者更喜欢 Kling 2.6 Pro。在跨环境设置中，说话者相似度比 Kling 提高了 24%，并且随着条件的不同，差距会扩大。初步的用户研究进一步表明，联合生成为物理接地的声音合成提供了有用的感应偏置。 ID-LoRA 在单个 GPU 上仅用约 3K 训练对即可实现这些结果。代码、模型和数据将被发布。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.10705" target="_blank">Prism-Δ: Differential Subspace Steering for Prompt Highlighting in Large Language Models</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yuyao Ge, Shenghua Liu, Yiwei Wang, Tianyu Liu, Baolong Bi</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.10705" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.10705" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.10705.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract PRISM-Δ extracts discriminative steering directions by decomposing cross-covariance differences, uses softplus weights for attention heads, and extends to value representations for improved long-context retrieval performance. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 PRISM-Δ 通过分解互协方差差异来提取判别性转向方向，使用注意力头的 softplus 权重，并扩展到值表示以提高长上下文检索性能。 
+					AI 生成的摘要</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Prompt highlighting steers a large language model to prioritize user-specified text spans during generation. A key challenge is extracting steering directions that capture the difference between relevant and irrelevant contexts, rather than shared structural patterns common to both. We propose PRISM-Δ (Projection-based Relevance-Informed Steering Method), which decomposes the difference between positive and negative cross-covariance matrices to maximize discriminative energy while eliminating shared directions. Each attention head receives a continuous softplus importance weight, letting weak-but-useful heads contribute at reduced strength. The framework extends naturally to Value representations, capturing content-channel signal that Key-only methods leave unused. Across four benchmarks and five models, PRISM-Δ matches or exceeds the best existing method on 19 of 20 configurations, with relative gains up to +10.6%, while halving the fluency cost of steering. PRISM-Δ also scales to long-context retrieval, outperforming the best existing method by up to +4.8% relative gain. PRISM-Δ is compatible with FlashAttention and adds negligible memory overhead.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">提示突出显示会引导大型语言模型在生成过程中优先考虑用户指定的文本范围。一个关键的挑战是提取捕获相关和不相关上下文之间差异的指导方向，而不是共享两者共有的结构模式。我们提出了 PRISM-Δ（基于投影的相关性知情转向方法），它分解正负互协方差矩阵之间的差异，以最大化判别能量，同时消除共享方向。每个注意力头都会受到连续的 softplus 重要性权重，让弱但有用的头以降低的强度做出贡献。该框架自然地扩展到值表示，捕获仅键方法未使用的内容通道信号。在四个基准测试和五个模型中，PRISM-Δ 在 20 种配置中的 19 种配置中匹配或超过了现有最佳方法，相对增益高达 +10.6%，同时将转向流畅度成本减半。 PRISM-Δ 还可以扩展到长上下文检索，其性能优于现有最佳方法，相对增益高达 +4.8%。 PRISM-Δ 与 FlashAttention 兼容，并且增加的内存开销可以忽略不计。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.08561" target="_blank">RetroAgent: From Solving to Evolving via Retrospective Dual Intrinsic Feedback</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>shanghai ailab</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>xyingzhang, Xiaoying Zhang, Zichen Liu, Yipeng Zhang, Xia Hu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.08561" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.08561" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.08561.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract RetroAgent enhances LLM-based agents through online reinforcement learning with self-reflection mechanisms that provide both numerical and language-based intrinsic feedback for improved exploration and knowledge retrieval. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 RetroAgent 通过在线强化学习和自我反思机制增强基于 LLM 的代理，该机制提供基于数字和语言的内在反馈，以改进探索和知识检索。 
+					AI 生成的摘要</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Large language model (LLM)-based agents trained with reinforcement learning (RL) have shown strong potential on complex interactive tasks. However, standard RL paradigms favor static problem-solving over continuous adaptation: agents often converge to suboptimal strategies due to insufficient exploration, while learned knowledge remains implicit within parameters rather than explicitly retrievable, limiting effective experiential learning. To address these limitations, we introduce RetroAgent, an online RL framework that empowers agents to master complex interactive environments not just by solving, but by evolving. Concretely, RetroAgent features a hindsight self-reflection mechanism that produces dual intrinsic feedback: (1) intrinsic numerical feedback that that tracks incremental subtask completion relative to prior attempts, rewarding promising explorations, and (2) intrinsic language feedback that distills reusable lessons into a memory buffer, retrieved via our proposed Similarity &amp; Utility-Aware Upper Confidence Bound (SimUtil-UCB) strategy balancing relevance, utility, and exploration to effectively leverage past experiences. Extensive experiments on two model families across four challenging agentic tasks demonstrate that RetroAgent significantly outperforms existing methods, achieving state-of-the-art results -- e.g., surpassing Group Relative Policy Optimization (GRPO)-trained agents by +18.3% on ALFWorld, +15.4% on WebShop, +27.1% on Sokoban, and +8.9% on MineSweeper -- while exhibiting strong test-time adaptation and generalization to out-of-distribution scenarios.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">经过强化学习 (RL) 训练的基于大型语言模型 (LLM) 的智能体在复杂的交互任务上表现出了强大的潜力。然而，标准强化学习范式偏向于静态问题解决而不是持续适应：由于探索不足，智能体经常会收敛到次优策略，而学到的知识仍然隐含在参数中而不是显式检索，从而限制了有效的体验式学习。为了解决这些限制，我们引入了 RetroAgent，这是一个在线 RL 框架，它使智能体不仅可以通过解决问题，还可以通过进化来掌握复杂的交互环境。具体来说，RetroAgent 具有事后自我反思机制，可产生双重内在反馈：（1）内在数字反馈，跟踪相对于先前尝试的增量子任务完成情况，奖励有希望的探索；（2）内在语言反馈，将可重复使用的课程提炼到内存缓冲区中，通过我们提出的相似性和相似性检索。效用感知上置信区间 (SimUtil-UCB) 策略平衡相关性、效用和探索，以有效利用过去的经验。对四个具有挑战性的代理任务的两个模型系列进行的广泛实验表明，RetroAgent 显着优于现有方法，实现了最先进的结果 - 例如，在 ALFWorld 上超过组相对策略优化 (GRPO) 训练的代理 +18.3%，在 WebShop 上超过 +15.4%，在 Sokoban 上超过 +27.1%，在 MineSweeper 上超过 +8.9%，同时表现出强大的测试时间适应性和泛化能力分布外场景。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.10757" target="_blank">CodePercept: Code-Grounded Visual STEM Perception for MLLMs</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Qwen</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Tongkun Guan, Zhibo Yang, Jianqiang Wan, Mingkun Yang, Zhengtao Guo</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.10757" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.10757" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.10757.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract MLLMs struggle with STEM visual reasoning due to perceptual limitations rather than reasoning deficiencies, and enhancing perception through code-as-perception paradigms improves performance. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 MLLM 在 STEM 视觉推理中遇到困难是由于感知限制而不是推理缺陷，而通过代码即感知范式增强感知可以提高性能。 
+					AI 生成的摘要</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">When MLLMs fail at Science, Technology, Engineering, and Mathematics (STEM) visual reasoning, a fundamental question arises: is it due to perceptual deficiencies or reasoning limitations? Through systematic scaling analysis that independently scales perception and reasoning components, we uncover a critical insight: scaling perception consistently outperforms scaling reasoning. This reveals perception as the true lever limiting current STEM visual reasoning. Motivated by this insight, our work focuses on systematically enhancing the perception capabilities of MLLMs by establishing code as a powerful perceptual medium--executable code provides precise semantics that naturally align with the structured nature of STEM visuals. Specifically, we construct ICC-1M, a large-scale dataset comprising 1M Image-Caption-Code triplets that materializes this code-as-perception paradigm through two complementary approaches: (1) Code-Grounded Caption Generation treats executable code as ground truth for image captions, eliminating the hallucinations inherent in existing knowledge distillation methods; (2) STEM Image-to-Code Translation prompts models to generate reconstruction code, mitigating the ambiguity of natural language for perception enhancement. To validate this paradigm, we further introduce STEM2Code-Eval, a novel benchmark that directly evaluates visual perception in STEM domains. Unlike existing work relying on problem-solving accuracy as a proxy that only measures problem-relevant understanding, our benchmark requires comprehensive visual comprehension through executable code generation for image reconstruction, providing deterministic and verifiable assessment. Code is available at https://github.com/TongkunGuan/Qwen-CodePercept.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">当 MLLM 在科学、技术、工程和数学 (STEM) 视觉推理方面失败时，就会出现一个基本问题：这是由于感知缺陷还是推理限制造成的？通过独立缩放感知和推理组件的系统缩放分析，我们发现了一个重要的见解：缩放感知始终优于缩放推理。这揭示了感知是限制当前 STEM 视觉推理的真正杠杆。受这种洞察力的推动，我们的工作重点是通过将代码建立为强大的感知媒介来系统地增强 MLLM 的感知能力——可执行代码提供精确的语义，自然地与 STEM 视觉效果的结构化性质保持一致。具体来说，我们构建了 ICC-1M，这是一个包含 1M 个图像-标题-代码三元组的大型数据集，通过两种互补的方法实现了这种代码即感知范式：（1）基于代码的标题生成将可执行代码视为图像标题的基本事实，消除了现有知识蒸馏方法中固有的幻觉； (2) STEM图像到代码翻译提示模型生成重建代码，减轻自然语言的歧义以增强感知。为了验证这一范例，我们进一步引入了 STEM2Code-Eval，这是一种直接评估 STEM 领域视觉感知的新颖基准。与依赖问题解决准确性作为仅衡量与问题相关的理解的代理的现有工作不同，我们的基准测试需要通过用于图像重建的可执行代码生成来进行全面的视觉理解，从而提供确定性和可验证的评估。代码可在 https://github.com/TongkunGuan/Qwen-CodePercept 获取。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.10848" target="_blank">V_{0.5}: Generalist Value Model as a Prior for Sparse RL Rollouts</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>LongCat</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yi-Kai Zhang, Yueqing Sun, Hongyan Hao, Qi Gu, Xunliang Cai</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.10848" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.10848" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.10848.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Adaptive value estimation method combines pretrained prior with empirical rollouts using real-time statistical testing to reduce variance and improve reinforcement learning performance under sparse sampling conditions. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 自适应值估计方法将预训练先验与使用实时统计测试的经验推广相结合，以减少方差并提高稀疏采样条件下的强化学习性能。 
+					AI 生成的摘要</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">In Reinforcement Learning with Verifiable Rewards (RLVR), constructing a robust advantage baseline is critical for policy gradients, effectively guiding the policy model to reinforce desired behaviors. Recent research has introduced Generalist Value Models (such as V_0), which achieve pre-trained value estimation by explicitly encoding model capabilities in-context, eliminating the need to synchronously update the value model alongside the policy model. In this paper, we propose V_{0.5}, which adaptively fuses the baseline predicted by such value model (acting as a prior) with the empirical mean derived from sparse rollouts. This constructs a robust baseline that balances computational efficiency with extremely low variance. Specifically, we introduce a real-time statistical testing and dynamic budget allocation. This balances the high variance caused by sparse sampling against the systematic bias (or hallucinations) inherent in the value model's prior. By constructing a hypothesis test to evaluate the prior's reliability in real-time, the system dynamically allocates additional rollout budget on demand. This mechanism minimizes the baseline estimator's Mean Squared Error (MSE), guaranteeing stable policy gradients, even under extreme sparsity with a group size of 4. Extensive evaluations across six mathematical reasoning benchmarks demonstrate that V_{0.5} significantly outperforms GRPO and DAPO, achieving faster convergence and over some 10% performance improvement.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">在具有可验证奖励的强化学习（RLVR）中，构建强大的优势基线对于策略梯度至关重要，有效指导策略模型强化期望的行为。最近的研究引入了通用价值模型（例如 V_0），它通过在上下文中显式编码模型功能来实现预训练的价值估计，从而无需与策略模型同步更新价值模型。在本文中，我们提出了 V_{0.5}，它将这种价值模型（充当先验）预测的基线与从稀疏推出中得出的经验平均值自适应地融合。这构建了一个稳健的基线，可以平衡计算效率与极低的方差。具体来说，我们引入了实时统计测试和动态预算分配。这平衡了稀疏采样引起的高方差与价值模型先验固有的系统偏差（或幻觉）。通过构建假设检验来实时评估先验的可靠性，系统可以根据需要动态分配额外的推出预算。该机制最大限度地减少了基线估计器的均方误差 (MSE)，保证了稳定的策略梯度，即使在组大小为 4 的极端稀疏情况下也是如此。对六个数学推理基准的广泛评估表明，V_{0.5} 显着优于 GRPO 和 DAPO，实现了更快的收敛，并且性能提高了约 10%。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.09723" target="_blank">RbtAct: Rebuttal as Supervision for Actionable Review Feedback Generation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Yale NLP Lab</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Sihong Wu, Yiling Ma, Yilun Zhao, Tiansheng Hu, Owen Jiang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.09723" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.09723" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.09723.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Researchers developed RbtAct, a method that uses rebuttal responses to improve the actionability of AI-generated peer-review feedback by training a language model to produce specific, implementable comments based on paper content and defined perspectives. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 研究人员开发了 RbtAct，这是一种通过训练语言模型根据论文内容和定义的观点生成具体的、可实施的评论，使用反驳响应来提高人工智能生成的同行评审反馈的可操作性的方法。 
+					AI 生成的摘要</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Large language models (LLMs) are increasingly used across the scientific workflow, including to draft peer-review reports. However, many AI-generated reviews are superficial and insufficiently actionable, leaving authors without concrete, implementable guidance and motivating the gap this work addresses. We propose RbtAct, which targets actionable review feedback generation and places existing peer review rebuttal at the center of learning. Rebuttals show which reviewer comments led to concrete revisions or specific plans, and which were only defended. Building on this insight, we leverage rebuttal as implicit supervision to directly optimize a feedback generator for actionability. To support this objective, we propose a new task called perspective-conditioned segment-level review feedback generation, in which the model is required to produce a single focused comment based on the complete paper and a specified perspective such as experiments and writing. We also build a large dataset named RMR-75K that maps review segments to the rebuttal segments that address them, with perspective labels and impact categories that order author uptake. We then train the Llama-3.1-8B-Instruct model with supervised fine-tuning on review segments followed by preference optimization using rebuttal derived pairs. Experiments with human experts and LLM-as-a-judge show consistent gains in actionability and specificity over strong baselines while maintaining grounding and relevance.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">大语言模型 (LLM) 越来越多地在科学工作流程中使用，包括起草同行评审报告。然而，许多人工智能生成的评论都是肤浅的且缺乏可操作性，使作者缺乏具体的、可实施的指导，并激发了这项工作所解决的差距。我们提出 RbtAct，其目标是生成可操作的评审反馈，并将现有的同行评审反驳置于学习的中心。反驳表明哪些审稿人的意见导致了具体的修改或具体计划，哪些只是进行了辩护。基于这一见解，我们利用反驳作为隐式监督来直接优化反馈生成器的可操作性。为了支持这一目标，我们提出了一项称为视角条件分段级评论反馈生成的新任务，其中模型需要根据完整的论文和特定的视角（例如实验和写作）生成单一的重点评论。我们还构建了一个名为 RMR-75K 的大型数据集，它将评论片段映射到解决这些问题的反驳片段，并带有观点标签和影响类别，以排序作者的吸收。然后，我们通过对评论片段进行监督微调来训练 Llama-3.1-8B-Instruct 模型，然后使用反驳派生对进行偏好优化。人类专家和法学硕士作为法官进行的实验表明，在保持基础性和相关性的同时，在强大的基线上，可操作性和特异性不断提高。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.10744" target="_blank">Just-in-Time: Training-Free Spatial Acceleration for Diffusion Transformers</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Wenhao Sun, Ji Li, Zhaoqiang Liu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.10744" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.10744" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.10744.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Diffusion Transformers face high computational costs during iterative sampling, which this work addresses by introducing a spatial-domain acceleration framework that uses sparse anchor tokens and deterministic micro-flows to achieve significant speedup with minimal performance loss. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：扩散变压器在迭代采样过程中面临着高昂的计算成本，这项工作通过引入一个空间域加速框架来解决这个问题，该框架使用稀疏锚标记和确定性微流来实现显着的加速和最小的性能损失。 
+					AI 生成的摘要</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Diffusion Transformers have established a new state-of-the-art in image synthesis, but the high computational cost of iterative sampling severely hampers their practical deployment. While existing acceleration methods often focus on the temporal domain, they overlook the substantial spatial redundancy inherent in the generative process, where global structures emerge long before fine-grained details are formed. The uniform computational treatment of all spatial regions represents a critical inefficiency. In this paper, we introduce Just-in-Time (JiT), a novel training-free framework that addresses this challenge by acceleration in the spatial domain. JiT formulates a spatially approximated generative ordinary differential equation (ODE) that drives the full latent state evolution based on computations from a dynamically selected, sparse subset of anchor tokens. To ensure seamless transitions as new tokens are incorporated to expand the dimensions of the latent state, we propose a deterministic micro-flow, a simple and effective finite-time ODE that maintains both structural coherence and statistical correctness. Extensive experiments on the state-of-the-art FLUX.1-dev model demonstrate that JiT achieves up to a 7x speedup with nearly lossless performance, significantly outperforming existing acceleration methods and establishing a new and superior trade-off between inference speed and generation fidelity.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">扩散变压器在图像合成方面建立了新的最先进技术，但迭代采样的高计算成本严重阻碍了其实际部署。虽然现有的加速方法通常关注时域，但它们忽略了生成过程中固有的大量空间冗余，其中全局结构早在细粒度细节形成之前就出现了。所有空间区域的统一计算处理代表了严重的低效率。在本文中，我们介绍了 Just-in-Time (JiT)，这是一种新颖的免训练框架，它通过空间域加速来解决这一挑战。 JiT 制定了一个空间近似的生成常微分方程 (ODE)，该方程基于动态选择的稀疏锚标记子集的计算来驱动完整的潜在状态演化。为了确保在合并新令牌以扩展潜在状态维度时的无缝转换，我们提出了一种确定性微流，这是一种简单有效的有限时间 ODE，可以保持结构一致性和统计正确性。对最先进的 FLUX.1-dev 模型进行的大量实验表明，JiT 在几乎无损的性能下实现了高达 7 倍的加速，显着优于现有的加速方法，并在推理速度和生成保真度之间建立了新的、卓越的权衡。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.04597" target="_blank">Bootstrapping Exploration with Group-Level Natural Language Feedback in Reinforcement Learning</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Lei Huang, Xiang Cheng, Chenxiao Zhao, Guobin Shen, Junjie Yang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.04597" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.04597" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.04597.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Language feedback is leveraged in reinforcement learning to improve exploration efficiency and sample utilization through grouped critique aggregation and joint generation-refinement optimization. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 在强化学习中利用语言反馈，通过分组批评聚合和联合生成细化优化来提高探索效率和样本利用率。 
+					AI 生成的摘要</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Large language models (LLMs) typically receive diverse natural language (NL) feedback through interaction with the environment. However, current reinforcement learning (RL) algorithms rely solely on scalar rewards, leaving the rich information in NL feedback underutilized and leading to inefficient exploration. In this work, we propose GOLF, an RL framework that explicitly exploits group-level language feedback to guide targeted exploration through actionable refinements. GOLF aggregates two complementary feedback sources: (i) external critiques that pinpoint errors or propose targeted fixes, and (ii) intra-group attempts that supply alternative partial ideas and diverse failure patterns. These group-level feedbacks are aggregated to produce high-quality refinements, which are adaptively injected into training as off-policy scaffolds to provide targeted guidance in sparse-reward regions. Meanwhile, GOLF jointly optimizes generation and refinement within a unified RL loop, creating a virtuous cycle that continuously improves both capabilities. Experiments on both verifiable and non-verifiable benchmarks show that GOLF achieves superior performance and exploration efficiency, achieving 2.2times improvements in sample efficiency compared to RL methods trained solely on scalar rewards. Code is available at https://github.com/LuckyyySTA/GOLF.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">大型语言模型 (LLM) 通常通过与环境交互来接收不同的自然语言 (NL) 反馈。然而，当前的强化学习（RL）算法仅依赖于标量奖励，使得 NL 反馈中的丰富信息未得到充分利用，导致探索效率低下。在这项工作中，我们提出了 GOLF，这是一个 RL 框架，它明确利用群体级语言反馈，通过可操作的改进来指导有针对性的探索。 GOLF 聚合了两个互补的反馈源：(i) 查明错误或提出有针对性的修复方案的外部批评，以及 (ii) 提供替代的部分想法和不同失败模式的内部尝试。这些群体层面的反馈被汇总起来以产生高质量的改进，这些改进被自适应地注入到训练中作为离策略支架，以在稀疏奖励区域提供有针对性的指导。同时，GOLF 在统一的 RL 循环中联合优化生成和细化，形成不断提高两种能力的良性循环。在可验证和不可验证基准上的实验表明，GOLF 实现了卓越的性能和探索效率，与仅基于标量奖励训练的 RL 方法相比，样本效率提高了 2.2 倍。代码可在 https://github.com/LuckyyySTA/GOLF 获取。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.08754" target="_blank">Hindsight Credit Assignment for Long-Horizon LLM Agents</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Hui-Ze Tan, yangxw, Xiao-Wen Yang, Hao Chen, shjj</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.08754" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.08754" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.08754.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract HCAPO addresses credit assignment challenges in LLM agents through hindsight credit assignment and multi-scale advantage mechanisms, improving performance in long-horizon tasks. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 HCAPO 通过事后学分分配和多尺度优势机制解决了 LLM 代理中的学分分配挑战，从而提高了长期任务的性能。 
+					AI 生成的摘要</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Large Language Model (LLM) agents often face significant credit assignment challenges in long-horizon, multi-step tasks due to sparse rewards. Existing value-free methods, such as Group Relative Policy Optimization (GRPO), encounter two fundamental bottlenecks: inaccurate step-level Q-value estimation and misaligned value baselines for intermediate states. To address these limitations, we introduce HCAPO, the first framework to integrate hindsight credit assignment into LLM agents. HCAPO leverages the LLM itself as a post-hoc critic to refine step-level Q-values through hindsight reasoning. Furthermore, HCAPO's multi-scale advantage mechanism effectively supplements the inaccurate value baselines at critical decision states. Evaluations across three challenging benchmarks, including WebShop and ALFWorld, demonstrate that HCAPO consistently outperforms state-of-the-art RL methods. Notably, HCAPO achieves a 7.7% improvement in success rate on WebShop and a 13.8% on ALFWorld over GRPO using the Qwen2.5-7B-Instruct model. These results indicate that HCAPO significantly enhances exploration efficiency, promotes concise decision-making, and ensures scalability in complex, long-horizon tasks.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由于奖励稀疏，大型语言模型（LLM）代理在长期、多步骤任务中经常面临重大的信用分配挑战。现有的无值方法，例如组相对策略优化（GRPO），遇到两个基本瓶颈：不准确的步级 Q 值估计和中间状态的值基线不对齐。为了解决这些限制，我们引入了 HCAPO，这是第一个将事后学分分配集成到 LLM 代理中的框架。 HCAPO 利用 LLM 本身作为事后批评家，通过事后推理来完善阶梯级 Q 值。此外，HCAPO的多尺度优势机制有效补充了关键决策状态下不准确的价值基线。对 WebShop 和 ALFWorld 等三个具有挑战性的基准的评估表明，HCAPO 始终优于最先进的 RL 方法。值得注意的是，使用 Qwen2.5-7B-Instruct 模型，HCAPO 在 WebShop 上的成功率比 GRPO 提高了 7.7%，在 ALFWorld 上的成功率提高了 13.8%。这些结果表明，HCAPO 显着提高了探索效率，促进了简洁的决策，并确保了复杂、长期任务的可扩展性。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.11048" target="_blank">COMIC: Agentic Sketch Comedy Generation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>University of Washington</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Susung Hong, Brian Curless, Ira Kemelmacher-Shlizerman, Steve Seitz</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.11048" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.11048" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.11048.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract An AI system generates comedic videos using agent-based optimization and LLM critics trained on YouTube comedy data, producing content comparable to professional sketch shows. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 人工智能系统使用基于代理的优化和受 YouTube 喜剧数据训练的法学硕士评论家生成喜剧视频，生成与专业小品节目相当的内容。 
+					AI 生成的摘要</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">We propose a fully automated AI system that produces short comedic videos similar to sketch shows such as Saturday Night Live. Starting with character references, the system employs a population of agents loosely based on real production studio roles, structured to optimize the quality and diversity of ideas and outputs through iterative competition, evaluation, and improvement. A key contribution is the introduction of LLM critics aligned with real viewer preferences through the analysis of a corpus of comedy videos on YouTube to automatically evaluate humor. Our experiments show that our framework produces results approaching the quality of professionally produced sketches while demonstrating state-of-the-art performance in video generation.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">我们提出了一个完全自动化的人工智能系统，可以生成类似于周六夜现场等小品节目的喜剧短片。从角色参考开始，该系统根据真实的制作工作室角色松散地采用了一群代理，其结构是通过迭代竞争、评估和改进来优化想法和输出的质量和多样性。一个关键贡献是通过分析 YouTube 上的喜剧视频语料库来自动评估幽默，引入了与真实观众偏好相一致的法学硕士评论家。我们的实验表明，我们的框架产生的结果接近专业制作草图的质量，同时展示了视频生成中最先进的性能。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.10702" target="_blank">UniCom: Unified Multimodal Modeling via Compressed Continuous Semantic Representations</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Tencent Hunyuan</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yaqi Zhao, Wang Lin, Zijian Zhang, Miles Yang, Jingyuan Chen</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.10702" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.10702" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.10702.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract UniCom presents a unified multimodal framework that uses compressed continuous representations to improve visual understanding and generation while maintaining image consistency and controllability. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 UniCom 提出了一个统一的多模态框架，该框架使用压缩的连续表示来提高视觉理解和生成，同时保持图像的一致性和可控性。 
+					AI 生成的摘要</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Current unified multimodal models typically rely on discrete visual tokenizers to bridge the modality gap. However, discretization inevitably discards fine-grained semantic information, leading to suboptimal performance in visual understanding tasks. Conversely, directly modeling continuous semantic representations (e.g., CLIP, SigLIP) poses significant challenges in high-dimensional generative modeling, resulting in slow convergence and training instability. To resolve this dilemma, we introduce UniCom, a unified framework that harmonizes multimodal understanding and generation via compressed continuous representation. We empirically demonstrate that reducing channel dimension is significantly more effective than spatial downsampling for both reconstruction and generation. Accordingly, we design an attention-based semantic compressor to distill dense features into a compact unified representation. Furthermore, we validate that the transfusion architecture surpasses query-based designs in convergence and consistency. Experiments demonstrate that UniCom achieves state-of-the-art generation performance among unified models. Notably, by preserving rich semantic priors, it delivers exceptional controllability in image editing and maintains image consistency even without relying on VAE.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">当前的统一多模态模型通常依赖于离散视觉标记器来弥合模态差距。然而，离散化不可避免地会丢弃细粒度的语义信息，导致视觉理解任务中的性能不佳。相反，直接建模连续语义表示（例如 CLIP、SigLIP）对高维生成建模提出了重大挑战，导致收敛缓慢和训练不稳定。为了解决这个困境，我们引入了 UniCom，这是一个统一的框架，通过压缩连续表示来协调多模态理解和生成。我们凭经验证明，对于重建和生成来说，减少通道维度比空间下采样更有效。因此，我们设计了一种基于注意力的语义压缩器，将密集特征提炼成紧凑的统一表示。此外，我们验证了输血架构在收敛性和一致性方面优于基于查询的设计。实验表明，联通在统一模型中实现了最先进的发电性能。值得注意的是，通过保留丰富的语义先验，即使不依赖 VAE，它也能在图像编辑中提供出色的可控性并保持图像的一致性。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.10377" target="_blank">Causal Concept Graphs in LLM Latent Space for Stepwise Reasoning</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>New York University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Md Muntaqim Meherab, Noor Islam S. Mohammad, Faiza Feroz</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.10377" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.10377" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.10377.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Causal Concept Graphs leverage sparse autoencoders and differentiable structure learning to identify causal relationships between concepts in language models, demonstrating superior causal fidelity compared to alternative methods. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">抽象因果概念图利用稀疏自动编码器和可微结构学习来识别语言模型中概念之间的因果关系，与其他方法相比，证明了卓越的因果保真度。 
+					AI 生成的摘要</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Sparse autoencoders can localize where concepts live in language models, but not how they interact during multi-step reasoning. We propose Causal Concept Graphs (CCG): a directed acyclic graph over sparse, interpretable latent features, where edges capture learned causal dependencies between concepts. We combine task-conditioned sparse autoencoders for concept discovery with DAGMA-style differentiable structure learning for graph recovery and introduce the Causal Fidelity Score (CFS) to evaluate whether graph-guided interventions induce larger downstream effects than random ones. On ARC-Challenge, StrategyQA, and LogiQA with GPT-2 Medium, across five seeds (n{=}15 paired runs), CCG achieves CFS=5.654pm0.625, outperforming ROME-style tracing (3.382pm0.233), SAE-only ranking (2.479pm0.196), and a random baseline (1.032pm0.034), with p&lt;0.0001 after Bonferroni correction. Learned graphs are sparse (5-6\% edge density), domain-specific, and stable across seeds.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">稀疏自动编码器可以本地化概念在语言模型中的位置，但不能本地化它们在多步骤推理过程中的交互方式。我们提出因果概念图（CCG）：稀疏、可解释的潜在特征上的有向无环图，其中边缘捕获概念之间学习的因果依赖关系。我们将用于概念发现的任务条件稀疏自动编码器与用于图恢复的 DAGMA 式可微结构学习相结合，并引入因果保真度评分（CFS）来评估图引导干预是否会比随机干预产生更大的下游效应。在使用 GPT-2 介质的 ARC-Challenge、StrategyQA 和 LogiQA 上，跨五个种子（n{=}15 配对运行），CCG 实现了 CFS=5.654pm0.625，优于 ROME 式跟踪 (3.382pm0.233)、仅 SAE 排名 (2.479pm0.196) 和随机基线 (1.032pm0.034)，其中Bonferroni 校正后 p＜0.0001。学习的图是稀疏的（5-6\% 边缘密度）、特定于域的并且跨种子稳定。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.10145" target="_blank">Lost in Backpropagation: The LM Head is a Gradient Bottleneck</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Cornell University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Nathan Godey, Yoav Artzi</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.10145" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.10145" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.10145.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract The softmax bottleneck in neural language models creates both expressivity and optimization issues by compressing gradients through rank-deficient output layers, leading to inefficient training dynamics. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 神经语言模型中的 softmax 瓶颈通过排序不足的输出层压缩梯度，从而产生表达能力和优化问题，导致训练动态效率低下。 
+					AI 生成的摘要</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">The last layer of neural language models (LMs) projects output features of dimension D to logits in dimension V, the size of the vocabulary, where usually D ll V. This mismatch is known to raise risks of limited expressivity in neural LMs, creating a so-called softmax bottleneck. We show the softmax bottleneck is not only an expressivity bottleneck but also an optimization bottleneck. Backpropagating V-dimensional gradients through a rank-D linear layer induces unavoidable compression, which alters the training feedback provided to the vast majority of the parameters. We present a theoretical analysis of this phenomenon and measure empirically that 95-99% of the gradient norm is suppressed by the output layer, resulting in vastly suboptimal update directions. We conduct controlled pretraining experiments showing that the gradient bottleneck makes trivial patterns unlearnable, and drastically affects the training dynamics of LLMs. We argue that this inherent flaw contributes to training inefficiencies at scale independently of the model architecture, and raises the need for new LM head designs.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">神经语言模型 (LM) 的最后一层将 D 维的输出特征投影到 V 维（词汇量的大小，通常为 D ll V）中的对数。众所周知，这种不匹配会增加神经 LM 表达能力有限的风险，从而产生所谓的 softmax 瓶颈。我们证明了 softmax 瓶颈不仅是表达性瓶颈，也是优化瓶颈。通过 D 阶线性层反向传播 V 维梯度会导致不可避免的压缩，从而改变提供给绝大多数参数的训练反馈。我们对这种现象进行了理论分析，并根据经验测量到 95-99% 的梯度范数被输出层抑制，导致更新方向大大次优。我们进行的受控预训练实验表明，梯度瓶颈使得琐碎的模式无法学习，并极大地影响了法学硕士的训练动态。我们认为，这种固有的缺陷会导致独立于模型架构的大规模训练效率低下，并提出了对新的 LM 头设计的需求。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.10101" target="_blank">CLIPO: Contrastive Learning in Policy Optimization Generalizes RLVR</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Sijia Cui, Pengyu Cheng, Jiajun Song, Yongbo Gai, Guojun Zhang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.10101" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.10101" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.10101.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Contrastive Learning mechanism integrated into Policy Optimization enhances LLM reasoning by regularizing correct reasoning paths and reducing hallucinations. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 整合到策略优化中的对比学习机制通过规范正确的推理路径和减少幻觉来增强 LLM 推理。 
+					AI 生成的摘要</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Reinforcement Learning with Verifiable Rewards (RLVR) has significantly advanced the reasoning capacity of Large Language Models (LLMs). However, RLVR solely relies on final answers as outcome rewards, neglecting the correctness of intermediate reasoning steps. Training on these process-wrong but outcome-correct rollouts can lead to hallucination and answer-copying, severely undermining the model's generalization and robustness. To address this, we incorporate a Contrastive Learning mechanism into the Policy Optimization (CLIPO) to generalize the RLVR process. By optimizing a contrastive loss over successful rollouts, CLIPO steers the LLM to capture the invariant structure shared across correct reasoning paths. This provides a more robust cross-trajectory regularization than the original single-path supervision in RLVR, effectively mitigating step-level reasoning inconsistencies and suppressing hallucinatory artifacts. In experiments, CLIPO consistently improves multiple RLVR baselines across diverse reasoning benchmarks, demonstrating uniform improvements in generalization and robustness for policy optimization of LLMs. Our code and training recipes are available at https://github.com/Qwen-Applications/CLIPO.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">带可验证奖励的强化学习 (RLVR) 显着提高了大型语言模型 (LLM) 的推理能力。然而，RLVR 仅依赖最终答案作为结果奖励，忽略了中间推理步骤的正确性。对这些过程错误但结果正确的部署进行训练可能会导致幻觉和答案复制，严重损害模型的泛化性和鲁棒性。为了解决这个问题，我们将对比学习机制纳入策略优化 (CLIPO) 中，以推广 RLVR 过程。通过优化成功推出的对比损失，CLIPO 引导法学硕士捕获跨正确推理路径共享的不变结构。这提供了比 RLVR 中原始单路径监督更强大的跨轨迹正则化，有效地减轻了步骤级推理的不一致并抑制了幻觉伪像。在实验中，CLIPO 持续改进了跨不同推理基准的多个 RLVR 基线，证明了 LLM 策略优化的泛化性和鲁棒性的统一改进。我们的代码和培训食谱可在 https://github.com/Qwen-Applications/CLIPO 上获取。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.09018" target="_blank">Meissa: Multi-modal Medical Agentic Intelligence</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Johns Hopkins University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yixiong Chen, Xinyi Bai, Yue Pan, Zongwei Zhou, Alan Yuille</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.09018" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.09018" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.09018.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract A lightweight 4B-parameter medical multimodal language model named Meissa is introduced, which replicates advanced agentic capabilities through trajectory distillation and operates offline with reduced latency and enhanced privacy compared to frontier models. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 介绍了一种名为 Meissa 的轻量级 4B 参数医学多模态语言模型，该模型通过轨迹蒸馏复制了先进的代理功能，并且与前沿模型相比，可以离线运行，减少延迟并增强隐私性。 
+					AI 生成的摘要</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Multi-modal large language models (MM-LLMs) have shown strong performance in medical image understanding and clinical reasoning. Recent medical agent systems extend them with tool use and multi-agent collaboration, enabling complex decision-making. However, these systems rely almost entirely on frontier models (e.g., GPT), whose API-based deployment incurs high cost, high latency, and privacy risks that conflict with on-premise clinical requirements. We present Meissa, a lightweight 4B-parameter medical MM-LLM that brings agentic capability offline. Instead of imitating static answers, Meissa learns both when to engage external interaction (strategy selection) and how to execute multi-step interaction (strategy execution) by distilling structured trajectories from frontier models. Specifically, we propose: (1) Unified trajectory modeling: trajectories (reasoning and action traces) are represented within a single state-action-observation formalism, allowing one model to generalize across heterogeneous medical environments. (2) Three-tier stratified supervision: the model's own errors trigger progressive escalation from direct reasoning to tool-augmented and multi-agent interaction, explicitly learning difficulty-aware strategy selection. (3) Prospective-retrospective supervision: pairing exploratory forward traces with hindsight-rationalized execution traces enables stable learning of effective interaction policies. Trained on 40K curated trajectories, Meissa matches or exceeds proprietary frontier agents in 10 of 16 evaluation settings across 13 medical benchmarks spanning radiology, pathology, and clinical reasoning. Using over 25x fewer parameters than typical frontier models like Gemini-3, Meissa operates fully offline with 22x lower end-to-end latency compared to API-based deployment. Data, models, and environments are released at https://github.com/Schuture/Meissa.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">多模态大语言模型（MM-LLM）在医学图像理解和临床推理方面表现出了强大的性能。最近的医疗代理系统通过工具使用和多代理协作扩展了它们，从而实现了复杂的决策。然而，这些系统几乎完全依赖于前沿模型（例如 GPT），其基于 API 的部署会带来高成本、高延迟和隐私风险，与本地临床需求相冲突。我们推出 Meissa，这是一种轻量级 4B 参数医学 MM-LLM，可实现离线代理功能。 Meissa 不是模仿静态答案，而是通过从前沿模型中提取结构化轨迹来学习何时进行外部交互（策略选择）以及如何执行多步骤交互（策略执行）。具体来说，我们建议：（1）统一轨迹建模：轨迹（推理和行动轨迹）在单一状态-行动-观察形式中表示，允许一个模型在异构医疗环境中泛化。 （2）三层分层监督：模型自身的错误触发从直接推理逐步升级到工具增强和多智能体交互，显式学习困难感知策略选择。 （3）前瞻-回顾性监督：将探索性的前向轨迹与事后合理化的执行轨迹相结合，可以稳定地学习有效的交互策略。经过 40K 条精心设计的轨迹训练，Meissa 在放射学、病理学和临床推理等 13 个医学基准的 16 个评估设置中的 10 个中匹配或超过了专有前沿代理。与 Gemini-3 等典型前沿模型相比，Meissa 使用的参数数量减少了 25 倍以上，完全离线运行，与基于 API 的部署相比，端到端延迟降低了 22 倍。数据、模型和环境发布于 https://github.com/Schuture/Meissa。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.01990" target="_blank">According to Me: Long-Term Personalized Referential Memory QA</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>University of Cambridge</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Jingbiao Mei, Jinghong Chen, Guangyu Yang, Xinyu Hou, Margaret Li</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.01990" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.01990" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.01990.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract ATM-Bench presents the first multimodal, multi-source personalized referential memory benchmark with privacy-preserving data and human-annotated QA pairs requiring complex reasoning across different memory types. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 ATM-Bench 提出了第一个多模式、多源个性化参考内存基准，其中包含隐私保护数据和人工注释的 QA 对，需要跨不同内存类型进行复杂的推理。 
+					AI 生成的摘要</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Personalized AI assistants must recall and reason over long-term user memory, which naturally spans multiple modalities and sources such as images, videos, and emails. However, existing Long-term Memory benchmarks focus primarily on dialogue history, failing to capture realistic personalized references grounded in lived experience. We introduce ATM-Bench, the first benchmark for multimodal, multi-source personalized referential Memory QA. ATM-Bench contains approximately four years of privacy-preserving personal memory data and human-annotated question-answer pairs with ground-truth memory evidence, including queries that require resolving personal references, multi-evidence reasoning from multi-source and handling conflicting evidence. We propose Schema-Guided Memory (SGM) to structurally represent memory items originated from different sources. In experiments, we implement 5 state-of-the-art memory systems along with a standard RAG baseline and evaluate variants with different memory ingestion, retrieval, and answer generation techniques. We find poor performance (under 20\% accuracy) on the ATM-Bench-Hard set, and that SGM improves performance over Descriptive Memory commonly adopted in prior works. Code available at: https://github.com/JingbiaoMei/ATM-Bench</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">个性化人工智能助手必须对用户的长期记忆进行回忆和推理，这些记忆自然涵盖图像、视频和电子邮件等多种模式和来源。然而，现有的长期记忆基准主要关注对话历史，未能捕捉基于生活经验的现实个性化参考。我们推出 ATM-Bench，这是第一个多模式、多源个性化参考内存 QA 基准。 ATM-Bench 包含大约四年的隐私保护个人记忆数据和人工注释的问答对以及真实的记忆证据，包括需要解决个人参考、来自多源的多证据推理和处理冲突证据的查询。我们提出模式引导记忆（SGM）来结构性地表示源自不同来源的记忆项。在实验中，我们实现了 5 个最先进的记忆系统以及标准 RAG 基线，并使用不同的记忆摄取、检索和答案生成技术来评估变体。我们发现 ATM-Bench-Hard 集上的性能较差（低于 20% 的准确度），而 SGM 比先前工作中常用的描述性记忆提高了性能。代码可访问：https://github.com/JingbiaoMei/ATM-Bench</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.11042" target="_blank">V2M-Zero: Zero-Pair Time-Aligned Video-to-Music Generation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Adobe Research</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yan-Bo Lin, Jonah Casebeer, Long Mai, Aniruddha Mahapatra, Gedas Bertasius</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.11042" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.11042" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.11042.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract V2M-Zero enables video-to-music generation with improved temporal alignment by using modality-specific event curves derived from pretrained encoders, achieving superior audio quality and synchronization without paired training data. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 V2M-Zero 通过使用从预训练编码器导出的特定模态事件曲线，实现视频到音乐的生成，并改进时间对齐，无需配对训练数据即可实现卓越的音频质量和同步。 
+					AI 生成的摘要</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generating music that temporally aligns with video events is challenging for existing text-to-music models, which lack fine-grained temporal control. We introduce V2M-Zero, a zero-pair video-to-music generation approach that outputs time-aligned music for video. Our method is motivated by a key observation: temporal synchronization requires matching when and how much change occurs, not what changes. While musical and visual events differ semantically, they exhibit shared temporal structure that can be captured independently within each modality. We capture this structure through event curves computed from intra-modal similarity using pretrained music and video encoders. By measuring temporal change within each modality independently, these curves provide comparable representations across modalities. This enables a simple training strategy: fine-tune a text-to-music model on music-event curves, then substitute video-event curves at inference without cross-modal training or paired data. Across OES-Pub, MovieGenBench-Music, and AIST++, V2M-Zero achieves substantial gains over paired-data baselines: 5-21% higher audio quality, 13-15% better semantic alignment, 21-52% improved temporal synchronization, and 28% higher beat alignment on dance videos. We find similar results via a large crowd-source subjective listening test. Overall, our results validate that temporal alignment through within-modality features, rather than paired cross-modal supervision, is effective for video-to-music generation. Results are available at https://genjib.github.io/v2m_zero/</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">对于现有的文本到音乐模型来说，生成与视频事件在时间上一致的音乐是一项挑战，因为现有的文本到音乐模型缺乏细粒度的时间控制。我们推出了 V2M-Zero，这是一种零对视频到音乐生成方法，可为视频输出时间对齐的音乐。我们的方法受到一个关键观察的启发：时间同步需要匹配发生变化的时间和程度，而不是变化的内容。虽然音乐和视觉事件在语义上有所不同，但它们表现出共享的时间结构，可以在每种模态中独立捕获。我们通过使用预训练的音乐和视频编码器根据模内相似性计算的事件曲线来捕获这种结构。通过独立测量每种模态内的时间变化，这些曲线提供了跨模态的可比较的表示。这实现了一种简单的训练策略：在音乐事件曲线上微调文本到音乐模型，然后在推理时替换视频事件曲线，而无需跨模式训练或配对数据。在 OES-Pub、MovieGenBench-Music 和 AIST++ 中，V2M-Zero 比配对数据基线取得了显着的进步：音频质量提高了 5-21%，语义对齐提高了 13-15%，时间同步提高了 21-52%，舞蹈视频的节拍对齐提高了 28%。我们通过大型众包主观听力测试发现了类似的结果。总的来说，我们的结果验证了通过模态内特征进行时间对齐，而不是配对的跨模态监督，对于视频到音乐的生成是有效的。结果可在 https://genjib.github.io/v2m_zero/ 获取</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.10098" target="_blank">Code-Space Response Oracles: Generating Interpretable Multi-Agent Policies with Large Language Models</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Deepmind</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Daniel Hennes, Zun Li, John Schultz, Marc Lanctot</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.10098" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.10098" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.10098.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Code-Space Response Oracles replace traditional neural network policies with human-readable code generated by large language models, enabling interpretable and explainable multi-agent reinforcement learning. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 代码空间响应预言机用大型语言模型生成的人类可读代码取代了传统的神经网络策略，从而实现了可解释和可解释的多智能体强化学习。 
+					AI 生成的摘要</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Recent advances in multi-agent reinforcement learning, particularly Policy-Space Response Oracles (PSRO), have enabled the computation of approximate game-theoretic equilibria in increasingly complex domains. However, these methods rely on deep reinforcement learning oracles that produce `black-box' neural network policies, making them difficult to interpret, trust or debug. We introduce Code-Space Response Oracles (CSRO), a novel framework that addresses this challenge by replacing RL oracles with Large Language Models (LLMs). CSRO reframes the best response computation as a code generation task, prompting an LLM to generate policies directly as human-readable code. This approach not only yields inherently interpretable policies but also leverages the LLM's pretrained knowledge to discover complex, human-like strategies. We explore multiple ways to construct and enhance an LLM-based oracle: zero-shot prompting, iterative refinement and AlphaEvolve, a distributed LLM-based evolutionary system. We demonstrate that CSRO achieves performance competitive with baselines while producing a diverse set of explainable policies. Our work presents a new perspective on multi-agent learning, shifting the focus from optimizing opaque policy parameters to synthesizing interpretable algorithmic behavior.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">多智能体强化学习的最新进展，特别是策略空间响应预言机（PSRO），使得在日益复杂的领域中计算近似博弈论均衡成为可能。然而，这些方法依赖于产生“黑盒”神经网络策略的深度强化学习预言，这使得它们难以解释、信任或调试。我们引入了代码空间响应预言机 (CSRO)，这是一种新颖的框架，通过用大型语言模型 (LLM) 取代强化学习预言机来应对这一挑战。 CSRO 将最佳响应计算重新构建为代码生成任务，促使法学硕士直接将策略生成为人类可读的代码。这种方法不仅产生本质上可解释的策略，而且还利用法学硕士的预训练知识来发现复杂的、类人的策略。我们探索了多种方法来构建和增强基于 LLM 的预言机：零样本提示、迭代细化和 AlphaEvolve（一种基于 LLM 的分布式进化系统）。我们证明，CSRO 在制定一套多样化的可解释政策的同时，实现了与基准相比具有竞争力的绩效。我们的工作提出了多智能体学习的新视角，将重点从优化不透明的策略参数转移到综合可解释的算法行为。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.05757" target="_blank">EmboAlign: Aligning Video Generation with Compositional Constraints for Zero-Shot Manipulation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Northwestern University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Harry4582, Gehao Zhang, Zhenyang Ni, Payal Mohapatra, Han Liu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.05757" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.05757" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.05757.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract A data-free framework aligns video generative model outputs with vision-language model constraints for improved robotic manipulation, achieving higher success rates through constraint-guided selection and trajectory optimization. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：无数据框架将视频生成模型输出与视觉语言模型约束相结合，以改进机器人操作，通过约束引导选择和轨迹优化实现更高的成功率。 
+					AI 生成的摘要</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Video generative models (VGMs) pretrained on large-scale internet data can produce temporally coherent rollout videos that capture rich object dynamics, offering a compelling foundation for zero-shot robotic manipulation. However, VGMs often produce physically implausible rollouts, and converting their pixel-space motion into robot actions through geometric retargeting further introduces cumulative errors from imperfect depth estimation and keypoint tracking. To address these challenges, we present , a data-free framework that aligns VGM outputs with compositional constraints generated by vision-language models (VLMs) at inference time. The key insight is that VLMs offer a capability complementary to VGMs: structured spatial reasoning that can identify the physical constraints critical to the success and safety of manipulation execution. Given a language instruction,  uses a VLM to automatically extract a set of compositional constraints capturing task-specific requirements, which are then applied at two stages: (1) constraint-guided rollout selection, which scores and filters a batch of VGM rollouts to retain the most physically plausible candidate, and (2) constraint-based trajectory optimization, which uses the selected rollout as initialization and refines the robot trajectory under the same constraint set to correct retargeting errors. We evaluate  on six real-robot manipulation tasks requiring precise, constraint-sensitive execution, improving the overall success rate by 43.3\% points over the strongest baseline without any task-specific training data.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">在大规模互联网数据上预先训练的视频生成模型 (VGM) 可以生成时间连贯的推出视频，捕捉丰富的对象动态，为零镜头机器人操作提供令人信服的基础。然而，VGM 通常会产生物理上令人难以置信的滚动，并且通过几何重定向将其像素空间运动转换为机器人动作，进一步引入了不完美的深度估计和关键点跟踪带来的累积误差。为了应对这些挑战，我们提出了一个无数据框架，该框架将 VGM 输出与视觉语言模型 (VLM) 在推理时生成的组成约束保持一致。关键的见解是，VLM 提供了与 VGM 互补的功能：结构化空间推理，可以识别对操作执行的成功和安全至关重要的物理约束。给定语言指令，使用 VLM 自动提取一组捕获特定于任务的要求的组合约束，然后将其应用于两个阶段：(1) 约束引导的 rollout 选择，对一批 VGM rollout 进行评分和过滤，以保留最物理上合理的候选；(2) 基于约束的轨迹优化，使用所选的 rollout 作为初始化，并在相同的约束集下细化机器人轨迹以纠正重定向错误。我们评估了六个需要精确、约束敏感执行的真实机器人操作任务，与没有任何特定任务训练数据的最强基线相比，整体成功率提高了 43.3%。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.05711" target="_blank">Any to Full: Prompting Depth Anything for Depth Completion in One Stage</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>zhiyuandaily, Zhiyuan Zhou, Ruofeng Liu, Taichi Liu, Weijian Zuo</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.05711" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.05711" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.05711.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract A novel one-stage depth completion framework that uses scale-prompting adaptation of pretrained monocular depth estimation models to handle varying depth sparsity and irregular distributions more efficiently than existing methods. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：一种新颖的单阶段深度完成框架，使用预训练单目深度估计模型的尺度提示适应来比现有方法更有效地处理变化的深度稀疏性和不规则分布。 
+					AI 生成的摘要</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Accurate, dense depth estimation is crucial for robotic perception, but commodity sensors often yield sparse or incomplete measurements due to hardware limitations. Existing RGBD-fused depth completion methods learn priors jointly conditioned on training RGB distribution and specific depth patterns, limiting domain generalization and robustness to various depth patterns. Recent efforts leverage monocular depth estimation (MDE) models to introduce domain-general geometric priors, but current two-stage integration strategies relying on explicit relative-to-metric alignment incur additional computation and introduce structured distortions. To this end, we present Any2Full, a one-stage, domain-general, and pattern-agnostic framework that reformulates completion as a scale-prompting adaptation of a pretrained MDE model. To address varying depth sparsity levels and irregular spatial distributions, we design a Scale-Aware Prompt Encoder. It distills scale cues from sparse inputs into unified scale prompts, guiding the MDE model toward globally scale-consistent predictions while preserving its geometric priors. Extensive experiments demonstrate that Any2Full achieves superior robustness and efficiency. It outperforms OMNI-DC by 32.2\% in average AbsREL and delivers a 1.4times speedup over PriorDA with the same MDE backbone, establishing a new paradigm for universal depth completion. Codes and checkpoints are available at https://github.com/zhiyuandaily/Any2Full.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">准确、密集的深度估计对于机器人感知至关重要，但由于硬件限制，商用传感器通常会产生稀疏或不完整的测量结果。现有的 RGBD 融合深度补全方法学习以训练 RGB 分布和特定深度模式联合为条件的先验，限制了域泛化和对各种深度模式的鲁棒性。最近的工作利用单目深度估计（MDE）模型来引入领域通用几何先验，但当前依赖于显式相对度量对齐的两阶段集成策略会产生额外的计算并引入结构化失真。为此，我们提出了 Any2Full，这是一种单阶段、通用领域且与模式无关的框架，它将完成重新表述为预训练 MDE 模型的规模提示适应。为了解决不同的深度稀疏程度和不规则的空间分布，我们设计了一个尺度感知提示编码器。它将稀疏输入中的尺度线索提炼为统一的尺度提示，引导 MDE 模型进行全局尺度一致的预测，同时保留其几何先验。大量实验证明 Any2Full 具有卓越的稳健性和效率。它的平均 AbsREL 性能比 OMNI-DC 高出 32.2%，并且在具有相同 MDE 主干的情况下比 PriorDA 提供 1.4 倍的加速，为通用深度完成建立了新的范例。代码和检查点可在 https://github.com/zhiyuandaily/Any2Full 获取。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.09482" target="_blank">StyleVLA: Driving Style-Aware Vision Language Action Model for Autonomous Driving</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yuan Gao, Dengyuan Hua, Mattia Piccinini, Finn Rasmus Schäfer, Korbinian Moller</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.09482" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.09482" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.09482.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract StyleVLA is a physics-informed vision-language-action framework that generates diverse and physically plausible driving trajectories by combining kinematic constraints with continuous regression, outperforming proprietary models on specialized autonomous driving tasks. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 StyleVLA 是一种基于物理的视觉-语言-动作框架，通过将运动学约束与连续回归相结合，生成多样化且物理上合理的驾驶轨迹，在专门的自动驾驶任务上优于专有模型。 
+					AI 生成的摘要</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Vision Language Models (VLMs) bridge visual perception and linguistic reasoning. In Autonomous Driving (AD), this synergy has enabled Vision Language Action (VLA) models, which translate high-level multimodal understanding into driving behaviors, typically represented as future trajectories. However, existing VLA models mainly generate generic collision-free trajectories. Beyond collision avoidance, adapting to diverse driving styles (e.g., sporty, comfortable) is essential for personalized driving. Moreover, many methods treat trajectory generation as naive token prediction, which can produce kinematically infeasible actions. To address these limitations, we present StyleVLA, a physics-informed VLA framework for generating diverse and physically plausible driving behaviors. We introduce a hybrid loss that combines a kinematic consistency constraint with a continuous regression head to improve trajectory feasibility. To train StyleVLA, built on Qwen3-VL-4B, we construct a large-scale instruction dataset with over 1.2k scenarios, 76k Bird's Eye View (BEV) samples, and 42k First Person View (FPV) samples, with ground-truth trajectories for five driving styles and natural-language instructions. Experiments show that our 4B-parameter StyleVLA significantly outperforms proprietary models (e.g., Gemini-3-Pro) and state-of-the-art VLA models. Using a composite driving score measuring success rate, physical feasibility, and style adherence, StyleVLA achieves 0.55 on BEV and 0.51 on FPV, versus 0.32 and 0.35 for Gemini-3-Pro. These results show that a specialized, physics-informed, lightweight model can surpass closed-source models on domain-specific tasks.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">视觉语言模型 (VLM) 连接视觉感知和语言推理。在自动驾驶 (AD) 中，这种协同作用启用了视觉语言动作 (VLA) 模型，该模型将高级多模态理解转化为驾驶行为，通常表示为未来轨迹。然而，现有的 VLA 模型主要生成通用的无碰撞轨迹。除了避免碰撞之外，适应不同的驾驶风格（例如运动型、舒适型）对于个性化驾驶也至关重要。此外，许多方法将轨迹生成视为朴素的令牌预测，这可能会产生运动学​​上不可行的动作。为了解决这些限制，我们提出了 StyleVLA，这是一种基于物理的 VLA 框架，用于生成多样化且物理上合理的驾驶行为。我们引入了一种混合损失，它将运动学一致性约束与连续回归头相结合，以提高轨迹可行性。为了训练基于 Qwen3-VL-4B 构建的 StyleVLA，我们构建了一个包含超过 1.2k 个场景、76k 个鸟瞰图 (BEV) 样本和 42k 个第一人称视角 (FPV) 样本的大规模指令数据集，以及五种驾驶风格和自然语言指令的地面实况轨迹。实验表明，我们的 4B 参数 StyleVLA 显着优于专有模型（例如 Gemini-3-Pro）和最先进的 VLA 模型。使用衡量成功率、物理可行性和风格坚持性的综合驾驶分数，StyleVLA 在 BEV 上达到 0.55，在 FPV 上达到 0.51，而 Gemini-3-Pro 为 0.32 和 0.35。这些结果表明，专门的、基于物理的轻量级模型可以在特定领域任务上超越闭源模型。</p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+        
+        <div class="nav-buttons">
+            <a href="2026-03-11.html" class="nav-btn">← 2026-03-11</a>
+            <a href="2026-03-13.html" class="nav-btn">2026-03-13 →</a>
+        </div>
+        
+        <footer>
+            Generated by <a href="https://github.com" target="_blank">HF Papers Daily</a>
+        </footer>
+    </div>
+    
+    <script>
+        function toggleAbstract(header) {
+            const toggle = header.querySelector('.abstract-toggle');
+            const content = header.nextElementSibling;
+            toggle.classList.toggle('expanded');
+            content.classList.toggle('expanded');
+        }
+    </script>
+</html>
