@@ -1,0 +1,2242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hugging Face Papers - 2026-03-15</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .date {
+            font-size: 1.2em;
+            color: #a0a0a0;
+        }
+        
+        .stats {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #888;
+        }
+        
+        .paper-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .paper-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(102, 126, 234, 0.5);
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.2);
+        }
+        
+        .paper-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        
+        .paper-title a {
+            color: #e0e0e0;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .paper-title a:hover {
+            color: #667eea;
+        }
+        
+        .paper-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            color: #a0a0a0;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .meta-label {
+            color: #888;
+        }
+        
+        .links {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .link-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .link-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .link-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .abstract-section {
+            margin-top: 15px;
+        }
+        
+        .abstract-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .abstract-header:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .abstract-toggle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+            transition: transform 0.3s;
+        }
+        
+        .abstract-toggle.expanded {
+            transform: rotate(180deg);
+        }
+        
+        .abstract-label {
+            font-weight: 500;
+            color: #667eea;
+        }
+        
+        .abstract-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding: 0 15px;
+        }
+        
+        .abstract-content.expanded {
+            max-height: 10000px;
+            padding: 15px;
+        }
+        
+        .abstract-text {
+            line-height: 1.7;
+            color: #c0c0c0;
+        }
+        
+        .summary-box {
+            background: rgba(102, 126, 234, 0.1);
+            border-left: 3px solid #667eea;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .summary-label {
+            font-size: 0.8em;
+            color: #667eea;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .summary-text {
+            color: #b0b0b0;
+            line-height: 1.5;
+        }
+        
+        .translation-box {
+            background: rgba(118, 75, 162, 0.1);
+            border-left: 3px solid #764ba2;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .translation-label {
+            font-size: 0.8em;
+            color: #764ba2;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .translation-text {
+            color: #b0b0b0;
+            line-height: 1.5;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding: 0 10px;
+        }
+        
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .nav-btn.disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: #666;
+            pointer-events: none;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .paper-title {
+                font-size: 1.1em;
+            }
+            
+            .links {
+                flex-wrap: wrap;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-btn {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Hugging Face Papers</h1>
+            <div class="date">2026-03-15</div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number">48</div>
+                    <div class="stat-label">Papers</div>
+                </div>
+            </div>
+        </header>
+        
+        <main>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.12255" target="_blank">Spatial-TTT: Streaming Visual-based Spatial Intelligence with Test-Time Training</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Tencent Hunyuan</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Fangfu Liu, Diankun Wu, Jiawei Chi, Yimo Cai, Yi-Hsin Hung</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.12255" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.12255" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.12255.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Spatial-TTT enables streaming visual-based spatial intelligence through test-time training that adapts parameters to capture spatial evidence over long video sequences using hybrid architecture and 3D spatiotemporal convolution. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Humans perceive and understand real-world spaces through a stream of visual observations. Therefore, the ability to streamingly maintain and update spatial evidence from potentially unbounded video streams is essential for spatial intelligence. The core challenge is not simply longer context windows but how spatial information is selected, organized, and retained over time. In this paper, we propose Spatial-TTT towards streaming visual-based spatial intelligence with test-time training (TTT), which adapts a subset of parameters (fast weights) to capture and organize spatial evidence over long-horizon scene videos. Specifically, we design a hybrid architecture and adopt large-chunk updates parallel with sliding-window attention for efficient spatial video processing. To further promote spatial awareness, we introduce a spatial-predictive mechanism applied to TTT layers with 3D spatiotemporal convolution, which encourages the model to capture geometric correspondence and temporal continuity across frames. Beyond architecture design, we construct a dataset with dense 3D spatial descriptions, which guides the model to update its fast weights to memorize and organize global 3D spatial signals in a structured manner. Extensive experiments demonstrate that Spatial-TTT improves long-horizon spatial understanding and achieves state-of-the-art performance on video spatial benchmarks. Project page: https://liuff19.github.io/Spatial-TTT.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.12180" target="_blank">Strategic Navigation or Stochastic Search? How Agents and Humans Reason Over Document Collections</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Snowflake</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Łukasz Borchmann, Jordy Van Landeghem, Michał Turski, Shreyansh Padarha, Ryan Othniel Kearns</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.12180" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.12180" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.12180.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract MADQA benchmark evaluates multimodal agents' strategic reasoning capabilities through diverse PDF document questions, revealing gaps between human-level accuracy and efficient reasoning performance. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Multimodal agents offer a promising path to automating complex document-intensive workflows. Yet, a critical question remains: do these agents demonstrate genuine strategic reasoning, or merely stochastic trial-and-error search? To address this, we introduce MADQA, a benchmark of 2,250 human-authored questions grounded in 800 heterogeneous PDF documents. Guided by Classical Test Theory, we design it to maximize discriminative power across varying levels of agentic abilities. To evaluate agentic behaviour, we introduce a novel evaluation protocol measuring the accuracy-effort trade-off. Using this framework, we show that while the best agents can match human searchers in raw accuracy, they succeed on largely different questions and rely on brute-force search to compensate for weak strategic planning. They fail to close the nearly 20% gap to oracle performance, persisting in unproductive loops. We release the dataset and evaluation harness to help facilitate the transition from brute-force retrieval to calibrated, efficient reasoning.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.12201" target="_blank">IndexCache: Accelerating Sparse Attention via Cross-Layer Index Reuse</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Z.ai</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yushi Bai, Qian Dong, Ting Jiang, Xin Lv, Zhengxiao Du</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.12201" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.12201" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.12201.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract IndexCache reduces sparse attention computation in large language models by reusing top-k token selections across layers, achieving significant speedups with minimal quality loss. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Long-context agentic workflows have emerged as a defining use case for large language models, making attention efficiency critical for both inference speed and serving cost. Sparse attention addresses this challenge effectively, and DeepSeek Sparse Attention (DSA) is a representative production-grade solution: a lightweight lightning indexer selects the top-k most relevant tokens per query, reducing core attention from O(L^2) to O(Lk). However, the indexer itself retains O(L^2) complexity and must run independently at every layer, despite the fact that the resulting top-k selections are highly similar across consecutive layers. We present IndexCache, which exploits this cross-layer redundancy by partitioning layers into a small set of Full layers that run their own indexers and a majority of Shared layers that simply reuse the nearest Full layer's top-k indices. We propose two complementary approaches to determine and optimize this configuration. Training-free IndexCache applies a greedy search algorithm that selects which layers to retain indexers by directly minimizing language modeling loss on a calibration set, requiring no weight updates. Training-aware IndexCache introduces a multi-layer distillation loss that trains each retained indexer against the averaged attention distributions of all layers it serves, enabling even simple interleaved patterns to match full-indexer accuracy. Experimental results on a 30B DSA model show that IndexCache can remove 75% of indexer computations with negligible quality degradation, achieving up to 1.82times prefill speedup and 1.48times decode speedup compared to standard DSA. These positive results are further confirmed by our preliminary experiments on the production-scale GLM-5 model (Figure 1).</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.10178" target="_blank">Video-Based Reward Modeling for Computer-Use Agents</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Language, Intelligence, and Model Evaluation Lab</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Linxin Song, Jieyu Zhang, Huanxin Sheng, Taiwei Shi, Gupta Rahul</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.10178" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.10178" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.10178.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Video-execution reward modeling enables scalable evaluation of computer-using agents by predicting task success from user instructions and execution videos, outperforming proprietary models across multiple operating systems. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Computer-using agents (CUAs) are becoming increasingly capable; however, it remains difficult to scale evaluation of whether a trajectory truly fulfills a user instruction. In this work, we study reward modeling from execution video: a sequence of keyframes from an agent trajectory that is independent of the agent's internal reasoning or actions. Although video-execution modeling is method-agnostic, it presents key challenges, including highly redundant layouts and subtle, localized cues that determine success. We introduce Execution Video Reward 53k (ExeVR-53k), a dataset of 53k high-quality video--task--reward triplets. We further propose adversarial instruction translation to synthesize negative samples with step-level annotations. To enable learning from long, high-resolution execution videos, we design spatiotemporal token pruning, which removes homogeneous regions and persistent tokens while preserving decisive UI changes. Building on these components, we fine-tune an Execution Video Reward Model (ExeVRM) that takes only a user instruction and a video-execution sequence to predict task success. Our ExeVRM 8B achieves 84.7% accuracy and 87.7% recall on video-execution assessment, outperforming strong proprietary models such as GPT-5.2 and Gemini-3 Pro across Ubuntu, macOS, Windows, and Android, while providing more precise temporal attribution. These results show that video-execution reward modeling can serve as a scalable, model-agnostic evaluator for CUAs.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.11421" target="_blank">ShotVerse: Advancing Cinematic Camera Control for Text-Driven Multi-Shot Video Creation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Tencent</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Songlin Yang, Zhe Wang, Xuyi Yang, Songchun Zhang, Xianghao Kong</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.11421" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.11421" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.11421.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract ShotVerse enables cinematic video generation through a plan-then-control framework that decouples textual planning from camera control using vision-language models and trajectory alignment. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Text-driven video generation has democratized film creation, but camera control in cinematic multi-shot scenarios remains a significant block. Implicit textual prompts lack precision, while explicit trajectory conditioning imposes prohibitive manual overhead and often triggers execution failures in current models. To overcome this bottleneck, we propose a data-centric paradigm shift, positing that aligned (Caption, Trajectory, Video) triplets form an inherent joint distribution that can connect automated plotting and precise execution. Guided by this insight, we present ShotVerse, a "Plan-then-Control" framework that decouples generation into two collaborative agents: a VLM (Vision-Language Model)-based Planner that leverages spatial priors to obtain cinematic, globally aligned trajectories from text, and a Controller that renders these trajectories into multi-shot video content via a camera adapter. Central to our approach is the construction of a data foundation: we design an automated multi-shot camera calibration pipeline aligns disjoint single-shot trajectories into a unified global coordinate system. This facilitates the curation of ShotVerse-Bench, a high-fidelity cinematic dataset with a three-track evaluation protocol that serves as the bedrock for our framework. Extensive experiments demonstrate that ShotVerse effectively bridges the gap between unreliable textual control and labor-intensive manual plotting, achieving superior cinematic aesthetics and generating multi-shot videos that are both camera-accurate and cross-shot consistent.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.12257" target="_blank">DreamVideo-Omni: Omni-Motion Controlled Multi-Subject Video Customization with Latent Identity Reinforcement Learning</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yujie Wei, Xinyu Liu, Shiwei Zhang, Hangjie Yuan, Jinbo Xing</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.12257" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.12257" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.12257.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract DreamVideo-Omni is a unified framework for video synthesis that enables precise multi-subject identity control and multi-granularity motion manipulation through a two-stage training approach combining condition-aware 3D positional embeddings, hierarchical motion injection, and latent identity reward learning. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">While large-scale diffusion models have revolutionized video synthesis, achieving precise control over both multi-subject identity and multi-granularity motion remains a significant challenge. Recent attempts to bridge this gap often suffer from limited motion granularity, control ambiguity, and identity degradation, leading to suboptimal performance on identity preservation and motion control. In this work, we present DreamVideo-Omni, a unified framework enabling harmonious multi-subject customization with omni-motion control via a progressive two-stage training paradigm. In the first stage, we integrate comprehensive control signals for joint training, encompassing subject appearances, global motion, local dynamics, and camera movements. To ensure robust and precise controllability, we introduce a condition-aware 3D rotary positional embedding to coordinate heterogeneous inputs and a hierarchical motion injection strategy to enhance global motion guidance. Furthermore, to resolve multi-subject ambiguity, we introduce group and role embeddings to explicitly anchor motion signals to specific identities, effectively disentangling complex scenes into independent controllable instances. In the second stage, to mitigate identity degradation, we design a latent identity reward feedback learning paradigm by training a latent identity reward model upon a pretrained video diffusion backbone. This provides motion-aware identity rewards in the latent space, prioritizing identity preservation aligned with human preferences. Supported by our curated large-scale dataset and the comprehensive DreamOmni Bench for multi-subject and omni-motion control evaluation, DreamVideo-Omni demonstrates superior performance in generating high-quality videos with precise controllability.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.12247" target="_blank">Trust Your Critic: Robust Reward Modeling and Reinforcement Learning for Faithful Image Editing and Generation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>SJTU VisionXLab</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Xiangyu Zhao, Peiyuan Zhang, Junming Lin, Tianhao Liang, Yuchen Duan</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.12247" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.12247" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.12247.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Reinforcement learning framework with novel reward modeling and benchmarking approaches improves fidelity and instruction adherence in image editing and text-to-image generation. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Reinforcement learning (RL) has emerged as a promising paradigm for enhancing image editing and text-to-image (T2I) generation. However, current reward models, which act as critics during RL, often suffer from hallucinations and assign noisy scores, inherently misguiding the optimization process. In this paper, we present FIRM (Faithful Image Reward Modeling), a comprehensive framework that develops robust reward models to provide accurate and reliable guidance for faithful image generation and editing. First, we design tailored data curation pipelines to construct high-quality scoring datasets. Specifically, we evaluate editing using both execution and consistency, while generation is primarily assessed via instruction following. Using these pipelines, we collect the FIRM-Edit-370K and FIRM-Gen-293K datasets, and train specialized reward models (FIRM-Edit-8B and FIRM-Gen-8B) that accurately reflect these criteria. Second, we introduce FIRM-Bench, a comprehensive benchmark specifically designed for editing and generation critics. Evaluations demonstrate that our models achieve superior alignment with human judgment compared to existing metrics. Furthermore, to seamlessly integrate these critics into the RL pipeline, we formulate a novel "Base-and-Bonus" reward strategy that balances competing objectives: Consistency-Modulated Execution (CME) for editing and Quality-Modulated Alignment (QMA) for generation. Empowered by this framework, our resulting models FIRM-Qwen-Edit and FIRM-SD3.5 achieve substantial performance breakthroughs. Comprehensive experiments demonstrate that FIRM mitigates hallucinations, establishing a new standard for fidelity and instruction adherence over existing general models. All of our datasets, models, and code have been publicly available at https://firm-reward.github.io.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.12056" target="_blank">XSkill: Continual Learning from Experience and Skills in Multimodal Agents</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Guanyu Jiang, Zhaochen Su, Xiaoye Qu, Yi R., Fung</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.12056" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.12056" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.12056.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Multimodal agents using XSkill framework achieve improved continual learning through dual-stream knowledge extraction and retrieval from visual observations, enhancing tool use efficiency and reasoning capabilities. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Multimodal agents can now tackle complex reasoning tasks with diverse tools, yet they still suffer from inefficient tool use and inflexible orchestration in open-ended settings. A central challenge is enabling such agents to continually improve without parameter updates by learning from past trajectories. We identify two complementary forms of reusable knowledge essential for this goal: experiences, providing concise action-level guidance for tool selection and decision making, and skills, providing structured task-level guidance for planning and tool use. To this end, we propose XSkill, a dual-stream framework for continual learning from experience and skills in multimodal agents. XSkill grounds both knowledge extraction and retrieval in visual observations. During accumulation, XSkill distills and consolidates experiences and skills from multi-path rollouts via visually grounded summarization and cross-rollout critique. During inference, it retrieves and adapts this knowledge to the current visual context and feeds usage history back into accumulation to form a continual learning loop. Evaluated on five benchmarks across diverse domains with four backbone models, XSkill consistently and substantially outperforms both tool-only and learning-based baselines. Further analysis reveals that the two knowledge streams play complementary roles in influencing the reasoning behaviors of agents and show superior zero-shot generalization.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.12250" target="_blank">DVD: Deterministic Video Depth Estimation with Generative Priors</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Hongfei Zhang, Harold Haodong Chen, Chenfei Liao, Jing He, Zixin Zhang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.12250" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.12250" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.12250.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Video depth estimation framework DVD adapts pre-trained video diffusion models into deterministic single-pass depth regressors using structural anchors, latent manifold rectification, and global affine coherence for improved accuracy and efficiency. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Existing video depth estimation faces a fundamental trade-off: generative models suffer from stochastic geometric hallucinations and scale drift, while discriminative models demand massive labeled datasets to resolve semantic ambiguities. To break this impasse, we present DVD, the first framework to deterministically adapt pre-trained video diffusion models into single-pass depth regressors. Specifically, DVD features three core designs: (i) repurposing the diffusion timestep as a structural anchor to balance global stability with high-frequency details; (ii) latent manifold rectification (LMR) to mitigate regression-induced over-smoothing, enforcing differential constraints to restore sharp boundaries and coherent motion; and (iii) global affine coherence, an inherent property bounding inter-window divergence, which enables seamless long-video inference without requiring complex temporal alignment. Extensive experiments demonstrate that DVD achieves state-of-the-art zero-shot performance across benchmarks. Furthermore, DVD successfully unlocks the profound geometric priors implicit in video foundation models using 163x less task-specific data than leading baselines. Notably, we fully release our pipeline, providing the whole training suite for SOTA video depth estimation to benefit the open-source community.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.11593" target="_blank">WeEdit: A Dataset, Benchmark and Glyph-Guided Framework for Text-centric Image Editing</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Hui Zhang, Juntao Liu, Zongkai Liu, Liqiang Niu, Fandong Meng</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.11593" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.11593" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.11593.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract WeEdit presents a systematic approach for text-centric image editing with a scalable data pipeline, multi-language benchmarks, and a two-stage training strategy combining supervised fine-tuning and reinforcement learning. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Instruction-based image editing aims to modify specific content within existing images according to user-provided instructions while preserving non-target regions. Beyond traditional object- and style-centric manipulation, text-centric image editing focuses on modifying, translating, or rearranging textual elements embedded within images. However, existing leading models often struggle to execute complex text editing precisely, frequently producing blurry or hallucinated characters. We attribute these failures primarily to the lack of specialized training paradigms tailored for text-centric editing, as well as the absence of large-scale datasets and standardized benchmarks necessary for a closed-loop training and evaluation system. To address these limitations, we present WeEdit, a systematic solution encompassing a scalable data construction pipeline, two benchmarks, and a tailored two-stage training strategy. Specifically, we propose a novel HTML-based automatic editing pipeline, which generates 330K training pairs covering diverse editing operations and 15 languages, accompanied by standardized bilingual and multilingual benchmarks for comprehensive evaluation. On the algorithmic side, we employ glyph-guided supervised fine-tuning to inject explicit spatial and content priors, followed by a multi-objective reinforcement learning stage to align generation with instruction adherence, text clarity, and background preservation. Extensive experiments demonstrate that WeEdit outperforms previous open-source models by a clear margin across diverse editing operations.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.12264" target="_blank">GRADE: Benchmarking Discipline-Informed Reasoning in Image Editing</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Mingxin Liu, Ziqian Fan, Zhaokai Wang, Leyao Gu, Zirun Zhu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.12264" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.12264" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.12264.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract GRADE is introduced as the first benchmark for assessing discipline-informed knowledge and reasoning in image editing, revealing significant limitations in current models under knowledge-intensive editing scenarios. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Unified multimodal models target joint understanding, reasoning, and generation, but current image editing benchmarks are largely confined to natural images and shallow commonsense reasoning, offering limited assessment of this capability under structured, domain-specific constraints. In this work, we introduce GRADE, the first benchmark to assess discipline-informed knowledge and reasoning in image editing. GRADE comprises 520 carefully curated samples across 10 academic domains, spanning from natural science to social science. To support rigorous evaluation, we propose a multi-dimensional evaluation protocol that jointly assesses Discipline Reasoning, Visual Consistency, and Logical Readability. Extensive experiments on 20 state-of-the-art open-source and closed-source models reveal substantial limitations in current models under implicit, knowledge-intensive editing settings, leading to large performance gaps. Beyond quantitative scores, we conduct rigorous analyses and ablations to expose model shortcomings and identify the constraints within disciplinary editing. Together, GRADE pinpoints key directions for the future development of unified multimodal models, advancing the research on discipline-informed image editing and reasoning. Our benchmark and evaluation code are publicly released.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.12245" target="_blank">One Model, Many Budgets: Elastic Latent Interfaces for Diffusion Transformers</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Snapchat Inc.</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Moayed Haji-Ali, Willi Menapace, Ivan Skorokhodov, Dogyun Park, Anil Kag</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.12245" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.12245" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.12245.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Elastic Latent Interface Transformer (ELIT) decouples compute from image resolution in diffusion transformers by introducing learnable latent tokens that adaptively prioritize important regions, enabling dynamic resource allocation without modifying core model architecture. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Diffusion transformers (DiTs) achieve high generative quality but lock FLOPs to image resolution, limiting principled latency-quality trade-offs, and allocate computation uniformly across input spatial tokens, wasting resource allocation to unimportant regions. We introduce Elastic Latent Interface Transformer (ELIT), a drop-in, DiT-compatible mechanism that decouples input image size from compute. Our approach inserts a latent interface, a learnable variable-length token sequence on which standard transformer blocks can operate. Lightweight Read and Write cross-attention layers move information between spatial tokens and latents and prioritize important input regions. By training with random dropping of tail latents, ELIT learns to produce importance-ordered representations with earlier latents capturing global structure while later ones contain information to refine details. At inference, the number of latents can be dynamically adjusted to match compute constraints. ELIT is deliberately minimal, adding two cross-attention layers while leaving the rectified flow objective and the DiT stack unchanged. Across datasets and architectures (DiT, U-ViT, HDiT, MM-DiT), ELIT delivers consistent gains. On ImageNet-1K 512px, ELIT delivers an average gain of 35.3% and 39.6% in FID and FDD scores. Project page: https://snap-research.github.io/elit/</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.09970" target="_blank">CREATE: Testing LLMs for Associative Creativity</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>New York University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>wadhma, Manya Wadhwa, Tiasa Singha Roy, Harvey Lederman, Junyi Jessy Li</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.09970" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.09970" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.09970.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract CREATE is a benchmark for evaluating models' associative reasoning abilities by generating diverse, specific concept paths from parametric knowledge. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">A key component of creativity is associative reasoning: the ability to draw novel yet meaningful connections between concepts. We introduce CREATE, a benchmark designed to evaluate models' capacity for creative associative reasoning. CREATE requires models to generate sets of paths connecting concepts in a model's parametric knowledge. Paths should have high specificity (distinctiveness and closeness of the concept connection) and high diversity (dissimilarity from other paths), and models are scored more highly if they produce a larger set of strong, diverse paths. This task shares demands of real creativity tasks like hypothesis generation, including an extremely large search space, but enables collection of a sizable benchmark with objective answer grading. Evaluation of frontier models shows that the strongest models achieve higher creative utility than others, with the high multiplicity of answers and complexity of the search making benchmark saturation difficult to achieve. Furthermore, our results illustrate that thinking models are not always more effective on our task, even with high token budgets. Recent approaches for creative prompting give some but limited additional improvement. CREATE provides a sandbox for developing new methods to improve models' capacity for associative creativity.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.12267" target="_blank">EVATok: Adaptive Length Video Tokenization for Efficient Visual Autoregressive Generation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>The University of Hong Kong</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Tianwei Xiong, Jun Hao Liew, Zilong Huang, Zhijie Lin, Jiashi Feng</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.12267" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.12267" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.12267.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract EVATok is a framework for efficient video tokenization that adapts token assignment based on video content, improving reconstruction quality and generation efficiency through learned routers and adaptive encoding. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Autoregressive (AR) video generative models rely on video tokenizers that compress pixels into discrete token sequences. The length of these token sequences is crucial for balancing reconstruction quality against downstream generation computational cost. Traditional video tokenizers apply a uniform token assignment across temporal blocks of different videos, often wasting tokens on simple, static, or repetitive segments while underserving dynamic or complex ones. To address this inefficiency, we introduce EVATok, a framework to produce Efficient Video Adaptive Tokenizers. Our framework estimates optimal token assignments for each video to achieve the best quality-cost trade-off, develops lightweight routers for fast prediction of these optimal assignments, and trains adaptive tokenizers that encode videos based on the assignments predicted by routers. We demonstrate that EVATok delivers substantial improvements in efficiency and overall quality for video reconstruction and downstream AR generation. Enhanced by our advanced training recipe that integrates video semantic encoders, EVATok achieves superior reconstruction and state-of-the-art class-to-video generation on UCF-101, with at least 24.4% savings in average token usage compared to the prior state-of-the-art LARP and our fixed-length baseline.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.12252" target="_blank">EndoCoT: Scaling Endogenous Chain-of-Thought Reasoning in Diffusion Models</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Intern Large Models</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Xuanlang Dai, Yujie Zhou, Long Xing, Jiazi Bu, Xilin Wei</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.12252" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.12252" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.12252.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract A novel framework called Endogenous Chain-of-Thought is proposed to enhance multimodal large language models' reasoning capabilities in diffusion frameworks by enabling iterative thought refinement and progressive task execution. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Recently, Multimodal Large Language Models (MLLMs) have been widely integrated into diffusion frameworks primarily as text encoders to tackle complex tasks such as spatial reasoning. However, this paradigm suffers from two critical limitations: (i) MLLMs text encoder exhibits insufficient reasoning depth. Single-step encoding fails to activate the Chain-of-Thought process, which is essential for MLLMs to provide accurate guidance for complex tasks. (ii) The guidance remains invariant during the decoding process. Invariant guidance during decoding prevents DiT from progressively decomposing complex instructions into actionable denoising steps, even with correct MLLM encodings. To this end, we propose Endogenous Chain-of-Thought (EndoCoT), a novel framework that first activates MLLMs' reasoning potential by iteratively refining latent thought states through an iterative thought guidance module, and then bridges these states to the DiT's denoising process. Second, a terminal thought grounding module is applied to ensure the reasoning trajectory remains grounded in textual supervision by aligning the final state with ground-truth answers. With these two components, the MLLM text encoder delivers meticulously reasoned guidance, enabling the DiT to execute it progressively and ultimately solve complex tasks in a step-by-step manner. Extensive evaluations across diverse benchmarks (e.g., Maze, TSP, VSP, and Sudoku) achieve an average accuracy of 92.1%, outperforming the strongest baseline by 8.3 percentage points.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.09160" target="_blank">RubiCap: Rubric-Guided Reinforcement Learning for Dense Image Captioning</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Apple</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Tzu-Heng Huang, Sirajul Salekin, Javier Movellan, Frederic Sala, Manjot Bilkhu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.09160" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.09160" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.09160.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract RubiCap introduces a reinforcement learning framework for dense image captioning that uses large language model-generated rubrics to provide fine-grained reward signals, achieving superior performance over supervised methods and competing with larger models. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Dense image captioning is critical for cross-modal alignment in vision-language pretraining and text-to-image generation, but scaling expert-quality annotations is prohibitively expensive. While synthetic captioning via strong vision-language models (VLMs) is a practical alternative, supervised distillation often yields limited output diversity and weak generalization. Reinforcement learning (RL) could overcome these limitations, but its successes have so far been concentrated in verifiable domains that rely on deterministic checkers -- a luxury not available in open-ended captioning. We address this bottleneck with RubiCap, a novel RL framework that derives fine-grained, sample-specific reward signals from LLM-written rubrics. RubiCap first assembles a diverse committee of candidate captions, then employs an LLM rubric writer to extract consensus strengths and diagnose deficiencies in the current policy. These insights are converted into explicit evaluation criteria, enabling an LLM judge to decompose holistic quality assessment and replace coarse scalar rewards with structured, multi-faceted evaluations. Across extensive benchmarks, RubiCap achieves the highest win rates on CapArena, outperforming supervised distillation, prior RL methods, human-expert annotations, and GPT-4V-augmented outputs. On CaptionQA, it demonstrates superior word efficiency: our 7B model matches Qwen2.5-VL-32B-Instruct, and our 3B model surpasses its 7B counterpart. Remarkably, using the compact RubiCap-3B as a captioner produces stronger pretrained VLMs than those trained on captions from proprietary models.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.12265" target="_blank">OmniStream: Mastering Perception, Reconstruction and Action in Continuous Streams</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yibin Yan, Jilan Xu, Shangzhe Di, Haoning Wu, Weidi Xie</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.12265" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.12265" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.12265.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract OmniStream is a unified visual backbone that processes streaming video data through causal spatiotemporal attention and 3D rotary positional embeddings, enabling general-purpose visual understanding across multiple domains. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Modern visual agents require representations that are general, causal, and physically structured to operate in real-time streaming environments. However, current vision foundation models remain fragmented, specializing narrowly in image semantic perception, offline temporal modeling, or spatial geometry. This paper introduces OmniStream, a unified streaming visual backbone that effectively perceives, reconstructs, and acts from diverse visual inputs. By incorporating causal spatiotemporal attention and 3D rotary positional embeddings (3D-RoPE), our model supports efficient, frame-by-frame online processing of video streams via a persistent KV-cache. We pre-train OmniStream using a synergistic multi-task framework coupling static and temporal representation learning, streaming geometric reconstruction, and vision-language alignment on 29 datasets. Extensive evaluations show that, even with a strictly frozen backbone, OmniStream achieves consistently competitive performance with specialized experts across image and video probing, streaming geometric reconstruction, complex video and spatial reasoning, as well as robotic manipulation (unseen at training). Rather than pursuing benchmark-specific dominance, our work demonstrates the viability of training a single, versatile vision backbone that generalizes across semantic, spatial, and temporal reasoning, i.e., a more meaningful step toward general-purpose visual understanding for interactive and embodied agents.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.11531" target="_blank">Mobile-GS: Real-time Gaussian Splatting for Mobile Devices</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Xiaobiao Du, Yida Wang, Kun Zhan, Xin Yu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.11531" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.11531" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.11531.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Mobile-GS enables real-time 3D Gaussian Splatting rendering on mobile devices through depth-aware order-independent rendering, neural view-dependent enhancement, and compression techniques. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">3D Gaussian Splatting (3DGS) has emerged as a powerful representation for high-quality rendering across a wide range of applications.However, its high computational demands and large storage costs pose significant challenges for deployment on mobile devices. In this work, we propose a mobile-tailored real-time Gaussian Splatting method, dubbed Mobile-GS, enabling efficient inference of Gaussian Splatting on edge devices. Specifically, we first identify alpha blending as the primary computational bottleneck, since it relies on the time-consuming Gaussian depth sorting process. To solve this issue, we propose a depth-aware order-independent rendering scheme that eliminates the need for sorting, thereby substantially accelerating rendering. Although this order-independent rendering improves rendering speed, it may introduce transparency artifacts in regions with overlapping geometry due to the scarcity of rendering order. To address this problem, we propose a neural view-dependent enhancement strategy, enabling more accurate modeling of view-dependent effects conditioned on viewing direction, 3D Gaussian geometry, and appearance attributes. In this way, Mobile-GS can achieve both high-quality and real-time rendering. Furthermore, to facilitate deployment on memory-constrained mobile platforms, we also introduce first-order spherical harmonics distillation, a neural vector quantization technique, and a contribution-based pruning strategy to reduce the number of Gaussian primitives and compress the 3D Gaussian representation with the assistance of neural networks. Extensive experiments demonstrate that our proposed Mobile-GS achieves real-time rendering and compact model size while preserving high visual quality, making it well-suited for mobile applications.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.10652" target="_blank">Are Video Reasoning Models Ready to Go Outside?</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Nanyang Technological University Singapore</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yangfan He, Changgyu Boo, Jaehong Yoon</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.10652" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.10652" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.10652.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract ROVA is a training framework that enhances vision-language model robustness under real-world disturbances through spatio-temporal corruption modeling and adaptive sample difficulty assessment. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">In real-world deployment, vision-language models often encounter disturbances such as weather, occlusion, and camera motion. Under such conditions, their understanding and reasoning degrade substantially, revealing a gap between clean, controlled (i.e., unperturbed) evaluation settings and real-world robustness. To address this limitation, we propose ROVA, a novel training framework that improves robustness by modeling a robustness-aware consistency reward under spatio-temporal corruptions. ROVA introduces a difficulty-aware online training strategy that prioritizes informative samples based on the model's evolving capability. Specifically, it continuously re-estimates sample difficulty via self-reflective evaluation, enabling adaptive training with a robustness-aware consistency reward. We also introduce PVRBench, a new benchmark that injects real-world perturbations into embodied video datasets to assess both accuracy and reasoning quality under realistic disturbances. We evaluate ROVA and baselines on PVRBench, UrbanVideo, and VisBench, where open-source and proprietary models suffer up to 35% and 28% drops in accuracy and reasoning under realistic perturbations. ROVA effectively mitigates performance degradation, boosting relative accuracy by at least 24% and reasoning by over 9% compared with baseline models (QWen2.5/3-VL, InternVL2.5, Embodied-R). These gains transfer to clean standard benchmarks, yielding consistent improvements.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.10444" target="_blank">The Curse and Blessing of Mean Bias in FP4-Quantized LLM Training</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Hengjie Cao, Zhendong Huang, Mengyi Chen, Yifeng Yang, Fanqi Yu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.10444" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.10444" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.10444.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract LLM anisotropy caused by rank-one mean bias in low-bit training can be stabilized through mean subtraction, recovering performance while enabling efficient hardware deployment. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Large language models trained on natural language exhibit pronounced anisotropy: a small number of directions concentrate disproportionate energy, while the remaining dimensions form a broad semantic tail. In low-bit training regimes, this geometry becomes numerically unstable. Because blockwise quantization scales are determined by extreme elementwise magnitudes, dominant directions stretch the dynamic range, compressing long-tail semantic variation into narrow numerical bins. We show that this instability is primarily driven by a coherent rank-one mean bias, which constitutes the dominant component of spectral anisotropy in LLM representations. This mean component emerges systematically across layers and training stages and accounts for the majority of extreme activation magnitudes, making it the principal driver of dynamic-range inflation under low precision. Crucially, because the dominant instability is rank-one, it can be eliminated through a simple source-level mean-subtraction operation. This bias-centric conditioning recovers most of the stability benefits of SVD-based spectral methods while requiring only reduction operations and standard quantization kernels. Empirical results on FP4 (W4A4G4) training show that mean removal substantially narrows the loss gap to BF16 and restores downstream performance, providing a hardware-efficient path to stable low-bit LLM training.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.11327" target="_blank">Meta-Reinforcement Learning with Self-Reflection for Agentic Search</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Ai2</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Teng Xiao, Yige Yuan, Hamish Ivison, Huaisheng Zhu, Faeze Brahman</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.11327" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.11327" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.11327.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract MR-Search enables adaptive agent search through meta-reinforcement learning with self-reflection, improving exploration and generalization across multiple episodes. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">This paper introduces MR-Search, an in-context meta reinforcement learning (RL) formulation for agentic search with self-reflection. Instead of optimizing a policy within a single independent episode with sparse rewards, MR-Search trains a policy that conditions on past episodes and adapts its search strategy across episodes. MR-Search learns to learn a search strategy with self-reflection, allowing search agents to improve in-context exploration at test-time. Specifically, MR-Search performs cross-episode exploration by generating explicit self-reflections after each episode and leveraging them as additional context to guide subsequent attempts, thereby promoting more effective exploration during test-time. We further introduce a multi-turn RL algorithm that estimates a dense relative advantage at the turn level, enabling fine-grained credit assignment on each episode. Empirical results across various benchmarks demonstrate the advantages of MR-Search over baselines based RL, showing strong generalization and relative improvements of 9.2% to 19.3% across eight benchmarks. Our code and data are available at https://github.com/tengxiao1/MR-Search.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.11103" target="_blank">Understanding by Reconstruction: Reversing the Software Development Process for LLM Pretraining</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>ByteDance Seed</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Zhiyuan Zeng, Yichi Zhang, Yong Shan, Kai Hua, Siyuan Fang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.11103" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.11103" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.11103.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Large language models trained on reconstructed agent trajectories from multi-agent simulations show improved performance in long-context understanding, coding proficiency, and agentic capabilities. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">While Large Language Models (LLMs) have achieved remarkable success in code generation, they often struggle with the deep, long-horizon reasoning required for complex software engineering. We attribute this limitation to the nature of standard pre-training data: static software repositories represent only the terminal state of an intricate intellectual process, abstracting away the intermediate planning, debugging, and iterative refinement. To bridge this gap, we propose a novel paradigm: understanding via reconstruction. We hypothesize that reverse-engineering the latent agentic trajectories -- the planning, reasoning, and debugging steps -- behind static repositories provides a far richer supervision signal than raw code alone. To operationalize this, we introduce a framework that synthesizes these trajectories using a multi-agent simulation. This process is grounded in the structural realities of the source repositories (e.g., dependency graphs and file hierarchies) to ensure fidelity. Furthermore, to guarantee the logical rigor of the synthetic data, we employ a search-based optimization technique that iteratively refines the Chain-of-Thought (CoT) reasoning to maximize the likelihood of the ground-truth code. Empirical results demonstrate that continuous pre-training on these reconstructed trajectories significantly enhances Llama-3-8B's performance across diverse benchmarks, including long-context understanding, coding proficiency, and agentic capabilities.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.12246" target="_blank">Examining Reasoning LLMs-as-Judges in Non-Verifiable LLM Post-Training</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>AI at Meta</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yixin Liu, Yue Yu, DiJia Su, Sid Wang, Xuewei Wang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.12246" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.12246" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.12246.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Research examines the effectiveness of reasoning versus non-reasoning large language model judges in reinforcement learning-based alignment, revealing that reasoning judges prevent reward hacking but may produce adversarial outputs that deceive other judges. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Reasoning LLMs-as-Judges, which can benefit from inference-time scaling, provide a promising path for extending the success of reasoning models to non-verifiable domains where the output correctness/quality cannot be directly checked. However, while reasoning judges have shown better performance on static evaluation benchmarks, their effectiveness in actual policy training has not been systematically examined. Therefore, we conduct a rigorous study to investigate the actual impact of non-reasoning and reasoning judges in reinforcement-learning-based LLM alignment. Our controlled synthetic setting, where a "gold-standard" judge (gpt-oss-120b) provides preference annotations to train smaller judges, reveals key differences between non-reasoning and reasoning judges: non-reasoning judges lead to reward hacking easily, while reasoning judges can lead to policies that achieve strong performance when evaluated by the gold-standard judge. Interestingly, we find that the reasoning-judge-trained policies achieve such strong performance by learning to generate highly effective adversarial outputs that can also score well on popular benchmarks such as Arena-Hard by deceiving other LLM-judges. Combined with our further analysis, our study highlights both important findings and room for improvements for applying (reasoning) LLM-judges in non-verifiable LLM post-training.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.12057" target="_blank">Coarse-Guided Visual Generation via Weighted h-Transform Sampling</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>The Hong Kong University of Science and Technology</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yanghao Wang, Ziqi Jiang, Zhen Wang, Long Chen</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.12057" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.12057" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.12057.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract A novel training-free visual generation method uses h-transform to guide diffusion models with improved quality and generalization compared to existing approaches. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Coarse-guided visual generation, which synthesizes fine visual samples from degraded or low-fidelity coarse references, is essential for various real-world applications. While training-based approaches are effective, they are inherently limited by high training costs and restricted generalization due to paired data collection. Accordingly, recent training-free works propose to leverage pretrained diffusion models and incorporate guidance during the sampling process. However, these training-free methods either require knowing the forward (fine-to-coarse) transformation operator, e.g., bicubic downsampling, or are difficult to balance between guidance and synthetic quality. To address these challenges, we propose a novel guided method by using the h-transform, a tool that can constrain stochastic processes (e.g., sampling process) under desired conditions. Specifically, we modify the transition probability at each sampling timestep by adding to the original differential equation with a drift function, which approximately steers the generation toward the ideal fine sample. To address unavoidable approximation errors, we introduce a noise-level-aware schedule that gradually de-weights the term as the error increases, ensuring both guidance adherence and high-quality synthesis. Extensive experiments across diverse image and video generation tasks demonstrate the effectiveness and generalization of our method.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.11076" target="_blank">DIVE: Scaling Diversity in Agentic Task Synthesis for Generalizable Tool Use</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Fudan University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Aili Chen, Chi Zhang, Junteng Liu, Jiangjie Chen, Chengyu Du</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.11076" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.11076" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.11076.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Training Qwen3-8B on DIVE data improves performance across out-of-distribution benchmarks, with diversity scaling outperforming quantity scaling even with less data. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Recent work synthesizes agentic tasks for post-training tool-using LLMs, yet robust generalization under shifts in tasks and toolsets remains an open challenge. We trace this brittleness to insufficient diversity in synthesized tasks. Scaling diversity is difficult because training requires tasks to remain executable and verifiable, while generalization demands coverage of diverse tool types, toolset combinations, and heterogeneous tool-use patterns. We propose DIVE, an evidence-driven recipe that inverts synthesis order, executing diverse, real-world tools first and reverse-deriving tasks strictly entailed by the resulting traces, thereby providing grounding by construction. DIVE scales structural diversity along two controllable axes, tool-pool coverage and per-task toolset variety, and an Evidence Collection--Task Derivation loop further induces rich multi-step tool-use patterns across 373 tools in five domains. Training Qwen3-8B on DIVE data (48k SFT + 3.2k RL) improves by +22 average points across 9 OOD benchmarks and outperforms the strongest 8B baseline by +68. Remarkably, controlled scaling analysis reveals that diversity scaling consistently outperforms quantity scaling for OOD generalization, even with 4x less data.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.07534" target="_blank">Accent Vector: Controllable Accent Manipulation for Multilingual TTS Without Accented Data</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>University of Southern California</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Thanathai Lertpetchpun, Thanapat Trachu, Jihwan Lee, Tiantian Feng, Dani Byrd</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.07534" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.07534" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.07534.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Accent Vector enables controllable accent manipulation in multilingual TTS systems through fine-tuning on native speech from different languages and computing task vectors that capture accent characteristics. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Accent is an integral part of society, reflecting multiculturalism and shaping how individuals express identity. The majority of English speakers are non-native (L2) speakers, yet current Text-To-Speech (TTS) systems primarily model American-accented English due limited accented data. We propose Accent Vector, a controllable representation that enables accent manipulation in multilingual TTS without requiring accented training data. Accent Vector is derived by fine-tuning a TTS system on native speech of a different language (i.e. non-English) and computing task vectors capturing accent characteristics (i.e. in English). By scaling and interpolating the vector, we achieve fine-grained control over accent strength and generate mixed-accent speech. In addition, it generalizes beyond English, enabling accent control across multiple languages. Objective and human evaluations confirm the effectiveness of Accent Vector for fine-grained and compositional accent control.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.12228" target="_blank">Neural Thickets: Diverse Task Experts Are Dense Around Pretrained Weights</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Massachusetts Institute of Technology</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yulu Gan, Phillip Isola</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.12228" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.12228" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.12228.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Pretraining creates a parameter distribution where task-specific experts become more densely populated in large models, enabling effective ensemble methods for post-training adaptation. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Pretraining produces a learned parameter vector that is typically treated as a starting point for further iterative adaptation. In this work, we instead view the outcome of pretraining as a distribution over parameter vectors, whose support already contains task-specific experts. We show that in small models such expert solutions occupy a negligible fraction of the volume of this distribution, making their discovery reliant on structured optimization methods such as gradient descent. In contrast, in large, well-pretrained models the density of task-experts increases dramatically, so that diverse, task-improving specialists populate a substantial fraction of the neighborhood around the pretrained weights. Motivated by this perspective, we explore a simple, fully parallel post-training method that samples N parameter perturbations at random, selects the top K, and ensembles predictions via majority vote. Despite its simplicity, this approach is competitive with standard post-training methods such as PPO, GRPO, and ES for contemporary large-scale models.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.12145" target="_blank">Automatic Generation of High-Performance RL Environments</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Princeton University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Seth Karten, Rahul Dev Appapogu, Chi Jin</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.12145" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.12145" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.12145.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Automated framework generates high-performance reinforcement learning environments through prompt-based translation and verification, achieving significant speedups over existing implementations while maintaining semantic equivalence. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Translating complex reinforcement learning (RL) environments into high-performance implementations has traditionally required months of specialized engineering. We present a reusable recipe - a generic prompt template, hierarchical verification, and iterative agent-assisted repair - that produces semantically equivalent high-performance environments for &lt;$10 in compute cost. We demonstrate three distinct workflows across five environments. Direct translation (no prior performance implementation exists): EmuRust (1.5x PPO speedup via Rust parallelism for a Game Boy emulator) and PokeJAX, the first GPU-parallel Pokemon battle simulator (500M SPS random action, 15.2M SPS PPO; 22,320x over the TypeScript reference). Translation verified against existing performance implementations: throughput parity with MJX (1.04x) and 5x over Brax at matched GPU batch sizes (HalfCheetah JAX); 42x PPO (Puffer Pong). New environment creation: TCGJax, the first deployable JAX Pokemon TCG engine (717K SPS random action, 153K SPS PPO; 6.6x over the Python reference), synthesized from a web-extracted specification. At 200M parameters, the environment overhead drops below 4% of training time. Hierarchical verification (property, interaction, and rollout tests) confirms semantic equivalence for all five environments; cross-backend policy transfer confirms zero sim-to-sim gap for all five environments. TCGJax, synthesized from a private reference absent from public repositories, serves as a contamination control for agent pretraining data concerns. The paper contains sufficient detail - including representative prompts, verification methodology, and complete results - that a coding agent could reproduce the translations directly from the manuscript.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.11510" target="_blank">Tiny Aya: Bridging Scale and Multilingual Depth</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Cohere Labs</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Alejandro R. Salamanca, Diana Abagyan, Daniel D'souza, Ammar Khairi, David Mora</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.11510" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.11510" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.11510.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Tiny Aya demonstrates high-quality multilingual capabilities with 3.35 billion parameters through region-aware posttraining and balanced language performance. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Tiny Aya redefines what a small multilingual language model can achieve. Trained on 70 languages and refined through region-aware posttraining, it delivers state-of-the-art in translation quality, strong multilingual understanding, and high-quality target-language generation, all with just 3.35B parameters. The release includes a pretrained foundation model, a globally balanced instruction-tuned variant, and three region-specialized models targeting languages from Africa, South Asia, Europe, Asia-Pacific, and West Asia. This report details the training strategy, data composition, and comprehensive evaluation framework behind Tiny Aya, and presents an alternative scaling path for multilingual AI: one centered on efficiency, balanced performance across languages, and practical deployment.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.11178" target="_blank">PACED: Distillation at the Frontier of Student Competence</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>xuyd16, Yuanda Xu, Hejian Sang, Zhengze Zhou, Ran He</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.11178" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.11178" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.11178.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Distillation processes suffer from inefficient compute usage due to vanishing gradient signals at extreme performance levels, which is addressed through a novel framework that focuses training on the optimal competence zone using a Beta kernel weighting scheme. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Standard LLM distillation wastes compute on two fronts: problems the student has already mastered (near-zero gradients) and problems far beyond its reach (incoherent gradients that erode existing capabilities). We show that this waste is not merely intuitive but structurally inevitable: the gradient signal-to-noise ratio in distillation provably vanishes at both pass-rate extremes. This theoretical observation leads to Paced, a framework that concentrates distillation on the zone of proximal development -- the frontier of a student model's competence -- via a principled pass-rate weight w(p) = p^α(1 - p)^β derived from the boundary-vanishing structure of distillation gradients. Key results: (1) Theory: We prove that the Beta kernel w(p) = p^α(1-p)^β is a leading-order weight family arising from the SNR structure of distillation, and that it is minimax-robust -- under bounded multiplicative misspecification, worst-case efficiency loss is only O(δ^2). (2)Distillation: On distillation from a larger teacher to a smaller student model with forward KL, Paced achieves significant gain over the base model, while keeping benchmark forgetting at a low level. (3)Self-distillation: On instruction-tuned models with reverse KL, gains are exceeding baselines as well. (4)Two-stage synergy: A forward-KL-then-reverse-KL schedule yields the strongest results in our setting, reaching substantial improvements on standard reasoning benchmarks -- supporting a mode-coverage-then-consolidation interpretation of the distillation process. All configurations require only student rollouts to estimate pass rates, need no architectural changes, and are compatible with any KL direction.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.10420" target="_blank">FireRedASR2S: A State-of-the-Art Industrial-Grade All-in-One Automatic Speech Recognition System</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Kaituo Xu, Yan Jia, Kai Huang, Junjie Chen, Wenpeng Li</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.10420" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.10420" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.10420.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract FireRedASR2S is an industrial-grade ASR system integrating unified modules for speech recognition, voice activity detection, language identification, and punctuation prediction, achieving state-of-the-art performance across multiple benchmarks. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">We present FireRedASR2S, a state-of-the-art industrial-grade all-in-one automatic speech recognition (ASR) system. It integrates four modules in a unified pipeline: ASR, Voice Activity Detection (VAD), Spoken Language Identification (LID), and Punctuation Prediction (Punc). All modules achieve SOTA performance on the evaluated benchmarks: FireRedASR2: An ASR module with two variants, FireRedASR2-LLM (8B+ parameters) and FireRedASR2-AED (1B+ parameters), supporting speech and singing transcription for Mandarin, Chinese dialects and accents, English, and code-switching. Compared to FireRedASR, FireRedASR2 delivers improved recognition accuracy and broader dialect and accent coverage. FireRedASR2-LLM achieves 2.89% average CER on 4 public Mandarin benchmarks and 11.55% on 19 public Chinese dialects and accents benchmarks, outperforming competitive baselines including Doubao-ASR, Qwen3-ASR, and Fun-ASR. FireRedVAD: An ultra-lightweight module (0.6M parameters) based on the Deep Feedforward Sequential Memory Network (DFSMN), supporting streaming VAD, non-streaming VAD, and multi-label VAD (mVAD). On the FLEURS-VAD-102 benchmark, it achieves 97.57% frame-level F1 and 99.60% AUC-ROC, outperforming Silero-VAD, TEN-VAD, FunASR-VAD, and WebRTC-VAD. FireRedLID: An Encoder-Decoder LID module supporting 100+ languages and 20+ Chinese dialects and accents. On FLEURS (82 languages), it achieves 97.18% utterance-level accuracy, outperforming Whisper and SpeechBrain. FireRedPunc: A BERT-style punctuation prediction module for Chinese and English. On multi-domain benchmarks, it achieves 78.90% average F1, outperforming FunASR-Punc (62.77%). To advance research in speech processing, we release model weights and code at https://github.com/FireRedTeam/FireRedASR2S.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.10365" target="_blank">Geometric Autoencoder for Diffusion Models</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Shanghai Innovation Institute</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>GK50, Hangyu Liu, Jianyong Wang, Yutao Sun</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.10365" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.10365" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.10365.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Geometric Autoencoder (GAE) presents a principled approach to latent diffusion modeling by optimizing semantic supervision, latent manifold stability, and reconstruction robustness through geometric alignment and dynamic noise sampling. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Latent diffusion models have established a new state-of-the-art in high-resolution visual generation. Integrating Vision Foundation Model priors improves generative efficiency, yet existing latent designs remain largely heuristic. These approaches often struggle to unify semantic discriminability, reconstruction fidelity, and latent compactness. In this paper, we propose Geometric Autoencoder (GAE), a principled framework that systematically addresses these challenges. By analyzing various alignment paradigms, GAE constructs an optimized low-dimensional semantic supervision target from VFMs to provide guidance for the autoencoder. Furthermore, we leverage latent normalization that replaces the restrictive KL-divergence of standard VAEs, enabling a more stable latent manifold specifically optimized for diffusion learning. To ensure robust reconstruction under high-intensity noise, GAE incorporates a dynamic noise sampling mechanism. Empirically, GAE achieves compelling performance on the ImageNet-1K 256 times 256 benchmark, reaching a gFID of 1.82 at only 80 epochs and 1.31 at 800 epochs without Classifier-Free Guidance, significantly surpassing existing state-of-the-art methods. Beyond generative quality, GAE establishes a superior equilibrium between compression, semantic depth and robust reconstruction stability. These results validate our design considerations, offering a promising paradigm for latent diffusion modeling. Code and models are publicly available at https://github.com/freezing-index/Geometric-Autoencoder-for-Diffusion-Models.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.10055" target="_blank">Training Language Models via Neural Cellular Automata</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Dan Lee, Seungwook Han, Akarsh Kumar, Pulkit Agrawal</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.10055" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.10055" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.10055.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Neural cellular automata generate synthetic spatiotemporal data for pre-pre-training large language models, achieving better performance and faster convergence than traditional natural language pre-training. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Pre-training is crucial for large language models (LLMs), as it is when most representations and capabilities are acquired. However, natural language pre-training has problems: high-quality text is finite, it contains human biases, and it entangles knowledge with reasoning. This raises a fundamental question: is natural language the only path to intelligence? We propose using neural cellular automata (NCA) to generate synthetic, non-linguistic data for pre-pre-training LLMs--training on synthetic-then-natural language. NCA data exhibits rich spatiotemporal structure and statistics resembling natural language while being controllable and cheap to generate at scale. We find that pre-pre-training on only 164M NCA tokens improves downstream language modeling by up to 6% and accelerates convergence by up to 1.6x. Surprisingly, this even outperforms pre-pre-training on 1.6B tokens of natural language from Common Crawl with more compute. These gains also transfer to reasoning benchmarks, including GSM8K, HumanEval, and BigBench-Lite. Investigating what drives transfer, we find that attention layers are the most transferable, and that optimal NCA complexity varies by domain: code benefits from simpler dynamics, while math and web text favor more complex ones. These results enable systematic tuning of the synthetic distribution to target domains. More broadly, our work opens a path toward more efficient models with fully synthetic pre-training.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.11665" target="_blank">Multi-Task Reinforcement Learning for Enhanced Multimodal LLM-as-a-Judge</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>AI at Meta</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Junjie Wu, Xuan Kan, Zihao He, Shunwen Tan, Bo Pan</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.11665" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.11665" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.11665.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Multi-Task Reinforcement Learning framework improves multimodal large language models' judgment consistency and generalization across diverse visual tasks. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Multimodal Large Language Models (MLLMs) have been widely adopted as MLLM-as-a-Judges due to their strong alignment with human judgment across various visual tasks. However, most existing judge models are optimized for single-task scenarios and struggle to generalize to diverse contexts, which is a critical requirement for reliable evaluation. To address this limitation, we propose Multi-Task Reinforcement Learning for MLLM-as-a-Judge (MT-RL-Judge), a framework that jointly optimizes the judge model across multiple tasks, leveraging the generalization capabilities of RL. Experimental results against several strong baselines demonstrate that MT-RL-Judge outperforms strong baselines in both judgment consistency and correlation with human preferences. Furthermore, our approach exhibits robust generalization on out-of-distribution tasks, further validating its effectiveness.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.11653" target="_blank">Simple Recipe Works: Vision-Language-Action Models are Natural Continual Learners with Reinforcement Learning</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Jiaheng Hu, Jay Shim, Chen Tang, Yoonchang Sung, Bo Liu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.11653" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.11653" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.11653.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Sequential fine-tuning with low-rank adaptation demonstrates superior performance in continual reinforcement learning for vision-language-action models, challenging conventional wisdom about catastrophic forgetting. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Continual Reinforcement Learning (CRL) for Vision-Language-Action (VLA) models is a promising direction toward self-improving embodied agents that can adapt in openended, evolving environments. However, conventional wisdom from continual learning suggests that naive Sequential Fine-Tuning (Seq. FT) leads to catastrophic forgetting, necessitating complex CRL strategies. In this work, we take a step back and conduct a systematic study of CRL for large pretrained VLAs across three models and five challenging lifelong RL benchmarks. We find that, contrary to established belief, simple Seq. FT with low-rank adaptation (LoRA) is remarkably strong: it achieves high plasticity, exhibits little to no forgetting, and retains strong zero-shot generalization, frequently outperforming more sophisticated CRL methods. Through detailed analysis, we show that this robustness arises from a synergy between the large pretrained model, parameter-efficient adaptation, and on-policy RL. Together, these components reshape the stability-plasticity trade-off, making continual adaptation both stable and scalable. Our results position Sequential Fine-Tuning as a powerful method for continual RL with VLAs and provide new insights into lifelong learning in the large model era. Code is available at github.com/UT-Austin-RobIn/continual-vla-rl.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.11045" target="_blank">Neural Field Thermal Tomography: A Differentiable Physics Framework for Non-Destructive Evaluation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Princeton University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>n3il666, Tao Zhong, Yixun Hu, Dongzhe Zheng, Aditya Sood</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.11045" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.11045" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.11045.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract NeFTY uses a differentiable physics framework to reconstruct 3D material properties from temperature measurements, overcoming limitations of traditional thermography and PINNs through continuous neural field parameterization and hard constraint enforcement. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">We propose Neural Field Thermal Tomography (NeFTY), a differentiable physics framework for the quantitative 3D reconstruction of material properties from transient surface temperature measurements. While traditional thermography relies on pixel-wise 1D approximations that neglect lateral diffusion, and soft-constrained Physics-Informed Neural Networks (PINNs) often fail in transient diffusion scenarios due to gradient stiffness, NeFTY parameterizes the 3D diffusivity field as a continuous neural field optimized through a rigorous numerical solver. By leveraging a differentiable physics solver, our approach enforces thermodynamic laws as hard constraints while maintaining the memory efficiency required for high-resolution 3D tomography. Our discretize-then-optimize paradigm effectively mitigates the spectral bias and ill-posedness inherent in inverse heat conduction, enabling the recovery of subsurface defects at arbitrary scales. Experimental validation on synthetic data demonstrates that NeFTY significantly improves the accuracy of subsurface defect localization over baselines. Additional details at https://cab-lab-princeton.github.io/nefty/</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.07988" target="_blank">TeamHOI: Learning a Unified Policy for Cooperative Human-Object Interactions with Any Team Size</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Sea AI Lab</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Stefan Lionar, Gim Hee Lee</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.07988" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.07988" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.07988.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract TeamHOI enables decentralized cooperative human-object interaction using a Transformer-based policy with teammate tokens and a masked adversarial motion prior for realistic multi-agent coordination. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Physics-based humanoid control has achieved remarkable progress in enabling realistic and high-performing single-agent behaviors, yet extending these capabilities to cooperative human-object interaction (HOI) remains challenging. We present TeamHOI, a framework that enables a single decentralized policy to handle cooperative HOIs across any number of cooperating agents. Each agent operates using local observations while attending to other teammates through a Transformer-based policy network with teammate tokens, allowing scalable coordination across variable team sizes. To enforce motion realism while addressing the scarcity of cooperative HOI data, we further introduce a masked Adversarial Motion Prior (AMP) strategy that uses single-human reference motions while masking object-interacting body parts during training. The masked regions are then guided through task rewards to produce diverse and physically plausible cooperative behaviors. We evaluate TeamHOI on a challenging cooperative carrying task involving two to eight humanoid agents and varied object geometries. Finally, to promote stable carrying, we design a team-size- and shape-agnostic formation reward. TeamHOI achieves high success rates and demonstrates coherent cooperation across diverse configurations with a single policy.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.07865" target="_blank">SoundWeaver: Semantic Warm-Starting for Text-to-Audio Diffusion Serving</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>University of Illinois at Urbana-Champaign</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>jormungandr2017, Ayush Barik, Sofia Stoica, Nikhil Sarda, Arnav Kethana</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.07865" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.07865" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.07865.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract SoundWeaver accelerates text-to-audio diffusion generation by caching semantically similar audio and dynamically skipping function evaluations, achieving significant latency reduction with minimal quality loss. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Text-to-audio diffusion models produce high-fidelity audio but require tens of function evaluations (NFEs), incurring multi-second latency and limited throughput. We present SoundWeaver, the first training-free, model-agnostic serving system that accelerates text-to-audio diffusion by warm-starting from semantically similar cached audio. SoundWeaver introduces three components: a Reference Selector that retrieves and temporally aligns cached candidates via semantic and duration-aware gating; a Skip Gater that dynamically determines the percentage of NFEs to skip; and a lightweight Cache Manager that maintains cache utility through quality-aware eviction and refinement. On real-world audio traces, SoundWeaver achieves 1.8--3.0 times  latency reduction with a cache of only {sim}1K entries while preserving or improving perceptual quality.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.06922" target="_blank">NerVE: Nonlinear Eigenspectrum Dynamics in LLM Feed-Forward Networks</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>New York University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Nandan Kumar Jha, Brandon Reagen</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.06922" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.06922" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.06922.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract NerVE provides a unified framework for analyzing feed-forward network dynamics in large language models through spectral analysis metrics that reveal information flow organization and optimization impacts across architectures. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">We introduce NerVE, a unified eigenspectral framework for understanding how feed-forward networks (FFNs) in large language models (LLMs) organize and regulate information flow in high-dimensional latent space. Despite FFNs dominating the parameter budget, their high-dimensional dynamics remain poorly understood. NerVE addresses this gap through lightweight, memory-efficient tracking of eigenspectrum dynamics via four complementary metrics: Spectral Entropy (dispersion), Participation Ratio (effective dimensionality), Eigenvalue Early Enrichment (top-heaviness), and Jensen-Shannon divergence (distributional shifts). Our key insight is that FFN nonlinearities reinject variance across eigenmodes, fundamentally governing latent dimension utilization, and that optimizer geometry strongly modulates the extent of this variance reinjection. We validate NerVE across model scales, and diverse architectural and optimizer configurations, each uniquely shaping FFN dynamics: normalization schemes controlling variance flow; FFN weight geometries constraining latent space; positional encoding and activation functions regulating information flow; and optimizer choices redistributing effective capacity across depth. Across these settings, NerVE consistently recovers stable spectral signatures that correlate with model's generalization ability and respond predictably to design choices, generalizing beyond transformer to MLP-Mixer architectures, providing actionable insights for architectural and optimizer choices beyond trial-and-error.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.05483" target="_blank">SurvHTE-Bench: A Benchmark for Heterogeneous Treatment Effect Estimation in Survival Analysis</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Carnegie Mellon University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>snoroozi, Shahriar Noroozizadeh, Xiaobin Shen, Jeremy C. Weiss, George H. Chen</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.05483" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.05483" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.05483.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract SurvHTE-Bench presents the first comprehensive benchmark for heterogeneous treatment effects estimation with censored survival data, featuring synthetic, semi-synthetic, and real-world datasets with varying causal assumptions and survival dynamics. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Estimating heterogeneous treatment effects (HTEs) from right-censored survival data is critical in high-stakes applications such as precision medicine and individualized policy-making. Yet, the survival analysis setting poses unique challenges for HTE estimation due to censoring, unobserved counterfactuals, and complex identification assumptions. Despite recent advances, from Causal Survival Forests to survival meta-learners and outcome imputation approaches, evaluation practices remain fragmented and inconsistent. We introduce SurvHTE-Bench, the first comprehensive benchmark for HTE estimation with censored outcomes. The benchmark spans (i) a modular suite of synthetic datasets with known ground truth, systematically varying causal assumptions and survival dynamics, (ii) semi-synthetic datasets that pair real-world covariates with simulated treatments and outcomes, and (iii) real-world datasets from a twin study (with known ground truth) and from an HIV clinical trial. Across synthetic, semi-synthetic, and real-world settings, we provide the first rigorous comparison of survival HTE methods under diverse conditions and realistic assumption violations. SurvHTE-Bench establishes a foundation for fair, reproducible, and extensible evaluation of causal survival methods. The data and code of our benchmark are available at: https://github.com/Shahriarnz14/SurvHTE-Bench .</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.12089" target="_blank">EmbTracker: Traceable Black-box Watermarking for Federated Language Models</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Shanghai Jiao Tong University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Haodong Zhao, Jinming Hu, Yijie Bai, Tian Dong, Wei Du</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.12089" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.12089" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.12089.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract EmbTracker is a server-side black-box watermarking framework for federated language models that provides client-level traceability through unique identity-specific watermarks embedded via backdoor detection mechanisms. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Federated Language Model (FedLM) allows a collaborative learning without sharing raw data, yet it introduces a critical vulnerability, as every untrustworthy client may leak the received functional model instance. Current watermarking schemes for FedLM often require white-box access and client-side cooperation, providing only group-level proof of ownership rather than individual traceability. We propose EmbTracker, a server-side, traceable black-box watermarking framework specifically designed for FedLMs. EmbTracker achieves black-box verifiability by embedding a backdoor-based watermark detectable through simple API queries. Client-level traceability is realized by injecting unique identity-specific watermarks into the model distributed to each client. In this way, a leaked model can be attributed to a specific culprit, ensuring robustness even against non-cooperative participants. Extensive experiments on various language and vision-language models demonstrate that EmbTracker achieves robust traceability with verification rates near 100\%, high resilience against removal attacks (fine-tuning, pruning, quantization), and negligible impact on primary task performance (typically within 1-2\%).</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.12046" target="_blank">Dr. SHAP-AV: Decoding Relative Modality Contributions via Shapley Attribution in Audio-Visual Speech Recognition</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Imperial College London</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Umberto Cappellazzo, Stavros Petridis, Maja Pantic</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.12046" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.12046" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.12046.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Dr. SHAP-AV framework uses Shapley values to analyze modality contributions in audio-visual speech recognition, revealing how models balance acoustic and visual information under varying noise conditions. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Audio-Visual Speech Recognition (AVSR) leverages both acoustic and visual information for robust recognition under noise. However, how models balance these modalities remains unclear. We present Dr. SHAP-AV, a framework using Shapley values to analyze modality contributions in AVSR. Through experiments on six models across two benchmarks and varying SNR levels, we introduce three analyses: Global SHAP for overall modality balance, Generative SHAP for contribution dynamics during decoding, and Temporal Alignment SHAP for input-output correspondence. Our findings reveal that models shift toward visual reliance under noise yet maintain high audio contributions even under severe degradation. Modality balance evolves during generation, temporal alignment holds under noise, and SNR is the dominant factor driving modality weighting. These findings expose a persistent audio bias, motivating ad-hoc modality-weighting mechanisms and Shapley-based attribution as a standard AVSR diagnostic.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.11487" target="_blank">Attention Sinks Are Provably Necessary in Softmax Transformers: Evidence from Trigger-Conditional Tasks</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Tel Aviv University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yuval Ran-Milo</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.11487" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.11487" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.11487.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Softmax self-attention models exhibit attention sinks where probability mass concentrates on fixed positions due to normalization constraints, while ReLU attention avoids this behavior. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Transformers often display an attention sink: probability mass concentrates on a fixed, content-agnostic position. We prove that computing a simple trigger-conditional behavior necessarily induces a sink in softmax self-attention models. Our results formalize a familiar intuition: normalization over a probability simplex must force attention to collapse onto a stable anchor to realize a default state (e.g., when the model needs to ignore the input). We instantiate this with a concrete task: when a designated trigger token appears, the model must return the average of all preceding token representations, and otherwise output zero, a task which mirrors the functionality of attention heads in the wild (Barbero et al., 2025; Guo et al., 2024). We also prove that non-normalized ReLU attention can solve the same task without any sink, confirming that the normalization constraint is the fundamental driver of sink behavior. Experiments validate our predictions and demonstrate they extend beyond the theoretically analyzed setting: softmax models develop strong sinks while ReLU attention eliminates them in both single-head and multi-head variants.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2602.24181" target="_blank">A Mixed Diet Makes DINO An Omnivorous Vision Encoder</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Deepmind</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Rishabh Kabra, Maks Ovsjanikov, Drew A. Hudson, Ye Xia, Skanda Koppula</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2602.24181" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2602.24181" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2602.24181.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract A novel vision encoder framework is presented that learns modality-agnostic feature representations by aligning multi-modal inputs while preserving semantic distinctions from a frozen teacher model. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Pre-trained vision encoders like DINOv2 have demonstrated exceptional performance on unimodal tasks. However, we observe that their feature representations are poorly aligned across different modalities. For instance, the feature embedding for an RGB image and its corresponding depth map of the same scene exhibit a cosine similarity that is nearly identical to that of two random, unrelated images. To address this, we propose the Omnivorous Vision Encoder, a novel framework that learns a modality-agnostic feature space. We train the encoder with a dual objective: first, to maximize the feature alignment between different modalities of the same scene; and second, a distillation objective that anchors the learned representations to the output of a fully frozen teacher such as DINOv2. The resulting student encoder becomes "omnivorous" by producing a consistent, powerful embedding for a given scene, regardless of the input modality (RGB, Depth, Segmentation, etc.). This approach enables robust cross-modal understanding while retaining the discriminative semantics of the original foundation model.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.10604" target="_blank">HyPER-GAN: Hybrid Patch-Based Image-to-Image Translation for Real-Time Photorealism Enhancement</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Stefanos Pasios, Nikos Nikolaidis</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.10604" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.10604" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.10604.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract HyPER-GAN is a lightweight image-to-image translation method using a U-Net-style generator and hybrid training strategy that improves photorealism while enabling real-time inference. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generative models are widely employed to enhance the photorealism of synthetic data for training computer vision algorithms. However, they often introduce visual artifacts that degrade the accuracy of these algorithms and require high computational resources, limiting their applicability in real-time training or evaluation scenarios. In this paper, we propose Hybrid Patch Enhanced Realism Generative Adversarial Network (HyPER-GAN), a lightweight image-to-image translation method based on a U-Net-style generator designed for real-time inference. The model is trained using paired synthetic and photorealism-enhanced images, complemented by a hybrid training strategy that incorporates matched patches from real-world data to improve visual realism and semantic consistency. Experimental results demonstrate that HyPER-GAN outperforms state-of-the-art paired image-to-image translation methods in terms of inference latency, visual realism, and semantic robustness. Moreover, it is illustrated that the proposed hybrid training strategy indeed improves visual quality and semantic consistency compared to training the model solely with paired synthetic and photorealism-enhanced images. Code and pretrained models are publicly available for download at: https://github.com/stefanos50/HyPER-GAN</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.10125" target="_blank">4DEquine: Disentangling Motion and Appearance for 4D Equine Reconstruction from Monocular Video</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>luoxue-star, Jin Lyu, Liang An, Pujin Cheng, Yebin Liu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.10125" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.10125" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.10125.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract A novel 4D reconstruction framework for equine family that separates motion and appearance reconstruction using spatio-temporal transformers and 3D Gaussian avatars, achieving state-of-the-art results on real-world datasets. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">4D reconstruction of equine family (e.g. horses) from monocular video is important for animal welfare. Previous mainstream 4D animal reconstruction methods require joint optimization of motion and appearance over a whole video, which is time-consuming and sensitive to incomplete observation. In this work, we propose a novel framework called 4DEquine by disentangling the 4D reconstruction problem into two sub-problems: dynamic motion reconstruction and static appearance reconstruction. For motion, we introduce a simple yet effective spatio-temporal transformer with a post-optimization stage to regress smooth and pixel-aligned pose and shape sequences from video. For appearance, we design a novel feed-forward network that reconstructs a high-fidelity, animatable 3D Gaussian avatar from as few as a single image. To assist training, we create a large-scale synthetic motion dataset, VarenPoser, which features high-quality surface motions and diverse camera trajectories, as well as a synthetic appearance dataset, VarenTex, comprising realistic multi-view images generated through multi-view diffusion. While training only on synthetic datasets, 4DEquine achieves state-of-the-art performance on real-world APT36K and AiM datasets, demonstrating the superiority of 4DEquine and our new datasets for both geometry and appearance reconstruction. Comprehensive ablation studies validate the effectiveness of both the motion and appearance reconstruction network. Project page: https://luoxue-star.github.io/4DEquine_Project_Page/.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.08258" target="_blank">WaDi: Weight Direction-aware Distillation for One-step Image Synthesis</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Lei Wang, Yang Cheng, Senmao Li, Ge Wu, Yaxing Wang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.08258" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.08258" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.08258.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Diffusion model distillation techniques using low-rank rotation matrices achieve high-quality image generation with reduced parameters and enhanced versatility across downstream tasks. 
+					AI-generated summary</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Despite the impressive performance of diffusion models such as Stable Diffusion (SD) in image generation, their slow inference limits practical deployment. Recent works accelerate inference by distilling multi-step diffusion into one-step generators. To better understand the distillation mechanism, we analyze U-Net/DiT weight changes between one-step students and their multi-step teacher counterparts. Our analysis reveals that changes in weight direction significantly exceed those in weight norm, highlighting it as the key factor during distillation. Motivated by this insight, we propose the Low-rank Rotation of weight Direction (LoRaD), a parameter-efficient adapter tailored to one-step diffusion distillation. LoRaD is designed to model these structured directional changes using learnable low-rank rotation matrices. We further integrate LoRaD into Variational Score Distillation (VSD), resulting in Weight Direction-aware Distillation (WaDi)-a novel one-step distillation framework. WaDi achieves state-of-the-art FID scores on COCO 2014 and COCO 2017 while using only approximately 10% of the trainable parameters of the U-Net/DiT. Furthermore, the distilled one-step model demonstrates strong versatility and scalability, generalizing well to various downstream tasks such as controllable generation, relation inversion, and high-resolution synthesis.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.07331" target="_blank">Causal Attribution of Coastal Water Clarity Degradation to Nickel Processing Expansion at the Indonesia Morowali Industrial Park, Sulawesi</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Institut Teknologi Bandung</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>sandyherho, Sandy Hardian Susanto Herho, Alfita Puspa Handayani, Iwan Pramesti Anwar, Faruq Khadami</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.07331" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.07331" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.07331.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Indonesia's nickel ore export ban has driven rapid expansion of smelting and hydrometallurgical processing capacity at the Indonesia Morowali Industrial Park (IMIP), now the world's largest integrated nickel processing complex, on the coast of Central Sulawesi. Whether this industrialization has degraded the adjacent marine environment remains unquantified. We apply Bayesian structural time-series (BSTS) causal inference to a multi-decadal, multi-sensor satellite ocean color record of the diffuse attenuation coefficient at 490 nm, K_d(490), to test for a causal link between IMIP expansion and nearshore turbidity change. A consensus structural breakpoint, a significant posterior causal effect estimated against a Banda Sea counterfactual, and a distribution-free placebo rank test collectively establish that coastal water clarity deteriorated after the transition from initial nickel pig iron production to hyper-expansion of high-pressure acid leaching facilities for battery-grade nickel. Satellite-derived land cover analysis independently corroborates this timing, showing substantial built-area growth and concurrent tree cover loss within the IMIP footprint. The resulting euphotic zone shoaling occurs in oligotrophic waters supporting high marine biodiversity, where even moderate optical degradation may impair coral photosynthesis and compress depth-dependent reef habitat. These findings quantify a marine environmental cost absent from Indonesia's mineral downstreaming policy discourse and demonstrate a transferable, satellite-based quasi-experimental framework for causal impact assessment at coastal industrial sites in data-limited tropical settings.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF 
+				GitHub
+				    
+			Add to collection      Community             sandyherho  Paper author Paper submitter    about 1 hour ago • edited 44 minutes ago             The global push for electric vehicles carries a hidden environmental cost, and a compelling new study leverages satellite data to finally quantify its impact on vulnerable marine ecosystems. Researchers investigated the coastal waters adjacent to the Indonesia Morowali Industrial Park, the world's largest integrated nickel processing complex. By applying Bayesian structural time-series causal inference to a multi-decadal record of ocean color satellite data, they detected a statistically significant degradation in nearshore water clarity. The study pinpoints a structural breakpoint in May 2019, aligning precisely with the site's aggressive expansion of high-pressure acid leaching facilities designed to produce battery-grade nickel. This localized industrialization caused the photic zone to shoal by 12.3 meters in the highly biodiverse Coral Triangle , providing a crucial, quasi-experimental framework to expose the unmeasured marine externalities of the green energy transition.</p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+        
+        <div class="nav-buttons">
+            <a href="2026-03-14.html" class="nav-btn">← 2026-03-14</a>
+            <a href="2026-03-16.html" class="nav-btn">2026-03-16 →</a>
+        </div>
+        
+        <footer>
+            Generated by <a href="https://github.com" target="_blank">HF Papers Daily</a>
+        </footer>
+    </div>
+    
+    <script>
+        function toggleAbstract(header) {
+            const toggle = header.querySelector('.abstract-toggle');
+            const content = header.nextElementSibling;
+            toggle.classList.toggle('expanded');
+            content.classList.toggle('expanded');
+        }
+    </script>
+</html>
