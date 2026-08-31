@@ -1,0 +1,1496 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hugging Face Papers - 2026-07-16 (zh-CN)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .date {
+            font-size: 1.2em;
+            color: #a0a0a0;
+        }
+        
+        .stats {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #888;
+        }
+        
+        .paper-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .paper-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(102, 126, 234, 0.5);
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.2);
+        }
+        
+        .paper-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        
+        .paper-title a {
+            color: #e0e0e0;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .paper-title a:hover {
+            color: #667eea;
+        }
+        
+        .paper-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            color: #a0a0a0;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .meta-label {
+            color: #888;
+        }
+        
+        .links {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .link-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .link-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .link-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .abstract-section {
+            margin-top: 15px;
+        }
+        
+        .abstract-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .abstract-header:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .abstract-toggle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+            transition: transform 0.3s;
+        }
+        
+        .abstract-toggle.expanded {
+            transform: rotate(180deg);
+        }
+        
+        .abstract-label {
+            font-weight: 500;
+            color: #667eea;
+        }
+        
+        .abstract-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding: 0 15px;
+        }
+        
+        .abstract-content.expanded {
+            max-height: 10000px;
+            padding: 15px;
+        }
+        
+        .abstract-text {
+            line-height: 1.7;
+            color: #c0c0c0;
+        }
+        
+        .summary-box {
+            background: rgba(102, 126, 234, 0.1);
+            border-left: 3px solid #667eea;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .summary-label {
+            font-size: 0.8em;
+            color: #667eea;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .summary-text {
+            color: #b0b0b0;
+            line-height: 1.5;
+        }
+        
+        .translation-box {
+            background: rgba(118, 75, 162, 0.1);
+            border-left: 3px solid #764ba2;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .translation-label {
+            font-size: 0.8em;
+            color: #764ba2;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .translation-text {
+            color: #b0b0b0;
+            line-height: 1.5;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding: 0 10px;
+        }
+        
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .nav-btn.disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: #666;
+            pointer-events: none;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .paper-title {
+                font-size: 1.1em;
+            }
+            
+            .links {
+                flex-wrap: wrap;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-btn {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Hugging Face Papers</h1>
+            <div class="date">2026-07-16</div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number">24</div>
+                    <div class="stat-label">Papers</div>
+                </div>
+            </div>
+        </header>
+        
+        <main>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.13285" target="_blank">Harness Handbook: Making Evolving Agent Harnesses Readable,Navigable, and Editable</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Tencent Hunyuan</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Ruhan Wang, Yucheng Shi, Zongxia Li, Zhongzhi Li, Yue Yu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.13285" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.13285" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.13285.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  The capability of a modern AI agent depends not only on its foundation model but also on its harness, which constructs prompts, manages state, invokes tools, and coordinates execution. As models, APIs, environments, and requirements evolve, the harness must be continually modified. Before such a change can be made, a developer or coding agent must identify all code locations that implement the target behavior. This is difficult because production harnesses are large, tightly coupled, and behaviorally distributed, while modification requests describe what the system should do and repositories are organized by files and modules. Code search, repository indexing, and long-context processing ease inspection, but still leave this behavior-to-code mapping to be recovered by hand. Behavior localization is therefore a central bottleneck in harness evolution. We introduce the Harness Handbook, a behavior-centric representation synthesized automatically from a harness codebase via static analysis and LLM-assisted structuring, linking each behavior to its corresponding source. We also introduce Behavior-Guided Progressive Disclosure (BGPD), which guides agents from high-level behaviors to relevant implementation details and verifies candidate locations against the current source. On diverse modification requests from two open-source harnesses, Handbook-Assisted planning improves behavior localization and edit-plan quality while using fewer planner tokens, with the largest gains on scattered sites, rarely executed paths, and cross-module interactions. Evolving complex agentic systems thus depends not only on generating edits, but also on determining where those edits should be made.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 现代人工智能代理的能力不仅取决于其基础模型，还取决于其构建提示、管理状态、调用工具和协调执行的工具。随着模型、API、环境和需求的发展，必须不断修改线束。在进行此类更改之前，开发人员或编码代理必须识别实现目标行为的所有代码位置。这很困难，因为生产工具很大、紧密耦合且行为分布式，而修改请求描述了系统应该做什么，而存储库是按文件和模块组织的。代码搜索、存储库索引和长上下文处理简化了检查，但仍然需要手动恢复此行为到代码的映射。因此，行为本地化是安全带进化的中心瓶颈。我们引入了 Harness Handbook，这是一种以行为为中心的表示，通过静态分析和 LLM 辅助结构化从线束代码库自动合成，将每个行为与其相应的源链接起来。我们还引入了行为引导渐进式披露（BGPD），它将代理从高级行为引导到相关的实施细节，并根据当前源验证候选位置。针对来自两个开源工具的不同修改请求，手册辅助规划提高了行为本地化和编辑计划质量，同时使用更少的规划器标记，在分散的站点、很少执行的路径和跨模块交互上获得最大的收益。因此，发展复杂的代理系统不仅取决于生成编辑，还取决于确定应在何处进行这些编辑。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page   Add to collection     Community   EditPreview      Upload images, audio, and videos by dragging in the text input, pasting, or clicking here. Tap or paste here to upload images        Comment · Sign up or log in to comment</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 添加到集合 社区 EditPreview 通过拖入文本输入、粘贴或单击此处上传图像、音频和视频。点击或粘贴此处上传图片 评论 · 注册或登录以发表评论</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.13125" target="_blank">Boogu-Image-0.1: Boosting Open-Source Unified Multimodal Understanding and Generation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Boogu</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Guoxuan Chen, Chufeng Xiao, Haoran Yang, Siyue Xie, Binxiao Huang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.13125" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.13125" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.13125.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  We introduce Boogu-Image-0.1, an open-source unified multimodal understanding and generation model family, comprising Base, Turbo, Edit, and Edit-Turbo variants. It delivers competitive performance in high-quality text-to-image generation, fast inference, instruction-based editing, and bilingual (Chinese-English) text rendering. Closed-source multimodal systems like Nano-Banana-Pro and GPT-Image-2 achieve strong performance through system-level integration rather than a single model, yet their internal practices remain largely undisclosed. In this work, we demonstrate that targeted improvements in model understanding, data quality, and training pipelines, coupled with agentic inference-time scaling, can substantially enhance generation and editing performance even under highly constrained compute budgets. Comprehensive evaluations show that Boogu-Image-0.1 consistently matches or surpasses other open-source models across standard benchmarks, and achieves results approaching leading closed-source systems. Notably, this is accomplished with only 208.62 million unique images. The base model's theoretical training cost is only approximately \$400K. We share practical discussions that we believe are valuable to the broader research community, and release weights, code, and recipes under Apache 2.0 to advance the open ecosystem for unified multimodal understanding and generation. Our code is available here: https://github.com/Boogu-Project/Boogu-Image.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：我们介绍了 Boogu-Image-0.1，一个开源的统一多模态理解和生成模型系列，包括 Base、Turbo、Edit 和 Edit-Turbo 变体。它在高质量文本到图像生成、快速推理、基于指令的编辑和双语（中英）文本渲染方面提供了具有竞争力的性能。 Nano-Banana-Pro 和 GPT-Image-2 等闭源多模态系统通过系统级集成而不是单一模型实现了强大的性能，但其内部实践在很大程度上仍未公开。在这项工作中，我们证明了模型理解、数据质量和训练管道的有针对性的改进，加上代理推理时间缩放，即使在计算预算高度受限的情况下也可以显着提高生成和编辑性能。综合评估表明，Boogu-Image-0.1 在标准基准测试中始终匹配或超越其他开源模型，并取得了接近领先闭源系统的结果。值得注意的是，这是仅用 2.0862 亿张独特图像就完成的。基础模型的理论训练成本仅为约 40 万美元。我们分享我们认为对更广泛的研究社区有价值的实际讨论，并在 Apache 2.0 下发布权重、代码和配方，以推进统一的多模式理解和生成的开放生态系统。我们的代码可以在这里找到：https://github.com/Boogu-Project/Boogu-Image。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub     Add to collection     Community         Chufeng   Paper submitter    13 minutes ago         Boogu-Image-0.1 is a strongly competitive Apache-2.0 open-source unified image generation and editing model family, including Base, Turbo, Edit, and other variants that provide stable, practical capabilities for high-quality text-to-image generation, fast generation, image editing, and Chinese-English text rendering, with performance that matches top closed-source models in many scenarios.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 添加到收藏社区 楚风 论文提交者 13 分钟前 Boogu-Image-0.1 是一款具有强大竞争力的 Apache-2.0 开源统一图像生成和编辑模型家族，包括 Base、Turbo、Edit 等变体，为高质量文本转图像生成、快速生成、图像编辑、中英文文本渲染提供稳定、实用的能力，在很多场景下性能可媲美顶级闭源模型。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.12395" target="_blank">Ring-Zero: Scaling Zero RL to a Trillion Parameters for Emergent Reasoning</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>inclusionAI</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Xinyu Tang, Gangqiang Cao, Yurou Liu, Yuliang Zhan, Xiaochong Lan</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.12395" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.12395" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.12395.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Reinforcement learning with verifiable rewards without human-annotated data, often referred to as zero RL, has emerged as a powerful paradigm for eliciting chain-of-thought reasoning. However, due to computational constraints, existing studies are largely restricted to small models, leaving the training dynamics and emergent capabilities at a large scale unexplored. To meaningfully explore this frontier, we aim to elicit high-quality reasoning behaviors from the model. However, we find that naive scaling often suffers from poor readability, token redundancy, and a lack of adaptive reasoning depth. To address these challenges, we present a stable and efficient training pipeline, incorporating algorithmic and system optimizations such as clipped importance sampling, training-inference ratio correction, and mixed-precision control. Our experiments offer three key findings that validate the "bitter lesson" of scaling: (1) scaling to 1T parameters significantly enhances sample efficiency and performance ceilings; (2) the training process progresses sequentially through an initial discovery phase followed by a sharpening phase; and (3) the model spontaneously develops advanced cognitive behaviors, including anthropomorphism, structured formatting, self-verification, parallel reasoning, and context anxiety, rendering hand-crafted heuristics redundant. Evaluated on seven mathematical benchmarks, Ring-2.5-1T-Zero achieves competitive performance. Additionally, to assess CoT quality beyond final-answer correctness, we propose a structured evaluation framework across three dimensions: comprehensibility, reproducibility, and efficiency, where our model demonstrates clear advantages in producing structured and concise reasoning traces. By sharing our observed emergent phenomena, we hope to provide the community with deeper insights into scaling behaviors, particularly at the 1-trillion scale.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：具有可验证奖励且无需人工注释数据的强化学习（通常称为零强化学习）已成为引发思维链推理的强大范例。然而，由于计算限制，现有研究很大程度上仅限于小型模型，而大规模的训练动态和涌现能力尚未得到探索。为了有意义地探索这一前沿领域，我们的目标是从模型中引出高质量的推理行为。然而，我们发现幼稚的扩展通常会遇到可读性差、令牌冗余和缺乏自适应推理深度的问题。为了应对这些挑战，我们提出了一个稳定高效的训练流程，结合了算法和系统优化，例如截断重要性采样、训练推理比校正和混合精度控制。我们的实验提供了三个关键发现，验证了缩放的“惨痛教训”：（1）缩放至 1T 参数显着提高了样本效率和性能上限； (2) 训练过程按顺序进行，先是初始发现阶段，然后是锐化阶段； （3）模型自发地发展出高级认知行为，包括拟人化、结构化格式化、自我验证、并行推理和情境焦虑，使得手工启发式变得多余。根据七个数学基准进行评估，Ring-2.5-1T-Zero 实现了具有竞争力的性能。此外，为了评估最终答案正确性之外的 CoT 质量，我们提出了一个跨三个维度的结构化评估框架：可理解性、可重复性和效率，其中我们的模型在生成结构化和简洁的推理轨迹方面表现出明显的优势。通过分享我们观察到的新兴现象，我们希望为社区提供对扩展行为（尤其是 1 万亿规模）的更深入见解。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community         cloakone       about 23 hours ago         File unavailable for 2607.12395HTML or source was not provided to generate HTML or a PDF.maybe something wrong!</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 cloakone 大约 23 小时前 文件不可用 2607.12395HTML 或未提供源来生成 HTML 或 PDF。可能出了问题！</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.12625" target="_blank">KnowAct-GUIClaw: Know Deeply, Act Perfectly, Personal GUI Assistant with Self-Evolving Memory and Skill</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Lychee Team</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yunxin Li, Jinchao Li, Shibo Su, Zhenran Xu, Chenrui Zhao</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.12625" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.12625" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.12625.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  OpenClaw has emerged as a leading agent framework for complex task automation, yet it faces insufficient cross-platform GUI interaction support and a well-built self-evolution mechanism. These flaws limit its adaptation to diverse device ecosystems and prevent performance improvements through continuous learning from execution experience. To resolve these issues, we propose the Know Deeply, Act Perfectly paradigm for personal assistants, which holds that accumulated user interaction and task-running experience directly improve execution accuracy and efficiency, unifying cognitive comprehension and operational execution. Based on this paradigm, we introduce KnowAct-GUIClaw, a novel Know-Route-Act-Reflect framework designed to address OpenClaw's GUI manipulation deficits and break through its cross-platform and recursive self-improvement constraints. First, the host agent leverages accumulated interaction experience and task-relevant knowledge for long-horizon task decomposition and allocation (Know). Second, a pluggable GUI subagent with an experience-attributable memory system (Know) and self-evolving skill library (Act), enabling seamless cross-platform migration and fast-path integration. Especially, this framework continuously stores user profiles and feedback to improve the accuracy of task decomposition and tool calls. Extensive experiments across Android, iOS, HarmonyOS and Windows show that KnowAct-GUIClaw achieves superior efficiency, accuracy and cross-platform adaptability. Especially, the GUIClaw with open-source Kimi-2.6 models achieves the best performance (64.1%) on the long-horizon MobileWorld benchmark, beating all agentical frameworks and closed-source agentical models, e.g., Seed-2.0-Pro and GPT-5.5. Additionally, the knowledgeable memory and execution skills supported by our framework are transferable across diverse base models, improving by 8.5% with Kimi-2.6.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 OpenClaw已经成为复杂任务自动化领域领先的代理框架，但它面临着跨平台GUI交互支持不足和完善的自我进化机制的问题。这些缺陷限制了其对不同设备生态系统的适应，并阻碍了通过不断学习执行经验来提高性能。为了解决这些问题，我们提出了个人助理的“深知、完美行动”范式，认为积累的用户交互和任务运行经验直接提高执行的准确性和效率，统一认知理解和操作执行。基于此范式，我们引入了KnowAct-GUIClaw，这是一种新颖的Know-Route-Act-Reflect框架，旨在解决OpenClaw的GUI操作缺陷并突破其跨平台和递归自我改进的限制。首先，主机代理利用积累的交互经验和任务相关知识进行长期任务分解和分配（Know）。其次，可插拔的 GUI 子代理具有经验归因记忆系统 (Know) 和自我进化技能库 (Act)，可实现无缝跨平台迁移和快速路径集成。特别是，该框架持续存储用户配置文件和反馈，以提高任务分解和工具调用的准确性。跨Android、iOS、HarmonyOS和Windows的广泛实验表明KnowAct-GUIClaw实现了卓越的效率、准确性和跨平台适应性。特别是，采用开源 Kimi-2.6 模型的 GUIClaw 在长期 MobileWorld 基准测试中实现了最佳性能 (64.1%)，击败了所有代理框架和闭源代理模型，例如 Seed-2.0-Pro 和 GPT-5.5。此外，我们的框架支持的知识记忆和执行技能可以在不同的基础模型之间转移，在 Kimi-2.6 中提高了 8.5%。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  15    Add to collection      Community         YunxinLi   Paper submitter    about 1 hour ago         Recursive Self-improvement Personal assistant with self-evolving memory and skill for long-horizon, cross-application GUI workflows.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 15 添加到集合 社区 YunxinLi 论文提交者 大约 1 小时前 递归自我改进 具有自我进化记忆和技能的个人助理，适用于长期、跨应用程序 GUI 工作流程。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.13639" target="_blank">OvisOCR2 Technical Report</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Shiyin Lu, Yinglun Li, Yu Xia, Yuhui Chen, An-Yang Ji</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.13639" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.13639" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.13639.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  We introduce OvisOCR2, a 0.8B document parsing model. OvisOCR2 is designed as an end-to-end parser: given a document page image, it generates a Markdown representation in natural reading order, covering text, formulas, tables, and visual regions. We build a data engine that combines filtered real-document annotations with synthetic pages whose rendered images and Markdown targets are derived from the same HTML source. The training recipe includes supervised fine-tuning, reinforcement learning on a 4B branch with a multi-component reward design, on-policy distillation into the 0.8B model, and model fusion. On OmniDocBench v1.6, OvisOCR2 achieves a state-of-the-art overall score of 96.58, placing an end-to-end model at the top of this leaderboard previously dominated by pipeline methods and highlighting the potential of end-to-end document parsing. On PureDocBench, OvisOCR2 also achieves the highest Avg3 score of 75.06. Beyond these two public benchmarks, we evaluate OvisOCR2 on an in-house benchmark designed to cover a broader set of long-tail and challenging scenarios. OvisOCR2 obtains the best overall performance among the compared methods, providing further evidence of its generalization and robustness. OvisOCR2 is available at https://huggingface.co/ATH-MaaS/OvisOCR2.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 我们介绍OvisOCR2，一个0.8B的文档解析模型。 OvisOCR2 被设计为端到端解析器：给定文档页面图像，它以自然阅读顺序生成 Markdown 表示，涵盖文本、公式、表格和可视区域。我们构建了一个数据引擎，将过滤后的真实文档注释与合成页面相结合，合成页面的渲染图像和 Markdown 目标源自相同的 HTML 源。训练方法包括监督微调、在 4B 分支上采用多组件奖励设计的强化学习、在策略蒸馏到 0.8B 模型以及模型融合。在 OmniDocBench v1.6 上，OvisOCR2 取得了 96.58 的最高总分，将端到端模型置于之前由管道方法主导的排行榜顶部，凸显了端到端文档解析的潜力。在 PureDocBench 上，OvisOCR2 也取得了最高的 Avg3 分数 75.06。除了这两个公共基准之外，我们还根据内部基准评估 OvisOCR2，该基准旨在涵盖更广泛的长尾和具有挑战性的场景。 OvisOCR2 在比较方法中获得了最佳的整体性能，进一步证明了其泛化性和鲁棒性。 OvisOCR2 可在 https://huggingface.co/ATH-MaaS/OvisOCR2 上获取。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community   EditPreview      Upload images, audio, and videos by dragging in the text input, pasting, or clicking here. Tap or paste here to upload images        Comment · Sign up or log in to comment</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 EditPreview 通过拖入文本输入、粘贴或单击此处上传图像、音频和视频。点击或粘贴此处上传图片 评论 · 注册或登录以发表评论</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.05910" target="_blank">PolicyShiftGuard: Benchmarking and Improving Policy-Adaptive Image Guardrails</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Fudan University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Mingyang Song, Luxin Xu, Haoyu Sun, Minzhou Pan, Yu Cheng</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.05910" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.05910" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.05910.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Image guardrails are typically trained and evaluated under a fixed safety policy, implicitly treating safety as an intrinsic property of an image. Real deployments are different: the same image may be allowed in one product, restricted in another, and newly disallowed when a policy boundary changes. We study policy-adaptive image guardrailing, where a model must decide whether an image violates the currently supplied policy and generalize to held-out policy definitions. We introduce PolicyShiftBench, a comprehensive benchmark with 2,000 policy-discriminative instances over 265 images, where each image is paired with 7.55 policy-conditioned prompts on average to test whether models adapt to the active policy rather than relying on image-level safety priors. We then propose PolicyShiftGuard, a compact policy-conditioned guardrail trained with a two-stage training recipe that combines Randomized Policy SFT (RP-SFT) with Boundary-Pair Policy Adaptation (BP-Adapt). BP-Adapt trains matched prompts for the same image and risk category using standard label supervision and a pairwise comparison loss that separates blocking policies from passing policies. Experiments show that existing VLMs and specialized guardrails remain brittle under policy shifts, while PolicyShiftGuard substantially improves policy-sensitive performance. The 7B model achieves SOTA performance of 76.9 Avg. F1 and 72.1 Avg. PSS on PolicyShiftBench, transfers well to UnSafeBench and SafeEditBench, and improves the latency-performance trade-off with a concise output format. Ablations confirm that matched pass/block boundary pairs are essential for stable policy adaptation.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 图像护栏通常在固定的安全策略下进行训练和评估，隐式地将安全视为图像的固有属性。实际部署是不同的：相同的映像可能在一个产品中被允许，在另一种产品中受到限制，并且当策略边界发生变化时新被禁止。我们研究策略自适应图像护栏，其中模型必须决定图像是否违反当前提供的策略并推广到保留的策略定义。我们引入了PolicyShiftBench，这是一个综合基准测试，包含超过 265 个图像的 2,000 个策略判别实例，其中每个图像平均与 7.55 个策略条件提示配对，以测试模型是否适应主动策略，而不是依赖于图像级安全先验。然后，我们提出了PolicyShiftGuard，这是一种紧凑的策略条件护栏，采用两阶段训练方案进行训练，将随机策略SFT（RP-SFT）与边界对策略适应（BP-Adapt）相结合。 BP-Adapt 使用标准标签监督和成对比较损失来训练匹配相同图像和风险类别的提示，该损失将阻止策略与通过策略分开。实验表明，现有的 VLM 和专门的护栏在策略转变下仍然很脆弱，而 PolicyShiftGuard 则大大提高了策略敏感的性能。 7B 模型实现了 76.9 Avg 的 SOTA 性能。 F1 和 72.1 平均PolicyShiftBench 上的 PSS 可以很好地转移到 UnSafeBench 和 SafeEditBench，并通过简洁的输出格式改善延迟性能权衡。消融证实匹配的通过/块边界对对于稳定的策略适应至关重要。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  20    Add to collection     Community         hitsmy   Paper submitter    31 minutes ago         A policy-adaptive guardrail model training and evaluation recipe</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 20 添加到集合 社区 hitmy 论文提交者 31 分钟前 策略自适应护栏模型训练和评估秘诀</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.13960" target="_blank">GigaWorld-Policy-0.5: A Faster and Stronger WAM Empowered by AutoResearch</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>GigaAI</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>GigaWorld Team, Angen Ye, Angyuan Ma, Boyuan Wang, Chaojun Ni</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.13960" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.13960" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.13960.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  World Action Models (WAMs) improve robot policy learning by jointly modeling actions and future visual observations, using future scene evolution as dense supervision for physically grounded action generation. However, a common design in existing WAMs is to explicitly generate future videos at inference time, incurring substantial computational overhead and hindering real-time closed-loop deployment. GigaWorld-Policy addresses this issue with an action-centered formulation, where future visual dynamics are used during training while action-only decoding is used at inference time. Building upon this framework, we present GigaWorld-Policy-0.5, an enhanced action-centered WAM designed for more efficient robot control. During pretraining, GigaWorld-Policy-0.5 adopts a mixed Action-Conditioned World Modeling (AC-WM) and WAM training strategy. This strengthens the coupling between visual dynamics and robot actions and improves the transferability of action representations for downstream policy learning. For efficient inference, GigaWorld-Policy-0.5 introduces a Mixture-of-Transformers architecture that separates visual dynamics modeling and action generation into specialized experts, reducing active computation during action-only inference and achieving 85 ms inference latency on a local RTX 4090 setup. In addition, we employ an agent-based AutoResearch pipeline to systematically search training configurations, enabling more efficient identification of optimal experimental setups while reducing the time and manual intervention required for hyperparameter tuning. Experiments and ablations show that GigaWorld-Policy-0.5 preserves the training benefits of future visual dynamics while improving inference efficiency for robot control.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要世界动作模型（WAM）通过联合建模动作和未来视觉观察来改进机器人策略学习，使用未来场景演化作为物理基础动作生成的密集监督。然而，现有 WAM 的常见设计是在推理时显式生成未来视频，这会产生大量计算开销并阻碍实时闭环部署。 GigaWorld-Policy 通过以动作为中心的公式解决了这个问题，其中在训练期间使用未来的视觉动态，而在推理时使用仅动作解码。在此框架的基础上，我们推出了 GigaWorld-Policy-0.5，这是一种增强的以动作为中心的 WAM，旨在实现更高效的机器人控制。在预训练过程中，GigaWorld-Policy-0.5采用混合动作条件世界建模（AC-WM）和WAM训练策略。这加强了视觉动力学和机器人动作之间的耦合，并提高了下游策略学习的动作表示的可转移性。为了实现高效推理，GigaWorld-Policy-0.5 引入了 Mixture-of-Transformers 架构，将视觉动态建模和动作生成分离给专门的专家，减少仅动作推理期间的主动计算，并在本地 RTX 4090 设置上实现 85 毫秒的推理延迟。此外，我们采用基于代理的自动研究管道来系统地搜索训练配置，从而能够更有效地识别最佳实验设置，同时减少超参数调整所需的时间和手动干预。实验和消融表明，GigaWorld-Policy-0.5 保留了未来视觉动态的训练优势，同时提高了机器人控制的推理效率。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page   Add to collection     Community         Jeff-Wang   Paper submitter    22 minutes ago         GigaWorld-Policy-0.5: A Faster and Stronger WAM Empowered by AutoResearch</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 添加到收藏集 社区 Jeff-Wang 论文提交者 22 分钟前 GigaWorld-Policy-0.5：由 AutoResearch 提供支持的更快更强的 WAM</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.12000" target="_blank">MetaView: Monocular Novel View Synthesis with Scale-Aware Implicit Geometry Priors</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Kolors Team, Kuaishou Technology</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yufei Cai, Xuesong Niu, Hao Lu, Kun Gai, Kai Wu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.12000" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.12000" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.12000.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Current visual generation models are capable of producing high-quality content, yet they lack a coherent perception of the spatial structure. Existing generative novel view synthesis methods typically introduce explicit geometry priors, which enforce spatial consistency but inherently restrict generalization in large view changes. In contrast, recent interactive generative methods favor implicit scene modeling, offering greater flexibility at the cost of precise camera control and geometry consistency. In this paper, we propose MetaView, a diffusion-based monocular novel view synthesis framework that enables rendering under large view changes from a single image. Our key insight is to combine implicit geometry modeling with minimal yet essential explicit 3D cues: we incorporate implicit geometry priors from a feed-forward geometry perception network to regularize structure without imposing restrictive reconstruction pipelines, while leveraging metric depth to anchor the generation to a metric scale. This design allows MetaView to achieve both geometry consistency and precise controllability. Extensive experiments demonstrate that, under challenging monocular large viewpoint changes, MetaView significantly outperforms existing methods and exhibits superior generalization. Our code is publicly available at https://github.com/KlingAIResearch/MetaView.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 当前的视觉生成模型能够生成高质量的内容，但缺乏对空间结构的连贯感知。现有的生成新颖视图合成方法通常引入显式几何先验，这增强了空间一致性，但本质上限制了大视图变化中的泛化。相比之下，最近的交互式生成方法有利于隐式场景建模，以牺牲精确的相机控制和几何一致性为代价提供更大的灵活性。在本文中，我们提出了 MetaView，一种基于扩散的单目新颖视图合成框架，可以在单个图像的大视图变化下进行渲染。我们的主要见解是将隐式几何建模与最小但必要的显式 3D 线索相结合：我们将来自前馈几何感知网络的隐式几何先验结合起来，以在不施加限制性重建管道的情况下规范结构，同时利用度量深度将生成锚定到度量尺度。这种设计使得MetaView能够同时实现几何一致性和精确的可控性。大量实验表明，在具有挑战性的单眼大视点变化下，MetaView 显着优于现有方法并表现出卓越的泛化能力。我们的代码可在 https://github.com/KlingAIResearch/MetaView 上公开获取。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub     Add to collection     Community         KaiiWuu1993   Paper submitter    13 minutes ago         Current visual generation models are capable of producing high-quality content, yet they lack a coherent perception of the spatial structure. Existing generative novel view synthesis methods typically introduce explicit geometry priors, which enforce spatial consistency but inherently restrict generalization in large view changes. In contrast, recent interactive generative methods favor implicit scene modeling, offering greater flexibility at the cost of precise camera control and geometry consistency. In this work, we propose MetaView, a diffusion-based monocular novel view synthesis framework that enables rendering under large view changes from a single image. Our key insight is to combine implicit geometry modeling with minimal yet essential explicit 3D cues: we incorporate implicit geometry priors from a feed-forward geometry perception network to regularize structure without imposing restrictive reconstruction pipelines, while leveraging metric depth to anchor the generation to a metric scale. This design allows MetaView to achieve both geometry consistency and precise controllability. Extensive experiments demonstrate that, under challenging monocular large viewpoint changes, MetaView significantly outperforms existing methods and exhibits superior generalization.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 添加到集合 社区 KaiiWuu1993 论文提交者 13 分钟前 当前的视觉生成模型能够生成高质量的内容，但缺乏对空间结构的连贯感知。现有的生成新颖视图合成方法通常引入显式几何先验，这增强了空间一致性，但本质上限制了大视图变化中的泛化。相比之下，最近的交互式生成方法有利于隐式场景建模，以牺牲精确的相机控制和几何一致性为代价提供更大的灵活性。在这项工作中，我们提出了 MetaView，一种基于扩散的单目新颖视图合成框架，可以在单个图像的大视图变化下进行渲染。我们的主要见解是将隐式几何建模与最小但必要的显式 3D 线索相结合：我们将来自前馈几何感知网络的隐式几何先验结合起来，以在不施加限制性重建管道的情况下规范结构，同时利用度量深度将生成锚定到度量尺度。这种设计使得MetaView能够同时实现几何一致性和精确的可控性。大量实验表明，在具有挑战性的单眼大视点变化下，MetaView 显着优于现有方法并表现出卓越的泛化能力。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2605.16147" target="_blank">Registers Matter for Pixel-Space Diffusion Transformers</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Yandex Research</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Nikita Starodubcev, Ilia Sudakov, Ilya Drobyshevskiy, Artem Babenko, Dmitry Baranchuk</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2605.16147" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2605.16147" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2605.16147.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Vision Transformers (ViTs) are known to exhibit high-norm patch-token outliers that degrade feature map quality, a problem effectively mitigated by register tokens. As diffusion models increasingly adopt transformer architectures and move toward pixel-space training, they become closer in form to ViTs, raising the question of whether register tokens are also useful for Diffusion Transformers (DiTs). In this work, we show that DiTs differ from ViTs in a key respect: they do not exhibit patch-token outliers but still benefit from registers. Interestingly, registers are more effective in pixel-space DiTs than in latent-space DiTs. By analyzing intermediate representations, we find that register tokens produce cleaner feature maps at high noise levels, which may contribute to their effectiveness in pixel-space generation. We further observe that recent pixel-space DiT architectures implicitly incorporate register-like mechanisms, which may partially account for their strong empirical performance. Motivated by these observations, we propose Register Guidance, a technique that amplifies the contribution of register tokens responsible for improving visual structure and coherence.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">众所周知，抽象视觉变换器 (ViT) 会表现出高范数补丁令牌异常值，从而降低特征图质量，这一问题可以通过寄存器令牌有效缓解。随着扩散模型越来越多地采用 Transformer 架构并转向像素空间训练，它们在形式上变得更接近 ViT，这就提出了寄存器令牌是否对扩散变压器 (DiT) 也有用的问题。在这项工作中，我们证明 DiT 与 ViT 在一个关键方面有所不同：它们不表现出补丁令牌异常值，但仍然受益于寄存器。有趣的是，寄存器在像素空间 DiT 中比在潜在空间 DiT 中更有效。通过分析中间表示，我们发现寄存器标记在高噪声水平下产生更清晰的特征图，这可能有助于它们在像素空间生成中的有效性。我们进一步观察到，最近的像素空间 DiT 架构隐式地结合了类似寄存器的机制，这可能部分解释了它们强大的经验性能。受这些观察的启发，我们提出了注册指导（Register Guidance），这是一种放大注册标记的贡献的技术，该标记负责改善视觉结构和连贯性。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  7    Add to collection     Community   EditPreview      Upload images, audio, and videos by dragging in the text input, pasting, or clicking here. Tap or paste here to upload images        Comment · Sign up or log in to comment</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 7 添加到集合 社区 EditPreview 通过拖入文本输入、粘贴或单击此处上传图像、音频和视频。点击或粘贴此处上传图片 评论 · 注册或登录以发表评论</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.13104" target="_blank">Self-Improvements in Modern Agentic Systems: A Survey</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Zhe Ren, Yimeng Chen, Dandan Guo, Guowei Rong, Tonghui Li</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.13104" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.13104" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.13104.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Self-improving autonomous agents are moving from research prototypes to deployed systems. The primary goal is controllable evolution, or adaptation, from experience with minimal or even no human input. This survey frames modern self-improving agents as adaptive systems that convert experience into accumulated capability gains. We offer a system-level framework that represents a modern agent as a configuration coupling a foundation model with an operational scaffold of prompts, memory, tools, and control logic. Within this framework, self-improvement is formalized as a self-induced update operator that obtains and commits updates to model parameters or scaffold components. We organize prior work by update target and by the signals that drive change, then review applications and discuss evaluation, before closing with open problems and future directions. For convenience, we track technical updates on https://github.com/selfimproving-agent/awesome-Self-Improving-Agents.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 自我改进的自主代理正在从研究原型转向部署系统。主要目标是通过最少甚至没有人类输入的经验实现可控的进化或适应。这项调查将现代自我改进代理视为自适应系统，将经验转化为累积的能力增益。我们提供了一个系统级框架，它将现代代理表示为将基础模型与提示、内存、工具和控制逻辑的操作支架耦合起来的配置。在这个框架内，自我改进被形式化为一个自我诱导的更新操作符，它获取并提交对模型参数或脚手架组件的更新。我们通过更新目标和推动变革的信号来组织先前的工作，然后审查应用程序并讨论评估，然后结束未解决的问题和未来的方向。为了方便起见，我们在 https://github.com/selfimproving-agent/awesome-Self-Improving-Agents 上跟踪技术更新。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  10    Add to collection      Community         Ray368   Paper submitter    about 1 hour ago         We present a unified framework for self-improving agents, defining an agent as a foundation model plus scaffolding and organizing existing methods by what is improved: the foundation model or the scaffolding, including prompts, memory, tools, and control logic.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 10 添加到集合 社区 Ray368 论文提交者 大约 1 小时前 我们提出了一个自我改进代理的统一框架，将代理定义为基础模型加脚手架，并通过改进的内容来组织现有方法：基础模型或脚手架，包括提示、内存、工具和控制逻辑。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.13124" target="_blank">ShortOPD: Recovering Pruned LLMs with Short-to-Long On-Policy Distillation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>ByteDance</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Qingyu Zhang, Qianhao Yuan, Hongyu Lin, Yaojie Lu, Xianpei Han</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.13124" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.13124" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.13124.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Structured pruning is a hardware-friendly way to compress LLMs, but it is mostly validated on multiple-choice recognition tasks, while the same compressed checkpoints can collapse on the free-form generation that deployment actually requires. Two observations trace this gap. First, greedy pass@1 nearly vanishes after compression, yet pass@k recovers substantially under repeated sampling: useful generations are demoted, not erased. Second, the recoverable regime fails mainly through suffix repetition. Recovery should therefore train on the compressed model's own on-policy states with dense token-level supervision, which On-Policy Distillation (OPD) provides by reusing the pre-compression model as a frozen teacher. However, long on-policy rollouts spend early recovery budget on low-information repetitive suffixes, delaying loss descent. To mitigate this waste, we propose \shortopd, a short-to-long OPD schedule that detects teacher-confirmed repetitive suffixes, treats the surviving prefix as each rollout's effective length, and allocates future rollout budgets to the effective lengths the policy can currently use. Across math, code, and open-ended generation, \shortopd\ raises the compressed model's score to about 9times its unrecovered value and 1.6--4.4times standard recovery recipes (SFT w/o KD, KD, and SeqKD), and it matches a fixed 8192-token rollout horizon within two points using a quarter of the training time (8.5 vs.\ 35.9 hours) and 71% fewer rollout tokens. We hope this recipe helps move structured pruning beyond marginal gains on perplexity and multiple-choice benchmarks, a step closer to deployment-ready generation quality.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 结构化剪枝是一种硬件友好的压缩 LLM 的方法，但它主要在多项选择识别任务上进行验证，而相同的压缩检查点可能会在部署实际需要的自由形式生成上崩溃。有两个观察结果追踪了这一差距。首先，贪婪的 pass@1 在压缩后几乎消失，但 pass@k 在重复采样下大幅恢复：有用的代被降级，而不是被删除。其次，可恢复机制的失败主要是由于后缀重复。因此，恢复应该通过密集的令牌级监督来训练压缩模型自身的同策略状态，这是同策略蒸馏（OPD）通过重用压缩前模型作为冻结教师来提供的。然而，长期的保单部署将早期恢复预算花费在低信息重复后缀上，从而延迟了损失下降。为了减少这种浪费，我们提出 \shortopd，一种从短到长的 OPD 计划，它可以检测教师确认的重复后缀，将幸存的前缀视为每次推出的有效长度，并将未来的推出预算分配给策略当前可以使用的有效长度。在数学、代码和开放式生成方面，\shortopd\ 将压缩模型的分数提高到其未恢复值的约 9 倍，是标准恢复方案的 1.6--4.4 倍（SFT 无 KD、KD 和 SeqKD），并且它使用四分之一的训练时间（8.5 小时 vs.\ 35.9 小时）在两点内匹配固定的 8192 代币推出范围，减少了 71%推出代币。我们希望这个方法有助于使结构化修剪超越复杂性和多项选择基准的边际收益，更接近部署就绪的生成质量。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community         zhangqingyu   Paper submitter    39 minutes ago • edited 29 minutes ago        We hope structured pruning research will move beyond multiple-choice benchmarks and pay greater attention to recovering free-form generation capabilities. In this work, we introduce ShortOPD to restore the generative performance of pruned models. This is ongoing work, and we plan to evaluate it on more model families.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到收藏 社区 zhangqingyu 论文提交者 39 分钟前 • 编辑于 29 分钟前 我们希望结构化剪枝研究能够超越多项选择基准，更加注重恢复自由形式生成能力。在这项工作中，我们引入了 ShortOPD 来恢复剪枝模型的生成性能。这是一项正在进行的工作，我们计划在更多模型家庭上对其进行评估。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.12752" target="_blank">Hallo4D: Multi-Modal Hallucination Mitigation for Consistent Spatio-Temporal Generation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Hongbo Wang, Huaibo Huang, Jie Cao, Jin Liu, Haoyang Tong</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.12752" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.12752" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.12752.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  While recent advances in 3D generation have enabled impressive visual synthesis, existing methods often rely on 2D diffusion supervision without explicit mechanisms for geometric consistency, leading to spatial hallucinations such as duplicated structures and misaligned geometry. These issues become more severe in 4D generation, where maintaining consistency across viewpoints and temporal evolution introduces additional challenges, including jitter, identity flicker, and structural drift. We present Hallo4D, a unified and model-agnostic framework for mitigating spatiotemporal hallucinations in 3D and 4D content generation. Hallo4D introduces a generation-detection-correction paradigm that leverages large multimodal language models (LMMs) to identify and summarize spatial and temporal inconsistencies from multi-view and multi-frame renderings. These insights guide a consensus-driven image-space consistency optimization, where an LMM-based selector evaluates candidate corrections through multi-model voting, without requiring retraining or architectural modifications. To further improve temporal consistency and optimization efficiency, Hallo4D incorporates motion-aware keyframe sampling, LMM-guided initialization, and appearance alignment. We additionally introduce exposure-aware optimization and visibility pruning to enhance robustness under challenging viewpoints. Extensive experiments demonstrate that Hallo4D consistently outperforms strong baselines across diverse 3D and 4D generation settings, providing a scalable and generalizable solution for consistency-aware content generation.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：虽然 3D 生成的最新进展已经实现了令人印象深刻的视觉合成，但现有方法通常依赖于 2D 扩散监督，而没有明确的几何一致性机制，从而导致空间幻觉，例如重复的结构和未对齐的几何形状。这些问题在 4D 生成中变得更加严重，其中保持视点和时间演化的一致性会带来额外的挑战，包括抖动、身份闪烁和结构漂移。我们推出 Hallo4D，这是一个与模型无关的统一框架，用于减轻 3D 和 4D 内容生成中的时空幻觉。 Hallo4D 引入了一种生成-检测-校正范例，利用大型多模态语言模型 (LMM) 来识别和总结多视图和多帧渲染中的空间和时间不一致。这些见解指导共识驱动的图像空间一致性优化，其中基于 LMM 的选择器通过多模型投票评估候选校正，无需重新训练或架构修改。为了进一步提高时间一致性和优化效率，Hallo4D 结合了运动感知关键帧采样、LMM 引导初始化和外观对齐。我们还引入了曝光感知优化和可见性修剪，以增强在具有挑战性的观点下的鲁棒性。大量实验表明，Hallo4D 在不同的 3D 和 4D 生成设置中始终优于强大的基线，为一致性感知内容生成提供了可扩展且通用的解决方案。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub     Add to collection     Community         wafer-bob   Paper submitter    22 minutes ago         Excited to introduce Hallo4D, the latest addition to our Hallo series!</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 添加到集合 社区 Wafer-bob 论文提交者 22 分钟前 很高兴介绍 Hallo4D，这是我们 Hallo 系列的最新成员！</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.13705" target="_blank">AgentCompass: A Unified Evaluation Infrastructure for Agent Capabilities</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>OpenCompass</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Zichen Ding, Jiaye Ge, Shufan Jiang, Kai Chen, Mo Li</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.13705" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.13705" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.13705.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  As Large Language Models (LLMs) evolve into autonomous agents, the need for unified evaluation infrastructure becomes critical. However, current evaluation pipelines remain highly fragmented and tightly coupled, hindering reproducibility and causing redundant engineering. To address this, we introduce AgentCompass, an open-source, lightweight, and extensible infrastructure for evaluating LLM-based agents. AgentCompass organizes the evaluation process around three independent components, namely Benchmark, Harness, and Environment, thereby enabling flexible configurations without requiring the reimplementation of complex execution logic. Furthermore, it features a fault-tolerant asynchronous runtime and comprehensive trajectory analysis tools to transparently diagnose nuanced failure modes like reward-hacking. Natively supporting over 20 benchmarks across five capability dimensions, AgentCompass provides the community with a scalable and reproducible infrastructure for advancing agent research.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 随着大型语言模型（LLM）发展成为自治代理，对统一评估基础设施的需求变得至关重要。然而，当前的评估流程仍然高度分散且紧密耦合，阻碍了可重复性并导致冗余工程。为了解决这个问题，我们引入了 AgentCompass，这是一个开源、轻量级且可扩展的基础设施，用于评估基于 LLM 的代理。 AgentCompass围绕三个独立的组件（即Benchmark、Harness和Environment）组织评估过程，从而实现灵活的配置，而无需重新实现复杂的执行逻辑。此外，它还具有容错异步运行时和全面的轨迹分析工具，可以透明地诊断奖励黑客等细微的故障模式。 AgentCompass 本身支持跨五个功能维度的 20 多个基准，为社区提供了可扩展和可复制的基础设施，以推进代理研究。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub  30    Add to collection     Community         Tsumugii   Paper submitter    about 1 hour ago         AgentCompass is an extensible open-source evaluation infrastructure for systematically assessing LLM/VLM agent capabilities.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF GitHub 30 添加到集合 社区 Tsumugii 论文提交者 大约 1 小时前 AgentCompass 是一个可扩展的开源评估基础设施，用于系统地评估 LLM/VLM 代理能力。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.12747" target="_blank">Tracing Agentic Failure from the Flow of Success</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Samuel Yeh, Yiwen Zhu, Shaleen Deep, Sharon Li</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.12747" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.12747" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.12747.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Failure attribution for LLM-based agentic systems, i.e., identifying which steps in a failure trajectory caused the task to fail, is critical for debugging and improving these systems. Existing approaches either rely on prompting-based pipelines, which are computationally expensive, or require post-training on failure trajectories with step-level error annotations, which are costly to collect and difficult to scale. We argue that a practical failure attribution model should be lightweight and trainable without step-level supervision on failure data. To this end, we address unsupervised failure attribution, i.e., training exclusively on successful trajectories and identifying error steps at inference time given a failure trajectory. We propose OAT, which casts this problem as one-class learning with neural controlled differential equations, modeling the dynamical pattern of successful trajectories in latent space. At inference time, each step in a failure trajectory is assigned an anomaly score based on its deviation from the dynamics learned on successful trajectories, which is then used to form a set of error steps. With training on only 100 successful trajectories, experiments show that OAT is 200--5000 times faster than prompting-based baselines, and, at the same time, consistently outperforms them in both in-domain and out-of-distribution datasets with +20% and +7% F1 scores, respectively, demonstrating that OAT is a promising and efficient direction for diagnosing agentic system failures.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 基于 LLM 的代理系统的故障归因，即识别故障轨迹中的哪些步骤导致任务失败，对于调试和改进这些系统至关重要。现有的方法要么依赖于基于提示的管道，这在计算上是昂贵的，要么需要使用步骤级错误注释对故障轨迹进行后期训练，这收集起来成本很高并且难以扩展。我们认为，实际的故障归因模型应该是轻量级的且可训练的，无需对故障数据进行步骤级监督。为此，我们解决了无监督的故障归因问题，即专门针对成功轨迹进行训练，并在给定故障轨迹的推理时识别错误步骤。我们提出了 OAT，它将这个问题转化为神经控制微分方程的一类学习，对潜在空间中成功轨迹的动态模式进行建模。在推理时，失败轨迹中的每个步骤都会根据其与成功轨迹上学到的动态的偏差分配一个异常分数，然后使用该分数形成一组错误步骤。通过仅对 100 个成功轨迹进行训练，实验表明 OAT 比基于提示的基线快 200--5000 倍，同时在域内和分布外数据集中始终优于它们，F1 分数分别为 +20% 和 +7%，这表明 OAT 是诊断代理系统故障的一个有前途且有效的方向。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community         samuelyeh   Paper submitter    about 1 hour ago         When an LLM agent fails on a long-horizon task, pinpointing which step caused the failure is hard. Existing approaches either rely on expensive prompting pipelines or require costly step-level annotated failure data to train on.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 samuelyeh 论文提交者 大约 1 小时前 当 LLM 代理在长期任务中失败时，很难查明哪一步导致了失败。现有方法要么依赖昂贵的提示管道，要么需要昂贵的步骤级带注释的故障数据来进行训练。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.11523" target="_blank">Vinci2: Providing Proactive Assistance in Continuous Egocentric Videos</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>The University of Tokyo</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Gong Sitong, Tianyu Yan, Caixin Kang, Bo Zheng, Xiang Ruan</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.11523" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.11523" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.11523.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  When should an intelligent assistant speak up without being asked? Continuous egocentric video offers rich, evolving context that enables a new form of assistance: one that is proactive rather than merely reactive. Yet existing approaches either wait passively for user queries or treat every detected event as requiring a response, without considering the user's history, current activity, or whether assistance would actually be welcome. We reframe proactive assistance as a context-dependent decision problem: the agent must not only perceive what is happening, but reason over accumulated temporal context to determine when and whether to intervene. To this end, we present Vinci2, a proactive egocentric assistance system that advances the on-device assistant Vinci from reactive response toward proactivity. On the evaluation side, we present EgoServe, the first large-scale benchmark for proactive assistance in continuous egocentric video. EgoServe comprises over 3,000 service instances organized along 4 temporal memory horizons, ranging from immediate safety alerts to long-term habit coaching, across 10 service categories. On the modeling side, we propose EgoMemo, a training-free, memory-augmented agent that maintains three complementary memory representations: multi-scale temporal summaries, a semantic knowledge graph, and visual embedding archives. At each timestep, EgoMemo performs retrieval-augmented reasoning to determine whether assistance is warranted and, if so, produces contextually grounded responses. Experiments demonstrate that EgoMemo establishes strong baselines on EgoServe while remaining competitive on existing egocentric benchmarks. Our benchmark and code are publicly available at https://sitonggong.github.io/EgoServe-page/{Vinci2}.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 智能助理什么时候应该在没有被询问的情况下说话？连续的以自我为中心的视频提供了丰富的、不断发展的背景，从而实现了一种新形式的帮助：一种主动的而不是仅仅被动的帮助。然而，现有的方法要么被动地等待用户查询，要么将每个检测到的事件视为需要响应，而不考虑用户的历史记录、当前活动，或者是否实际上会欢迎帮助。我们将主动协助重新定义为依赖于上下文的决策问题：代理不仅必须感知正在发生的事情，还必须根据累积的时间上下文进行推理，以确定何时以及是否进行干预。为此，我们推出了 Vinci2，这是一种主动的以自我为中心的辅助系统，可将设备上的助手 Vinci 从被动响应提升为主动响应。在评估方面，我们推出了 EgoServe，这是第一个针对连续自我中心视频主动协助的大型基准。 EgoServe 包含 3,000 多个服务实例，按照 4 个时间记忆范围组织，范围从即时安全警报到长期习惯指导，涵盖 10 个服务类别。在建模方面，我们提出了 EgoMemo，这是一种免训练的记忆增强代理，它维护三种互补的记忆表示：多尺度时间摘要、语义知识图和视觉嵌入档案。在每个时间步长，EgoMemo 都会执行检索增强推理，以确定是否需要提供帮助，如果需要，则生成基于上下文的响应。实验表明，EgoMemo 在 EgoServe 上建立了强大的基准，同时在现有的以自我为中心的基准上保持竞争力。我们的基准测试和代码可在 https://sitonggong.github.io/EgoServe-page/{Vinci2} 上公开获取。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  2    Add to collection     Community         Ukpkmkkk   Paper submitter    42 minutes ago         🎯 Vinci2: Proactive Assistance in Continuous Egocentric Videos (ECCV 2026)</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 2 添加到集合 社区 Ukpkmkkk 论文提交者 42 分钟前 🎯 Vinci2：连续自我中心视频中的主动协助 (ECCV 2026)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.13431" target="_blank">Discrete Diffusion Models: A Unified Framework from Tokenization to Generation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>AAAAA Academia Attractions</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Ye Yuan, Weien Li, Rui Song, Zeyu Li, Haochen Liu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.13431" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.13431" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.13431.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Discrete denoising diffusion models (DDMs) have recently emerged as a compelling alternative to autoregressive (AR) modeling for discrete data, offering parallel generation and iterative global refinement capabilities. Unlike continuous diffusion, where the state space is fixed, DDMs are fundamentally shaped by how the discrete state space is constructed: the tokenization scheme, the vocabulary topology, and domain-specific structural alphabets. This work introduces a unified conceptual framework that views discrete diffusion models through the construction of the underlying discrete state space. Within this framework, existing formulations, including transition-matrix, masking/absorbing-state, and score/ratio-based approaches, emerge as different instantiations of a common design space. The framework further exposes common design trade-offs across training objectives, inference algorithms, scaling behavior, systems optimization, and evaluation protocols, suggesting several promising directions for future research.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 离散去噪扩散模型 (DDM) 最近已成为离散数据自回归 (AR) 建模的引人注目的替代方案，提供并行生成和迭代全局细化功能。与状态空间固定的连续扩散不同，DDM 从根本上是由离散状态空间的构造方式决定的：标记化方案、词汇拓扑和特定领域的结构字母表。这项工作引入了一个统一的概念框架，通过构建底层离散状态空间来查看离散扩散模型。在此框架内，现有的公式，包括过渡矩阵、掩蔽/吸收状态和基于分数/比率的方法，作为公共设计空间的不同实例出现。该框架进一步揭示了训练目标、推理算法、缩放行为、系统优化和评估协议之间的常见设计权衡，为未来研究提出了几个有希望的方向。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub  2    Add to collection      Community         stevenyuan666   Paper submitter    22 minutes ago         Why is applying diffusion to text, proteins, and molecules so much harder than applying it to images?</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF GitHub 2 添加到集合 社区 stevenyuan666 论文提交者 22 分钟前 为什么将扩散应用于文本、蛋白质和分子比应用于图像困难得多？</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.13027" target="_blank">PalmClaw: A Native On-Device Agent Framework for Mobile Phones</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>ModalityDance</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Hongru Cai, Yongqi Li, Ran Wei, Wenjie Li</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.13027" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.13027" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.13027.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Large Language Model (LLM) agents have moved beyond generating responses to executing multi-step tasks by calling tools, observing the results, and iteratively deciding the next action. Most agent systems run on desktops or servers, which support tool use and task automation. Mobile devices are also important agent environments because they are widely accessible and contain users' data, sensors, and daily-use applications. Existing mobile agents mainly operate smartphones through graphical user interface (GUI) actions such as tapping, swiping, and typing, which often form long, interface-dependent sequences, cannot directly access device capabilities, and make execution boundaries difficult to define. We present PalmClaw, an open-source agent framework that runs natively on mobile phones and manages the sessions, memory, skills, tools, and agent loop directly on the device. PalmClaw exposes device capabilities as device tools with explicit arguments, structured results, and clearly defined execution boundaries. This design enables agents to use mobile capabilities directly while keeping each action explicit and controlled. Experiments show an 11.5\% relative improvement in task success and a 94.9\% reduction in completion time over the strongest baseline, with lower setup burden and traces illustrating how execution boundaries are applied. Code is available at https://github.com/ModalityDance/PalmClaw.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 大型语言模型 (LLM) 代理已经超越了生成响应的范围，而是通过调用工具、观察结果并迭代地决定下一步操作来执行多步骤任务。大多数代理系统运行在桌面或服务器上，支持工具使用和任务自动化。移动设备也是重要的代理环境，因为它们可以广泛访问并且包含用户的数据、传感器和日常使用的应用程序。现有的移动代理主要通过点击、滑动和打字等图形用户界面（GUI）操作来操作智能手机，这些操作通常形成长的、依赖于界面的序列，无法直接访问设备功能，并且使得执行边界难以定义。我们推出 PalmClaw，这是一个开源代理框架，它在移动电话上本地运行，并直接在设备上管理会话、内存、技能、工具和代理循环。 PalmClaw 将设备功能公开为具有显式参数、结构化结果和明确定义的执行边界的设备工具。这种设计使代理能够直接使用移动​​功能，同时保持每个操作的明确和受控。实验表明，与最强基线相比，任务成功率相对提​​高了 11.5%，完成时间减少了 94.9%，设置负担较低，并且跟踪说明了如何应用执行边界。代码可在 https://github.com/ModalityDance/PalmClaw 获取。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  1.12k    Add to collection     Community         HongruCai   Paper submitter    about 1 hour ago         Large Language Model (LLM) agents have moved beyond generating responses to executing multi-step tasks by calling tools, observing the results, and iteratively deciding the next action. Most agent systems run on desktops or servers, which support tool use and task automation. Mobile devices are also important agent environments because they are widely accessible and contain users' data, sensors, and daily-use applications. Existing mobile agents mainly operate smartphones through graphical user interface (GUI) actions such as tapping, swiping, and typing, which often form long, interface-dependent sequences, cannot directly access device capabilities, and make execution boundaries difficult to define. We present PalmClaw, an open-source agent framework that runs natively on mobile phones and manages the sessions, memory, skills, tools, and agent loop directly on the device. PalmClaw exposes device capabilities as device tools with explicit arguments, structured results, and clearly defined execution boundaries. This design enables agents to use mobile capabilities directly while keeping each action explicit and controlled. Experiments show an 11.5% relative improvement in task success and a 94.9% reduction in completion time over the strongest baseline, with lower setup burden and traces illustrating how execution boundaries are applied.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 1.12k 添加到集合 社区 HongruCai 论文提交者 大约 1 小时前 大型语言模型 (LLM) 代理已经超越了生成响应，而是通过调用工具、观察结果并迭代地决定下一步操作来执行多步骤任务。大多数代理系统运行在桌面或服务器上，支持工具使用和任务自动化。移动设备也是重要的代理环境，因为它们可以广泛访问并且包含用户的数据、传感器和日常使用的应用程序。现有的移动代理主要通过点击、滑动和打字等图形用户界面（GUI）操作来操作智能手机，这些操作通常形成长的、依赖于界面的序列，无法直接访问设备功能，并且使得执行边界难以定义。我们推出 PalmClaw，这是一个开源代理框架，它在移动电话上本地运行，并直接在设备上管理会话、内存、技能、工具和代理循环。 PalmClaw 将设备功能公开为具有显式参数、结构化结果和明确定义的执行边界的设备工具。这种设计使代理能够直接使用移动​​功能，同时保持每个操作的明确和受控。实验表明，与最强基线相比，任务成功率相对提​​高了 11.5%，完成时间缩短了 94.9%，设置负担更低，并且跟踪说明了如何应用执行边界。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.07702" target="_blank">From Noisy Traces to Root Causes: Structural Trajectory Analysis and Causal Extraction for Agent Optimization</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Ying Chang, Jiahang Xu, Xuan Feng, Chenyuan Yang, Peng Cheng</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.07702" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.07702" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.07702.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  The optimization of long-horizon agents increasingly relies on reflection-based mechanisms, where a large language model (LLM) acts as an optimizer to diagnose agent failures and improve agent policies. However, real execution traces are difficult to use directly for optimization: large trace collections are often redundant and heterogeneous, making optimization inefficient and prone to overfitting to low-value failures; meanwhile, each individual trajectory also contains many irrelevant steps, while naive context reduction methods such as truncation or sliding windows can discard causally important evidence and produce misleading optimization signals. To resolve this dilemma, we introduce STRACE (Structural TRajectory Analysis and Causal Extraction), a framework that constructs high signal-noise optimization contexts for more precise and effective optimization. At the batch level, STRACE mines failure patterns to filter redundant traces and retain representative failures; within each selected trace, it performs causal localization over a textual dependency graph to remove non-causal steps and identify the true root-cause module for optimization. Empirical results demonstrate that STRACE significantly outperforms standard context-filtering baselines. Notably, on a challenging formal verification task (VeruSAGE-Bench), it successfully optimizes human-expert designed agents, delivering 1.4times success-rate improvement (42.5% to 58.5%). The code is available at https://github.com/moomight/STRACE .</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 长视野智能体的优化越来越依赖于基于反射的机制，其中大型语言模型（LLM）充当优化器来诊断智能体故障并改进智能体策略。然而，真实的执行跟踪很难直接用于优化：大型跟踪集合通常是冗余和异构的，使得优化效率低下，并且容易过度拟合低值故障；同时，每个单独的轨迹还包含许多不相关的步骤，而截断或滑动窗口等朴素的上下文缩减方法可能会丢弃因果上重要的证据并产生误导性的优化信号。为了解决这个困境，我们引入了 STRACE（结构轨迹分析和因果提取），这是一个构建高信噪优化上下文以实现更精确和有效优化的框架。在批次级别，STRACE挖掘故障模式以过滤冗余痕迹并保留代表性故障；在每个选定的跟踪中，它对文本依赖图执行因果定位，以删除非因果步骤并识别真正的根本原因模块以进行优化。实证结果表明 STRACE 显着优于标准上下文过滤基线。值得注意的是，在一项具有挑战性的形式验证任务 (VeruSAGE-Bench) 上，它成功优化了人类专家设计的代理，将成功率提高了 1.4 倍（42.5% 至 58.5%）。该代码可在 https://github.com/moomight/STRACE 获取。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community         Jiahang   Paper submitter    about 1 hour ago         The optimization of long-horizon agents increasingly relies on reflection-based mechanisms, where a large language model (LLM) acts as an optimizer to diagnose agent failures and improve agent policies. However, real execution traces are difficult to use directly for optimization: large trace collections are often redundant and heterogeneous, making optimization inefficient and prone to overfitting to low-value failures; meanwhile, each individual trajectory also contains many irrelevant steps, while naive context reduction methods such as truncation or sliding windows can discard causally important evidence and produce misleading optimization signals. To resolve this dilemma, we introduce STRACE (Structural Trajectory Analysis and Causal Extraction), a framework that constructs high signal-noise optimization contexts for more precise and effective optimization. At the batch level, STRACE mines failure patterns to filter redundant traces and retain representative failures; within each selected trace, it performs causal localization over a textual dependency graph to remove non-causal steps and identify the true root-cause module for optimization. Empirical results demonstrate that STRACE significantly outperforms standard context-filtering baselines. Notably, on a challenging formal verification task (VeruSAGE-Bench), it successfully optimizes human-expert designed agents, delivering 1.4× success-rate improvement (42.5% to 58.5%). The code is available at https://github.com/moomight/STRACE.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 Jiahang 论文提交者 大约 1 小时前 长视野代理的优化越来越依赖于基于反射的机制，其中大型语言模型 (LLM) 充当优化器来诊断代理故障并改进代理策略。然而，真实的执行跟踪很难直接用于优化：大型跟踪集合通常是冗余和异构的，使得优化效率低下，并且容易过度拟合低值故障；同时，每个单独的轨迹还包含许多不相关的步骤，而截断或滑动窗口等朴素的上下文缩减方法可能会丢弃因果上重要的证据并产生误导性的优化信号。为了解决这个困境，我们引入了 STRACE（结构轨迹分析和因果提取），这是一个构建高信噪比优化上下文以实现更精确和有效优化的框架。在批次级别，STRACE挖掘故障模式以过滤冗余痕迹并保留代表性故障；在每个选定的跟踪中，它对文本依赖图执行因果定位，以删除非因果步骤并识别真正的根本原因模块以进行优化。实证结果表明 STRACE 显着优于标准上下文过滤基线。值得注意的是，在一项具有挑战性的形式验证任务 (VeruSAGE-Bench) 上，它成功优化了人类专家设计的代理，将成功率提高了 1.4 倍（42.5% 至 58.5%）。该代码可在 https://github.com/moomight/STRACE 获取。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.09786" target="_blank">Length Penalties Make Chain-of-Thought Less Monitorable</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Bryce Little</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.09786" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.09786" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.09786.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Length-penalized reinforcement learning can shorten chain-of-thought reasoning while hiding an influence that drives the model's answer. In our experiments, training with length penalties does not stop misleading hints from steering models, even though the models' chains of thought mention the hint much less often. A token-accuracy evaluation would count these runs as successful because they use fewer reasoning tokens with little accuracy loss; it would miss whether the remaining trace still shows what drove the answer. We train Qwen3-4B and Qwen3-14B variants with different target chain lengths, then evaluate them with biasing-hint interventions on held-out MMLU-Pro-R and four transfer benchmarks. Compression sharply cuts reasoning tokens, preserves most multiple-choice accuracy, and leaves hint influence near baseline. At the strongest target, lower-bound faithfulness falls to 63.1% of baseline for Qwen3-14B and 69.4% for Qwen3-4B; the raw rate at which a monitor catches hint use falls from 69% to 49% and from 60% to 48%. To separate length from content, we randomly delete sentences from uncompressed baseline chains until the remaining text matches the compressed length. Even after this length matching, compressed chains disclose the hint 7-35 percentage points less often than baseline chains that we shorten at random, for both Qwen3 sizes and all five evaluation distributions. Compression therefore does more than shorten reasoning, preferentially removing the cues a monitor needs to see what influenced the answer. Together, these results reveal a compression-monitorability frontier in which cheaper reasoning can preserve answers while making the influences behind them harder to detect.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 长度惩罚强化学习可以缩短思维链推理，同时隐藏驱动模型答案的影响。在我们的实验中，带有长度惩罚的训练并不能阻止来自转向模型的误导性提示，即使模型的思想链提及该提示的频率要少得多。令牌准确性评估会将这些运行视为成功，因为它们使用较少的推理令牌，并且准确性损失很小；它会错过剩余的痕迹是否仍然显示驱动答案的因素。我们训练具有不同目标链长度的 Qwen3-4B 和 Qwen3-14B 变体，然后通过对保留的 MMLU-Pro-R 和四个传输基准进行偏差提示干预来评估它们。压缩大大减少了推理标记，保留了大多数多项选择的准确性，并在基线附近留下了提示影响。在最强目标下，Qwen3-14B 的忠实度下限降至基线的 63.1%，Qwen3-4B 的忠实度下限降至基线的 69.4%；监视器捕获提示使用的原始比率从 69% 下降到 49%，从 60% 下降到 48%。为了将长度与内容分开，我们从未压缩的基线链中随机删除句子，直到剩余的文本与压缩的长度匹配。即使在这种长度匹配之后，对于 Qwen3 大小和所有五个评估分布，压缩链披露提示的频率比我们随机缩短的基线链低 7-35 个百分点。因此，压缩的作用不仅仅是缩短推理，还优先删除监视器需要的线索，以了解影响答案的因素。总之，这些结果揭示了一个压缩可监控性前沿，其中更便宜的推理可以保留答案，同时使它们背后的影响更难以检测。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community         blit124   Paper submitter    2 minutes ago         Length-penalised reinforcement learning can make chain-of-thought reasoning shorter without making it more faithful. Across Qwen3-4B and Qwen3-14B, compression preserved most answer accuracy and left biasing-hint influence largely unchanged, while substantially reducing how often the reasoning trace revealed that influence. Even compared with randomly shortened baselines of the same length, compressed chains disclosed hint use 7–35 percentage points less often, revealing a compression–monitorability frontier: cheaper reasoning can preserve answers while making their underlying influences harder to detect.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 blit124 论文提交者 2 分钟前 长度惩罚强化学习可以使思想链推理变得更短，但不会使其更加忠实。在 Qwen3-4B 和 Qwen3-14B 中，压缩保留了大部分答案准确性，并且偏差提示影响基本保持不变，同时大大降低了推理轨迹揭示该影响的频率。即使与相同长度的随机缩短基线相比，压缩链披露的提示使用频率也减少了 7-35 个百分点，揭示了压缩可监控性前沿：更便宜的推理可以保留答案，同时使其潜在影响更难以检测。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2605.10834" target="_blank">From Controlled to the Wild: Evaluation of Pentesting Agents for the Real-World</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Pedro Conde, Henrique Branquinho, Valerio Mazzone, Bruno Mendes, André Baptista</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2605.10834" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2605.10834" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2605.10834.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  AI pentesting agents are increasingly credible as offensive security systems, but current benchmarks still provide limited guidance on which will perform best in real-world targets. Existing evaluation protocols assess and optimize for predefined goals such as capture-the-flag, remote code execution, exploit reproduction, or trajectory similarity, in simplified or narrow settings. These tools are valuable for measuring bounded capabilities, yet they do not adequately capture the complexity, open-ended exploration, and strategic decision-making required in realistic pentesting. In this paper, we present a practical evaluation protocol that shifts assessment from task completion to validated vulnerability discovery, allowing evaluation in sufficiently complex targets spanning multiple attack surfaces and vulnerability classes. The protocol combines structured ground-truth with LLM-based semantic matching to identify vulnerabilities, bipartite resolution to score findings under realistic ambiguity, continuous ground-truth maintenance, repeated and cumulative evaluation of stochastic agents, efficiency metrics, and reduced-suite selection for sustainable experimentation. This protocol extends the state of the art by enabling a more realistic, operationally informative comparison of AI pentesting agents. To enable reproducibility, we also release expert-annotated ground truth and code for the proposed evaluation protocol: https://github.com/ethiack/ethibench.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：人工智能渗透测试代理作为进攻性安全系统越来越可信，但当前的基准测试仍然提供有限的指导，无法确定哪些代理在现实世界目标中表现最佳。现有的评估协议在简化或狭窄的设置中评估和优化预定义的目标，例如捕获标志、远程代码执行、漏洞复制或轨迹相似性。这些工具对于衡量有限的能力很有价值，但它们并不能充分捕捉现实渗透测试所需的复杂性、开放式探索和战略决策。在本文中，我们提出了一种实用的评估协议，该协议将评估从任务完成转变为经过验证的漏洞发现，从而允许对跨越多个攻击面和漏洞类别的足够复杂的目标进行评估。该协议将结构化地面实况与基于 LLM 的语义匹配相结合，以识别漏洞，在现实模糊性下对结果进行二分解析，持续地面实况维护，随机代理的重复和累积评估，效率指标以及可持续实验的缩减套件选择。该协议通过对人工智能渗透测试代理进行更真实、操作信息丰富的比较来扩展现有技术。为了实现可重复性，我们还发布了专家注释的基本事实和拟议评估协议的代码：https://github.com/ethiack/ethibench。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub  64    Add to collection      Community         pedrormconde   Paper submitter    35 minutes ago • edited 35 minutes ago        Current AI pentesting benchmarks emphasize task completion in constrained settings rather than realistic vulnerability discovery. We present an evaluation protocol that measures validated vulnerabilities across complex targets using expert-annotated ground-truth, LLM-assisted matching, ambiguity-aware scoring, repeated evaluation of stochastic agents, and efficiency metrics. The protocol enables more realistic and operationally informative comparisons of AI pentesting agents, and we release ground-truth annotations and the evaluation protocol code for reproducibility.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF GitHub 64 添加到集合 社区 pedrormconde 论文提交者 35 分钟前 • 编辑 35 分钟前 当前的 AI 渗透测试基准强调在受限设置中完成任务，而不是实际的漏洞发现。我们提出了一种评估协议，该协议使用专家注释的地面实况、LLM 辅助匹配、模糊性感知评分、随机代理的重复评估和效率指标来衡量复杂目标中经过验证的漏洞。该协议可以对 AI 渗透测试代理进行更真实且可操作的信息比较，并且我们发布了真实注释和评估协议代码以实现可重复性。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.12477" target="_blank">Self in Space: Benchmarking Self-Awareness and Spatial Cognition in UAV Embodied Intelligence</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>choucsan, Zhishan Zou, Guoyan Sun, Zhiwei Wei, Jiancheng Pan</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.12477" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.12477" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.12477.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Autonomous UAV systems increasingly rely on multimodal large language models (MLLMs) to operate in complex real-world environments. Such embodied scenarios require not only understanding the surrounding space but also maintaining a coherent representation of the agent itself. However, existing UAV-oriented approaches and benchmarks remain largely environment-centric, primarily focusing on spatial understanding tasks, with the agent's self-awareness remaining implicit. To address this gap, we introduce SIS-Bench, a benchmark for evaluating embodied spatial intelligence in UAV scenarios under a unified self-in-space formulation. SIS-Bench organizes evaluation along two complementary dimensions, space and self, and a three-level hierarchy of perception, memory, and reasoning. It contains 4,856 question--answer pairs across 13 tasks derived from 1,646 real-world UAV videos through a task-conditioned construction pipeline with expert verification.Extensive evaluations reveal that current MLLMs exhibit fundamental limitations in modeling dynamic and agent-centered processes. In particular, we observe a clear imbalance between spatial cognition and self-awareness, as well as a progressive performance degradation across cognitive levels.Motivated by these findings, we further explore a motion-aware representation that incorporates self-related dynamics through optical flow and visual feature fusion. Experimental results show that modeling agent motion consistently improves perception and memory performance, not only in spatial cognition but also in self-awareness, and generalizes to downstream UAV decision-making tasks.Our results highlight the importance of self-awareness for advancing embodied spatial intelligence, and provide both a new benchmark and empirical evidence for motion-aware self-in-space modeling.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 自主无人机系统越来越依赖多模式大语言模型（MLLM）在复杂的现实环境中运行。这种具体场景不仅需要理解周围的空间，还需要保持代理本身的连贯表示。然而，现有的面向无人机的方法和基准仍然很大程度上以环境为中心，主要关注空间理解任务，而代理的自我意识仍然是隐含的。为了解决这一差距，我们引入了 SIS-Bench，这是一个在统一的自空间公式下评估无人机场景中的体现空间智能的基准。 SIS-Bench 沿着两个互补的维度（空间和自我）以及感知、记忆和推理的三级层次结构组织评估。它包含 4,856 个问答对，涉及 13 个任务，这些任务是通过经过专家验证的任务条件构建管道从 1,646 个真实无人机视频中派生出来的。广泛的评估表明，当前的 MLLM 在建模动态和以代理为中心的流程方面表现出根本局限性。特别是，我们观察到空间认知和自我意识之间存在明显的不平衡，以及跨认知水平的逐渐性能下降。受这些发现的启发，我们进一步探索了一种运动感知表示，该表示通过光流和视觉特征融合结合了自我相关的动态。实验结果表明，建模代理运动不仅在空间认知方面而且在自我意识方面持续提高感知和记忆性能，并推广到下游无人机决策任务。我们的结果强调了自我意识对于推进具身空间智能的重要性，并为运动感知自我空间建模提供了新的基准和经验证据。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  4    Add to collection     Community         choucsan  Paper author Paper submitter    1 day ago • edited 1 day ago        🌐 website: https://choucisan.github.io/publications/self-in-space🚀 code: https://github.com/IntelliSensing/Self-in-Space😊 huggingface: https://huggingface.co/collections/choucsan/self-in-space🫟 modelscope: https://www.modelscope.cn/collections/choucisan/Self-in-Space</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 4 添加到集合 社区 choucsan 论文作者 论文提交者 1 天前 • 1 天前编辑 🌐 网站：https://choucisan.github.io/publications/self-in-space🚀 代码：https://github.com/IntelliSensing/Self-in-Space😊 Huggingface：https://huggingface.co/collections/choucsan/self-in-space🫟 modelscope：https://www.modelscope.cn/collections/choucisan/Self-in-Space</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.06701" target="_blank">SPEAR: A Simulator for Photorealistic Embodied AI Research</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Adobe Research</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>mikeroberts3000, Mike Roberts, Renhan Wang, Rushikesh Zawar, Rachith Dey-Prakash</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.06701" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.06701" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.06701.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Interactive simulators have become powerful tools for training embodied agents and generating synthetic visual data, but existing photorealistic simulators suffer from limited generality, programmability, and rendering speed. We address these limitations by introducing SPEAR: A Simulator for Photorealistic Embodied AI Research. At its core, SPEAR is a Python library that can connect to, and programmatically control, any Unreal Engine (UE) application via a modular plugin architecture. SPEAR exposes over 14K unique UE functions to Python, representing an order-of-magnitude increase in programmable functionality over existing UE-based simulators. Additionally, a single SPEAR instance can render 1920x1080 photorealistic beauty images directly into a user's NumPy array at 73 frames per second - an order of magnitude faster than existing UE plugins - while also providing ground truth image modalities that are not available in any existing UE-based simulator (e.g., a non-diffuse intrinsic image decomposition, material IDs, and physically based shading parameters). Finally, SPEAR introduces an expressive high-level programming model that enables users to specify complex graphs of UE work with arbitrary data dependencies among work items, and to execute these graphs deterministically within a single UE frame. We demonstrate the utility of SPEAR through a diverse collection of example applications: controlling multiple embodied agents with distinct action spaces (e.g., humans, cars, and robots) across several in-the-wild UE projects; rendering photorealistic city-scale environments; manipulating UE's procedural content generation systems; rendering synchronized multi-view images of detailed human faces; coordinating an interactive co-simulation with the MuJoCo physics simulator; and editing scenes with natural language via an AI coding assistant.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 交互式模拟器已成为训练实体代理和生成合成视觉数据的强大工具，但现有的真实感模拟器的通用性、可编程性和渲染速度有限。我们通过引入 SPEAR：用于真实感体现人工智能研究的模拟器来解决这些限制。 SPEAR 的核心是一个 Python 库，可以通过模块化插件架构连接到任何虚幻引擎 (UE) 应用程序并以编程方式进行控制。 SPEAR 向 Python 公开了超过 14K 个独特的 UE 函数，与现有的基于 UE 的模拟器相比，可编程功能有了数量级的增长。此外，单个 SPEAR 实例可以以每秒 73 帧的速度将 1920x1080 真实感美女图像直接渲染到用户的 NumPy 阵列中（比现有 UE 插件快一个数量级），同时还提供任何现有基于 UE 的模拟器中不可用的地面实况图像模式（例如，非漫反射固有图像分解、材质 ID 和基于物理的着色参数）。最后，SPEAR 引入了一种富有表现力的高级编程模型，使用户能够指定具有工作项之间任意数据依赖性的 UE 工作的复杂图，并在单个 UE 框架内确定性地执行这些图。我们通过一系列不同的示例应用程序展示了 SPEAR 的实用性：在多个野外 UE 项目中控制具有不同动作空间（例如人类、汽车和机器人）的多个实体代理；渲染逼真的城市规模环境；操纵UE的程序内容生成系统；渲染详细人脸的同步多视图图像；与 MuJoCo 物理模拟器协调交互式联合模拟；并通过人工智能编码助手用自然语言编辑场景。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub     Add to collection         Community         mikeroberts3000  Paper author Paper submitter    12 minutes ago    This comment has been hidden (marked as Resolved)               EditPreview      Upload images, audio, and videos by dragging in the text input, pasting, or clicking here. Tap or paste here to upload images        Comment · Sign up or log in to comment</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 添加到集合 社区 mikeroberts3000 论文作者 论文提交者 12 分钟前 此评论已被隐藏（标记为“已解决”） EditPreview 通过拖入文本输入、粘贴或单击此处上传图像、音频和视频。点击或粘贴此处上传图片 评论 · 注册或登录以发表评论</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.13921" target="_blank">Generative Compilation: On-the-Fly Compiler Feedback as AI Generates Code</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>SRI LAB</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Niels Mündler-Sasahara, Hristo Venev, Dawn Song, Martin Vechev, Jingxuan He</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.13921" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.13921" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.13921.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Languages with rich static semantics, such as Rust, provide stronger guarantees for AI-generated code, but their strictness makes generation more difficult. Off-the-shelf compilers can provide useful feedback post-generation, but does not guide intermediate generation steps, such as those during autoregressive LLM decoding. Constrained decoding intervenes earlier by rejecting invalid tokens during sampling, but requires white-box model access and costly reimplementation for semantic constraints.We introduce generative compilation, the first approach to obtaining compiler feedback on partial programs during generation. The core technical device is a sealor: a lightweight, mostly syntax-guided transformation that converts partial programs into complete ones that standard compilers can diagnose. It is designed such that possible-to-complete partial programs are never rejected, while preserving enough code context to catch genuine dead ends early. We construct such a sealor on a core Rust-like calculus and prove that it satisfies these properties, all mechanized in Lean. We extend it to the first partial-program checker for real Rust. We evaluate our method on challenging repository-level Rust coding tasks, across both frontier black-box and open-weight models. We show that generative compilation reduces non-compiling outputs and improves functional correctness, relative to standard post-generation feedback. It does so by detecting a broad range of errors close to their source and early during generation, thereby reducing errors cascades and enabling focused diagnostics. More broadly, generative compilation is a step toward making compilers a first-class citizen of AI-assisted programming active during generation, rather than a separate post-generation check.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">具有丰富静态语义的抽象语言，例如Rust，为AI生成的代码提供了更有力的保证，但其严格性使得生成变得更加困难。现成的编译器可以在生成后提供有用的反馈，但不能指导中间生成步骤，例如自回归 LLM 解码期间的步骤。约束解码通过在采样期间拒绝无效标记来较早进行干预，但需要白盒模型访问和昂贵的语义约束重新实现。我们引入生成编译，这是在生成期间获取部分程序的编译器反馈的第一种方法。核心技术设备是密封器：一种轻量级的、主要是语法引导的转换，可将部分程序转换为标准编译器可以诊断的完整程序。它的设计使得可能完成的部分程序永远不会被拒绝，同时保留足够的代码上下文以尽早发现真正的死胡同。我们在类似 Rust 的核心微积分上构造了这样的密封器，并证明它满足这些属性，所有这些属性都在精益中机械化。我们将其扩展为真正 Rust 的第一个部分程序检查器。我们在前沿黑盒和开放权重模型中评估了我们在具有挑战性的存储库级 Rust 编码任务上的方法。我们表明，相对于标准的生成后反馈，生成编译减少了非编译输出并提高了功能正确性。它通过在生成早期检测靠近源头的广泛错误来实现这一点，从而减少错误级联并实现集中诊断。更广泛地说，生成编译是使编译器成为生成期间活跃的人工智能辅助编程的一等公民的一步，而不是单独的生成后检查。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub  1    Add to collection      Community         nmuendler   Paper submitter    about 1 hour ago         We introduce generative compilation, which provides LLMs with compiler feedback during  code generation.Its core device is a sealor: a lightweight, mostly syntax-guided transformation that closes a partial program so that an off-the-shelf compiler can diagnose it.We formalize the properties for such a sealor to be correct and useful, mechanize a sealor for a core Rust calculus in Lean, and build the first partial-program checker for real Rust.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF GitHub 1 添加到集合 社区 nmuendler 论文提交者 大约 1 小时前 我们引入生成式编译，它在代码生成期间为 LLM 提供编译器反馈。它的核心设备是密封器：一种轻量级、主要是语法引导的转换，可以关闭部分程序，以便现成的编译器可以对其进行诊断。我们将这种密封器的属性形式化，使其正确且有用，将核心 Rust 演算的密封器机械化精益，并为真正的 Rust 构建第一个部分程序检查器。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.13250" target="_blank">AffectFlow-DINO: Uncertainty-Aware Multi-Task Affect Estimation via Conditional Rectified Flow</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Salah Eddine Bekhouche, Abdellah Zakaria Sellam, Fadi Dornaika, Abdenour Hadid</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.13250" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.13250" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.13250.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  We present AffectFlow-DINO, a multi-task learning system for the 11th ABAW challenge that extends a standard deterministic architecture with a conditional rectified-flow head to model the inherent ambiguity of in-the-wild facial behavior. Instead of predicting a single affect estimate, the model learns a conditional generative distribution, enabling uncertainty-aware one-to-many predictions through Monte Carlo sampling. The system jointly estimates continuous valence-arousal, classifies eight facial expressions, and detects twelve Action Units from static face images. Built on a frozen DINOv3 ViT-S/16 backbone, extensive ablation studies show that rectified-flow decoding consistently improves deterministic prediction, particularly for valence-arousal estimation (CCC-V +0.058). We further show that post-hoc threshold calibration effectively recovers performance on severely imbalanced rare classes (e.g., Fear: 3.8% rightarrow 33.1%) without retraining. Combined with backbone fine-tuning and flow retuning, the final model achieves P_{MTL=1.177}, substantially outperforming the official challenge baseline of P_{MTL}=0.45.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：我们提出了 AffectFlow-DINO，这是一个针对第 11 届 ABAW 挑战的多任务学习系统，它扩展了带有条件整流流头的标准确定性架构，以模拟野外面部行为的固有模糊性。该模型不是预测单个影响估计，而是学习条件生成分布，通过蒙特卡罗采样实现不确定性感知的一对多预测。该系统联合估计连续价唤醒，对八种面部表情进行分类，并从静态面部图像中检测十二个动作单元。建立在冻结的 DINOv3 ViT-S/16 主干上，广泛的消融研究表明，整流流解码持续改进确定性预测，特别是对于价唤醒估计 (CCC-V +0.058)。我们进一步表明，事后阈值校准可以有效恢复严重不平衡的稀有类别（例如，恐惧：3.8% 右箭头 33.1%）的性能，而无需重新训练。结合骨干网微调和流程重调，最终模型达到了 P_{MTL=1.177}，大大优于官方挑战基线 P_{MTL}=0.45。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub  0    Add to collection      Community         Bekhouche   Paper submitter    about 2 hours ago         AffectFlow-DINO models in-the-wild facial affect as a conditional distribution p(y|x), not a single point estimate.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF GitHub 0 添加到集合 社区 Bekhouche 论文提交者大约 2 小时前 AffectFlow-DINO 将野外面部影响建模为条件分布 p(y|x)，而不是单点估计。</p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+        
+        <div class="nav-buttons">
+            <a href="2026-07-15.html" class="nav-btn">← 2026-07-15</a>
+            <a href="2026-07-17.html" class="nav-btn">2026-07-17 →</a>
+        </div>
+        
+        <footer>
+            Generated by <a href="https://github.com" target="_blank">HF Papers Daily</a>
+        </footer>
+    </div>
+    
+    <script>
+        function toggleAbstract(header) {
+            const toggle = header.querySelector('.abstract-toggle');
+            const content = header.nextElementSibling;
+            toggle.classList.toggle('expanded');
+            content.classList.toggle('expanded');
+        }
+    </script>
+</html>

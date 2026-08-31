@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hugging Face Papers - 2026-07-14 (zh-CN)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .date {
+            font-size: 1.2em;
+            color: #a0a0a0;
+        }
+        
+        .stats {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #888;
+        }
+        
+        .paper-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .paper-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(102, 126, 234, 0.5);
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.2);
+        }
+        
+        .paper-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        
+        .paper-title a {
+            color: #e0e0e0;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .paper-title a:hover {
+            color: #667eea;
+        }
+        
+        .paper-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            color: #a0a0a0;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .meta-label {
+            color: #888;
+        }
+        
+        .links {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .link-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .link-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .link-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .abstract-section {
+            margin-top: 15px;
+        }
+        
+        .abstract-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .abstract-header:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .abstract-toggle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+            transition: transform 0.3s;
+        }
+        
+        .abstract-toggle.expanded {
+            transform: rotate(180deg);
+        }
+        
+        .abstract-label {
+            font-weight: 500;
+            color: #667eea;
+        }
+        
+        .abstract-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding: 0 15px;
+        }
+        
+        .abstract-content.expanded {
+            max-height: 10000px;
+            padding: 15px;
+        }
+        
+        .abstract-text {
+            line-height: 1.7;
+            color: #c0c0c0;
+        }
+        
+        .summary-box {
+            background: rgba(102, 126, 234, 0.1);
+            border-left: 3px solid #667eea;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .summary-label {
+            font-size: 0.8em;
+            color: #667eea;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .summary-text {
+            color: #b0b0b0;
+            line-height: 1.5;
+        }
+        
+        .translation-box {
+            background: rgba(118, 75, 162, 0.1);
+            border-left: 3px solid #764ba2;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .translation-label {
+            font-size: 0.8em;
+            color: #764ba2;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .translation-text {
+            color: #b0b0b0;
+            line-height: 1.5;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding: 0 10px;
+        }
+        
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .nav-btn.disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: #666;
+            pointer-events: none;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .paper-title {
+                font-size: 1.1em;
+            }
+            
+            .links {
+                flex-wrap: wrap;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-btn {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Hugging Face Papers</h1>
+            <div class="date">2026-07-14</div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number">19</div>
+                    <div class="stat-label">Papers</div>
+                </div>
+            </div>
+        </header>
+        
+        <main>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.05394" target="_blank">Weak-to-Strong Generalization via Direct On-Policy Distillation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>BytedTsinghua-SIA</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Shiyuan Feng, Huan-ang Gao, Haohan Chi, Hanlin Wu, Zhilong Zhang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.05394" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.05394" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.05394.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Direct On-Policy Distillation transfers reinforcement learning improvements from smaller to larger models by using the policy shift induced by RL as an implicit reward signal, enabling efficient scaling of training without re-running expensive RL on the target model.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 直接策略蒸馏通过使用强化学习引起的策略转变作为隐式奖励信号，将强化学习的改进从较小的模型转移到较大的模型，从而实现训练的有效扩展，而无需在目标模型上重新运行昂贵的强化学习。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Reinforcement learning with verifiable rewards (RLVR) is a powerful recipe for improving language-model reasoning, but it is expensive to repeat on every new strong model because the target model must generate many rollouts during training. As models scale, post-training itself becomes a bottleneck. We study a weak-to-strong alternative: run RL on a smaller model where rollouts are cheaper, then reuse what that RL run learned to improve a stronger target model. Directly distilling the post-RL weak teacher is not enough, because the teacher's final policy mixes useful RL gains with the limitations of the smaller model. We propose Direct On-Policy Distillation (Direct-OPD), which transfers the teacher's RL-induced policy shift instead. Direct-OPD compares the post-RL teacher with its own pre-RL reference and treats their log-ratio as a dense implicit reward for the student. In plain terms, the checkpoint pair tells us which actions RL made the weak model more or less likely to take, and Direct-OPD applies that signal on the stronger student's own on-policy states. This directly reuses the weak model's RL supervision signal without running sparse-reward RL on the target model. Empirically, Direct-OPD consistently leverages weaker teachers to improve stronger target models; notably, it boosts Qwen3-1.7B from 48.3% to 58.3% on AIME 2024 in just 4 hours on 8 A100 GPUs. It outperforms step-matched direct RL and enables the sequential composition of multiple policy shifts. Our results show that RL outcomes can be reused across model scales as implicit reward signals, not merely as final models to imitate.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 具有可验证奖励的强化学习 (RLVR) 是改进语言模型推理的强大方法，但在每个新的强模型上重复的成本很高，因为目标模型必须在训练期间生成许多 rollouts。随着模型规模的扩大，训练后本身就成为了瓶颈。我们研究了一种从弱到强的替代方案：在较小的模型上运行强化学习，其中部署成本更低，然后重用强化学习运行学到的知识来改进更强的目标模型。直接提取 RL 后的弱教师是不够的，因为教师的最终策略将有用的 RL 收益与较小模型的局限性混合在一起。我们提出直接按策略蒸馏（Direct-OPD），它转移了教师的 RL 诱导的策略转变。 Direct-OPD 将 RL 后的教师与其自己的 RL 前的参考进行比较，并将它们的对数比视为对学生的密集隐式奖励。简单来说，检查点对告诉我们 RL 使弱模型更有可能采取哪些行动，而 Direct-OPD 将该信号应用于更强的学生自己的政策状态。这直接重用了弱模型的 RL 监督信号，而无需在目标模型上运行稀疏奖励 RL。根据经验，Direct-OPD 始终利用较弱的教师来改进更强的目标模型；值得注意的是，它在 8 个 A100 GPU 上仅用了 4 小时就将 Qwen3-1.7B 在 AIME 2024 上的性能从 48.3% 提升到了 58.3%。它的性能优于步长匹配的直接强化学习，并支持多个策略转变的顺序组合。我们的结果表明，强化学习的结果可以在模型尺度上作为隐式奖励信号重复使用，而不仅仅是作为最终的模型来模仿。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.10383" target="_blank">ABot-N1: Toward a General Visual Language Navigation Foundation Model</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Alibaba AMAP CV Lab</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Ruiyan Gong, Yingnan Guo, Junjun Hu, Jintao Kong, Xiaoxu Leng</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.10383" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.10383" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.10383.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Visual Language Navigation foundation models aim to unify deep reasoning for grounded spatial decisions with broad versatility for diverse embodied tasks. Current approaches typically achieve this integration via monolithic policies that map observations directly to actions, yet they often suffer from coordinate drift and poor handling of long-tail semantics. Furthermore, these black-box mappings lack interpretability, hindering the simultaneous achievement of generality, robustness, and transparency. We present ABot-N1, a step toward a general Visual Language Navigation foundation model, that addresses these challenges by decoupling cognition from control via a slow-fast architecture guided by dual visual-language signals. More specifically, a slow vision-language reasoner performs explicit Chain-of-Thought reasoning while producing a pixel goal. This compact set of image-space anchor points serves as a universal interface for diverse tasks, including point-goal, object-goal, poi-goal, instruction-following, and person-following. Subsequently, a fast action expert leverages both the textual cues and the pixel guidance to generate continuous waypoints at the native control frequency. By bridging high-level intents and low-level control through pixel-grounded anchors paired with explicit linguistic traces, our approach ensures robust, generalizable, and interpretable navigation across simulation and real-world benchmarks. ABot-N1 establishes new state-of-the-art records, delivering massive gains specifically in urban-scale navigation: boosting POI arrival by 35.0% (to 77.3%) and achieving 95.4%/92.9% SR in complex indoor and outdoor scenes. It also maintains superior robustness across object-reaching, person-following, and instruction-following tasks. New Point-Goal/POI-Goal benchmarks are released as open source to advance the field of urban-scale navigation.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要视觉语言导航基础模型旨在将基于空间决策的深度推理与针对不同具体任务的广泛多功能性统一起来。当前的方法通常通过将观察结果直接映射到操作的整体策略来实现这种集成，但它们经常遭受坐标漂移和长尾语义处理不当的问题。此外，这些黑盒映射缺乏可解释性，阻碍了通用性、鲁棒性和透明度的同时实现。我们提出了 ABot-N1，这是迈向通用视觉语言导航基础模型的一步，它通过由双视觉语言信号引导的慢速架构将认知与控制解耦来解决这些挑战。更具体地说，慢速视觉语言推理器在产生像素目标的同时执行显式的思想链推理。这组紧凑的图像空间锚点集可作为各种任务的通用接口，包括点目标、对象目标、POI 目标、指令跟踪和人员跟踪。随后，快速行动专家利用文本提示和像素引导以本机控制频率生成连续的航路点。通过基于像素的锚点与显式语言跟踪相结合，桥接高级意图和低级控制，我们的方法确保了跨模拟和现实世界基准的稳健、可概括和可解释的导航。 ABot-N1 创造了新的最先进记录，特别是在城市规模导航方面取得了巨大成果：将 POI 到达率提高 35.0%（达到 77.3%），并在复杂的室内和室外场景中实现 95.4%/92.9% SR。它还在物体到达、人员跟踪和指令跟踪任务中保持卓越的鲁棒性。新的 Point-Goal/POI-Goal 基准以开源方式发布，以推进城市规模导航领域。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page   Add to collection     Community         mingchenlin2025   Paper submitter    17 minutes ago    This comment has been hidden (marked as Abuse)               EditPreview      Upload images, audio, and videos by dragging in the text input, pasting, or clicking here. Tap or paste here to upload images        Comment · Sign up or log in to comment</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 添加到集合 社区 mingchenlin2025 论文提交者 17 分钟前 该评论已被隐藏（标记为滥用） EditPreview 通过拖入文本输入、粘贴或单击此处上传图像、音频和视频。点击或粘贴此处上传图片 评论 · 注册或登录以发表评论</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.10350" target="_blank">ABot-AgentOS: A General Robotic Agent OS with Lifelong Multi-modal Memory</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Alibaba AMAP CV Lab</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Jiayi Tian, Shiao Liu, Yuting Xu, Jia Lu, Zihao Guan</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.10350" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.10350" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.10350.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Recent VLM and VLA systems have improved robotic perception and action prediction, yet long-horizon embodied agents still require a general runtime layer for reasoning, memory, tool use, verification, and cross-embodiment execution. We present ABot-AgentOS, a general robotic Agent Operating System that sits above low-level controllers and provides a deliberative agent layer for scene-conditioned planning, context-isolated skill execution, multi-stage verification, multi-modal memory, and edge-cloud collaboration. To evaluate such systems, we introduce EmbodiedWorldBench, an executable benchmark with 16 indoor, outdoor, and hybrid scenes, four difficulty levels, and over 200 tasks involving navigation, object search, NPC dialogue, dynamic events, and trace-grounded scoring. ABot-AgentOS further introduces Universal Multi-modal Graph Memory, a persistent source-grounded substrate that converts dialogue, visual observations, spatial context, temporal relations, and task traces into typed nodes and edges. A failure-driven self-evolution loop converts diagnosed memory failures into gated runtime evo-assets that are promoted only to later evaluation splits, preventing current-split ground-truth leakage while enabling continual improvement. On an initial EmbodiedWorldBench subset, ABot-AgentOS improves over a single-controller baseline in both task success and goal completion. Across memory benchmarks, ABot-AgentOS Static achieves 87.5 on LoCoMo, 59.9 on OpenEQA EM-EQA, 88.6 on Mem-Gallery, and 76.5 Acc@All on NExT-QA; self-evolution further improves LoCoMo to 88.7, OpenEQA to 60.4, and Mem-Gallery to 89.0. These results suggest that a general Agent OS layer can improve long-horizon embodied execution while providing persistent, auditable memory for continual interaction.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：最近的 VLM 和 VLA 系统改进了机器人感知和动作预测，但长期具体代理仍然需要通用运行时层来进行推理、记忆、工具使用、验证和跨具体执行。我们推出了 ABot-AgentOS，这是一种通用机器人代理操作系统，位于低级控制器之上，并为场景条件规划、上下文隔离技能执行、多阶段验证、多模式内存和边缘云协作提供深思熟虑的代理层。为了评估此类系统，我们引入了 EmbodiedWorldBench，这是一个可执行基准测试，具有 16 个室内、室外和混合场景、四个难度级别以及 200 多个任务，涉及导航、对象搜索、NPC 对话、动态事件和基于轨迹的评分。 ABot-AgentOS 进一步引入了通用多模态图形内存，这是一种持久的基于源的基底，可将对话、视觉观察、空间上下文、时间关系和任务跟踪转换为类型节点和边。故障驱动的自进化循环将诊断出的内存故障转换为门控运行时进化资产，这些资产仅提升到以后的评估分裂，防止当前分裂的地面真相泄漏，同时实现持续改进。在初始 EmbodiedWorldBench 子集上，ABot-AgentOS 在任务成功和目标完成方面均优于单控制器基线。在内存基准测试中，ABot-AgentOS Static 在 LoCoMo 上达到 87.5，在 OpenEQA EM-EQA 上达到 59.9，在 Mem-Gallery 上达到 88.6，在 NExT-QA 上达到 76.5 Acc@All；自我进化进一步将LoCoMo提高到88.7，OpenEQA提高到60.4，Mem-Gallery提高到89.0。这些结果表明，通用代理操作系统层可以改善长期具体执行，同时为持续交互提供持久的、可审计的内存。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community         CheeryLJH   Paper submitter    about 1 hour ago         We present ABot-AgentOS, a general robotic Agent Operating System that sits above low-level controllers and provides a deliberative agent layer for scene-conditioned planning, context-isolated skill execution, multi-stage verification, multi-modal memory, and edge-cloud collaboration. To evaluate such systems, we introduce EmbodiedWorldBench, an executable benchmark with 16 indoor, outdoor, and hybrid scenes, four difficulty levels, and over 200 tasks involving navigation, object search, NPC dialogue, dynamic events, and trace-grounded scoring.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 CheeryLJH 论文提交者 大约 1 小时前 我们推出了 ABot-AgentOS，这是一种通用机器人代理操作系统，位于低级控制器之上，并为场景条件规划、上下文隔离技能执行、多阶段验证、多模式内存和边缘云协作提供深思熟虑的代理层。为了评估此类系统，我们引入了 EmbodiedWorldBench，这是一个可执行基准测试，具有 16 个室内、室外和混合场景、四个难度级别以及 200 多个任务，涉及导航、对象搜索、NPC 对话、动态事件和基于轨迹的评分。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.09125" target="_blank">4D Human-Scene Reconstruction from Low-Overlap Captures</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Seoul National University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Minhyuk Hwang, Sangmin Kim, Seunguk Do, Daneul Kim, Jaesik Park</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.09125" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.09125" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.09125.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Existing volumetric capture of dynamic human performance achieves high fidelity with dense camera arrays. However, in real-world scenarios, only a handful of low-overlap cameras are available, which degrades the output quality and leaves large areas unobserved. Recent 4D reconstruction methods have focused on low-overlap settings, yet they still produce noticeable artifacts in under-observed regions. Video diffusion models have emerged as another option, but they show geometrically inconsistent results for humans. To address these limitations, we propose StudioRecon, a pipeline that reconstructs 4D human scenes from sparse, low-overlap cameras by decoupling background and humans. We densify background supervision by synthesizing hundreds of camera-controlled novel views with a video diffusion model. We also robustly initialize deformable Gaussian humans with cross-view identity association and triangulated multi-view keypoint fitting. Finally, our recursive enhancement module with motion-adaptive consistency injection harmonizes the composed output, thereby further avoiding remaining artifacts. We achieve state-of-the-art novel view synthesis across four real-world datasets and demonstrate applications such as novel trajectory rendering and human replacement.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 现有的动态人体表现的体积捕捉通过密集的相机阵列实现了高保真度。然而，在现实场景中，只有少数低重叠相机可用，这会降低输出质量并导致大面积区域无法观察到。最近的 4D 重建方法侧重于低重叠设置，但它们仍然在观察不足的区域产生明显的伪影。视频扩散模型已成为另一种选择，但它们对人类显示出几何上不一致的结果。为了解决这些限制，我们提出了 StudioRecon，这是一种通过分离背景和人类，从稀疏、低重叠摄像机重建 4D 人类场景的管道。我们通过视频扩散模型合成数百个摄像机控制的新颖视图来强化背景监督。我们还通过跨视图身份关联和三角多视图关键点拟合来稳健地初始化可变形高斯人类。最后，我们的递归增强模块具有运动自适应一致性注入，可以协调组合的输出，从而进一步避免剩余的伪影。我们在四个现实世界数据集上实现了最先进的新颖视图合成，并演示了新颖的轨迹渲染和人类替换等应用。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page   Add to collection         Community         nstar1125   Paper submitter    30 minutes ago • edited 24 minutes ago        Four cameras around a room, roughly 90° apart, with barely any overlap between neighboring views. COLMAP doesn't even register them. That's the setting we went after.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 添加到集合 社区 nstar1125 论文提交者 30 分钟前 • 24 分钟前编辑 房间周围有四个摄像机，大约相距 90°，相邻视图之间几乎没有任何重叠。 COLMAP 甚至不注册它们。这就是我们所追求的设置。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.11487" target="_blank">LightMem-Ego: Your AI Memory for Everyday Life</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>ZJUNLP</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yijun Chen, Boyi Xiao, Yixian Zhao, Haoting Xia, Buqiang Xu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.11487" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.11487" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.11487.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Personal AI assistants on mobile and wearable devices continuously perceive users' daily lives through visual and audio streams. However, answering queries about past experiences requires lightweight multimodal memory that can continuously accumulate, organize, and retrieve long-term experiences, which remains challenging. To address this challenge, we present LightMem-Ego, a lightweight streaming multimodal memory system for everyday-life assistance. The system continuously captures egocentric visual and audio streams, aligns them on a shared timeline, and organizes them into a hierarchical memory consisting of current, short-term, and long-term memory. Given a user query, LightMem-Ego dynamically routes retrieval to the appropriate memory level and generates answers grounded in multimodal evidence. The demonstration can be deployed on smartphones and AI glasses, supporting object finding, conversation recall, life summarization, routine discovery, and personalized assistance. Code is available at https://github.com/zjunlp/LightMem-Ego.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 移动和可穿戴设备上的个人人工智能助理通过视觉和音频流不断感知用户的日常生活。然而，回答有关过去经历的查询需要轻量级多模态记忆，它可以不断积累、组织和检索长期经验，这仍然具有挑战性。为了应对这一挑战，我们推出了 LightMem-Ego，这是一种用于日常生活辅助的轻量级流式多模式存储系统。该系统不断捕获以自我为中心的视觉和音频流，将它们排列在共享时间线上，并将它们组织成由当前、短期和长期记忆组成的分层记忆。给定用户查询，LightMem-Ego 动态地将检索路由到适当的记忆级别，并生成基于多模式证据的答案。该演示可部署在智能手机和AI眼镜上，支持物体查找、对话回忆、生活总结、日常发现和个性化帮助。代码可在 https://github.com/zjunlp/LightMem-Ego 获取。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection         Community         Ningyu   Paper submitter    3 minutes ago         LightMem-Ego: Bringing lifelong memory to AI assistants on smartphones and AI glasses, enabling them to see, remember, and help with your daily life.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到收藏夹 社区宁宇论文提交者 3 分钟前 LightMem-Ego：为智能手机和 AI 眼镜上的 AI 助手带来终生记忆，使他们能够看到、记住并为您的日常生活提供帮助。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.11849" target="_blank">AdvancedMathBench: A Benchmark Suite for Advanced Mathematical Proof Generation and Verification</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Intern Large Models</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Lingkai Kong, Zijian Wu, Yuzhe Gu, Haiteng Zhao, Wenyong Huang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.11849" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.11849" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.11849.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Large language models (LLMs) have achieved remarkable performance on high-school and olympiad-style mathematics, yet their capabilities on advanced mathematics remain poorly understood. Existing benchmarks, however, fall short in both scope and evaluation granularity: they provide limited disciplinary coverage and often rely on final-answer correctness or coarse judgments, leaving the validity of the reasoning process inadequately assessed. To bridge this gap, we introduce AdvancedMathBench, a benchmark suite designed to evaluate advanced mathematical reasoning capabilities. Its core proof-generation benchmark, ProverBench, contains 296 problems spanning undergraduate and doctoral qualifying-exam levels. To provide reliable evaluation of the proofs, we develop a dedicated automatic verification pipeline trained on large-scale expert annotations to produce both correctness verdicts and fine-grained assessments of proof errors, which exhibits strong agreement with human experts on held-out proof trajectories. We further introduce VerifierBench, consisting of 888 model-generated proof trajectories paired with expert ground truth, to evaluate whether models can correctly judge proof validity and provide sound verification rationales. Experiments show that AdvancedMathBench remains challenging for frontier models. On proof generation, the best-performing model, GPT-5.5-xhigh, achieves only 75.8 and 66.1 on the UGD and QE splits, respectively, indicating substantial room for improvement on advanced mathematical proof construction. On proof verification, the best model attains a Balanced F1 of only 65.1, and models generally exhibit low true negative rates, suggesting that critical error detection remains a major bottleneck.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 大语言模型（LLM）在高中和奥林匹克数学方面取得了显着的成绩，但它们在高等数学方面的能力仍然知之甚少。然而，现有的基准在范围和评估粒度上都存在不足：它们提供的学科覆盖范围有限，并且通常依赖于最终答案的正确性或粗略的判断，从而导致推理过程的有效性评估不充分。为了弥补这一差距，我们引入了 AdvancedMathBench，这是一个旨在评估高级数学推理能力的基准套件。其核心证明生成基准 ProverBench 包含涵盖本科和博士资格考试级别的 296 个问题。为了提供对证明的可靠评估，我们开发了一个专门的自动验证管道，经过大规模专家注释的训练，可以生成正确性判决和对证明错误的细粒度评估，这与人类专家在保留的证明轨迹上表现出强烈的一致性。我们进一步引入了 VerifierBench，由 888 个模型生成的证明轨迹与专家地面事实配对组成，以评估模型是否能够正确判断证明有效性并提供合理的验证理由。实验表明，AdvancedMathBench 对于前沿模型仍然具有挑战性。在证明生成方面，性能最好的模型 GPT-5.5-xhigh 在 UGD 和 QE 分割上分别仅获得 75.8 和 66.1，这表明高级数学证明构造还有很大的改进空间。在证明验证中，最佳模型的平衡 F1 仅为 65.1，并且模型通常表现出较低的真负率，这表明关键错误检测仍然是主要瓶颈。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community         vanilla1116   Paper submitter    1 minute ago         We introduce AdvancedMathBench, a benchmark suite designed to evaluate advanced mathematical reasoning capabilities.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 vanilla1116 论文提交者 1 分钟前 我们推出 AdvancedMathBench，这是一个旨在评估高级数学推理能力的基准套件。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.11881" target="_blank">Metacognition in LLMs: Foundations, Progress, and Opportunities</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Yale NLP Lab</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Gabrielle Kaili-May Liu, Areeb Gani, Jacqueline Lu, Jordan Thomas, Mark Steyvers</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.11881" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.11881" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.11881.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Metacognition is a foundational component of intelligence critical to effective learning, problem solving, decision-making, communication, and more. In recent years, it has become increasingly recognized as a cornerstone of capable, transparent AI systems. Yet while LLMs have made significant progress across diverse real-world tasks, it is not yet clear when, how, or to what extent they can exhibit or be endowed with effective metacognitive abilities, nor how such abilities can be adapted to advance the fundamental capabilities, reliability, and intelligence of AI systems. This paper bridges this gap by presenting the first comprehensive overview of the current state of knowledge on metacognition for LLMs. We analyze and taxonomize the landscape of this emerging field and summarize recent technical advancements, including methods and benchmarks to measure and evaluate LLMs' metacognitive abilities, techniques to elicit, improve, and apply metacognition in LLMs, and findings and implications of ongoing research. We also discuss applications, open questions and challenges, and promising directions for future work. Our aim is to provide a detailed and up-to-date review of this topic and stimulate meaningful research and discussion. An organized list of papers can be found at https://github.com/yale-nlp/LLM-Metacognition.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 元认知是智力的基本组成部分，对于有效学习、解决问题、决策、沟通等至关重要。近年来，它越来越被认为是强大、透明的人工智能系统的基石。然而，尽管法学硕士在各种现实世界任务中取得了重大进展，但尚不清楚他们何时、如何或在多大程度上能够表现出或被赋予有效的元认知能力，也不清楚如何调整这些能力来提高人工智能系统的基本能力、可靠性和智能。本文首次全面概述了法学硕士元认知知识的现状，弥补了这一差距。我们对这一新兴领域的前景进行分析和分类，并总结最新的技术进展，包括衡量和评估法学硕士元认知能力的方法和基准，在法学硕士中引发、改进和应用元认知的技术，以及正在进行的研究的发现和影响。我们还讨论应用、悬而未决的问题和挑战，以及未来工作的有希望的方向。我们的目标是对该主题提供详细且最新的回顾，并激发有意义的研究和讨论。可以在 https://github.com/yale-nlp/LLM-Metacognition 找到有序的论文列表。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection      Community         johncliu   Paper submitter    about 2 hours ago         Metacognition is a foundational component of intelligence that has become increasingly recognized as a cornerstone of capable, transparent AI systems. While LLMs have made significant progress, it remains unclear when, how, or to what extent they can exhibit or be endowed with effective metacognitive abilities, and how such abilities can be adapted to advance the fundamental capabilities, reliability, and intelligence of AI systems. This paper bridges this gap by presenting the first systematic, comprehensive review of the current state of knowledge on metacognition for LLMs. See the GitHub repo for the full paper list.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 johncliu 论文提交者 大约 2 小时前 元认知是智能的基本组成部分，它已被越来越多地认为是有能力、透明的人工智能系统的基石。虽然法学硕士取得了重大进展，但仍不清楚他们何时、如何或在多大程度上能够表现出或被赋予有效的元认知能力，以及如何调整这些能力来提高人工智能系统的基本能力、可靠性和智能。本文首次系统、全面地回顾了法学硕士元认知知识的现状，从而弥补了这一差距。请参阅 GitHub 存储库以获取完整的论文列表。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.11643" target="_blank">Xiaomi-Robotics-U0: Unified Embodied Synthesis with World Foundation Model</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Xiaomi Robotics</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Xinghang Li, Jun Guo, Qiwei Li, Long Qian, Hang Lai</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.11643" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.11643" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.11643.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Recent foundation image and video generation models offer strong generalization and controllability, but their direct application to embodied scenarios is limited by requirements for multi-view consistency, geometric coherence, and robot embodiment constraints. Existing methods typically adapt foundation models with limited robot data, often sacrificing visual knowledge acquired during large-scale pre-training. We present Xiaomi-Robotics-U0, a 38-billion-parameter multimodal autoregressive model for unified embodied synthesis. It treats embodied generation as an extension of foundation image and video generation and jointly optimizes text-to-image generation, image editing, embodied scene generation, embodied transfer, and embodied video generation. This unified framework preserves the generalization of the pre-trained world foundation model while adapting it to embodied settings. Xiaomi-Robotics-U0 is the first model to support high-quality multi-view scene generation across multiple robot embodiments and to introduce structured, controllable embodied transfer for fine-grained editing while preserving multi-view consistency and interaction dynamics. It achieves state-of-the-art results on single-step and sequential generation tasks, outperforming GPT-Image-2.0 in human evaluations of embodied scene generation and transfer, ranking first on World Arena for embodied video generation, and improving the out-of-distribution success rate of pi_0.5 from 36.9% to 63.2% on challenging real-world manipulation tasks. These results show that foundation world models can serve both as embodied world models and scalable data engines for embodied intelligence. Code and checkpoints are available at https://robotics.xiaomi.com/xiaomi-robotics-u0.html.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：最近的基础图像和视频生成模型具有很强的泛化性和可控性，但它们在具体场景中的直接应用受到多视图一致性、几何相干性和机器人具体约束的要求的限制。现有方法通常使用有限的机器人数据来调整基础模型，通常会牺牲在大规模预训练期间获得的视觉知识。我们推出了Xiaomi-Robotics-U0，这是一个用于统一具体综合的 380 亿参数多模态自回归模型。它将具体化生成视为基础图像和视频生成的扩展，并联合优化文本到图像生成、图像编辑、具体化场景生成、具体化传输和具体化视频生成。这个统一的框架保留了预先训练的世界基础模型的泛化性，同时使其适应具体的设置。小米机器人-U0是第一个支持跨多个机器人实施例的高质量多视图场景生成的模型，并引入结构化、可控的实施传输以进行细粒度编辑，同时保持多视图一致性和交互动态。它在单步和顺序生成任务上取得了最先进的结果，在具体场景生成和传输的人类评估中优于 GPT-Image-2.0，在具体视频生成的 World Arena 上排名第一，并将 pi_0.5 在具有挑战性的现实世界操作任务上的分布外成功率从 36.9% 提高到 63.2%。这些结果表明，基础世界模型既可以作为具体世界模型，也可以作为具体智能的可扩展数据引擎。代码和检查点可在 https://robotics.xiaomi.com/xiaomi-robotics-u0.html 获取。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community         nielsr   Paper submitter    3 minutes ago         X thread: https://x.com/sheriyuo/status/2076920174205345831</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 nielsr 论文提交者 3 分钟前 X 线程：https://x.com/sheriyuo/status/2076920174205345831</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.09701" target="_blank">EgoSteer: A Full-Stack System Towards Steerable Dexterous Manipulation from Egocentric Videos</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yifan Zhong, Zhang Chen, Tianrui Guan, Fanlian Zeng, Yuyao Ye</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.09701" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.09701" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.09701.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Steerability is a defining capability of generalist robot policies, yet remains largely absent in dexterous-hand systems for lack of large-scale, language-aligned, and action-accurate demonstration data. To address this bottleneck, we present a full-stack system that scales dexterous VLA pre-training from egocentric human videos and enables data-efficient real-robot post-training. It integrates EgoSmith, a data pipeline that curates in-the-wild egocentric videos into 9.6K hours of high-quality pre-training data with 9x higher throughput and better accuracy than prior SOTA; a unified robot stack for teleoperation and human-in-the-loop correction; and EgoSteer, a world-model-enhanced VLA trained on optimized infrastructure. Human-data pre-training equips EgoSteer with language-guided manipulation priors, which are grounded through robot post-training and improved by DAgger refinement. Empirically, EgoSteer robustly executes free-form instructions across 40+ diverse tasks, demonstrating failure recovery, dexterity, and generalization. The pre-trained model also few-shot adapts to complex long-horizon tasks, including box folding, on two embodiments with 75+% success. We open-source the system, data, and model at https://egosteer.github.io/.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 可操纵性是通用机器人策略的一个定义能力，但由于缺乏大规模、语言一致且动作准确的演示数据，在灵巧手系统中仍然基本上不存在。为了解决这个瓶颈，我们提出了一个全栈系统，可以扩展以自我为中心的人类视频的灵巧 VLA 预训练，并实现数据高效的真实机器人后期训练。它集成了 EgoSmith，这是一个数据管道，可将野外的以自我为中心的视频整理为 9600 小时的高质量预训练数据，吞吐量比之前的 SOTA 高出 9 倍，准确性也更高；用于远程操作和人机在环校正的统一机器人堆栈； EgoSteer，一个经过优化基础设施训练的世界模型增强型 VLA。人类数据预训练为 EgoSteer 配备了语言引导的操作先验，这些先验通过机器人后训练奠定基础，并通过 DAgger 细化进行改进。根据经验，EgoSteer 在 40 多个不同任务中稳健地执行自由格式指令，展示了故障恢复、灵活性和泛化能力。预训练模型还可以通过少量样本适应复杂的长期任务，包括盒子折叠，在两个实施例中成功率达到 75% 以上。我们在 https://egosteer.github.io/ 开源系统、数据和模型。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page   Add to collection     Community         Yifan-Zhong   Paper submitter    about 1 hour ago</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 添加到收藏集 社区 Yifan-Zhong 论文提交者 大约 1 小时前</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.11505" target="_blank">Proxy Exploration and Reusable Guidance: A Modular LLM Post-Training Paradigm via Proxy-Guided Update Signals</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>KnowledgeXLab@Shanghai AI Lab</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Daocheng Fu, Rong Wu, Yu Yang, Xuemeng Yang, Jianbiao Mei</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.11505" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.11505" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.11505.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Post-training is essential for refining the domain-specific capabilities of large language models (LLMs), yet existing reward optimization and distribution matching methods tightly couple policy exploration with distribution alignment. This coupling forces expensive exploration directly on the policy model and severely hinders the asynchronous generation, reuse, and cross-model transfer of optimization signals. In this paper, we propose Proxy-guided Update Signal Transfer (PUST), a novel post-training framework that fundamentally decouples update-signal exploration from distribution alignment. Instead of utilizing the primary model for costly exploration, PUST employs a lightweight proxy model as an efficient testbed to discover high-reward behaviors. We extract the relative improvement signal between the proxy's initial and optimized states, transferring this directional update to the primary model to guide its policy alignment. This decoupled pipeline, comprising proxy exploration, update-signal extraction, and signal transfer, significantly reduces computational overhead and enables optimization signals to be asynchronously generated, cached, and reused. Crucially, by transferring relative improvements rather than absolute policy distributions, PUST naturally supports weak-to-strong improvement and seamless cross-model transfer. Systematic evaluations on Qwen3-family models across math and code domains demonstrate that update signals extracted from substantially weaker proxies can robustly and adjustably enhance stronger primary models. Ultimately, PUST transforms post-training from a monolithic online optimization process into a highly modular, reusable, and cost-efficient paradigm.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 后训练对于完善大型语言模型（LLM）的特定领域能力至关重要，但现有的奖励优化和分布匹配方法将策略探索与分布对齐紧密结合在一起。这种耦合迫使直接在策略模型上进行昂贵的探索，并严重阻碍了优化信号的异步生成、重用和跨模型传输。在本文中，我们提出了代理引导更新信号传输（PUST），这是一种新颖的训练后框架，从根本上将更新信号探索与分布对齐解耦。 PUST 没有利用主要模型进行成本高昂的探索，而是采用轻量级代理模型作为有效的测试平台来发现高回报行为。我们提取代理的初始状态和优化状态之间的相对改进信号，将此定向更新转移到主要模型以指导其策略调整。这种解耦的管道包括代理探索、更新信号提取和信号传输，显着减少了计算开销，并使优化信号能够异步生成、缓存和重用。至关重要的是，通过转移相对改进而不是绝对策略分布，PUST 自然支持从弱到强的改进和无缝的跨模型转移。对跨数学和代码域的 Qwen3 系列模型的系统评估表明，从较弱的代理中提取的更新信号可以稳健且可调节地增强更强的主要模型。最终，PUST 将训练后从单一的在线优化过程转变为高度模块化、可重用且经济高效的范例。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection      Community         fudaocheng   Paper submitter    43 minutes ago         Post-training is essential for refining the domain-specific capabilities of large language models (LLMs), yet existing reward optimization and distribution matching methods tightly couple policy exploration with distribution alignment. This coupling forces expensive exploration directly on the policy model and severely hinders the asynchronous generation, reuse, and cross-model transfer of optimization signals. In this paper, we propose Proxy-guided Update Signal Transfer (PUST), a novel post-training framework that fundamentally decouples update-signal exploration from distribution alignment. Instead of utilizing the primary model for costly exploration, PUST employs a lightweight proxy model as an efficient testbed to discover high-reward behaviors. We extract the relative improvement signal between the proxy's initial and optimized states, transferring this directional update to the primary model to guide its policy alignment. This decoupled pipeline, comprising proxy exploration, update-signal extraction, and signal transfer, significantly reduces computational overhead and enables optimization signals to be asynchronously generated, cached, and reused. Crucially, by transferring relative improvements rather than absolute policy distributions, PUST naturally supports weak-to-strong improvement and seamless cross-model transfer. Systematic evaluations on Qwen3-family models across math and code domains demonstrate that update signals extracted from substantially weaker proxies can robustly and adjustably enhance stronger primary models. Ultimately, PUST transforms post-training from a monolithic online optimization process into a highly modular, reusable, and cost-efficient paradigm.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 fudao Cheng 论文提交者 43 分钟前 后训练对于完善大型语言模型 (LLM) 的特定领域能力至关重要，但现有的奖励优化和分配匹配方法将策略探索与分配调整紧密结合在一起。这种耦合迫使直接在策略模型上进行昂贵的探索，并严重阻碍了优化信号的异步生成、重用和跨模型传输。在本文中，我们提出了代理引导更新信号传输（PUST），这是一种新颖的训练后框架，从根本上将更新信号探索与分布对齐解耦。 PUST 没有利用主要模型进行成本高昂的探索，而是采用轻量级代理模型作为有效的测试平台来发现高回报行为。我们提取代理的初始状态和优化状态之间的相对改进信号，将此定向更新转移到主要模型以指导其策略调整。这种解耦的管道包括代理探索、更新信号提取和信号传输，显着减少了计算开销，并使优化信号能够异步生成、缓存和重用。至关重要的是，通过转移相对改进而不是绝对策略分布，PUST 自然支持从弱到强的改进和无缝的跨模型转移。对跨数学和代码域的 Qwen3 系列模型的系统评估表明，从较弱的代理中提取的更新信号可以稳健且可调节地增强更强的主要模型。最终，PUST 将训练后从单一的在线优化过程转变为高度模块化、可重用且经济高效的范例。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.11736" target="_blank">MET: Theory-Grounded and Culture-Aware Multilingual Moral Reasoning</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>LAUNCH Lab</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Ayoung Lee, Ryan Kwon, Yunxiang Zhang, Yuxuan Liu, Peter Railton</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.11736" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.11736" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.11736.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Language models are increasingly used for moral decision-making across diverse linguistic and cultural contexts, yet existing work overlooks multilinguality on three aspects: 1) multilingual evaluation benchmarks use direct translation, failing to adapt culture-specific items; 2) inference-time methods for moral reasoning rely on static, English-centric scaffolds and lack grounding in moral theory; 3) training methods for moral decision-making typically require expensive supervision from stronger models or human annotators. We address these gaps with three contributions. First, we introduce MCLASH, a multilingual moral decision-making benchmark to capture culturally situated moral intuitions and social norms across languages. Second, we propose MET (Multilingual Ethics with Theory-grounded reasoning), a two-step prompting method built on expert-curated, theory-based grounds drawn from psychology and philosophy: the model first selects situation- and culture-specific grounds, then reasons over them in the native language of the user. Third, we introduce MET-D (MET-Distillation), which enhances the second step through a self-distillation training stage that requires no external supervision. MET-D improves macro-F1 over the base model on all three models of different sizes and families (Qwen3-4B, Qwen3-8B, Gemma3-4B), by an average of 3.71 points on MCLASH and 4.23 on MMoralExceptQA, with a peak MCLASH gain of 12.94 points for Malay on Qwen3-8B. We further reveal that MET-D increases native-language reasoning by 62.13 points on average, and that beneficial grounds differ systematically across cultures. Together, these contributions open the path for culture-aligned, theory-grounded multilingual moral reasoning.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 语言模型越来越多地用于跨不同语言和文化背景的道德决策，但现有的工作在三个方面忽视了多语言性：1）多语言评估基准使用直接翻译，未能适应特定文化的项目； 2）道德推理的推理时间方法依赖于静态的、以英语为中心的支架，缺乏道德理论的基础； 3）道德决策的训练方法通常需要来自更强大的模型或人类注释者的昂贵监督。我们通过三项贡献来解决这些差距。首先，我们介绍 MCLASH，一个多语言道德决策基准，用于捕获跨语言的文化道德直觉和社会规范。其次，我们提出了 MET（基于理论推理的多语言伦理），这是一种两步提示方法，建立在专家策划的、基于心理学和哲学的理论基础之上：该模型首先选择特定于情境和文化的理由，然后用用户的母语对其进行推理。第三，我们引入了 MET-D（MET-Distillation），它通过不需要外部监督的自蒸馏训练阶段来增强第二步。 MET-D 在不同尺寸和系列的所有三个模型（Qwen3-4B、Qwen3-8B、Gemma3-4B）上相对于基本模型改进了宏 F1，在 MCLASH 上平均提高了 3.71 点，在 MMoralExceptQA 上平均提高了 4.23 点，在 Qwen3-8B 上马来语的峰值 MCLASH 增益为 12.94 点。我们进一步揭示，MET-D 使母语推理能力平均提高 62.13 分，并且不同文化的有益效果存在系统性差异。这些贡献共同为文化一致、以理论为基础的多语言道德推理开辟了道路。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page   Add to collection     Community         Ayoung01   Paper submitter    33 minutes ago         Multilingual moral reasoning has 2 gaps: 1) evaluation datasets that rely on direct translation instead of cultural adaptation, and 2) no adaptive, theory-grounded reasoning methods. We address these with MCLASH (a new evaluation dataset), MET (a theory-grounded reasoning method), and MET-D (adding self-distillation on top of MET).</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 添加到集合 社区 Ayoung01 论文提交者 33 分钟前 多语言道德推理有 2 个差距：1）依赖直接翻译而不是文化适应的评估数据集，2）没有自适应的、基于理论的推理方法。我们使用 MCLASH（一种新的评估数据集）、MET（一种基于理论的推理方法）和 MET-D（在 MET 之上添加自蒸馏）来解决这些问题。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.11250" target="_blank">Multi-Agent LLMs Fail to Explore Each Other</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>University of Wisconsin - Madison</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Hyeong Kyu Choi, Jiatong Li, Wendi Li, Xin Eric Wang, Sharon Li</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.11250" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.11250" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.11250.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Exploration is essential for reliable autonomy in multi-agent systems, yet it remains unclear whether large language model (LLM) agents can explore effectively when interacting with one another. We show that modern LLM agents fail to do so, often exhibiting myopic and polarized interaction patterns that lead to suboptimal coordination and increased regret. We formalize this challenge as the Multi-Agent Exploration problem, modeling it as a partially observable stochastic game (POSG) problem in which agents must probe peers to infer their capabilities and identify effective interaction strategies. To address this, we introduce Multi- Agent Contextual Exploration (MACE), a lightweight framework that explicitly promotes exploration through structured peer selection. Across both contextual and parametric diversity settings, MACE substantially improves exploration behavior and downstream task performance. We further show theoretically that the value of exploration increases with agent diversity. Overall, our results highlight a fundamental limitation of current LLM agents and underscore the importance of explicitly guided exploration for reliable multi-agent autonomy. Code will be released in https://github.com/deeplearning-wisc/mace</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">Abstract  Exploration is essential for reliable autonomy in multi-agent systems, yet it remains unclear whether large language model (LLM) agents can explore effectively when interacting with one another.我们表明，现代法学硕士代理人未能做到这一点，经常表现出短视和两极分化的互动模式，导致协调不理想并增加遗憾。我们将这一挑战形式化为多智能体探索问题，将其建模为部分可观察随机博弈（POSG）问题，其中智能体必须探测同伴以推断其能力并确定有效的交互策略。为了解决这个问题，我们引入了多智能体上下文探索（MACE），这是一个轻量级框架，可以通过结构化的同伴选择来明确促进探索。在上下文和参数多样性设置中，MACE 显着改善了探索行为和下游任务性能。我们进一步从理论上证明，探索的价值随着代理的多样性而增加。总的来说，我们的结果凸显了当前 LLM 智能体的根本局限性，并强调了明确引导探索对可靠的多智能体自主性的重要性。代码将在 https://github.com/deeplearning-wisc/mace 发布</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community         imhgchoi   Paper submitter    about 2 hours ago         1️⃣  We find that current LLM agents, including frontier models, often fail to systematically explore their peers. Instead, they prematurely commit to a small number of agents, producing myopic and highly polarized interaction patterns.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">Error 500 (Server Error)!!1500.That’s an error.There was an error. Please try again later.That’s all we know.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.00397" target="_blank">NeuroCogMap Reveals Cognitive Organization of Large Language Models</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Zhongxiang Sun, Haolang Lu, Qiang Ma, Qi Li, Qipeng Wang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.00397" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.00397" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.00397.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Understanding how complex cognitive functions are organized within artificial systems is central to interpreting large language models (LLMs) and relating them to biological cognition. Yet although LLMs exhibit broad cognitive-like behaviours, it remains unclear whether their internal representations form reproducible functional systems that explain behaviour, failure and links to human cognition. Here we present NeuroCogMap, a cognitive neuroscience-inspired framework that organizes internal features of LLMs into functional parcels and links them to interpretable functions, cognitive capabilities and a cognitive hierarchy. These parcels form a stable and semantically coherent organization that is partly conserved across models and functionally linked to model outputs. Within this organization, major LLM failures, including hallucination, bias, refusal failure and sycophancy, correspond to distinct disruptions in representational and behavioural-control systems, yielding internal signatures for mechanism-guided detection and targeted intervention. Beyond model behaviour, NeuroCogMap improves prediction of human cortical responses during naturalistic language comprehension, with the strongest correspondence in higher-order association cortex. At the cognitive level, its internal signatures expose latent strategies that guide refinements of classical models of human decision-making. Together, these findings establish NeuroCogMap as a system-level framework for mapping functional organization in artificial systems and for relating this organization to human cortical function and cognitive behaviour.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 了解复杂的认知功能如何在人工系统中组织对于解释大型语言模型 (LLM) 并将其与生物认知联系起来至关重要。然而，尽管法学硕士表现出广泛的类似认知的行为，但仍不清楚他们的内部表征是否形成可重复的功能系统来解释行为、失败以及与人类认知的联系。在这里，我们介绍 NeuroCogMap，这是一个受认知神经科学启发的框架，它将法学硕士的内部特征组织成功能包，并将它们与可解释的功能、认知能力和认知层次结构联系起来。这些地块形成了一个稳定且语义一致的组织，该组织在模型之间部分保守，并在功能上与模型输出相关联。在该组织内，主要的法学硕士失败，包括幻觉、偏见、拒绝失败和阿谀奉承，对应于表征和行为控制系统的明显破坏，产生用于机制引导的检测和有针对性的干预的内部特征。除了模型行为之外，NeuroCogMap 还改进了自然语言理解过程中人类皮层反应的预测，在高阶关联皮层中具有最强的对应性。在认知层面，其内部特征揭示了指导人类决策经典模型改进的潜在策略。总之，这些发现将 NeuroCogMap 确立为一个系统级框架，用于绘制人工系统中的功能组织并将该组织与人类皮质功能和认知行为联系起来。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page   Add to collection     Community         Jeryi   Paper submitter    12 minutes ago         NeuroCogMap maps reproducible cognitive organization within large language models, revealing how functional systems support capabilities, break down in model pathologies, align with human cortical activity and inform cognitive-model discovery.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 添加到集合 社区 Jeryi 论文提交者 12 分钟前 NeuroCogMap 在大型语言模型中绘制了可重复的认知组织，揭示了功能系统如何支持能力、分解模型病理、与人类皮层活动保持一致并为认知模型发现提供信息。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.11644" target="_blank">Motion4Motion: Motion Transfer Across Subjects at Inference</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Ling-Hao Chen, Zixin Yin, Duomin Wang, Xianfang Zeng, Gang Yu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.11644" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.11644" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.11644.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  This work explores the motion transfer from one video to another, which is crucial in animation for diverse characters. Previously, video motion transfer has been largely explored between human and human-like characters, enabling a lot of applications in digital creation. However, these approaches encounter a main limitation. Specifically, related technical pipelines heavily rely on a predefined human skeleton structure and accordingly require skeleton-conditional model training. On the one hand, these methods are difficult to generalize to diverse characters, such as animals from different species, while preserving their unique motion styles. On the other hand, labeled data in diverse skeletons is limited, which additionally restricts the large-scale training for the task. In this paper, we jump out of the skeleton-based motion transfer framework and propose a training-free motion transfer framework, named Motion4Motion. Motion4Motionmodels the motion flow of the character in a video instead of skeletons, which makes motion transfer across species easier. Extensive experimental results and novel applications show our methods outperform baselines impressively. Project page is available at https://lhchen.top/Motion4Motion.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 这项工作探讨了从一个视频到另一个视频的动作转移，这对于不同角色的动画至关重要。此前，视频动作传输已在人类和类人角色之间进行了大量探索，在数字创作中实现了许多应用。然而，这些方法遇到了一个主要限制。具体来说，相关技术流程严重依赖于预定义的人体骨骼结构，因此需要骨骼条件模型训练。一方面，这些方法很难推广到不同的角色，例如不同物种的动物，同时保留其独特的运动风格。另一方面，不同骨架中的标记数据是有限的，这进一步限制了任务的大规模训练。在本文中，我们跳出了基于骨架的运动传输框架，提出了一种免训练的运动传输框架，名为Motion4Motion。 Motion4Motion 对视频中角色的运动流而不是骨骼进行建模，这使得跨物种的运动转移变得更容易。广泛的实验结果和新颖的应用表明我们的方法明显优于基线。项目页面位于 https://lhchen.top/Motion4Motion。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page   Add to collection         Community   EditPreview      Upload images, audio, and videos by dragging in the text input, pasting, or clicking here. Tap or paste here to upload images        Comment · Sign up or log in to comment</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 添加到集合 社区 EditPreview 通过拖入文本输入、粘贴或单击此处上传图像、音频和视频。点击或粘贴此处上传图片 评论 · 注册或登录以发表评论</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.09362" target="_blank">CtrlVTON: Controllable Virtual Try-On via Visual-Instance-Prompt Segmentation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>NXN Labs</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Seungyong Lee, Hyun Jun Jang, Sangoh Kim, Sungjoon Park</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.09362" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.09362" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.09362.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Virtual try-on (VTO) has made significant progress in realistically transferring garments onto a target person. Yet most systems give the user little control over how a garment should be worn -- its size (loose or fitted), style (e.g., tucked in or untucked, open or closed), and spatial placement on the body. We address this gap with two complementary contributions. First, we define and solve Visual-Instance-Prompt Segmentation via VIP-SAM: given a flatlay image of a garment, segment that specific instance in a photograph of a person wearing it. This is an instance-level task, distinct from the typically studied category-level segmentation. Second, we introduce CtrlVTON, a controllable VTO framework that recasts try-on as an image editing problem and adds segmentation masks as pixel-level control over garment layout, including style, size, and spatial placement on the body. VIP-SAM and CtrlVTON each achieve state-of-the-art results on their respective tasks. In particular, CtrlVTON generates images that follow user-provided layouts far more faithfully than the strongest proprietary editing systems while matching them on garment fidelity.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 虚拟试穿（VTO）在将服装真实地转移到目标人身上方面取得了重大进展。然而，大多数系统让用户几乎无法控制衣服的穿着方式——尺寸（宽松或合身）、款式（例如，塞进或不塞进、打开或闭合）以及在身体上的空间位置。我们通过两项互补的贡献来解决这一差距。首先，我们通过 VIP-SAM 定义并解决视觉实例提示分割：给定服装的平面图像，分割穿着该服装的人的照片中的特定实例。这是一个实例级任务，与通常研究的类别级分割不同。其次，我们介绍 CtrlVTON，一个可控的 VTO 框架，它将试穿重新定义为图像编辑问题，并添加分割蒙版作为对服装布局的像素级控制，包括款式、尺寸和身体上的空间放置。 VIP-SAM 和 CtrlVTON 在各自的任务上均取得了最先进的结果。特别是，CtrlVTON 生成的图像比最强大的专有编辑系统更忠实地遵循用户提供的布局，同时匹配服装保真度。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection      Community         RyanL22   Paper submitter    about 2 hours ago         CtrlVTON: Controllable Virtual Try-On via Visual-Instance-Prompt Segmentation</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 RyanL22 论文提交者 大约 2 小时前 CtrlVTON：通过视觉实例提示分段进行可控虚拟试穿</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.11885" target="_blank">Latent-Identity Tuning in Text-to-Image Personalization Models</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Tel Aviv University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Daniel Garibi, Ronen Kamenetsky, Hadar Averbuch-Elor, Daniel Cohen-Or, Or Patashnik</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.11885" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.11885" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.11885.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Generating and editing a person's face demands high precision, as even minor modifications can significantly alter a subject's perceived identity. Current personalization and editing methods built on general-purpose text-to-image models, however, often lack the precision required for fine-grained facial edits. We present a method for fine-grained identity tuning in text-to-image personalization models. Unlike standard image editing, which operates on a given image, identity tuning modifies the latent representation of a specific identity, enabling the generation of diverse images that consistently depict the same edited identity. To enable fine-grained latent identity tuning, we explore the latent space of a pre-trained, frozen encoder for text-to-image personalization. Our approach requires no additional training. Instead, it leverages the existing architecture of a frozen encoder to uncover latent semantic directions. This space consists of a set of latent tokens that play distinct roles in capturing different aspects of an identity and often correspond to specific spatial or semantic facial regions. We show that meaningful directions can be identified within this space and within subspaces defined by selected tokens, enabling localized, fine-grained, and semantically coherent edits. We validate our approach through qualitative and quantitative experiments that demonstrate diverse localized facial edits while preserving cross-image identity consistency. Project page at: https://garibida.github.io/IdentityTuning/</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 生成和编辑人脸需要高精度，因为即使很小的修改也会显着改变主体的感知身份。然而，当前基于通用文本到图像模型构建的个性化和编辑方法通常缺乏细粒度面部编辑所需的精度。我们提出了一种在文本到图像个性化模型中进行细粒度身份调整的方法。与对给定图像进行操作的标准图像编辑不同，身份调整修改特定身份的潜在表示，从而能够生成一致地描述相同编辑身份的不同图像。为了实现细粒度的潜在身份调整，我们探索了用于文本到图像个性化的预训练、冻结编码器的潜在空间。我们的方法不需要额外的培训。相反，它利用冻结编码器的现有架构来发现潜在的语义方向。该空间由一组潜在标记组成，这些标记在捕获身份的不同方面方面发挥着不同的作用，并且通常对应于特定的空间或语义面部区域。我们表明，可以在该空间内以及由所选标记定义的子空间内识别有意义的方向，从而实现本地化、细粒度和语义连贯的编辑。我们通过定性和定量实验验证了我们的方法，这些实验展示了多样化的局部面部编辑，同时保持了跨图像身份的一致性。项目页面：https://garibida.github.io/IdentityTuning/</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page   Add to collection     Community   EditPreview      Upload images, audio, and videos by dragging in the text input, pasting, or clicking here. Tap or paste here to upload images        Comment · Sign up or log in to comment</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 添加到集合 社区 EditPreview 通过拖入文本输入、粘贴或单击此处上传图像、音频和视频。点击或粘贴此处上传图片 评论 · 注册或登录以发表评论</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.10623" target="_blank">LATO.2: Factorized 3D Mesh Generation with Vertex and Topology Flow</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Hang Long, Tianhao Zhao, Junkai Lin, Youjia Zhang, Huipeng Guo</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.10623" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.10623" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.10623.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Flow matching over carefully designed latent representations has recently emerged as a powerful paradigm for topology-aware mesh generation. Existing approaches, however, model vertices and connectivity jointly in a joint latent space, entangling continuous vertex geometry with discrete combinatorial structure; this complicates flow learning and manifests as drifting vertices and broken surfaces. We present LATO.2, a factorized flow matching framework that decomposes mesh generation into a vertex flow followed by a connectivity flow conditioned on the realized vertices, with both stages anchored to a shared coarse voxel scaffold. Dedicated VAEs underpin the two stages, recovering vertices at sub-voxel precision and embedding discrete connectivity into a continuous latent space. We demonstrate two advantages unique to this factorization: (i) part-wise generation, in which the scaffold is partitioned and each part synthesized at full latent capacity, yielding substantially higher-resolution meshes than a monolithic latent permits; and (ii) topology-adaptive editing, in which manipulating first-stage vertices induces the corresponding connectivity without re-optimization. Experiments show that LATO.2 surpasses state-of-the-art topology-aware mesh generators in geometric fidelity and connectivity quality.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 经过精心设计的潜在表示的流匹配最近已成为拓扑感知网格生成的强大范例。然而，现有的方法是在联合潜在空间中联合建模顶点和连接性，将连续的顶点几何形状与离散的组合结构纠缠在一起；这使流学习变得复杂，并表现为漂移的顶点和破碎的表面。我们提出了 LATO.2，一个因式分解的流匹配框架，它将网格生成分解为顶点流，然后是以已实现的顶点为条件的连接流，两个阶段都锚定到共享的粗体素支架。专用 VAE 支持这两个阶段，以亚体素精度恢复顶点并将离散连接嵌入连续的潜在空间。我们证明了这种分解的两个独特优势：（i）部分生成，其中支架被分区，每个部分以完全潜在能力合成，产生比整体潜在能力更高分辨率的网格； (ii) 拓扑自适应编辑，其中操作第一阶段顶点会产生相应的连接而无需重新优化。实验表明，LATO.2 在几何保真度和连接质量方面超越了最先进的拓扑感知网格生成器。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community   EditPreview      Upload images, audio, and videos by dragging in the text input, pasting, or clicking here. Tap or paste here to upload images        Comment · Sign up or log in to comment</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 EditPreview 通过拖入文本输入、粘贴或单击此处上传图像、音频和视频。点击或粘贴此处上传图片 评论 · 注册或登录以发表评论</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.07470" target="_blank">A Theory of Contrastive Learning with Natural Images</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Massachusetts Institute of Technology</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Antonio Torralba, Yair Weiss</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.07470" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.07470" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.07470.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Why does contrastive learning with simple images and augmentations yield useful representations for downstream tasks? We address this question by analytically computing the optimal representation in terms of a contrastive loss for a range of basic augmentations and any image dataset with stationary statistics. We show that for certain augmentations the optimum can be attained by a CNN whose first layer filters are sinusoids, followed by a pointwise nonlinearity, global average pooling, and a final linear layer that performs partial whitening. We also show that the optimal weights in such CNNs for more complicated augmentations are still sinusoids. The frequencies of the sinusoids and their weights can be computed using a simple waterfilling algorithm given the dataset's expected power spectrum. Experiments with different image datasets and augmentations show that such CNNs trained with SGD empirically learn sinusoids in their first layer and to perform partial whitening</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 为什么使用简单图像和增强的对比学习可以为下游任务产生有用的表示？我们通过分析计算一系列基本增强和任何具有固定统计数据的图像数据集的对比损失的最佳表示来解决这个问题。我们表明，对于某些增强，可以通过第一层滤波器为正弦曲线、随后是点非线性、全局平均池化和执行部分白化的最终线性层的 CNN 来获得最佳效果。我们还表明，此类 CNN 中对于更复杂的增强的最佳权重仍然是正弦曲线。给定数据集的预期功率谱，可以使用简单的注水算法来计算正弦曲线的频率及其权重。使用不同图像数据集和增强的实验表明，此类使用 SGD 训练的 CNN 在第一层中凭经验学习正弦曲线并执行部分白化</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community         ShadenA   Paper submitter    34 minutes ago         A very cool paper that analytically computes the optimal weights for vision contrastive learning models.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 ShadenA 论文提交者 34 分钟前 一篇非常酷的论文，分析计算视觉对比学习模型的最佳权重。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.11862" target="_blank">Evidence-Backed Video Question Answering</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Salesforce AI Research</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Shijie Wang, Honglu Zhou, Ziyang Wang, Ran Xu, Caiming Xiong</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.11862" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.11862" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.11862.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Current Video Large Language Models (Video LLMs) excel in question answering (QA) but largely operate as black boxes, providing textual answers without verifiable visual grounding. Existing explainability efforts rely on textual rationales or sparse bounding boxes, which struggle to capture complex video dynamics such as occlusions and non-rigid deformations. We propose Evidence-Backed Video Question Answering (E-VQA), a novel task requiring models to jointly output a semantic answer and precise spatio-temporal evidence: temporal segments and dense, tracked object segmentation masklets. To support this, we introduce ST-Evidence, the first human-verified benchmark for both discriminative and generative pixel-level grounding. Evaluations of state-of-the-art models reveal a critical decoupling between QA accuracy and true visual perception that scaling alone fails to bridge. To address this, we develop scalable, automated generation pipelines to create ST-Evidence-Instruct, a 160k-scale dataset bridging high-level reasoning with fine-grained grounding. Fine-tuning grounded Video LLMs on this data yields substantial gains over the corresponding size-matched UniPixel baselines (e.g., +27.2 t-mean and +13.8 J&amp;F on a 7B model), establishing a robust baseline for explainable, evidence-backed video understanding. Code and data are available at https://github.com/SalesforceAIResearch/EVQA.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 当前的视频大语言模型（视频 LLM）在问答（QA）方面表现出色，但很大程度上作为黑匣子运行，提供文本答案，而没有可验证的视觉基础。现有的可解释性工作依赖于文本原理或稀疏边界框，它们很难捕获复杂的视频动态，例如遮挡和非刚性变形。我们提出了证据支持的视频问答（E-VQA），这是一项新颖的任务，要求模型联合输出语义答案和精确的时空证据：时间片段和密集的跟踪对象分割掩码。为了支持这一点，我们引入了 ST-Evidence，这是第一个经过人类验证的判别性和生成性像素级接地基准。对最先进模型的评估揭示了 QA 准确性和真实视觉感知之间的关键脱钩，而仅靠缩放无法弥合这种脱钩。为了解决这个问题，我们开发了可扩展的自动化生成管道来创建 ST-Evidence-Instruct，这是一个将高级推理与细粒度基础联系起来的 16 万规模数据集。根据这些数据对扎根视频 LLM 进行微调，可比相应的尺寸匹配 UniPixel 基线（例如，7B 模型上的 +27.2 t-mean 和 +13.8 J&F）产生显着的增益，为可解释的、有证据支持的视频理解建立了可靠的基线。代码和数据可在 https://github.com/SalesforceAIResearch/EVQA 获取。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community         wang-sj16   Paper submitter    31 minutes ago         Current Video Large Language Models (Video LLMs) excel in question answering (QA) but largely operate as black boxes, providing textual answers without verifiable visual grounding. Existing explainability efforts rely on textual rationales or sparse bounding boxes, which struggle to capture complex video dynamics such as occlusions and non-rigid deformations. We propose Evidence-Backed Video Question Answering (E-VQA), a novel task requiring models to jointly output a semantic answer and precise spatio-temporal evidence: temporal segments and dense, tracked object segmentation masklets. To support this, we introduce ST-Evidence, the first human-verified benchmark for both discriminative and generative pixel-level grounding. Evaluations of state-of-the-art models reveal a critical decoupling between QA accuracy and true visual perception that scaling alone fails to bridge. To address this, we develop scalable, automated generation pipelines to create ST-Evidence-Instruct, a 160k-scale dataset bridging high-level reasoning with fine-grained grounding. Fine-tuning grounded Video LLMs on this data yields substantial gains over the corresponding size-matched UniPixel baselines (e.g., +27.2 t-mean and +13.8 J&amp;F on a 7B model), establishing a robust baseline for explainable, evidence-backed video understanding. Code and data are available.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 wang-sj16 论文提交者 31 分钟前 当前的视频大型语言模型（视频 LLM）在问答（QA）方面表现出色，但很大程度上作为黑匣子运行，提供文本答案，没有可验证的视觉基础。现有的可解释性工作依赖于文本原理或稀疏边界框，它们很难捕获复杂的视频动态，例如遮挡和非刚性变形。我们提出了证据支持的视频问答（E-VQA），这是一项新颖的任务，要求模型联合输出语义答案和精确的时空证据：时间片段和密集的跟踪对象分割掩码。为了支持这一点，我们引入了 ST-Evidence，这是第一个经过人类验证的判别性和生成性像素级接地基准。对最先进模型的评估揭示了 QA 准确性和真实视觉感知之间的关键脱钩，而仅靠缩放无法弥合这种脱钩。为了解决这个问题，我们开发了可扩展的自动化生成管道来创建 ST-Evidence-Instruct，这是一个将高级推理与细粒度基础联系起来的 16 万规模数据集。根据这些数据对扎根视频 LLM 进行微调，可比相应的尺寸匹配 UniPixel 基线（例如，7B 模型上的 +27.2 t-mean 和 +13.8 J&F）产生显着的增益，为可解释的、有证据支持的视频理解建立了可靠的基线。代码和数据可用。</p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+        
+        <div class="nav-buttons">
+            <a href="2026-07-13.html" class="nav-btn">← 2026-07-13</a>
+            <a href="2026-07-15.html" class="nav-btn">2026-07-15 →</a>
+        </div>
+        
+        <footer>
+            Generated by <a href="https://github.com" target="_blank">HF Papers Daily</a>
+        </footer>
+    </div>
+    
+    <script>
+        function toggleAbstract(header) {
+            const toggle = header.querySelector('.abstract-toggle');
+            const content = header.nextElementSibling;
+            toggle.classList.toggle('expanded');
+            content.classList.toggle('expanded');
+        }
+    </script>
+</html>

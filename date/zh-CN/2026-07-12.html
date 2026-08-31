@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hugging Face Papers - 2026-07-12 (zh-CN)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .date {
+            font-size: 1.2em;
+            color: #a0a0a0;
+        }
+        
+        .stats {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #888;
+        }
+        
+        .paper-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .paper-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(102, 126, 234, 0.5);
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.2);
+        }
+        
+        .paper-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        
+        .paper-title a {
+            color: #e0e0e0;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .paper-title a:hover {
+            color: #667eea;
+        }
+        
+        .paper-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            color: #a0a0a0;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .meta-label {
+            color: #888;
+        }
+        
+        .links {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .link-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .link-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .link-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .abstract-section {
+            margin-top: 15px;
+        }
+        
+        .abstract-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .abstract-header:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .abstract-toggle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+            transition: transform 0.3s;
+        }
+        
+        .abstract-toggle.expanded {
+            transform: rotate(180deg);
+        }
+        
+        .abstract-label {
+            font-weight: 500;
+            color: #667eea;
+        }
+        
+        .abstract-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding: 0 15px;
+        }
+        
+        .abstract-content.expanded {
+            max-height: 10000px;
+            padding: 15px;
+        }
+        
+        .abstract-text {
+            line-height: 1.7;
+            color: #c0c0c0;
+        }
+        
+        .summary-box {
+            background: rgba(102, 126, 234, 0.1);
+            border-left: 3px solid #667eea;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .summary-label {
+            font-size: 0.8em;
+            color: #667eea;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .summary-text {
+            color: #b0b0b0;
+            line-height: 1.5;
+        }
+        
+        .translation-box {
+            background: rgba(118, 75, 162, 0.1);
+            border-left: 3px solid #764ba2;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .translation-label {
+            font-size: 0.8em;
+            color: #764ba2;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .translation-text {
+            color: #b0b0b0;
+            line-height: 1.5;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding: 0 10px;
+        }
+        
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .nav-btn.disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: #666;
+            pointer-events: none;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .paper-title {
+                font-size: 1.1em;
+            }
+            
+            .links {
+                flex-wrap: wrap;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-btn {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Hugging Face Papers</h1>
+            <div class="date">2026-07-12</div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number">23</div>
+                    <div class="stat-label">Papers</div>
+                </div>
+            </div>
+        </header>
+        
+        <main>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.03118" target="_blank">Vidu S1: A Real-Time Interactive Video Generation Model</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Tsinghua University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Jintao Zhang, Kai Jiang, Jintao Chen, Xu Wang, Yang Luo</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.03118" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.03118" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.03118.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Vidu S1 is a real-time interactive video generation model that supports voice-controlled digital character animation with infinite-length output and high frame rate on consumer hardware.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 Vidu S1是一种实时交互式视频生成模型，支持在消费类硬件上无限长度输出和高帧率的语音控制数字角色动画。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct We introduce Vidu S1, a real-time interactive video generation model supporting voice control of digital characters. Users can control video generation content at any moment through voice instructions. Vidu S1 supports infinite-length real-time video generation without blurring, drift, or visual distortion. Built with TurboDiffusion and TurboServe, Vidu S1 outputs 540p real-time videos at up to 42 FPS on regular consumer GPUs. Users can upload custom images of real people, anime, and pets, and choose different voice tones for personalized experiences. Experiments show that Vidu S1 achieves the best performance across all test metrics while fully meeting real-time inference requirements. A playable online demo is available at https://vidu.com/vidu-stream.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 我们介绍 Vidu S1，一个支持数字角色语音控制的实时交互式视频生成模型。用户可以随时通过语音指令控制视频生成内容。 Vidu S1支持无限长度的实时视频生成，不会出现模糊、漂移或视觉失真的情况。 Vidu S1 采用 TurboDiffusion 和 TurboServe 构建，在普通消费级 GPU 上以高达 42 FPS 的速度输出 540p 实时视频。用户可以上传真人、动漫、宠物的自定义图片，并选择不同的语音音调以获得个性化体验。实验表明，Vidu S1在所有测试指标上均实现了最佳性能，同时完全满足实时推理要求。可在 https://vidu.com/vidu-stream 上获取可玩的在线演示。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2603.29616" target="_blank">Video-Oasis: Rethinking Evaluation of Video Understanding</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>NAVER</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>geuntaek, Geuntaek Lim, Sungjune Park, Jaeyun Lee, Inwoong Lee</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2603.29616" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2603.29616" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2603.29616.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Video-Oasis diagnostics reveal that half of existing video benchmarks can be solved without visual input, exposing significant capability gaps in current video understanding models.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 Video-Oasis 诊断表明，现有视频基准的一半可以在没有视觉输入的情况下解决，暴露出当前视频理解模型中的显着能力差距。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct The inherent complexity of video understanding makes it difficult to determine whether Video-LLM benchmark performance stems from visual perception, linguistic reasoning, or knowledge priors. While many benchmarks have emerged to assess high-level reasoning, shared criteria for evaluating video understanding remain largely overlooked. Instead of introducing yet another benchmark, we take a step back to re-examine the criteria for evaluating video understanding. In this work, we introduce Video-Oasis, a sustainable diagnostic suite for systematically auditing existing video understanding benchmarks. This audit reveals that 55\% of existing benchmark samples are solvable without visual input or temporal context. After filtering these shortcuts, the remaining video-native challenges expose a substantial capability gap: state-of-the-art models perform only marginally above random guessing. Building on these findings, we use the distilled challenges as a testbed to investigate which algorithmic design choices contribute to robust video understanding. We hope our work provides a practical foundation for constructing rigorous video benchmarks and evaluating future Video-LLMs. Code is available at https://github.com/sejong-rcv/Video-Oasis.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成视频理解固有的复杂性使得很难确定 Video-LLM 基准性能是否源于视觉感知、语言推理或知识先验。尽管已经出现了许多评估高级推理的基准，但评估视频理解的共同标准仍然在很大程度上被忽视。我们没有引入另一个基准，而是退一步重新审视评估视频理解的标准。在这项工作中，我们介绍了 Video-Oasis，这是一个可持续的诊断套件，用于系统地审核现有的视频理解基准。此次审计表明，55\% 的现有基准样本无需视觉输入或时间上下文即可解决。在过滤了这些捷径之后，剩下的视频原生挑战暴露了巨大的能力差距：最先进的模型的表现仅略高于随机猜测。基于这些发现，我们使用蒸馏挑战作为测试平台来研究哪些算法设计选择有助于稳健的视频理解。我们希望我们的工作为构建严格的视频基准和评估未来的视频法学硕士提供实用的基础。代码可在 https://github.com/sejong-rcv/Video-Oasis 获取。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2601.16211" target="_blank">Why Can't I Open My Drawer? Mitigating Object-Driven Shortcuts in Zero-Shot Compositional Action Recognition</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>NAVER</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>ahnGeo, Geo Ahn, Inwoong Lee, Taeoh Kim, Minho Shim</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2601.16211" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2601.16211" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2601.16211.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract RCORE addresses object-driven shortcuts in zero-shot compositional action recognition by using co-occurrence prior regularization and temporal order regularization to improve compositional generalization.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 RCORE 通过使用共现先验正则化和时间顺序正则化来解决零样本合成动作识别中的对象驱动捷径，以提高合成泛化能力。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Zero-Shot Compositional Action Recognition (ZS-CAR) requires recognizing novel verb-object combinations composed of previously observed primitives. In this work, we tackle a key failure mode: models predict verbs via object-driven shortcuts (i.e., relying on the labeled object class) rather than temporal evidence. We argue that sparse compositional supervision and verb-object learning asymmetry can promote object-driven shortcut learning. Our analysis with proposed diagnostic metrics shows that existing methods overfit to training co-occurrence patterns and underuse temporal verb cues, resulting in weak generalization to unseen compositions. To address object-driven shortcuts, we propose Robust COmpositional REpresentations (RCORE) with two components. Co-occurrence Prior Regularization (CPR) adds explicit supervision for unseen compositions and regularizes the model against frequent co-occurrence priors by treating them as hard negatives. Temporal Order Regularization for Composition (TORC) enforces temporal-order sensitivity to learn temporally grounded verb representations. Across Sth-com and EK100-com, RCORE reduces shortcut diagnostics and consequently improves compositional generalization.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成零射击组合动作识别 (ZS-CAR) 需要识别由先前观察到的基元组成的新颖的动词-宾语组合。在这项工作中，我们解决了一个关键的失败模式：模型通过对象驱动的快捷方式（即依赖于标记的对象类）而不是时间证据来预测动词。我们认为稀疏组合监督和动宾学习不对称可以促进对象驱动的快捷学习。我们对提出的诊断指标的分析表明，现有方法过于适合训练共现模式，并且未充分利用时间动词线索，导致对未见成分的泛化能力较弱。为了解决对象驱动的快捷方式，我们提出了具有两个组件的鲁棒组合表示（RCORE）。共现先验正则化 (CPR) 增加了对未见成分的显式监督，并通过将频繁共现先验视为硬负例来针对频繁共现先验对模型进行正则化。组合时间顺序正则化 (TORC) 强制执行时间顺序敏感性，以学习基于时间的动词表示。在 Sth-com 和 EK100-com 中，RCORE 减少了快捷诊断，从而提高了组合泛化。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.08758" target="_blank">Ideas Have Genomes: Benchmarking Scientific Lineage Reasoning and Lineage-Grounded Idea Generation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Shanghai Jiao Tong University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yifan Zhou, Qihao Yang, Yan Li, Donggang Li, Xiru Hu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.08758" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.08758" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.08758.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract A benchmark for scientific lineage reasoning and idea generation is introduced, organizing scientific works as genetic-like Idea Genome objects and evaluating both reasoning and generation capabilities.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 引入了科学谱系推理和思想生成的基准，将科学作品组织为类似遗传的思想基因组对象，并评估推理和生成能力。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Scientific ideas rarely start from a blank page. They inherit mechanisms, repair known limitations, and recombine pieces of earlier work, much like biological genomes. Current benchmarks still say little about whether AI systems can follow this inheritance structure. We present IdeaGene-Bench (IG-Bench), a benchmark for scientific lineage reasoning and lineage-grounded idea generation. IG-Bench is organized around the IdeaGene framework: each paper or proposal is represented as a set of minimal, typed, evidence-grounded Idea Genome objects, and a GenomeDiff aligns these objects to record inheritance, mutation, loss, external import, and novel insertion under six operational evolutionary dynamics. The benchmark contains 1,961 golden lineage traces, 1,085 curated Idea Genome objects, and 920 pairwise GenomeDiff records across 10 scientific domains. It supports two evaluations. IG-Exam (42 task types, 1,029 instances) tests closed-form lineage reasoning across Idea Genome abstraction, inheritance tracing, evolutionary reasoning, and lineage verification. IG-Arena evaluates generation with a lineage-conditioned Population-Evolution Score(PES), asking whether a proposal can be inserted as a coherent descendant of a given lineage population: it should inherit the right Idea Genome objects, vary meaningfully from nearby work, and offer selection value for future research. Experiments on 14 LLM-based scientists expose a compositional bottleneck. The strongest system reaches only 27.3% exact accuracy on lineage reasoning, and structured lineage context reshuffles system rankings rather than helping every participant uniformly.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 科学思想很少从空白页开始。它们继承机制，修复已知的局限性，并重组早期工作的片段，就像生物基因组一样。目前的基准测试仍然很少谈到人工智能系统是否可以遵循这种继承结构。我们推出 IdeaGene-Bench (IG-Bench)，这是科学谱系推理和基于谱系的想法生成的基准。 IG-Bench 围绕 IdeaGene 框架进行组织：每篇论文或提案都表示为一组最小的、有类型的、有证据的 Idea Genome 对象，GenomeDiff 对齐这些对象以记录六种操作进化动态下的继承、突变、丢失、外部导入和新颖插入。该基准包含 1,961 个黄金谱系痕迹、1,085 个精心策划的 Idea Genome 对象以及 10 个科学领域的 920 个成对 GenomeDiff 记录。它支持两种评估。 IG-Exam（42 种任务类型，1,029 个实例）测试思想基因组抽象、继承追踪、进化推理和谱系验证的封闭式谱系推理。 IG-Arena 使用谱系条件种群进化分数（PES）评估生成，询问是否可以将提案作为给定谱系种群的连贯后代插入：它应该继承正确的想法基因组对象，与附近的工作有有意义的变化，并为未来的研究提供选择价值。对 14 名法学硕士科学家进行的实验暴露了成分瓶颈。最强的系统在谱系推理上的准确率仅为 27.3%，结构化谱系上下文会重新洗牌系统排名，而不是统一帮助每个参与者。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.08770" target="_blank">LongE2V: Long-Horizon Event-based Video Reconstruction, Prediction, and Frame Interpolation with Video Diffusion Models</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>National Yang Ming Chiao Tung University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>fansam39, Cheng-De Fan, Chun-Wei Tuan Mu, Chen-Wei Chang, Chin-Yang Lin</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.08770" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.08770" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.08770.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract LongE2V enables high-quality video recovery from sparse event streams by leveraging pre-trained video diffusion priors and addressing temporal stability and frame interpolation challenges.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 LongE2V 通过利用预先训练的视频扩散先验并解决时间稳定性和帧插值挑战，实现从稀疏事件流中恢复高质量视频。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Recovering high-quality video from sparse event streams is a challenging task. Regression methods often blur textures, while existing generative models struggle with long-term stability. We propose LongE2V, a novel approach that leverages pre-trained video diffusion priors to jointly handle event-based video reconstruction, prediction, and frame interpolation. By fine-tuning a foundational video model, our approach achieves high data efficiency and superior perceptual quality. We introduce Autoregressive Unrolling and Adaptive Context Switching to mitigate temporal drift in extremely long sequences. We also propose Reencoding Alignment with Cross Residual Correction to ensure precise bidirectional consistency during frame interpolation. Furthermore, Event Voxel Density Augmentation ensures robustness across varying sensor resolutions. Extensive experiments on real-world benchmarks demonstrate that LongE2V outperforms state-of-the-art methods across all three tasks, exhibiting exceptional temporal coherence and zero-shot generalization. Project page: https://cdfan0627.github.io/LongE2V-page/</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 从稀疏事件流中恢复高质量视频是一项具有挑战性的任务。回归方法通常会模糊纹理，而现有的生成模型则难以实现长期稳定性。我们提出了 LongE2V，这是一种利用预先训练的视频扩散先验来联合处理基于事件的视频重建、预测和帧插值的新颖方法。通过微调基础视频模型，我们的方法实现了高数据效率和卓越的感知质量。我们引入自回归展开和自适应上下文切换来减轻极长序列中的时间漂移​​。我们还建议使用交叉残差校正重新编码对齐，以确保帧插值期间精确的双向一致性。此外，事件体素密度增强可确保不同传感器分辨率下的稳健性。对现实世界基准的大量实验表明，LongE2V 在所有三个任务中都优于最先进的方法，表现出卓越的时间一致性和零样本泛化。项目页面：https://cdfan0627.github.io/LongE2V-page/</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.08768" target="_blank">UniClawBench: A Universal Benchmark for Proactive Agents on Real-World Tasks</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>The University of Hong Kong</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Zhekai Chen, Chengqi Duan, Kaiyue Sun, Bohao Li, Yuqing Wang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.08768" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.08768" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.08768.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract UniClawBench introduces a capability-driven benchmark for evaluating proactive agents in real-world environments using live Docker container evaluation and closed-loop assessment with multiple agent roles.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 UniClawBench 引入了一种能力驱动的基准，用于使用实时 Docker 容器评估和具有多个代理角色的闭环评估来评估现实环境中的主动代理。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct The rapid development of large language models and multimodal large language models has accelerated the emergence of proactive agents capable of operating everyday tools and assisting users in real-world environments. However, existing benchmarks struggle to evaluate such agents effectively, as they often rely on sandboxed environments and single-turn evaluation paradigms. Moreover, their scenario-based task taxonomies mix multiple model capabilities within the same task category, making it difficult to identify the root causes of agent failures. To address these limitations, we introduce UniClawBench, the first capability-driven benchmark designed to evaluate proactive agents in dynamic, real-world settings. UniClawBench is built around five foundational model capabilities: Skill Usage, Exploration, Long-Context Reasoning, Multimodal Understanding, and Cross-Platform Coordination. Based on these capabilities, we design 400 bilingual real-world tasks. Unlike previous benchmarks that rely on static, pre-recorded answers, our benchmark evaluates agents in live Docker containers using fine-grained, step-by-step completion checkpoints. Furthermore, we design a closed-loop evaluation strategy comprising an executor agent, a hidden supervisor agent, and a user agent to simulate realistic multi-turn human feedback without leaking grading criteria. To disentangle base model capabilities from framework-level design choices, we evaluate state-of-the-art models under multiple agent frameworks. Through comprehensive comparisons across both models and frameworks, we show how base model capabilities and agent framework designs jointly shape performance in real-world environments. To facilitate future research, we make our benchmark and code publicly available at https://github.com/HKU-MMLab/UniClawBench.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 大语言模型和多模态大语言模型的快速发展加速了能够操作日常工具并在现实环境中帮助用户的主动代理的出现。然而，现有的基准很难有效地评估此类代理，因为它们通常依赖于沙盒环境和单轮评估范例。此外，他们基于场景的任务分类法在同一任务类别中混合了多个模型功能，使得很难确定代理失败的根本原因。为了解决这些限制，我们推出了 UniClawBench，这是第一个能力驱动的基准测试，旨在评估动态的现实环境中的主动代理。 UniClawBench 围绕五种基本模型功能构建：技能使用、探索、长上下文推理、多模式理解和跨平台协调。基于这些能力，我们设计了 400 个双语现实世界任务。与之前依赖静态、预先记录的答案的基准测试不同，我们的基准测试使用细粒度、逐步完成检查点来评估实时 Docker 容器中的代理。此外，我们设计了一种闭环评估策略，包括执行代理、隐藏监督代理和用户代理，以模拟真实的多轮人类反馈，而不会泄露评分标准。为了将基本模型功能与框架级设计选择分开，我们评估了多个代理框架下的最先进模型。通过对模型和框架的全面比较，我们展示了基本模型功能和代理框架设计如何共同塑造现实环境中的性能。为了促进未来的研究，我们在 https://github.com/HKU-MMLab/UniClawBench 上公开提供我们的基准测试和代码。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.08765" target="_blank">Enhancing In-context Panoramic Generation via Geometric-aware Pretraining</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Insta360</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Haoran Feng, Ruiyang Zhang, Longyi Zhang, Dizhe Zhang, Lu Qi</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.08765" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.08765" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.08765.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Canvas360 is a two-stage framework for in-context panoramic generation that combines geometry-aware pretraining with fine-tuning, featuring a large-scale dataset and novel modeling techniques for improved geometric consistency and global coherence.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 Canvas360 是一个用于上下文全景生成的两阶段框架，它将几何感知预训练与微调相结合，具有大规模数据集和新颖的建模技术，可提高几何一致性和全局一致性。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct In this work, we present Canvas360, a two-stage framework for in-context panoramic generation that combines geometry-aware pretraining with downstream task-specific fine-tuning. To address the lack of large-scale, high-quality training data tailored to in-context panoramic tasks, we propose Canvas360Dataset, a collection of 1M high-quality paired panoramic samples for style transfer, inpainting, outpainting, and editing, enabling effective supervision across diverse in-context generation scenarios. On the modeling side, Canvas360 enhances text-to-panorama generation through parallel depth generation, velocity circular padding, and similarity loss regularization, enabling the model to learn geometry-aware representations, capture object distortion details, and improve geometric consistency and global coherence. Furthermore, empowered by strong panoramic priors, Canvas360 enables a unified in-context panoramic generation framework that supports diverse downstream tasks via token-level concatenation, surpassing prior methods in both task coverage and modeling flexibility. Extensive experiments show that Canvas360 improves panoramic image fidelity, achieving particularly strong performance on the panorama-specific FAED metric and competitive or leading results across the reported quantitative evaluations. More information can be found on our project page: https://zry000.github.io/Canvas360/</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 在这项工作中，我们提出了 Canvas360，这是一个用于上下文全景生成的两阶段框架，它将几何感知预训练与下游特定于任务的微调相结合。为了解决缺乏针对上下文全景任务定制的大规模、高质量训练数据的问题，我们提出了 Canvas360Dataset，它是 1M 高质量配对全景样本的集合，用于风格迁移、修复、外绘和编辑，从而能够对不同的上下文生成场景进行有效监督。在建模方面，Canvas360 通过并行深度生成、速度圆形填充和相似性损失正则化增强了文本到全景的生成，使模型能够学习几何感知表示、捕获对象失真细节并提高几何一致性和全局连贯性。此外，在强大的全景先验的支持下，Canvas360 实现了统一的上下文全景生成框架，该框架通过令牌级串联支持各种下游任务，在任务覆盖范围和建模灵活性方面超越了现有方法。大量实验表明，Canvas360 提高了全景图像保真度，在全景特定 FAED 指标上实现了特别强劲的性能，并在报告的定量评估中取得了具有竞争力或领先的结果。更多信息可以在我们的项目页面上找到：https://zry000.github.io/Canvas360/</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.08404" target="_blank">DrugGen 2: A disease-aware language model for enhancing drug discovery</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Ali Motahharynia, Mohammadreza Ghaffarzadeh-Esfahani, Mahsa Sheikholeslami, Navid Mazrouei, Matin Irajpour</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.08404" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.08404" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.08404.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract DrugGen-2 generates small molecules conditioned on disease ontology and target protein sequences through fine-tuning GPT-2 with supervised learning and reinforcement learning using GRPO, achieving superior molecular diversity and binding affinity compared to baseline models.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 DrugGen-2 通过使用 GRPO 的监督学习和强化学习微调 GPT-2，生成以疾病本体和靶蛋白序列为条件的小分子，与基线模型相比，实现了卓越的分子多样性和结合亲和力。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Current computational approaches for drug design typically focus on generating molecules conditioned on specific targets or general molecular properties, often neglecting the influence of disease context on target behavior and therapeutic outcomes. To address this gap, we introduce DrugGen-2, a novel generative model that designs small molecules conditioned on both disease ontology and target protein sequences. DrugGen-2 was developed by fine-tuning a pre-trained GPT-2 model on a curated dataset of approved drugs linked to their diseases and targets, using a two-step strategy of supervised fine-tuning followed by reinforcement learning via group relative policy optimization (GRPO). This process was guided by reward functions optimizing for chemical validity, novelty, diversity, and high predicted binding affinity. When evaluated on five protein targets relevant to diabetic nephropathy, DrugGen-2 significantly outperformed baseline models (DrugGPT and DrugGen). It demonstrated a superior capacity to generate unique molecules, exhibited greater structural similarity to approved drugs, and achieved improved predicted binding affinities across all targets. Molecular docking analyses further supported these findings, identifying candidate ligands with strong binding potential, including compounds with predicted affinities (-9.917, -9.485, and -9.367) exceeding those of reference drugs such as enalapril for angiotensin-converting enzyme (-8.283). By integrating disease-specific context into molecular generation, DrugGen-2 advances AI-assisted drug discovery, offering a powerful tool for de novo design and drug repurposing that accounts for the complex interplay between diseases and molecular targets.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 当前的药物设计计算方法通常侧重于生成以特定靶标或一般分子特性为条件的分子，常常忽略疾病背景对靶标行为和治疗结果的影响。为了解决这一差距，我们引入了 DrugGen-2，这是一种新颖的生成模型，可以设计以疾病本体和目标蛋白序列为条件的小分子。 DrugGen-2 是通过在与其疾病和靶标相关的批准药物的精选数据集上微调预训练的 GPT-2 模型而开发的，使用监督微调的两步策略，然后通过组相对策略优化 (GRPO) 进行强化学习。该过程以优化化学有效性、新颖性、多样性和高预测结合亲和力的奖励函数为指导。当对与糖尿病肾病相关的五个蛋白质靶点进行评估时，DrugGen-2 显着优于基线模型（DrugGPT 和 DrugGen）。它表现出生成独特分子的卓越能力，与已批准的药物表现出更大的结构相似性，并在所有目标上实现了改进的预测结合亲和力。分子对接分析进一步支持了这些发现，确定了具有强结合潜力的候选配体，包括预测亲和力（-9.917、-9.485和-9.367）超过参考药物（例如依那普利对血管紧张素转换酶的亲和力（-8.283））的化合物。通过将特定疾病的背景整合到分子生成中，DrugGen-2 推进了人工智能辅助药物发现，为从头设计和药物再利用提供了强大的工具，解释了疾病和分子靶点之间复杂的相互作用。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.07740" target="_blank">Jet-Long: Efficient Long-Context Extension with Dynamic Bifocal RoPE</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>NVIDIA</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Haozhan Tang, Zerui Wang, Yuxian Gu, Song Han, Han Cai</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.07740" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.07740" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.07740.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract A novel zero-shot method called Jet-Long enables efficient long-context processing for large language models by dynamically adapting rescaling factors and utilizing a bifocal attention mechanism that maintains high performance across varying sequence lengths.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：一种称为 Jet-Long 的新型零样本方法通过动态调整缩放因子并利用双焦注意机制在不同的序列长度上保持高性能，从而实现大型语言模型的高效长上下文处理。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Modern LLMs are increasingly deployed in long-context applications such as retrieval-augmented generation, repository-level coding, and agentic workflows whose accumulated reasoning and tool traces routinely push the input an order of magnitude past the pretraining window, making zero-shot context extension the dominant deployment path for open-weight checkpoints. Most existing zero-shot methods fix a single rescaling factor up front, so an aggressive factor sacrifices short-context fidelity while a conservative one breaks down at long contexts. We propose Jet-Long, a tuning-free zero-shot method that pairs a local RoPE-faithful window with a long-range window whose rescaling factor adapts dynamically to the current sequence length, recovering the base model exactly at short inputs while extrapolating cleanly at long ones. An inclusion-exclusion attention merge and an on-the-fly RoPE correction rotation make the bifocal construction essentially free at inference; fused into a single CuTe kernel, long-context prefill reaches up to 1.39times FA2 throughput on H100 (approaching the Hopper-only FA4), and single-batch generation incurs le 4% overhead at every length. On Qwen3-1.7B/4B/8B up to 128K context, Jet-Long leads RULER by +4.79/+2.18/+2.03~pp over the strongest baseline at 1.7B/4B/8B, achieves the best overall accuracy on HELMET-RAG (a benchmark identified by HELMET as the most efficient predictor of downstream long-context performance) and attains the lowest PG-19 perplexity. Jet-Long also generalizes to hybrid attention architectures such as Jet-Nemotron for further long-context improvement without retraining, and remains hyperparameter-resilient for ease of deployment.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 现代 LLM 越来越多地部署在长上下文应用程序中，例如检索增强生成、存储库级编码和代理工作流程，其累积的推理和工具跟踪通常会将输入推过预训练窗口一个数量级，从而使零样本上下文扩展成为开放权重检查点的主要部署路径。大多数现有的零样本方法都会预先修复单个缩放因子，因此激进的因子会牺牲短上下文保真度，而保守的因子会在长上下文中崩溃。我们提出了 Jet-Long，一种免调整的零样本方法，它将本地 RoPE 忠实窗口与远程窗口配对，其缩放因子动态适应当前序列长度，在短输入处精确恢复基本模型，同时在长输入处干净地外推。包含排除注意力合并和动态 RoPE 校正旋转使双焦点结构基本上可以自由推理；融合到单个 CuTe 内核中，长上下文预填充在 H100 上达到 FA2 吞吐量的 1.39 倍（接近仅 Hopper 的 FA4），并且单批次生成在每个长度上都会产生 4% 的开销。在 Qwen3-1.7B/4B/8B 高达 128K 的上下文中，Jet-Long 在 1.7B/4B/8B 的最强基线上领先 RULER +4.79/+2.18/+2.03~pp，在 HELMET-RAG（HELMET 确定的基准，下游长上下文性能最有效的预测器）上实现了最佳整体精度，并获得最低的 PG-19困惑。 Jet-Long 还推广到混合注意力架构，例如 Jet-Nemotron，无需重新训练即可进一步改进长上下文，并保持超参数弹性以易于部署。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.08763" target="_blank">OpenCoF: Learning to Reason Through Video Generation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>ByteDance Seed</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Xinyan Chen, Ziyu Guo, Renrui Zhang, Dongzhi Jiang, Hongsheng Li</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.08763" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.08763" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.08763.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract OpenCoF framework introduces a reasoning video dataset and model that improve temporal reasoning through diverse supervision and explicit reasoning tokens for visual and textual cues.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 OpenCoF 框架引入了推理视频数据集和模型，通过视觉和文本线索的多样化监督和显式推理标记来改进时间推理。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Reasoning has become a core capability for large models, especially when reliable decisions require understanding logical consequences. Recent video generation models offer a reasoning path distinct from previous Chain-of-Thought (CoT): reasoning can unfold through temporally connected frames, known as Chain-of-Frame (CoF) reasoning. However, existing video generators are primarily trained on general video corpora, still lacking diverse supervision and dedicated designs for CoF reasoning. To address this gap, we introduce OpenCoF, a framework comprising the OpenCoF-17K dataset, a reasoning video dataset spanning 11 task families, and Wan-CoF, a fine-tuned video model for studying whether diverse temporal supervision improves CoF behavior. Across four video reasoning benchmarks, Wan-CoF achieves considerable gains over the Wan2.2-I2V-A14B baseline. Building on this, we empirically explore more advanced designs for CoF capabilities, i.e., equipping the model with visual and textual reasoning tokens. This mechanism respectively captures low-level visual cues and high-level semantic priors for spatial and temporal reasoning. Through performance comparisons and attention analysis, we examine how these tokens contribute across model depth, denoising steps, space, and time. Our results suggest that stronger video reasoning requires both broad temporal supervision and explicit mechanisms for organizing intermediate reasoning state. We open-source the dataset, model, and code to facilitate future research on reasoning-oriented video generation.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 推理已成为大型模型的核心功能，特别是当可靠的决策需要理解逻辑结果时。最近的视频生成模型提供了与之前的思想链 (CoT) 不同的推理路径：推理可以通过时间连接的帧展开，称为帧链 (CoF) 推理。然而，现有的视频生成器主要是在通用视频语料库上进行训练，仍然缺乏多样化的监督和专门的 CoF 推理设计。为了解决这一差距，我们引入了 OpenCoF，一个由 OpenCoF-17K 数据集（涵盖 11 个任务族的推理视频数据集）和 Wan-CoF 组成的框架，Wan-CoF 是一个微调视频模型，用于研究不同的时间监督是否可以改善 CoF 行为。在四个视频推理基准测试中，Wan-CoF 比 Wan2.2-I2V-A14B 基准取得了相当大的进步。在此基础上，我们凭经验探索更先进的 CoF 功能设计，即为模型配备视觉和文本推理标记。该机制分别捕获低级视觉线索和高级语义先验，以进行空间和时间推理。通过性能比较和注意力分析，我们检查这些标记如何在模型深度、去噪步骤、空间和时间方面做出贡献。我们的结果表明，更强的视频推理需要广泛的时间监督和组织中间推理状态的明确机制。我们开源数据集、模型和代码，以促进未来面向推理的视频生成的研究。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.03803" target="_blank">CineMobile: On-Device Image-to-Video Diffusion for Cinematic Camera Motion Generation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>DENG Lab @ SJTU</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Xuyao Huang, Zelai Deng, Xu Wang, Xizhong Xiao, Zhijie Deng</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.03803" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.03803" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.03803.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract CineMobile enables efficient image-to-video generation on mobile devices through distillation-guided pruning, diffusion distillation, and hybrid quantization techniques while maintaining visual quality and achieving significant speedup.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 CineMobile 通过蒸馏引导修剪、扩散蒸馏和混合量化技术，在移动设备上实现高效的图像到视频生成，同时保持视觉质量并实现显着的加速。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct The growing demand for image-to-video creation on mobile devices has increasingly focused on cinematic motion effects like bullet time, dolly zoom, slow motion, etc. While Diffusion Transformers (DiTs) exhibit strong performance in video generation, their large parameter sizes and multi-step iterative denoising processes lead to substantial computational overhead, making efficient generation on mobile devices challenging. We propose CineMobile to bridge the gap. In particular, CineMobile adopts a three-fold optimization strategy: (1) leveraging a distillation-guided pruning approach to derive a compact yet efficient model that retains the essential video generation capabilities required for cinematic effects; (2) optimizing the compressed model into a 4-step generator via a combination of diffusion distillation and reinforcement learning; (3) employing a hybrid post-training quantization strategy to compress the model footprint to under 1 GB. Experimental results show that compared to the teacher model with the Wan 2.1 architecture, CineMobile achieves a 40x speedup in generation while maintaining comparable visual quality. Specifically, CineMobile generates 49-frame 480p videos with a per-step denoising latency of 0.6s on an NVIDIA H200 GPU and 20s on the MediaTek Dimensity 8400 Ultimate 5G platform, with a peak memory usage of 1.8 GB, demonstrating its practical applicability for mobile-based image-to-video creation.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 移动设备上对图像到视频创建的需求不断增长，越来越关注电影运动效果，如子弹时间、移动变焦、慢动作等。虽然扩散变压器 (DiT) 在视频生成方面表现出强大的性能，但其大参数大小和多步迭代去噪过程导致大量的计算开销，使得在移动设备上高效生成具有挑战性。我们建议 CineMobile 来弥补这一差距。具体来说，CineMobile采用了三重优化策略：（1）利用蒸馏引导的修剪方法导出紧凑而高效的模型，保留电影效果所需的基本视频生成功能； (2)通过扩散蒸馏和强化学习的结合将压缩模型优化为4步生成器； (3) 采用混合训练后量化策略将模型占用空间压缩至 1 GB 以下。实验结果表明，与采用 Wan 2.1 架构的教师模型相比，CineMobile 的生成速度提高了 40 倍，同时保持了相当的视觉质量。具体来说，CineMobile 在 NVIDIA H200 GPU 上生成 49 帧 480p 视频，每步去噪延迟为 0.6 秒，在联发科天玑 8400 Ultimate 5G 平台上每步去噪延迟为 20 秒，峰值内存使用量为 1.8 GB，展示了其在移动图像到视频创作中的实际适用性。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.07953" target="_blank">Linear Attention Architectures: Mechanisms, Trade-offs, and Cross-Layer Routing</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>ETH Zurich</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Tommaso Cerruti, Tim Rieder, George Rowlands, Lingfeng Jin, Imanol Schlag</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.07953" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.07953" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.07953.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract A comparative analysis of softmax attention and recurrent linear-attention architectures examines their expressivity, memory management, and training efficiency across different parameter scales and sequence lengths.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：对 softmax 注意力和循环线性注意力架构进行比较分析，检查它们在不同参数尺度和序列长度下的表达能力、内存管理和训练效率。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Self-attention lets each token retrieve information from the full context, but its quadratic cost in sequence length limits training and inference at long context. This paper presents a comparative study of softmax attention and four recent recurrent linear-attention architectures: DeltaNet, Gated DeltaNet, Kimi Delta Attention, and Gated DeltaNet-2. We express these mechanisms in a common recurrent-memory notation, making explicit how they differ in expressivity, memory decay, erase and write control, training throughput, and implementation complexity. Our experiments center on 350M-parameter models trained for 15B tokens, and include optimizer and learning-rate comparisons, hybrid-versus-pure stack comparisons, sequence-length runtime measurements, larger DeltaNet runs at 1.3B and 3B parameters, and a small set of downstream evaluations. The reported speed results measure training throughput and iteration time; we do not provide an empirical inference-speed benchmark. Within the reported 350M-parameter, 15B-token sweep, Kimi Delta Attention with Muon reaches the lowest final validation loss, a pure Gated DeltaNet stack trained with AdamW has the highest normalized training throughput, hybrid stacks generally improve loss at a throughput cost, and Muon consistently lowers final validation loss relative to AdamW in the matched architecture settings we evaluate. We introduce and evaluate lightweight cross-layer routing mechanisms for DeltaNet-style memories. The most natural DeltaNet-inspired formulation, forwarding a lower layer's delta-rule write error into the next layer's value target, does not improve over matched baselines. Routing into the aligned hidden stream and forwarding the write value instead yields a modest improvement in the matched runs we report: Cross-Layer Value Routing (CLVR) lowers final validation loss for both DeltaNet and Gated DeltaNet.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 自注意力让每个标记从完整上下文中检索信息，但其序列长度的二次成本限制了长上下文中的训练和推理。本文介绍了 softmax 注意力和最近四种循环线性注意力架构的比较研究：DeltaNet、Gated DeltaNet、Kimi Delta Attention 和 Gated DeltaNet-2。我们用通用的循环记忆符号来表达这些机制，明确它们在表达性、记忆衰减、擦除和写入控制、训练吞吐量和实现复杂性方面的差异。我们的实验以针对 15B 令牌训练的 350M 参数模型为中心，包括优化器和学习率比较、混合与纯堆栈比较、序列长度运行时间测量、在 1.3B 和 3B 参数下运行的较大 DeltaNet 以及一小组下游评估。报告的速度结果衡量训练吞吐量和迭代时间；我们不提供经验推理速度基准。在报告的 350M 参数、15B 令牌扫描中，使用 Muon 的 Kimi Delta Attention 达到了最低的最终验证损失，使用 AdamW 训练的纯门控 DeltaNet 堆栈具有最高的归一化训练吞吐量，混合堆栈通常以吞吐量成本改善损失，并且在我们评估的匹配架构设置中，Muon 相对于 AdamW 始终降低最终验证损失。我们介绍并评估了 DeltaNet 式存储器的轻量级跨层路由机制。最自然的受 DeltaNet 启发的公式，将较低层的增量规则写入错误转发到下一层的值目标中，并不会比匹配的基线有所改进。相反，路由到对齐的隐藏流并转发写入值会在我们报告的匹配运行中产生适度的改进：跨层值路由（CLVR）降低了 DeltaNet 和门控 DeltaNet 的最终验证损失。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.08716" target="_blank">Remember When It Matters: Proactive Memory Agent for Long-Horizon Agents</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Meta Research</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yifan Wu, Lizhu Zhang, Yuhang Zhou, Mingyi Wang, Bo Peng</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.08716" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.08716" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.08716.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  In long-horizon tasks, decision-relevant state is often scattered across an expanding trajectory, while the action agent must surface it and act. As trajectories grow, task requirements, environment facts, prior attempts, diagnoses, and open subgoals can be buried in the context window or pushed beyond it, failing to influence decisions when needed. We call this failure mode "behavioral state decay". We study memory as an active intervention mechanism rather than passive retrieval. A separate memory agent runs alongside an unmodified action agent, updating a structured memory bank from the recent trajectory and deciding whether to inject a memory-grounded reminder or remain silent. The module is plug-and-play with frontier action agents and existing agent harnesses. Across Terminal-Bench 2.0 and τ^2-Bench, it improves pass@1 for both weaker and stronger action agents, with gains of +8.3 pp on Terminal-Bench and +6.8 pp on τ^2-Bench. Ablations show that selective intervention outperforms passive bank exposure, always-on injection, advisor-only guidance, and general retrieval. As an early step toward open-weight memory policies, we train Qwen3.5-27B on SETA using SFT and GRPO, improving validation reward and achieving partial transfer to Terminal-Bench.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 在长视野任务中，决策相关状态通常分散在不断扩展的轨迹上，而行动智能体必须浮出水面并采取行动。随着轨迹的增长，任务要求、环境事实、先前的尝试、诊断和开放的子目标可能会被隐藏在上下文窗口中或被推到上下文窗口之外，从而无法在需要时影响决策。我们将这种故障模式称为“行为状态衰退”。我们将记忆作为一种主动干预机制而不是被动检索来研究。一个单独的记忆代理与一个未修改的动作代理一起运行，根据最近的轨迹更新结构化记忆库，并决定是注入基于记忆的提醒还是保持沉默。该模块可与前沿行动代理和现有代理线束即插即用。在 Terminal-Bench 2.0 和 τ^2-Bench 中，它提高了较弱和较强动作代理的 pass@1，在 Terminal-Bench 上获得了 +8.3 pp，在 τ^2-Bench 上获得了 +6.8 pp。消融表明，选择性干预优于被动银行暴露、始终在线注入、仅限顾问指导和一般检索。作为实现开放权重内存策略的早期步骤，我们使用 SFT 和 GRPO 在 SETA 上训练 Qwen3.5-27B，提高验证奖励并实现部分转移到 Terminal-Bench。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub     Add to collection     Community         yfwu   Paper submitter    36 minutes ago</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF GitHub 添加到集合 社区 yfwu 论文提交者 36 分钟前</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.06987" target="_blank">UP: Unbounded Positive Asymmetric Optimization for Breaking the Exploration-Stability Dilemma</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>ByteDance Seed</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Chongyu Fan, Pengfei Liu, Jingjia Huang, Sijia Liu, Yi Lin</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.06987" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.06987" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.06987.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Reinforcement learning frameworks for large language models face exploration-stability trade-offs, which are addressed through a novel universal objective called Unbounded Positive Asymmetric Optimization that enables stable training with enhanced exploration capabilities.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：大型语言模型的强化学习框架面临着探索与稳定性的权衡，这是通过一种称为无界正非对称优化的新颖通用目标来解决的，该目标能够通过增强的探索能力实现稳定的训练。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Reinforcement learning (RL) has become the standard paradigm for enhancing the complex reasoning capabilities of large language models (LLMs). To achieve sample efficiency, modern RL frameworks rely on importance sampling (IS). However, these algorithms suffer from an exploration-stability dilemma. Pure IS often leads to catastrophic training instability, while standard clipping mechanisms used to mitigate this instability strictly constrain the policy update budget. By formalizing the concept of Probability Capacity (Cap), we reveal that conservative clipping structurally stifles exploration by prematurely truncating the update budget for correct but low-confidence reasoning paths. To break free from these constraints, we propose Unbounded Positive Asymmetric Optimization (UP), a universal and plug-and-play objective. UP theoretically restructures the optimization process by anchoring the policy to its current state via the stop-gradient operator. This asymmetric design unleashes unclipped, stable gradients for positive advantages to maximize exploration, while maintaining standard clipping safeguards for negative advantages to prevent training instability. Furthermore, our formulation readily extends across different optimization granularities, including token-level (GRPO, DAPO) and sequence-level (GSPO) frameworks. Extensive experiments demonstrate that UP enhances exploration capacity and achieves superior reasoning accuracy across diverse RL algorithms (DAPO, GSPO, and GRPO), model architectures (Dense, MoE, and vision-language), and training modalities (language and multimodal), validating UP as a truly universal plug-and-play enhancement for RL-based training.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 强化学习 (RL) 已成为增强大型语言模型 (LLM) 复杂推理能力的标准范式。为了实现样本效率，现代强化学习框架依赖于重要性采样 (IS)。然而，这些算法面临着探索稳定性的困境。纯粹的 IS 通常会导致灾难性的训练不稳定，而用于减轻这种不稳定性的标准裁剪机制严格限制了策略更新预算。通过形式化概率容量 (Cap) 的概念，我们揭示了保守剪裁通过过早截断正确但低置信度推理路径的更新预算，从结构上抑制了探索。为了摆脱这些限制，我们提出了无界正非对称优化（UP），这是一个通用且即插即用的目标。 UP 理论上通过停止梯度算子将策略锚定到当前状态来重构优化过程。这种不对称设计释放了未剪裁的稳定梯度，以获得积极的优势，以最大限度地探索，​​同时保持标准的剪裁保护措施，以获得消极的优势，以防止训练不稳定。此外，我们的公式很容易扩展到不同的优化粒度，包括令牌级（GRPO、DAPO）和序列级（GSPO）框架。大量实验表明，UP 增强了探索能力，并在不同的 RL 算法（DAPO、GSPO 和 GRPO）、模型架构（Dense、MoE 和视觉语言）和训练模式（语言和多模态）中实现了卓越的推理准确性，验证了 UP 是基于 RL 训练的真正通用的即插即用增强功能。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.08741" target="_blank">ARDY: Autoregressive Diffusion with Hybrid Representation for Interactive Human Motion Generation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>NVIDIA</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Kaifeng Zhao, Mathis Petrovich, Haotian Zhang, Tingwu Wang, Siyu Tang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.08741" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.08741" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.08741.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract ARDY is a streaming generation framework that enables real-time, high-fidelity 3D human motion generation with text and kinematic constraint control through a hybrid representation and two-stage autoregressive transformer denoiser.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 ARDY 是一种流式生成框架，可通过混合表示和两级自回归变压器降噪器实现实时、高保真 3D 人体运动生成，并具有文本和运动学约束控制。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Generating realistic 3D human motions in real-time within interactive applications is key for animation, simulation, and humanoid robotics. While recent offline motion generation approaches offer precise control via text and kinematic constraints, they lack the inference speed required for interactive settings. Conversely, existing online methods enable real-time synthesis but often sacrifice controllability or struggle with complex text semantics and long-horizon goals due to limited context windows. In this work, we introduce ARDY, a streaming generation framework that bridges this gap by enabling high-fidelity motion generation controllable via online text prompts and flexible kinematic constraints. ARDY employs a hybrid representation that combines explicit root features with a latent body embedding, balancing precise trajectory control with efficient generative learning. We propose a two-stage autoregressive transformer denoiser that features variable history context and supports conditioning on flexible, long-horizon kinematic constraints. By training on a large-scale motion capture dataset and being directly conditioned on text labels and kinematic constraints sampled from ground truth poses, ARDY natively learns controllable generation that supports online prompting and flexible long-horizon goals. Extensive evaluations on the HumanML3D benchmark and the large-scale, high-fidelity Bones Rigplay dataset demonstrate ARDY's high motion quality and constraint adherence, validating the efficacy of our key architectural decisions. Finally, we demonstrate the method's practical versatility through an interactive demo featuring dynamic text control, diverse keyframe pose constraints, path following, and interactive locomotion control via mouse and keyboard. Supplementary video results, code, and model releases can be found at https://research.nvidia.com/labs/sil/projects/ardy/.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 在交互式应用程序中实时生成逼真的 3D 人体动作是动画、模拟和人形机器人技术的关键。虽然最近的离线运动生成方法通过文本和运动学约束提供了精确控制，但它们缺乏交互设置所需的推理速度。相反，现有的在线方法可以实现实时合成，但由于上下文窗口有限，往往会牺牲可控性或难以应对复杂的文本语义和长期目标。在这项工作中，我们介绍了 ARDY，这是一种流式生成框架，它通过在线文本提示和灵活的运动学约束实现可控制的高保真运动生成，从而弥补了这一差距。 ARDY 采用混合表示，将显式根特征与潜在身体嵌入相结合，平衡精确的轨迹控制与高效的生成学习。我们提出了一种两级自回归变压器降噪器，其特征是可变的历史背景，并支持对灵活的长视野运动学约束的调节。通过在大规模运动捕捉数据集上进行训练，并直接以从地面真实姿势采样的文本标签和运动学约束为条件，ARDY 原生学习支持在线提示和灵活的长期目标的可控生成。对 HumanML3D 基准和大规模、高保真 Bones Rigplay 数据集的广泛评估证明了 ARDY 的高运动质量和约束遵守性，验证了我们关键架构决策的有效性。最后，我们通过交互式演示展示了该方法的实用多功能性，该演示具有动态文本控制、不同关键帧姿势约束、路径跟踪以及通过鼠标和键盘进行交互式运动控制。补充视频结果、代码和模型版本可在 https://research.nvidia.com/labs/sil/projects/ardy/ 上找到。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.08688" target="_blank">SAM-MT: Real-Time Interactive Multi-Target Video Segmentation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>FudanCVL</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Ruiqi Shen, Chang Liu, Henghui Ding</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.08688" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.08688" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.08688.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Modern Video Object Segmentation (VOS) involves tracking and segmenting user-specified targets. While recent approaches have achieved remarkable performance in single-target scenarios, extending them to multi-target settings typically involves replicating the single-target processing for each individual object, resulting in reduced frame rates (FPS) with unbounded latency as target count increases. Built upon Segment Anything 2 (SAM2), we propose SAM-MT, which addresses this by transforming the model into an interactive framework for real-time Multi-Target video segmentation. SAM-MT uses explicit queries to represent different individual targets, in parallel with a shared representation for global context. It employs decoupled masked attention to keep individual identities distinct from cross-target interference, and sparse memory for stable temporal evolution, along with specialized strategies for occlusion handling and overlap prevention. SAM-MT successfully decouples latency from the number of targets, achieving real-time speed on par with single-target baselines (>36 FPS for 10 targets) while maintaining SAM2's robust video segmentation performance.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 现代视频对象分割（VOS）涉及跟踪和分割用户指定的目标。虽然最近的方法在单目标场景中取得了显着的性能，但将它们扩展到多目标设置通常需要为每个单独的对象复制单目标处理，从而随着目标数量的增加而降低帧速率 (FPS) 和无限制的延迟。基于 Segment Anything 2 (SAM2)，我们提出了 SAM-MT，它通过将模型转换为实时多目标视频分割的交互式框架来解决这个问题。 SAM-MT 使用显式查询来表示不同的单独目标，同时使用全局上下文的共享表示。它采用解耦的屏蔽注意力来保持个体身份与跨目标干扰的区别，并采用稀疏记忆来实现稳定的时间演化，以及用于遮挡处理和重叠预防的专门策略。 SAM-MT 成功地将延迟与目标数量解耦，实现与单目标基线相当的实时速度（10 个目标 >36 FPS），同时保持 SAM2 强大的视频分段性能。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub     Add to collection     Community         HenghuiDing   Paper submitter    40 minutes ago</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 添加到收藏 社区 HenghuiDing 论文提交者 40 分钟前</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.07816" target="_blank">A Sparse and Truncated State Vector Simulator for Peaked Circuits</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Instituto Superior Técnico - Universidade de Lisboa</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>diogo4u, Diogo R. Ferreira</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.07816" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.07816" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.07816.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Peaked quantum circuits can be efficiently simulated classically using sparse state vector representations with vectorized operations and hardware acceleration.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 可以使用稀疏状态向量表示以及向量化运算和硬件加速来有效地经典模拟峰值量子电路。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct In a class of quantum circuits known as peaked circuits, the goal is to predict the most probable bit string at the output of the circuit. Since these circuits are designed to have a sharp peak in their output distribution, in principle it should be possible to simulate them using a truncated state vector with a limited number of terms, or a fraction of the total probability mass. This approximate simulation can be carried out on a classical computer with a sparse representation that stores only the nonzero amplitudes of the state vector, in contrast to the dense representations that are common in most quantum simulators. For efficiency, all operations on the state vector should be vectorized to the furthest possible extent and, if available, hardware acceleration can also be used. This work describes how these requirements were met in an open-source implementation, and discusses its performance and limitations.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成在一类称为峰值电路的量子电路中，目标是预测电路输出处最可能的位串。由于这些电路被设计为在其输出分布中具有尖峰，因此原则上应该可以使用具有有限项数或总概率质量的一小部分的截断状态向量来模拟它们。这种近似模拟可以在具有稀疏表示的经典计算机上进行，该稀疏表示仅存储状态向量的非零幅度，这与大多数量子模拟器中常见的密集表示相反。为了提高效率，状态向量上的所有操作都应尽可能向量化，如果可用，也可以使用硬件加速。这项工作描述了如何在开源实现中满足这些要求，并讨论其性能和局限性。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.06238" target="_blank">PhyMRI-SR: Toward Physics-Aware MRI Image Super-Resolution</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>ShanghaiTech University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Lihua Wei, Huatong Gao, Jia Gong, Zhiyu Tan, Hao Li</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.06238" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.06238" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.06238.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract MR super-resolution is reformulated as a physics-aware reconstruction problem that dynamically adapts resolution-SNR configurations using Gaussian splatting with prior-aware representations and physics-constrained modeling.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 MR 超分辨率被重新表述为物理感知重建问题，该问题使用具有先验感知表示和物理约束建模的高斯分布动态调整分辨率 SNR 配置。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Magnetic resonance imaging (MRI) super-resolution is vital for improving diagnostic accessibility, yet most methods treat it as a deterministic mapping from a fixed low-resolution input to a high-resolution target. This overlooks a key property of MRI acquisition physics: spatial resolution and signal-to-noise ratio (SNR) are inherently coupled, making any given low-resolution scan merely one of many possible realizations under varying acquisition trade-offs. We rethink MRI super-resolution as a physics-aware reconstruction problem, in which the goal is to identify the optimal resolution-SNR configuration and then super-resolve it to obtain high-quality MRI results. A key implication of this formulation is that MRI resolution becomes dynamic rather than fixed. To handle such resolution-heterogeneous inputs, we adapt 2D Gaussian Splatting (2D GS) to MRI by formulating reconstruction as a coordinate-based, resolution-agnostic rendering problem. To further enhance fidelity, we introduce three innovations: (1) a prior-aware Gaussian representation that combines an Anatomical Structure Prior for tissue-specific kernel initialization with an Imaging System Prior that captures hardware characteristics via a covariance dictionary; (2) a physics-constrained signal modeling scheme that predicts intrinsic tissue parameters (proton density rho and effective relaxation rate R2) and synthesizes intensities through governing physical equations, ensuring biophysically plausible contrast; and (3) a meta-learning framework that alleviates paired-data scarcity by pretraining on simulated data and adapting to real-world conditions. Extensive experiments on dynamic-resolution datasets and standard benchmarks demonstrate that our method achieves state-of-the-art performance, highlighting its strong potential for clinical deployment.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 磁共振成像 (MRI) 超分辨率对于提高诊断可及性至关重要，但大多数方法将其视为从固定低分辨率输入到高分辨率目标的确定性映射。这忽视了 MRI 采集物理的一个关键属性：空间分辨率和信噪比 (SNR) 本质上是耦合的，使得任何给定的低分辨率扫描只是在不同采集权衡下的许多可能实现之一。我们将 MRI 超分辨率重新视为物理感知重建问题，其目标是确定最佳分辨率-SNR 配置，然后对其进行超分辨率以获得高质量的 MRI 结果。这个公式的一个关键含义是 MRI 分辨率变得动态而不是固定的。为了处理这种分辨率异构的输入，我们通过将重建公式化为基于坐标、与分辨率无关的渲染问题，将 2D 高斯分布 (2D GS) 应用于 MRI。为了进一步提高保真度，我们引入了三项创新：（1）先验感知高斯表示，它将用于组织特定内核初始化的解剖结构先验与通过协方差字典捕获硬件特征的成像系统先验相结合； (2) 物理约束信号建模方案，可预测内在组织参数（质子密度 rho 和有效弛豫率 R2）并通过控制物理方程合成强度，确保生物物理上合理的对比度； (3) 元学习框架，通过对模拟数据进行预训练并适应现实条件来缓解配对数据的稀缺性。对动态分辨率数据集和标准基准的大量实验表明，我们的方法实现了最先进的性能，凸显了其临床部署的强大潜力。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.04461" target="_blank">Flash-BoN: Instant Drafts for Inference-Time Scaling in Diffusion Models</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Tom Goldstein's Lab at University of Maryland, College Park</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Ruchit Rawal, Reza Shirkavand, Sayak Paul, Yuxin Wen, Heng Huang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.04461" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.04461" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.04461.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Flash-BoN improves text-to-image generation efficiency by using inexpensive draft candidates generated through timestep truncation, layer skipping, and activation proxies, followed by multi-stage verification that outperforms existing methods under fixed wall-clock budgets.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 Flash-BoN 通过使用通过时间步截断、层跳跃和激活代理生成的廉价草稿候选来提高文本到图像的生成效率，然后进行多阶段验证，该验证在固定挂钟预算下优于现有方法。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Inference-time scaling for text-to-image generation has progressed from simple Best-of-N (BoN) sampling to guided search methods that verify and steer candidate trajectories at intermediate denoising steps. These approaches focus on when and how often to verify during denoising but largely treat the cost of generation itself as fixed. Moreover, the standard practice of comparing methods by number of function evaluations (NFEs) counts only denoising forward passes and ignores verifier overhead, which can distort efficiency rankings. We show that under wall-clock evaluation, simple BoN already matches or outperforms several guided search techniques, suggesting that compute is better spent on broader exploration than on repeated intermediate verification. This motivates Flash-BoN, which generates a large pool of inexpensive draft candidates by combining three complementary acceleration knobs: timestep truncation, layer skipping, and activation proxies into a single configuration optimized once per model. An efficient multi-stage verification procedure then identifies the most promising draft, which is refined at full quality. Across three benchmarks and three model scales, Flash-BoN consistently outperforms all baselines under fixed wall-clock budgets, with gains that grow at larger model scales (+8% AUC). We further show that our strategy combines well and improves existing orthogonal techniques such as reflection-based prompt optimization (+16% AUC). The gains correlate with increased candidate diversity, which also enables draft-guided selection to accelerate RL post-training convergence.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 用于文本到图像生成的推理时间缩放已经从简单的 Best-of-N (BoN) 采样发展到在中间去噪步骤验证和引导候选轨迹的引导搜索方法。这些方法侧重于去噪期间验证的时间和频率，但很大程度上将发电成本本身视为固定的。此外，通过函数评估 (NFE) 数量比较方法的标准做法仅计算去噪前向传递，而忽略验证器开销，这可能会扭曲效率排名。我们表明，在挂钟评估下，简单的 BoN 已经匹配或优于几种引导搜索技术，这表明计算最好花在更广泛的探索上，而不是重复的中间验证上。这激发了 Flash-BoN，它通过将三个互补的加速旋钮（时间步截断、层跳跃和激活代理）组合到每个模型优化一次的单个配置中，生成大量廉价的候选草案。然后，高效的多阶段验证程序会确定最有希望的草案，并以最高质量进行完善。在三个基准和三个模型规模中，Flash-BoN 始终优于固定挂钟预算下的所有基准，并且收益随着模型规模的增大而增长（+8% AUC）。我们进一步表明，我们的策略结合得很好，并改进了现有的正交技术，例如基于反射的提示优化（+16% AUC）。这些收益与候选多样性的增加相关，这也使得草案引导的选择能够加速强化学习训练后的收敛。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.08526" target="_blank">A Quantized Native Runtime for On-Device Semantic Audio Generation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Centro di Sonologia Computazionale</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>matteospanio, Matteo Spanio, Antonio Rodà</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.08526" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.08526" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.08526.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract A dependency-free runtime enables efficient text-to-music generation on embedded devices through quantization and activation steering while maintaining audio quality.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 无依赖运行时通过量化和激活控制在嵌入式设备上实现高效的文本到音乐生成，同时保持音频质量。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Semantic audio applications increasingly require controllable generation on commodity and embedded hardware rather than through framework-heavy datacenter stacks. We present aria, a dependency-free native runtime that runs the complete text-to-music pipeline of Stable Audio~3 (SA3) on ordinary GPUs, CPU-only machines, and a Raspberry~Pi~5, with no Python or deep-learning framework underneath. Our main contribution is a study of quantization: running the model at lower numerical precision to fit tight memory budgets, saving memory in place rather than adding to it. Because the runtime owns every internal tensor, it also exposes activation steering, a low-cost way to steer what the model generates. We judge the quality cost with three independent measures of the output (prompt adherence, overall audio quality, taste preservation), each compared against the ordinary variation between random seeds. Eight-bit precision shows no measurable quality loss on any measure while sharply cutting memory, and it is the fastest mode on the GPU; four-bit adds a small, bounded cost but shrinks the footprint enough to run the 1.2-billion-parameter model on an 8\,GB Pi. Against the official implementation, aria matches or exceeds generation speed and starts about seven times faster. A case study of the steering interface generates music carrying taste associations (sonic seasoning), with genuine but bounded control for a subset of attributes. These results make a compact, quantized runtime with built-in control a practical basis for on-device semantic audio in Internet-of-Sounds settings. The aria runtime is released at https://github.com/matteospanio/aria.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 语义音频应用程序越来越需要在商品和嵌入式硬件上进行可控生成，而不是通过框架密集的数据中心堆栈。我们推出了 aria，一个无依赖的本机运行时，它在普通 GPU、纯 CPU 机器和 Raspberry~Pi~5 上运行 Stable Audio~3 (SA3) 的完整文本到音乐管道，底层没有 Python 或深度学习框架。我们的主要贡献是量化研究：以较低的数值精度运行模型以适应紧张的内存预算，就地节省内存而不是添加内存。由于运行时拥有每个内部张量，因此它还公开了激活控制，这是一种控制模型生成内容的低成本方法。我们通过三个独立的输出衡量标准（及时遵守、整体音频质量、口味保留）来判断质量成本，每个衡量标准都与随机种子之间的普通变化进行比较。八位精度在大幅削减内存的同时，在任何测量中都没有显示出可测量的质量损失，并且它是 GPU 上最快的模式；四位增加了一个小的、有限的成本，但缩小了占用空间，足以在 8 GB Pi 上运行 12 亿参数模型。与官方实现相比，aria 匹配或超过生成速度，启动速度大约快七倍。转向界面的案例研究生成带有味道关联的音乐（声音调味），对属性子集进行真正但有限的控制。这些结果使得具有内置控制的紧凑、量化运行时成为音联网设置中设备上语义音频的实用基础。 aria 运行时发布于 https://github.com/matteospanio/aria。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.08093" target="_blank">CausalDS: Benchmarking Causal Reasoning in Data-Science Agents</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>University of Michigan</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Andrej Leban, Yuekai Sun</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.08093" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.08093" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.08093.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract CausalDS is a benchmark for evaluating causal reasoning in data-science workflows that combines synthetic causal structures with realistic observational data and natural-language stories across Pearl's three rungs of causal inference.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 CausalDS 是评估数据科学工作流程中因果推理的基准，它将综合因果结构与跨越 Pearl 因果推理三个梯级的真实观察数据和自然语言故事相结合。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Large language models (LLMs) increasingly act as integrated data-science agents, combining abstract reasoning with advanced tool use. Yet the relevant benchmark landscape largely divides into symbolic causal reasoning benchmarks without realistic data analysis or data analysis benchmarks without a principled causal data-generating structure. Furthermore, existing causal evaluation datasets are often restricted to curated examples from existing sources, with diversity coming from limited templatized variations rather than from systematic generation of novel synthetic causal structures. We introduce CausalDS, a benchmark for evaluating causal reasoning in agentic data-science workflows. Each benchmark instance is a scene consisting of a sampled structural causal model (SCM) with generated observational data and an accompanying synthetic natural-language story grounded in a realistic domain. We optionally ground the composition of the benchmark components in empirical distributions obtained from real-world datasets, thus retaining empirical structure while reducing the "causal parrot" risk through completely synthetic generation. From each scene, we then derive tasks spanning all three of Pearl's rungs, with typical data-science prediction tasks appearing as Rung 1. Most tasks include a data science coding component, where the model typically needs to use several tools to arrive at the final answer due to the frequent presence of imperfect observations, which are generated by an observation model. Additionally, recognizing when a question admits no warranted answer and abstaining is treated as a first-class scored outcome. The benchmark thus jointly evaluates symbolic causal reasoning, data science, uncertainty quantification, abstention, and tool use/coding.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 大型语言模型 (LLM) 越来越多地充当集成数据科学代理，将抽象推理与高级工具使用相结合。然而，相关基准景观主要分为没有现实数据分析的符号因果推理基准或没有原则性因果数据生成结构的数据分析基准。此外，现有的因果评估数据集通常仅限于现有来源的精选示例，其多样性来自有限的模板化变化，而不是来自新颖的综合因果结构的系统生成。我们引入 CausalDS，这是评估代理数据科学工作流程中因果推理的基准。每个基准实例都是一个场景，由采样的结构因果模型 (SCM) 和生成的观测数据以及基于现实领域的合成自然语言故事组成。我们可以选择将基准组件的组成基于从现实世界数据集获得的经验分布，从而保留经验结构，同时通过完全合成的生成来降低“因果鹦鹉”风险。然后，我们从每个场景中派生出跨越 Pearl 的所有三个梯级的任务，典型的数据科学预测任务显示为梯级 1。大多数任务包括数据科学编码组件，其中模型通常需要使用多种工具才能得出最终答案，因为经常存在由观察模型生成的不完美观察结果。此外，当问题不承认任何有保证的答案并弃权时，认识到该问题将被视为一流的评分结果。因此，该基准联合评估符号因果推理、数据科学、不确定性量化、弃权和工具使用/编码。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.03936" target="_blank">Can Dialects Be Steered Like Languages? Sparse Neurons and Distributed Directions in Arabic LLMs</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Mohamed Bin Zayed University of Artificial Intelligence</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Kareem Elozeiri, Mervat Abassy, Omar Kallas, Fahim Dalvi, Preslav Nakov</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.03936" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.03936" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.03936.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Arabic language models exhibit dialect-specific neural representations that can be manipulated at inference time to control dialectal output without requiring additional training.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">抽象阿拉伯语言模型表现出方言特定的神经表示，可以在推理时进行操作以控制方言输出，而无需额外的训练。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct A key challenge in Arabic NLP is the scarcity of dialectal data relative to Modern Standard Arabic (MSA), causing LLMs to overproduce MSA and struggle with dialectally accurate generation. From an interpretability perspective, this raises a fundamental question: where and how are dialectal features encoded within model internals, and can these representations be leveraged to improve dialect generation without fine-tuning? This study investigates two complementary inference-time approaches that serve simultaneously as interpretability probes and control mechanisms. First, we conduct a neuron-level analysis, identifying sparse neuron populations that encode dialect-specific features and showing that amplifying or suppressing these neurons can steer model outputs toward target dialects. Second, motivated by the entanglement of dialectal features at the single-neuron level, we apply a vector-steering approach that extracts dialect-specific activation directions and injects them during inference. Together, these methods illuminate the geometry of dialectal knowledge in Arabic LLMs and offer a principled, interpretability-grounded framework for dialect control without requiring dialect-specific fine-tuning.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 阿拉伯语 NLP 的一个关键挑战是相对于现代标准阿拉伯语 (MSA) 而言方言数据的稀缺，导致法学硕士生成过多的 MSA 并难以准确生成方言。从可解释性的角度来看，这提出了一个基本问题：方言特征在模型内部的何处以及如何编码，以及是否可以利用这些表示来改进方言生成而无需微调？这项研究研究了两种互补的推理时间方法，它们同时充当可解释性探针和控制机制。首先，我们进行神经元级分析，识别编码方言特定特征的稀疏神经元群体，并表明放大或抑制这些神经元可以将模型输出引导至目标方言。其次，受单神经元层面方言特征纠缠的启发，我们应用了一种向量引导方法，提取方言特定的激活方向并在推理过程中注入它们。这些方法共同阐明了阿拉伯语法学硕士中方言知识的几何结构，并为方言控制提供了一个有原则的、基于可解释性的框架，而无需针对特定方言进行微调。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.04690" target="_blank">PAST-TIDE: Prototype-Anchored Statement Tuning with Topic-Invariant Normalization for Stance Detection</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Md. Shakhoyat Rahman Shujon, MD Jahid Hasan Jim, Md. Milon Islam, Md Rezwanul Haque, Fakhri Karray</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.04690" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.04690" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.04690.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  We introduce PAST-TIDE, our stance detection system addressing both subtasks of the StanceNakba Shared Task at NakbaNLP@LREC-COLING 2026. The main idea is statement tuning. We redefine stance as cloze-style masked language modeling (MLM), letting a verbalizer map label words to stance categories through the pre-trained MLM head rather than appending a randomly initialized classification head. We complement this with prototypical contrastive learning, which uses learnable class prototypes for batch-size independent contrastive training, and topic-conditional layer normalization for cross-topic Arabic stance detection. PAST-TIDE achieves macro-F1 scores of 0.75 for Subtask A and 0.74 for Subtask B on the official leaderboard, indicating that minimal architectural additions to a pre-trained model can remain competitive in low-resource settings.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：我们介绍了 PAST-TIDE，这是我们的立场检测系统，可解决 NakbaNLP@LREC-COLING 2026 上 StanceNakba 共享任务的两个子任务。主要思想是语句调整。我们将立场重新定义为完形填空式的掩码语言模型 (MLM)，让语言表达者通过预先训练的 MLM 头将标签词映射到立场类别，而不是附加随机初始化的分类头。我们用原型对比学习来补充这一点，它使用可学习的类原型进行批量大小独立的对比训练，并使用主题条件层归一化进行跨主题阿拉伯语立场检测。 PAST-TIDE 在官方排行榜上的子任务 A 的宏观 F1 得分为 0.75，子任务 B 的宏观 F1 得分为 0.74，这表明对预训练模型添加最少的架构即可在低资源环境中保持竞争力。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub     Add to collection     Community         mr3haque   Paper submitter    37 minutes ago    This comment has been hidden (marked as Resolved)                     mr3haque   Paper submitter    37 minutes ago         Published in The Fifteenth Language Resources and Evaluation Conference (LREC 2026)</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF GitHub 添加到集合 社区 mr3haque 论文提交者 37 分钟前 该评论已被隐藏（标记为已解决） mr3haque 论文提交者 37 分钟前 发表于第十五届语言资源与评估会议（LREC 2026）</p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+        
+        <div class="nav-buttons">
+            <a href="2026-07-11.html" class="nav-btn">← 2026-07-11</a>
+            <a href="2026-07-13.html" class="nav-btn">2026-07-13 →</a>
+        </div>
+        
+        <footer>
+            Generated by <a href="https://github.com" target="_blank">HF Papers Daily</a>
+        </footer>
+    </div>
+    
+    <script>
+        function toggleAbstract(header) {
+            const toggle = header.querySelector('.abstract-toggle');
+            const content = header.nextElementSibling;
+            toggle.classList.toggle('expanded');
+            content.classList.toggle('expanded');
+        }
+    </script>
+</html>

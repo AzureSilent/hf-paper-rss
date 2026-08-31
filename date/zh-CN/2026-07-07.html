@@ -1,0 +1,2250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hugging Face Papers - 2026-07-07 (zh-CN)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .date {
+            font-size: 1.2em;
+            color: #a0a0a0;
+        }
+        
+        .stats {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #888;
+        }
+        
+        .paper-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .paper-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(102, 126, 234, 0.5);
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.2);
+        }
+        
+        .paper-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        
+        .paper-title a {
+            color: #e0e0e0;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .paper-title a:hover {
+            color: #667eea;
+        }
+        
+        .paper-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            color: #a0a0a0;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .meta-label {
+            color: #888;
+        }
+        
+        .links {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .link-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .link-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .link-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .abstract-section {
+            margin-top: 15px;
+        }
+        
+        .abstract-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .abstract-header:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .abstract-toggle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+            transition: transform 0.3s;
+        }
+        
+        .abstract-toggle.expanded {
+            transform: rotate(180deg);
+        }
+        
+        .abstract-label {
+            font-weight: 500;
+            color: #667eea;
+        }
+        
+        .abstract-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding: 0 15px;
+        }
+        
+        .abstract-content.expanded {
+            max-height: 10000px;
+            padding: 15px;
+        }
+        
+        .abstract-text {
+            line-height: 1.7;
+            color: #c0c0c0;
+        }
+        
+        .summary-box {
+            background: rgba(102, 126, 234, 0.1);
+            border-left: 3px solid #667eea;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .summary-label {
+            font-size: 0.8em;
+            color: #667eea;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .summary-text {
+            color: #b0b0b0;
+            line-height: 1.5;
+        }
+        
+        .translation-box {
+            background: rgba(118, 75, 162, 0.1);
+            border-left: 3px solid #764ba2;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .translation-label {
+            font-size: 0.8em;
+            color: #764ba2;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .translation-text {
+            color: #b0b0b0;
+            line-height: 1.5;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding: 0 10px;
+        }
+        
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .nav-btn.disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: #666;
+            pointer-events: none;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .paper-title {
+                font-size: 1.1em;
+            }
+            
+            .links {
+                flex-wrap: wrap;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-btn {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Hugging Face Papers</h1>
+            <div class="date">2026-07-07</div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number">40</div>
+                    <div class="stat-label">Papers</div>
+                </div>
+            </div>
+        </header>
+        
+        <main>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.04033" target="_blank">OmniOpt: Taxonomy, Geometry, and Benchmarking of Modern Optimizers</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>OpenDataLab</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Siyuan Li, Jiabao Pan, Yumou Liu, Zhuoli Ouyang, Xin Jin</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.04033" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.04033" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.04033.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract OmniOpt presents a unified framework for optimizer selection in large-scale model training by combining meta-pipeline transformations, norm-constrained linear minimization oracles, and a cross-domain benchmark to systematically analyze optimizer families and their trade-offs across different training objectives and model scales.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 OmniOpt 通过结合元管道转换、范数约束线性最小化预言和跨域基准，提出了大规模模型训练中优化器选择的统一框架，以系统地分析优化器系列及其在不同训练目标和模型规模上的权衡。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Optimizer selection for large-scale model training has become a system-level design decision constrained jointly by compute, memory, tuning budget, and task diversity, yet the landscape of over one hundred methods remains fragmented. We therefore present OmniOpt, a unified survey and benchmark cookbook of optimizers for the research community. OmniOpt rests on four coupled components. First, we treat every optimizer update as a structured transformation through a five-stage meta-pipeline, and show that most methods engage only one or two of these stages. Second, we use norm-constrained linear minimization oracles (LMOs) to unify different optimizers. Third, these two views ground a dual-dimension taxonomy, one dimension assigning each method to a mechanism family and the other recording the measurable training objectives it aims to improve. Fourth, and at the core of this paper, we instantiate the full taxonomy in a unified cross-domain benchmark spanning representative optimizers, model scales, and training regimes from language model pretraining to image classification, systematically analyzing each method family across multiple effect objectives and laying out their trade-offs. OmniOpt thus supplies the research community with an operational coordinate system for selecting optimizers under explicit mechanism and objective assumptions, and charts a direction for the future development of the optimizer community.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 大规模模型训练的优化器选择已成为受计算、内存、调优预算和任务多样性共同约束的系统级设计决策，但一百多种方法的景观仍然支离破碎。因此，我们推出了 OmniOpt，这是一本为研究界提供的优化器统一调查和基准指南。 OmniOpt 依赖于四个耦合组件。首先，我们将每次优化器更新视为通过五阶段元管道的结构化转换，并表明大多数方法仅涉及其中的一个或两个阶段。其次，我们使用范数约束线性最小化预言（LMO）来统一不同的优化器。第三，这两种观点建立了双重分类法，一个维度将每种方法分配给一个机制系列，另一个维度记录其旨在改进的可衡量的培训目标。第四，也是本文的核心，我们在统一的跨领域基准中实例化了完整的分类法，涵盖代表性优化器、模型规模和从语言模型预训练到图像分类的训练机制，系统地分析跨多个效果目标的每个方法系列并列出它们的权衡。因此，OmniOpt 为研究界提供了一个在明确机制和客观假设下选择优化器的操作坐标系，并为优化器界未来的发展指明了方向。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.04425" target="_blank">UI-MOPD: Multi-Platform On-Policy Distillation for Continual GUI Agent Learning</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Niu Lian, Alan Chen, Zhehao Yu, Chengzhen Duan, Fazhan Liu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.04425" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.04425" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.04425.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Uni-GUI dataset and UI-MOPD method enable cross-platform GUI agent training by addressing limited data and platform-specific capability degradation through multi-teacher on-policy distillation.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 Uni-GUI 数据集和 UI-MOPD 方法通过多教师策略蒸馏解决有限数据和特定于平台的能力退化问题，从而实现跨平台 GUI 代理训练。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Recent advances in multimodal foundation models and agent systems have driven GUI agents from single-platform task execution toward cross-platform interaction. However, building multi-platform GUI agents remains challenging. On one hand, high-quality and executable cross-platform interaction trajectories are still scarce, and existing data often suffer from limited platform coverage. On the other hand, different platforms exhibit distinct interaction conventions, making joint or continual training prone to behavioral pattern mixing, platform-specific capability degradation, and catastrophic forgetting. To address these challenges, we construct Uni-GUI, a high-quality cross-platform GUI interaction dataset, and propose UI-MOPD, the first method that incorporates multi-teacher on-policy distillation into continual learning for GUI agents. UI-MOPD dynamically selects a platform-specific teacher according to the current environment and transfers platform-specific behavioral priors to a shared policy through platform-conditioned distillation, enabling adaptation to new platforms while preserving capabilities on existing ones. Experiments on OSWorld and MobileWorld show that UI-MOPD achieves task success rates of 38.2% and 12.0%, respectively, demonstrating its effectiveness in balancing cross-platform capability retention and new-platform adaptation.
+  Project page: https://elispectre.github.io/UI-MOPD/.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 多模式基础模型和代理系统的最新进展推动 GUI 代理从单平台任务执行转向跨平台交互。然而，构建多平台 GUI 代理仍然具有挑战性。一方面，高质量且可执行的跨平台交互轨迹仍然稀缺，现有数据往往受到平台覆盖范围有限的影响。另一方面，不同的平台表现出不同的交互约定，使得联合或持续训练容易出现行为模式混合、平台特定能力下降和灾难性遗忘。为了应对这些挑战，我们构建了 Uni-GUI（一个高质量的跨平台 GUI 交互数据集），并提出了 UI-MOPD，这是第一个将多教师在策略蒸馏纳入 GUI 代理持续学习的方法。 UI-MOPD根据当前环境动态选择特定于平台的教师，并通过平台条件蒸馏将特定于平台的行为先验转移到共享策略，从而能够适应新平台，同时保留现有平台的功能。在OSWorld和MobileWorld上的实验表明，UI-MOPD的任务成功率分别达到38.2%和12.0%，证明了其在平衡跨平台能力保留和新平台适配方面的有效性。
+  项目页面：https://elispectre.github.io/UI-MOPD/。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.04438" target="_blank">ResearchStudio-Reel: Automate the Last Mile of Research from Paper to Poster, Video, and Blog</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Microsoft</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Lingao Xiao, Yalun Dai, Yangyu Huang, Qihao Zhao, Wenshan Wu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.04438" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.04438" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.04438.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract ResearchStudio-Reel automates research dissemination by composing specialized skills around a shared paper extractor, generating consistent and editable artifacts including posters, videos, and blogs with hard pass/fail quality gates.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 ResearchStudio-Reel 通过围绕共享论文提取器组合专业技能，生成一致且可编辑的工件，包括海报、视频和具有硬通过/失败质量门控的博客，从而实现研究传播的自动化。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Research dissemination, turning a paper into a poster, a talk video, and a blog post, is still a manual last mile. Prior automation treats each artifact in isolation that each re-extract the paper from scratch, usually ship one-way renders the author cannot reopen in PowerPoint or Word, and gates quality on soft VLM-preference scores that plateau while load-bearing sections still read as empty. We argue this last mile is best built as a composition of skills: thin agent-readable contracts that share one upstream extractor and wrap deterministic primitives in a measured-fill loop whose exits are hard pass/fail render gates. We instantiate this as ResearchStudio-Reel, five Claude Code and Codex skills organized into one shared extractor (Paper2Assets), three editable generators (Paper2Poster, Paper2Video, Paper2Blog), and one interactive convergence layer (Paper2Reel). Paper2Assets extracts each paper once into a shared bundle that can be reused by every downstream skill; The three generators produce a print-ready poster, a synchronized talk video, and a bilingual blog that stay factually consistent and round-trip through PowerPoint or Word; Paper2Reel then binds all three into a self-contained HTML viewer whose section-level clicks jump the video, slides, captions, and blog to matching content. On the Paper2Poster benchmark, our posters lead every aesthetic and information sub-criterion against both prior automated systems and single-shot frontier LLMs, surpassing the authors' own on aesthetics under two held-out VLM judges and winning overall on 84% to 93% of papers; capability audits further show that, by uniquely pairing narration-aligned on-slide highlights with a bilingual blog gated by layout-aware DOCX repair, ResearchStudio-Reel is the only pipeline to ship all three editable artifacts. Project is available at https://aka.ms/ResearchStudio</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct Research 传播生成，将论文变成海报、谈话视频、博文，仍然是最后一英里的手动操作。先前的自动化将每个工件分开处理，每个工件都从头开始重新提取论文，通常是单向渲染，作者无法在 PowerPoint 或 Word 中重新打开，并且在软 VLM 偏好分数上控制质量，该分数在承重部分仍然读取为空时处于稳定状态。我们认为，最后一英里最好构建为技能的组合：瘦代理可读合约，共享一个上游提取器，并将确定性基元包装在测量填充循环中，其出口是硬通过/失败渲染门。我们将其实例化为 ResearchStudio-Reel，五项 Claude Code 和 Codex 技能组织成一个共享提取器 (Paper2Assets)、三个可编辑生成器（Paper2Poster、Paper2Video、Paper2Blog）和一个交互式汇聚层 (Paper2Reel)。 Paper2Assets 将每篇论文一次提取到一个共享包中，可供每个下游技能重复使用；这三个生成器生成可打印的海报、同步谈话视频和双语博客，这些博客保持事实一致并通过 PowerPoint 或 Word 往返；然后，Paper2Reel 将这三者绑定到一个独立的 HTML 查看器中，其部分级别的点击会将视频、幻灯片、标题和博客跳转到匹配的内容。在 Paper2Poster 基准测试中，我们的海报在每项美学和信息子标准上都领先于先前的自动化系统和单次前沿法学硕士，在两位坚持不懈的 VLM 评委的指导下超越了作者自己的美学标准，并以 84% 至 93% 的论文总体获胜率；功能审核进一步表明，通过将与旁白对齐的幻灯片亮点与由布局感知 DOCX 修复控制的双语博客独特地配对，ResearchStudio-Reel 是唯一能够交付所有三个可编辑工件的管道。项目可在 https://aka.ms/ResearchStudio 获取</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.05373" target="_blank">PixWorld: Unifying 3D Scene Generation and Reconstruction in Pixel Space</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Sensen Gao, Zhaoqing Wang, Qihang Cao, Dongdong Yu, Changhu Wang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.05373" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.05373" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.05373.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract PixWorld presents a unified pixel-space diffusion approach for 3D reconstruction and generation that overcomes limitations of latent-space methods through direct image-level supervision and geometry-aware feature alignment.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 PixWorld 提出了一种用于 3D 重建和生成的统一像素空间扩散方法，通过直接图像级监督和几何感知特征对齐克服了潜在空间方法的局限性。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct 3D reconstruction and generation are commonly tackled by separate paradigms: pixel-based regression for reconstruction, and latent diffusion for generation. Recent works attempt to unify them in latent space, but with notable drawbacks: the diffusion objective is defined on latent features rather than the underlying 3D representation, and both branches suffer from information loss introduced by latent encoding, while requiring a pretrained Variational Autoencoder (VAE) or Representation Autoencoder (RAE). In this paper, we reformulate these two tasks under a unified pixel-space diffusion paradigm and introduce PixWorld, a single model that jointly addresses 3D reconstruction and generation. By supervising diffusion directly on rendered images, PixWorld removes the above limitations and aligns optimization with 3D scene fidelity. Beyond photometric and perceptual supervision that operates at the 2D image level and lacks 3D geometric awareness, we further introduce a geometry perception loss that aligns rendered views with their ground truth in the geometry-aware feature space of a pretrained 3D foundation model, providing 3D structural supervision. PixWorld consistently outperforms prior latent-space generation methods and matches state-of-the-art reconstruction methods, demonstrating the superiority of a unified pixel-space approach.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 3D 重建和生成通常通过单独的范例来处理：用于重建的基于像素的回归和用于生成的潜在扩散。最近的工作试图在潜在空间中统一它们，但有明显的缺点：扩散目标是在潜在特征而不是底层 3D 表示上定义的，并且两个分支都遭受潜在编码引入的信息丢失，同时需要预训练的变分自动编码器（VAE）或表示自动编码器（RAE）。在本文中，我们在统一的像素空间扩散范式下重新表述了这两个任务，并引入了 PixWorld，这是一个联合解决 3D 重建和生成问题的单一模型。通过直接监督渲染图像上的扩散，PixWorld 消除了上述限制，并使优化与 3D 场景保真度保持一致。除了在 2D 图像级别运行且缺乏 3D 几何感知的光度和感知监督之外，我们还引入了几何感知损失，将渲染视图与其预训练 3D 基础模型的几何感知特征空间中的地面实况对齐，从而提供 3D 结构监督。 PixWorld 始终优于先前的潜在空间生成方法，并与最先进的重建方法相匹配，展示了统一像素空间方法的优越性。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.04439" target="_blank">ResearchStudio-Idea: An Evidence-Grounded Research-Ideation Skill Suite from ML Conference Outcomes</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Microsoft</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Qihao Zhao, Yangyu Huang, Yalun Dai, Lingao Xiao, Jianjun Gao</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.04439" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.04439" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.04439.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract ResearchStudio-Idea provides a skill suite for effective research ideation that combines literature search, novelty checking, and pattern-guided generation to produce traceable research proposals.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 ResearchStudio-Idea 提供了一套有效研究构思的技能套件，它将文献搜索、新颖性检查和模式引导生成相结合，以生成可追溯的研究提案。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Large language models have made research ideation increasingly accessible, yet effective idea development requires more than generating candidate directions. Researchers must ground a problem in current literature, identify meaningful bottlenecks, differentiate from existing solutions, and evaluate risks before committing to implementation. We present ResearchStudio-Idea as a reusable skill suite for this first mile of research ideation. The suite includes Paper-Search, a standalone multi-source literature search skill; Scoop-Check, a standalone prior-art collision checker for novelty claims; and IdeaSpark, the end-to-end skill that composes evidence grounding, pattern-guided generation, collision retrieval, audit, and idea-card rendering into one workflow. IdeaSpark is constructed from a corpus of 1,947 machine learning conference papers collected from ICLR, ICML, and NeurIPS between 2021 and 2025, including Oral papers, a separately tracked high-citation subset, and rejected submissions. Analysis of these outcomes reveals 31 recurring ideation sub-patterns, consolidated into 15 reusable ideation patterns. Each pattern is operationalized as a structured card containing research contexts, bottleneck types, differentiation strategies, supporting precedents, and common failure modes. Given a research problem and an evidence bundle, IdeaSpark evaluates evidence readiness, reconstructs the surrounding research context, identifies unresolved bottlenecks, selects relevant patterns, instantiates one candidate direction, retrieves potentially conflicting prior work, and performs outcome-informed auditing. This workflow transforms reusable ideation patterns into traceable research proposals. Blind automated-judge evaluations show that IdeaSpark consistently produces stronger research proposals than no-skill and generic-skill baselines while maintaining competitive novelty.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 大型语言模型使研究构思变得越来越容易理解，但有效的创意开发需要的不仅仅是生成候选方向。研究人员必须在当前文献中找出问题，找出有意义的瓶颈，与现有解决方案区分开来，并在实施之前评估风险。我们将 ResearchStudio-Idea 作为研究构思第一英里的可重用技能套件推出。该套件包括 Paper-Search，一种独立的多源文献搜索技能； Scoop-Check，一个独立的现有技术碰撞检查器，用于新颖性声明； IdeaSpark，一种端到端技能，将证据基础、模式引导生成、冲突检索、审计和创意卡渲染整合到一个工作流程中。 IdeaSpark 由 2021 年至 2025 年间从 ICLR、ICML 和 NeurIPS 收集的 1,947 篇机器学习会议论文组成的语料库构建，其中包括口头论文、单独跟踪的高引用子集和被拒绝的提交论文。对这些结果的分析揭示了 31 种反复出现的构思子模式，并合并为 15 种可重复使用的构思模式。每个模式都可作为结构化卡片来操作，其中包含研究背景、瓶颈类型、差异化策略、支持先例和常见故障模式。给定一个研究问题和一组证据，IdeaSpark 会评估证据准备情况，重建周围的研究背景，识别未解决的瓶颈，选择相关模式，实例化一个候选方向，检索可能存在冲突的先前工作，并执行基于结果的审核。该工作流程将可重复使用的构思模式转化为可追踪的研究提案。盲式自动评审评估表明，IdeaSpark 始终能够产生比无技能和通用技能基线更强的研究提案，同时保持竞争新颖性。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.03973" target="_blank">MANCE: Manifold Aware Concept Erasure</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Bar-Ilan University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>MatanAvitan, Matan Avitan, Yoav Goldberg, Yanai Elazar</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.03973" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.03973" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.03973.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Manifold constraint hypothesis enables improved concept erasure by projecting updates onto estimated representation manifolds, achieving state-of-the-art results in nonlinear concept removal.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 流形约束假设通过将更新投影到估计的表示流形上来改进概念擦除，从而在非线性概念去除中实现最先进的结果。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Concept erasure aims to remove a target concept from a representation while preserving the other information encoded in it. This is difficult because representations encode many concepts that are often correlated with the erasure target, so removing the target risks damaging them. We propose the Manifold Constraint Hypothesis (MCH): if natural representations concentrate on a structured, lower-dimensional manifold, then interventions should be constrained to that manifold and better preserve other information encoded in the representation during interventions. We instantiate MCH in a new concept erasure method: MANifold aware Concept Erasure (MANCE). MANCE performs iterative updates to the representations using signals from a classifier that predicts a target concept. We estimate the manifold using representations obtained from natural inputs, and then we project the concept removal update to the estimated manifold. We perform extensive evaluation on 119 settings spanning text and vision, including 13 language models, three NLP concepts, and 40 CelebA-CLIP attributes. Employing MANCE on top of previous methods shows consistent improved leakage results. We also introduce MANCE+ and MANCE++, which prepend a closed-form erasure algorithm before employing MANCE, achieving better leakage--surgicality tradeoffs relative to matched full-space updates. MANCE++, our best method, achieves state-of-the-art results on nonlinear concept erasure. These results support MCH in the erasure setting: interventions should be constrained to the natural representation manifold.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 概念擦除旨在从表示中删除目标概念，同时保留其中编码的其他信息。这很困难，因为表示编码了许多通常与擦除目标相关的概念，因此删除目标可能会损坏它们。我们提出流形约束假设（MCH）：如果自然表征集中在结构化的低维流形上，那么干预措施应该限制在该流形上，并在干预期间更好地保留表征中编码的其他信息。我们以一种新的概念擦除方法实例化 MCH：MANifold 感知概念擦除（MANCE）。 MANCE 使用来自预测目标概念的分类器的信号对表示进行迭代更新。我们使用从自然输入获得的表示来估计流形，然后将概念删除更新投影到估计的流形上。我们对涵盖文本和视觉的 119 个设置进行了广泛的评估，包括 13 个语言模型、三个 NLP 概念和 40 个 CelebA-CLIP 属性。在以前的方法之上采用 MANCE 显示出一致的改进泄漏结果。我们还引入了 MANCE+ 和 MANCE++，它们在使用 MANCE 之前预先考虑了封闭式擦除算法，从而实现了更好的泄漏——相对于匹配的全空间更新的手术性权衡。 MANCE++ 是我们最好的方法，在非线性概念擦除方面取得了最先进的结果。这些结果支持抹除环境中的 MCH：干预措施应限制在自然表征流形内。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.02642" target="_blank">GigaWorld-1: A Roadmap to Build World Models for Robot Policy Evaluation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>GigaAI</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>GigaWorld Team, Angyuan Ma, Boyuan Wang, Bohan Li, Chaojun Ni</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.02642" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.02642" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.02642.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract World models for robotic policy evaluation are systematically studied through a new benchmark, revealing that long-horizon rollout consistency and robot-specific controllability are more important than short-term visual realism for reliable policy assessment.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：通过新的基准系统地研究了机器人政策评估的世界模型，揭示了对于可靠的政策评估而言，长期部署一致性和机器人特定的可控性比短期视觉现实性更重要。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Evaluating embodied robot foundation models remains a critical bottleneck; unlike large language models efficiently assessed via digital benchmarks, robotic policies require slow, costly real-world rollouts limited by hardware and human supervision, which has driven interest in world models as surrogate policy evaluators, yet the key properties that make a world model reliable for policy assessment remain poorly understood. This work presents a systematic study of world models for robotic policy evaluation and introduces WMBench, a benchmark constructed from real-robot teleoperation data and matched policy rollouts covering diverse manipulation tasks to enable controlled comparisons across model families, action encodings, rollout horizons, and evaluation metrics. Using WMBench, we analyze 7 video world models, 4 action representation schemes, and over 324,000 simulated policy rollouts paired with real robot executions, further enriching our analysis with large-scale community submissions from the CVPR 2026 GigaBrain Challenge, curated synthetic trajectories, and a training videos spanning more than 12,000 hours. Our experiments deliver three core insights: evaluator quality is dominated by long-horizon, action-faithful rollout consistency rather than short-term visual realism; pretraining gains stem not only from data scale but from balancing general world knowledge with robot-specific controllability; and architectural choices including action encoding, memory design, and evaluator-focused post-training strongly determine alignment with real-world robot behavior. Drawing on these results, we derive a practical design roadmap and realize it in GigaWorld-1, a world model specially optimized for policy evaluation, and we fully release our code, models, datasets, and toolkits to advance scalable evaluation research for embodied foundation models.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 评估实体机器人基础模型仍然是一个关键瓶颈；与通过数字基准有效评估的大型语言模型不同，机器人政策需要缓慢、昂贵的现实世界推出，受到硬件和人类监督的限制，这引发了人们对作为替代政策评估者的世界模型的兴趣，但使世界模型可靠用于政策评估的关键属性仍然知之甚少。这项工作提出了对机器人政策评估的世界模型的系统研究，并介绍了 WMBench，这是一个由真实机器人远程操作数据和涵盖不同操作任务的匹配政策推出构建的基准，以实现模型系列、动作编码、推出范围和评估指标之间的受控比较。使用 WMBench，我们分析了 7 个视频世界模型、4 个动作表示方案以及超过 324,000 个与真实机器人执行相结合的模拟策略部署，通过 CVPR 2026 GigaBrain Challenge 的大规模社区提交内容、精心策划的合成轨迹以及跨越 12,000 多个小时的训练视频，进一步丰富了我们的分析。我们的实验提供了三个核心见解：评估者的质量取决于长期、忠实于行动的推出一致性，而不是短期的视觉现实主义；预训练收益不仅源于数据规模，还源于平衡一般世界知识与机器人特定的可控性；包括动作编码、内存设计和以评估者为中心的后期训练在内的架构选择在很大程度上决定了与现实世界机器人行为的一致性。借鉴这些成果，我们得出了实用的设计路线图，并在专门针对政策评估优化的世界模型 GigaWorld-1 中实现，并全面发布我们的代码、模型、数据集和工具包，以推进具体基础模型的可扩展评估研究。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.05247" target="_blank">Vision Pretraining for Dense Spatial Perception</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Robbyant</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Zelin Fu, Bin Tan, Changjiang Sun, Shaohui Liu, Kecheng Zheng</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.05247" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.05247" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.05247.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Boundary modeling enables dense spatial perception by learning sub-pixel representations that enhance depth estimation and support embodied AI applications.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：边界建模通过学习子像素表示来实现密集的空间感知，从而增强深度估计并支持具体的人工智能应用。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Dense spatial perception is essential for physical intelligence, where visual systems are expected to recover structured, metric, and actionable representations from pixel observations. Modern visual foundation models tend to prioritize semantic invariance, often at the expense of detailed spatial understanding. In this work, we study vision pretraining through a boundary-centric lens, motivated by the premise that boundaries and shape discontinuities offer essential cues for perceiving geometric properties. Concretely, we propose masked boundary modeling, a self-supervised paradigm that dynamically learns sub-pixel boundary representations and subsequently leverages the discovered boundary-bearing tokens as masked targets to facilitate dense visual token learning. By scaling this framework, we develop LingBot-Vision and demonstrate its efficacy across a diverse set of downstream vision tasks with DINOv3 as a strong baseline. Remarkably, LingBot-Vision drives the progression from LingBot-Depth 1.0 to LingBot-Depth 2.0 for depth completion, and thereby yields enhanced depth estimation, a key pillar for embodied artificial intelligence. Our findings reveal that boundary modeling goes beyond simple line segments and instead serves as a scalable pretraining principle for learning spatially structured visual representations.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 密集的空间感知对于物理智能至关重要，视觉系统期望从像素观察中恢复结构化、度量和可操作的表示。现代视觉基础模型倾向于优先考虑语义不变性，通常以牺牲详细的空间理解为代价。在这项工作中，我们通过以边界为中心的镜头研究视觉预训练，其动机是边界和形状不连续性为感知几何特性提供了必要的线索。具体来说，我们提出了屏蔽边界建模，这是一种自监督范例，可以动态学习子像素边界表示，然后利用发现的边界承载标记作为屏蔽目标来促进密集的视觉标记学习。通过扩展该框架，我们开发了 LingBot-Vision，并以 DINOv3 作为强大的基线，在一系列不同的下游视觉任务中展示了其功效。值得注意的是，LingBot-Vision 推动了深度补全从 LingBot-Depth 1.0 到 LingBot-Depth 2.0 的发展，从而产生增强的深度估计，这是嵌入式人工智能的关键支柱。我们的研究结果表明，边界建模超越了简单的线段，而是作为学习空间结构化视觉表示的可扩展预训练原则。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.04443" target="_blank">Wan-Streamer v0.2: Higher Resolution, Same Latency</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Wan-AI</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Lianghua Huang, Zhi-Fan Wu, Yupeng Shi, Wei Wang, Mengyang Feng</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.04443" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.04443" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.04443.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Wan-Streamer v0.2 enhances audio-visual interaction by increasing visual resolution while maintaining low latency through optimized thinker-performer architecture with multi-GPU parallel processing.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 Wan-Streamer v0.2 通过提高视觉分辨率来增强视听交互，同时通过优化的思考者-执行者架构和多 GPU 并行处理保持低延迟。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct We present Wan-Streamer v0.2, a latency-preserving upgrade of the native-streaming, end-to-end audio-visual interaction model. v0.2 keeps the v0.1 modeling formulation, but raises the interactive output stream from 192x336 to 640x368 while preserving approximately 200 ms model-side signal-to-signal latency at 25 FPS. The higher-resolution stream supports scene-grounded mid-shot agents whose posture, gaze, hands, nearby objects, and local scene layout remain legible during real-time conversation. To support the larger visual stream without adding user-visible delay, v0.2 keeps the thinker as a single-GPU low-latency path for streaming perception, the short language/state Transformer pass that builds the generation cache, and final decoding. The performer becomes a multi-GPU Ulysses-style context-parallel group for the expensive next-unit latent generation. Each performer rank writes incoming K/V into a pre-sharded local cache. The long high-resolution latent video sequence is split across ranks for denoising and gathered through Ulysses communication, while the much shorter audio latent sequence is generated without sequence sharding. In this split, the thinker's language/state computation reaches the performer only as K/V conditioning, so no separate language sequence has to be communicated inside the performer group. This concentrates additional hardware on visual generation while preserving the compact thinker-performer boundary, keeping total remote interaction latency at approximately 550 ms when a 350 ms bidirectional network budget is included.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 我们推出了 Wan-Streamer v0.2，这是本机流媒体、端到端视听交互模型的延迟保留升级。 v0.2 保留了 v0.1 建模公式，但将交互式输出流从 192x336 提高到 640x368，同时在 25 FPS 下保留约 200 毫秒的模型端信号到信号延迟。更高分辨率的流支持基于场景的中镜头代理，其姿势、目光、手、附近物体和本地场景布局在实时对话期间保持清晰。为了支持更大的视觉流而不增加用户可见的延迟，v0.2 将思考者保留为单 GPU 低延迟路径，用于流感知、构建生成缓存的短语言/状态 Transformer 通道以及最终解码。执行者成为昂贵的下一个单元潜在代的多 GPU Ulysses 式上下文并行组。每个执行者等级将传入的 K/V 写入预分片的本地缓存中。长的高分辨率潜在视频序列被跨列分割以进行去噪，并通过 Ulysses 通信进行收集，而更短的音频潜在序列是在没有序列分片的情况下生成的。在这种分裂中，思考者的语言/状态计算仅作为 K/V 调节到达执行者，因此不需要在执行者组内传达单独的语言序列。这将额外的硬件集中在视觉生成上，同时保留了紧凑的思考者与执行者边界，当包括 350 毫秒的双向网络预算时，将总远程交互延迟保持在大约 550 毫秒。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.02646" target="_blank">EVA-Client: A Unified Data Collection, Inference, and Deployment Framework for Embodied Policies on Real Robots</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Heqing Yang, Yang Yi, Liyao Wang, Linqing Zhong, Donglin Yang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.02646" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.02646" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.02646.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract EVA-Client is an open-source framework that unifies real-robot policy deployment, data collection, and evaluation through a component-decoupled architecture with inspectable execution workflows.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 EVA-Client 是一个开源框架，通过具有可检查执行工作流程的组件解耦架构，将真实机器人策略部署、数据收集和评估统一起来。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct We present EVA-Client, an open-source framework for deployment, data collection, and evaluation of trained manipulation policies on real robots. Sitting between a policy server and the physical hardware, EVA-Client unifies the real-robot stages of the policy iteration loop within a single codebase. It makes three contributions. First, a component-decoupled architecture in which robot backends, inference strategies, and transport middlewares form an orthogonal grid: adding a robot or a strategy touches only its own layer. Second, inspectable execution through Debug, Collect, and Eval workflows, with modes ranging from open-loop simulation to continuous real-time control. Third, every evaluation run doubles as a data collection, recording full rollouts in training-ready format alongside exhaustive logs and a side-by-side comparison viewer, so each evaluation feeds the next round of training rather than ending as an unrecorded impression. EVA-Client further consolidates major real-time inference strategies, synchronous and asynchronous execution, ACT-style temporal ensembling, Real-Time Chunking, and a naive-async ablation baseline, behind a single configuration surface.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 我们推出了 EVA-Client，这是一个开源框架，用于部署、数据收集和评估真实机器人上训练有素的操作策略。 EVA-Client 位于策略服务器和物理硬件之间，将策略迭代循环的真实机器人阶段统一到单个代码库中。它做出了三个贡献。首先，组件解耦架构，其中机器人后端、推理策略和传输中间件形成正交网格：添加机器人或策略仅触及其自己的层。其次，通过调试、收集和评估工作流程进行可检查的执行，模式范围从开环仿真到连续实时控制。第三，每次评估运行都兼作数据收集，以训练就绪格式记录完整的部署以及详尽的日志和并排比较查看器，因此每次评估都会为下一轮训练提供信息，而不是以未记录的印象结束。 EVA-Client 在单个配置表面后面进一步整合了主要的实时推理策略、同步和异步执行、ACT 风格的时间集成、实时分块和朴素异步消融基线。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.04988" target="_blank">InternVLA-A1.5: Unifying Understanding, Latent Foresight, and Action for Compositional Generalization</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Haoxiang Ma, Junhao Cai, Xiaoxu Xu, Hao Li, Yuyin Yang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.04988" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.04988" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.04988.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract InternVLA-A1.5 integrates pretrained vision-language models with future prediction in latent space to enable efficient robot manipulation with preserved semantics and long-horizon execution.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 InternVLA-A1.5 将预训练的视觉语言模型与潜在空间中的未来预测相集成，以实现具有保留语义和长视野执行的高效机器人操作。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Unified models for robot manipulation aim to equip one policy with both the semantic priors of pretrained VLMs and the physical dynamics learned through future prediction. In practice, existing designs tend to erode the semantics of the pretrained backbone, suffer interference among heterogeneous objectives, and learn future prediction from scratch in pixel space, leaving the dynamics priors of pretrained video generators unexploited. We present InternVLA-A1.5, which builds the policy on a native VLM backbone that keeps training on VQA and subtask prediction, and attaches a lightweight unified expert for continuous action generation. Future prediction is recast as a latent-querying problem, where a small set of learnable foresight tokens condenses the task-relevant future into a compact latent code under the supervision of a frozen pretrained video generation model, so the policy inherits world-model dynamics priors without ever learning pixel-level generation. The video branch is discarded at inference, keeping real-time control. Pretrained on 1.2M robot episodes and 3M multimodal samples, InternVLA-A1.5 achieves the best overall results on all six simulation benchmarks. In the real world, the preserved semantics deliver the strongest compositional generalization on held-out instruction bindings, and the two designs together sustain long-horizon execution.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成的机器人操纵统一模型旨在为一项策略配备预训练 VLM 的语义先验和通过未来预测学习到的物理动力学。在实践中，现有的设计往往会侵蚀预训练主干的语义，遭受异构目标之间的干扰，并在像素空间中从头开始学习未来的预测，从而使预训练视频生成器的动态先验未被利用。我们提出了 InternVLA-A1.5，它在本机 VLM 主干上构建策略，持续进行 VQA 和子任务预测训练，并附加一个轻量级统一专家用于连续动作生成。未来预测被重新定义为一个潜在查询问题，其中一小组可学习的预见令牌在冻结的预训练视频生成模型的监督下将与任务相关的未来压缩为紧凑的潜在代码，因此该策略继承了世界模型动态先验，而无需学习像素级生成。视频分支在推理时被丢弃，保持实时控制。 InternVLA-A1.5 在 120 万个机器人场景和 3M 多模态样本上进行预训练，在所有六个模拟基准上均取得了最佳总体结果。在现实世界中，保留的语义在保留的指令绑定上提供了最强的组合概括，并且两种设计共同维持了长期执行。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.00597" target="_blank">Multi-Turn Agentic Scientific Literature Search via Workflow Induction</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>University of Illinois at Urbana-Champaign</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>mtilyjason, Jisen Li, Bingxuan Li, Nanyi Jiang, Xuying Ning</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.00597" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.00597" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.00597.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract paper pilot is a multi-turn literature search agent that uses executable workflows to improve search accuracy and reduce errors by incorporating user feedback and controlled workflow corruption training.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">Abstract paper Pilot 是一种多轮文献搜索代理，它使用可执行工作流通过合并用户反馈和受控工作流损坏训练来提高搜索准确性并减少错误。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Scientific literature search often requires more than retrieving papers from a single query: users' intents are underspecified, preference-dependent, and evolve through interaction. Existing search agents typically rely on fixed pipelines or implicit language-only reasoning, making their search strategies difficult to control, inspect, and refine. We introduce PaperPilot, a multi-turn literature search agent that frames scientific search as workflow induction. Given an anchor paper and a user query, PaperPilot constructs an executable DAG of paper-search operators, including keyword search, citation expansion, filtering, scoring, reranking, and evidence extraction. User feedback is then used to refine both the query and the workflow itself. We train PaperPilot with supervised workflow imitation and preference optimization over controlled workflow corruptions. Experiments show that PaperPilot-9B improves over the base Qwen3.5-9B toolset agent under multi-turn interaction, increasing Hit@5 from 58.0 to 77.0, MRR from 47.5 to 59.4, and nDCG@10 from 26.8 to 32.5, while reducing workflow execution errors from 9.5% to 0%. These results show that explicit, editable search workflows provide an effective and controllable interface for aligning literature search agents with complex scientific intent.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 科学文献搜索通常需要的不仅仅是从单个查询中检索论文：用户的意图不明确、依赖于偏好，并且通过交互而演变。现有的搜索代理通常依赖于固定管道或仅隐式语言推理，这使得它们的搜索策略难以控制、检查和细化。我们引入了 PaperPilot，这是一种多轮文献搜索代理，它将科学搜索构建为工作流程归纳。给定锚论文和用户查询，PaperPilot 构建可执行的论文搜索运算符 DAG，包括关键字搜索、引文扩展、过滤、评分、重新排名和证据提取。然后，使用用户反馈来优化查询和工作流程本身。我们通过监督工作流程模仿和对受控工作流程损坏的偏好优化来训练 PaperPilot。实验表明，PaperPilot-9B 在多轮交互下比基础 Qwen3.5-9B 工具集代理进行了改进，将 Hit@5 从 58.0 提高到 77.0，MRR 从 47.5 提高到 59.4，nDCG@10 从 26.8 提高到 32.5，同时将工作流执行错误从 9.5% 降低到 0%。这些结果表明，明确的、可编辑的搜索工作流程提供了一个有效且可控的界面，使文献搜索代理与复杂的科学意图保持一致。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.05061" target="_blank">KVpop -- Key-Value Cache Compression with Predictive Online Pruning</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>NX-AI</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Lukas Hauzenberger, Niklas Schmidinger, Anamaria-Roberta Hartl, David Stap, Thomas Schmied</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.05061" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.05061" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.05061.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract KVpop learns optimal key-value cache eviction by directly supervising keep-or-drop decisions using future-attention targets, achieving high performance with reduced memory usage.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 KVpop 通过使用未来关注目标直接监督保留或删除决策来学习最佳键值缓存驱逐，从而在减少内存使用的情况下实现高性能。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Key-value (KV) cache growth is a major bottleneck in autoregressive decoding, as memory and bandwidth scale linearly with context length. Existing KV eviction methods often rely on static heuristics or proxy scores, which poorly track future token utility and cause brittle eviction as relevance shifts. To address this, we introduce KVpop, which learns a fixed-budget KV eviction policy by directly supervising the keep-or-drop decision. The scorer is trained against a novel future-attention target, computed efficiently without materializing dense attention maps. We further introduce a delayed memory-based scorer that, uniquely among learned eviction methods, defers scoring for a fixed number of steps to exploit near-future context. On AIME and HMMT mathematical reasoning, KVpop retains 98% of full-attention performance on Qwen3-4B at 75% KV cache compression and 97% at 88% compression, consistently outperforming established eviction baselines. Qwen3-8B shows even stronger results, reaching near-full teacher performance. These results show that supervising eviction with future-attention signals cuts memory costs while maintaining quality.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 键值 (KV) 缓存增长是自回归解码的主要瓶颈，因为内存和带宽随上下文长度线性扩展。现有的 KV 驱逐方法通常依赖于静态启发式或代理分数，这很难跟踪未来的代币效用，并会在相关性发生变化时导致脆弱的驱逐。为了解决这个问题，我们引入了 KVpop，它通过直接监督保留或删除决策来学习固定预算的 KV 驱逐策略。评分器针对一个新颖的未来注意力目标进行训练，该目标可以有效计算，而无需具体化密集的注意力图。我们进一步引入了一种基于延迟记忆的评分器，它在学习驱逐方法中是独一无二的，它推迟了固定数量的步骤的评分，以利用近期的上下文。在 AIME 和 HMMT 数学推理上，KVpop 在 Qwen3-4B 上在 75% KV 缓存压缩时保留了 98% 的全注意力性能，在 88% 压缩时保留了 97%，始终优于既定的驱逐基线。 Qwen3-8B 显示出更强的结果，达到了接近满分的教师表现。这些结果表明，使用未来关注信号来监督驱逐可以在保持质量的同时降低内存成本。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.04605" target="_blank">Do All Visual Tokens Matter Equally? Object-Evidence Preserving Token Merging for Vision-Language Retrieval</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Suhyeong Park, Junha Jung, Jungwoo Park, Jaewoo Kang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.04605" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.04605" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.04605.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Object-aware token merging framework SaMer compresses image-side tokens while preserving query-selectable visual evidence, achieving significant storage reduction and improved retrieval performance.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 对象感知令牌合并框架 SaMer 压缩图像端令牌，同时保留查询可选择的视觉证据，从而显着减少存储空间并提高检索性能。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Multi-vector vision-language retrieval preserves fine-grained visual evidence through maximum-similarity late interaction, but dense image-side tokens make storage and scoring expensive. Existing token compression methods reduce this cost, yet they can remove or collapse object- and region-level evidence that future query tokens may need to select. We propose SaMer, an object-aware token merging framework that compresses image-side post-projector tokens into K representative centroids while preserving the original late-interaction interface. SaMer uses object annotations only during training as a merge prior to discourage cross-instance mixing, requires no ground-truth bounding boxes or detectors at inference time, and adapts only the shared projection layer with frozen vision and language backbones. With K=64, SaMer removes more than 93% of image-side tokens and reduces ColPali storage by 16.09times, while improving R@1 on Flickr30K and MSCOCO. These gains arise because object-aware merging preserves query-selectable object evidence that pruning or feature-only pooling can remove or collapse. SaMer also outperforms compression baselines and shows stronger phrase-level grounding, suggesting that efficient multi-vector retrieval depends not only on reducing token count, but on preserving the evidence future query tokens need to select.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 多向量视觉语言检索通过最大相似性后期交互保留细粒度的视觉证据，但密集的图像侧标记使得存储和评分成本高昂。现有的令牌压缩方法降低了这种成本，但它们可以删除或折叠未来查询令牌可能需要选择的对象和区域级证据。我们提出了 SaMer，一种对象感知令牌合并框架，它将图像侧后投影器令牌压缩为 K 个代表性质心，同时保留原始的后期交互界面。 SaMer 仅在训练期间使用对象注释作为合并，以阻止跨实例混合，在推理时不需要地面实况边界框或检测器，并且仅采用具有冻结视觉和语言主干的共享投影层。当 K=64 时，SaMer 删除了超过 93% 的图像端令牌，并将 ColPali 存储减少了 16.09 倍，同时改进了 Flickr30K 和 MSCOCO 上的 R@1。这些收益的出现是因为对象感知合并保留了查询可选择的对象证据，而修剪或仅功能池可以删除或崩溃。 SaMer 的性能还优于压缩基线，并显示出更强的短语级基础，这表明高效的多向量检索不仅取决于减少标记数量，还取决于保留未来查询标记需要选择的证据。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.04428" target="_blank">dOPSD: On-Policy Self-Distillation for Diffusion Language Models</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Phuong Tuan Dat, Qi Li, Xinchao Wang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.04428" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.04428" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.04428.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Diffusion large language models face challenges in reasoning enhancement through post-training, but a novel on-policy self-distillation method using internal denoising trajectories improves mathematical reasoning and code generation performance.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 扩散大语言模型在通过后训练增强推理方面面临挑战，但是一种使用内部去噪轨迹的新颖的策略自蒸馏方法提高了数学推理和代码生成性能。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Diffusion large language models (dLLMs) generate text by iteratively denoising a masked sequence, offering a parallel alternative to autoregressive models, but eliciting strong reasoning through post-training remains difficult: supervised fine-tuning is off-policy and suffers from exposure bias, while reinforcement learning gives only sparse, sequence-level rewards and is hard to apply without tractable sequence likelihoods. On-policy self-distillation (OPSD) offers a promising alternative, using one model as both student and teacher to provide dense, token-level, on-policy supervision, but its effectiveness hinges on giving the teacher privileged information (PI) - typically an instance-specific ground-truth reference unavailable at inference - so the student ends up distilling a weak PI-free consensus policy that yields little improvement on dLLM reasoning. We introduce dOPSD, which instead derives the teacher's privilege directly from the student's own denoising trajectory, evaluating masked positions using later, more-decoded steps of that same trajectory rather than an external label, so the teacher's advantage emerges from the model's own decoding process; on Dream and LLaDA, dOPSD improves both in-domain math reasoning and out-of-domain code generation, outperforming supervised and on-policy baselines.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 扩散大型语言模型 (dLLM) 通过迭代对屏蔽序列进行去噪来生成文本，为自回归模型提供了并行替代方案，但通过后训练引发强推理仍然很困难：监督微调是偏离策略的，并且存在暴露偏差，而强化学习仅提供稀疏的序列级奖励，并且在没有可处理的序列可能性的情况下很难应用。在策略自蒸馏 (OPSD) 提供了一种有前景的替代方案，使用一个模型作为学生和教师来提供密集的、代币级的在策略监督，但其有效性取决于向教师提供特权信息 (PI)（通常是在推理时无法获得的特定于实例的地面实况参考），因此学生最终会提炼出一种较弱的无 PI 共识策略，该策略对 dLLM 推理几乎没有任何改进。我们引入了 dOPSD，它直接从学生自己的去噪轨迹中获得教师的特权，使用同一轨迹的后续、更多解码步骤而不是外部标签来评估屏蔽位置，因此教师的优势来自于模型自己的解码过程；在 Dream 和 LLaDA 上，dOPSD 改进了域内数学推理和域外代码生成，优于监督和政策基线。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.05352" target="_blank">Multiplayer Interactive World Models with Representation Autoencoders</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Anthony Hu, Václav Volhejn, Adrien Ramanana Rahary, Chris Mulder, Aditya Makkar</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.05352" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.05352" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.05352.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract A large-scale multiplayer world model trained on extensive gameplay data demonstrates stable long-horizon rollouts in a complex physics-based environment while maintaining coherence across multiple agents' actions.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：基于大量游戏数据训练的大型多人世界模型展示了在复杂的基于物理的环境中稳定的长期部署，同时保持多个智能体行为的一致性。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct We introduce the first multiplayer world model for highly dynamic environments governed by complex physical interactions. Whereas single-player world models treat the other agents as part of the environment, ours conditions on the action streams of multiple agents, learning to attribute changes in the scene to the correct player and to stay coherent under arbitrary combinations of their actions. We study this problem in the game of Rocket League, where players compete and cooperate under fast, tightly coupled dynamics. Trained on 10,000 hours of gameplay collected with publicly available bots, our 5-billion-parameter latent diffusion model generates four-player matches in real time, producing 20 frames per second on a single Nvidia B200 GPU. Although trained only on short clips, its rollouts stay stable far beyond the training horizon: distributional quality holds steady out to five minutes, the longest horizon we measure, and in practice we observe rollouts continuing for hours with no sign of collapse. We systematically investigate the central design choices: the video codec, the generative objective, and the multiplayer conditioning scheme. In addition, we characterize how behavior changes with model and data scale, including the capabilities that emerge and the failure modes that persist. We further develop targeted evaluations that probe the model's physical understanding rather than visual appearance alone. To support continued research on multiplayer world models, we release our dataset, our full training and inference codebase, and a live demo.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 我们引入了第一个多人世界模型，用于由复杂的物理交互控制的高度动态环境。单人世界模型将其他智能体视为环境的一部分，而我们的条件是多个智能体的动作流，学习将场景中的变化归因于正确的玩家，并在其动作的任意组合下保持连贯。我们在《火箭联盟》游戏中研究了这个问题，玩家在快速、紧密耦合的动态下竞争和合作。我们的 50 亿参数潜在扩散模型经过使用公开机器人收集的 10,000 小时游戏玩法进行训练，可实时生成四人比赛，在单个 Nvidia B200 GPU 上每秒生成 20 帧。尽管仅在短片段上进行训练，但其推出在训练范围之外保持稳定：分布质量保持稳定至五分钟，这是我们测量的最长范围，并且在实践中，我们观察到推出持续数小时，没有崩溃的迹象。我们系统地研究了核心设计选择：视频编解码器、生成目标和多人调节方案。此外，我们还描述了行为如何随模型和数据规模而变化，包括出现的功能和持续存在的故障模式。我们进一步开发有针对性的评估，探索模型的物理理解，而不仅仅是视觉外观。为了支持多人世界模型的持续研究，我们发布了数据集、完整的训练和推理代码库以及现场演示。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.05155" target="_blank">EdgeBench: Unveiling Scaling Laws of Learning from Real-World Environments</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>ByteDance Seed</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Deyao Zhu, Xin Zhou, Shengling Qin, Xuekai Zhu, Hangliang Ding</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.05155" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.05155" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.05155.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Analysis of 38,000 hours of real-world agent interactions reveals log-sigmoid scaling laws for performance and exponential learning speed improvements across 134 diverse tasks.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">对 38,000 小时现实世界代理交互的分析揭示了 134 个不同任务的性能和指数学习速度改进的对数 sigmoid 缩放定律。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Pretraining scaling laws reveal that model capability improves predictably with data and compute. But learning from real world environments after deployment remains far less understood. Analyzing roughly 38,000 hours of agent interaction with the environment across 134 real world tasks, we find, to the best of our knowledge, the first evidence that overall performance during environment learning follows a log-sigmoid scaling law with remarkably high precision, reaching R^2 = 0.998. Across model generations, we also find that agent learning speed roughly doubles every three months. This discovery stems from EdgeBench, a suite of 134 real world tasks with ultra-long horizons, spanning scientific discovery, software engineering, combinatorial optimization, professional knowledge work, formal mathematics, and interactive games. Each task sustains at least 12 hours of continuous agent operation under rich, multilevel feedback, and is built through substantial expert effort. We publicly release 51 tasks and our full evaluation framework to accelerate the study of how agents learn from real world experience.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 预训练缩放定律表明，模型能力可通过数据和计算进行可预测的改进。但部署后如何从现实世界环境中学习仍然知之甚少。通过分析 134 个现实世界任务中大约 38,000 小时的智能体与环境交互，我们发现，据我们所知，第一个证据表明环境学习期间的整体性能遵循对数 sigmoid 缩放定律，且精度非常高，达到 R^2 = 0.998。在各代模型中，我们还发现智能体的学习速度大约每三个月翻一番。这一发现源于 EdgeBench，这是一套包含 134 个具有超长视野的现实世界任务的套件，涵盖科学发现、软件工程、组合优化、专业知识工作、形式数学和互动游戏。每项任务在丰富的多级反馈下维持至少 12 小时的连续代理操作，并且是通过大量专家努力构建的。我们公开发布了 51 项任务和完整的评估框架，以加速研究智能体如何从现实世界的经验中学习。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.03524" target="_blank">Perceptual Flow Matching for Few-Step Generative Modeling</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>jingdong</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>chuyangzhao, Chuyang Zhao, Yifei Song, Hongfa Wang, Jianlong Yuan</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.03524" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.03524" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.03524.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Perceptual Flow Matching enables efficient few-step generation by supervising flow matching in perceptual feature space, achieving high-quality results with reduced sampling steps and improved accuracy.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 感知流匹配通过监督感知特征空间中的流匹配来实现高效的少步生成，通过减少采样步骤和提高精度来实现高质量结果。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct We propose Perceptual Flow Matching (PFM), a simple yet effective framework for few-step generation in flow-matching models. Rather than performing velocity regression in the conventional VAE latent space, PFM supervises flow matching in a perceptual feature space using pretrained perceptual models. This simple change substantially improves the few-step generation capability of flow-matching models, reducing the number of sampling steps from 35-50 to 4-8 while preserving generation quality. Unlike existing acceleration and distillation approaches, PFM requires neither teacher models nor auxiliary score networks and can be integrated into standard flow-matching training pipelines with minimal modifications. Extensive experiments on image generation, video generation, and image editing tasks demonstrate that PFM consistently produces high-quality results while producing fewer artifacts than existing distillation-based methods. We further show that perceptual supervision shifts the regression minimizer from mean-seeking to mode-seeking, biasing predictions toward on-manifold modes that remain accurate under coarse few-step integration. Our results reveal that standard flow-matching training can naturally yield high-quality few-step generators when supervised in an appropriate representation space. We hope this insight inspires future research into representation-aware objectives for efficient generative modeling.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 我们提出感知流匹配 (PFM)，这是一种简单而有效的框架，用于在流匹配模型中进行几步生成。 PFM 不是在传统的 VAE 潜在空间中执行速度回归，而是使用预训练的感知模型在感知特征空间中监督流量匹配。这个简单的改变极大地提高了流匹配模型的少步生成能力，将采样步骤数从 35-50 减少到 4-8，同时保持生成质量。与现有的加速和蒸馏方法不同，PFM 既不需要教师模型，也不需要辅助评分网络，并且可以通过最小的修改集成到标准流程匹配训练管道中。关于图像生成、视频生成和图像编辑任务的大量实验表明，与现有的基于蒸馏的方法相比，PFM 始终能够产生高质量的结果，同时产生的伪影更少。我们进一步表明，感知监督将回归最小化器从均值寻求转变为模式寻求，将预测偏向在粗略的几步积分下保持准确的流形模式。我们的结果表明，当在适当的表示空间中进行监督时，标准流匹配训练可以自然地产生高质量的少步生成器。我们希望这一见解能够激发未来对高效生成建模的表示感知目标的研究。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.02403" target="_blank">ACID: Action Consistency via Inverse Dynamics for Planning with World Models</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Pohang University of Science and Technology</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>gawon1224, Gawon Seo, Dongwon Kim, Suha Kwak</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.02403" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.02403" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.02403.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract ACID is a decision-time planning framework that enhances action-conditioned world models by enforcing cycle action consistency to improve trajectory realism and reduce computational requirements.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 ACID 是一种决策时间规划框架，它通过强制循环动作一致性来增强动作条件世界模型，以提高轨迹真实性并减少计算要求。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Decision-time planning with action-conditioned world models has become a popular paradigm for embodied control. However, the standard planning cost judges a candidate solely by how close its predicted terminal state lies to the goal, leaving the realizability of the intermediate transitions unchecked -- a predicted trajectory can look convincing while the environment rollout drifts away from it. In this paper, we propose ACID, a decision-time planning framework that introduces cycle action consistency: the action inferred backward from a predicted transition by an inverse dynamics model should recover the one that was conditioned on. We fold this per-step residual into the planning cost via a scale-invariant adaptive weight. Across four action-conditioned world models and six tasks spanning rigid and deformable manipulation, articulated control, and visual navigation, ACID consistently improves planning and matches the baseline's accuracy with substantially less planning compute.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 使用动作条件世界模型的决策时间规划已成为体现控制的流行范例。然而，标准规划成本仅根据其预测的最终状态与目标的接近程度来判断候选者，而不检查中间转换的可实现性——预测的轨迹可能看起来令人信服，而环境的推出却偏离了它。在本文中，我们提出了 ACID，一种引入循环动作一致性的决策时间规划框架：通过逆动力学模型从预测的转换向后推断的动作应该恢复所条件的动作。我们通过尺度不变的自适应权重将每步残差折叠到规划成本中。在四个动作条件世界模型和涵盖刚性和可变形操纵、铰接控制和视觉导航的六项任务中，ACID 持续改进规划并以大幅减少规划计算来匹配基线的准确性。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.05391" target="_blank">LLM-as-a-Verifier: A General-Purpose Verification Framework</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Jacky Kwok, Shulu Li, Pranav Atreya, Yuejiang Liu, Yixing Jiang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.05391" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.05391" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.05391.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract LLM-as-a-Verifier introduces a probabilistic verification framework that scales across multiple dimensions to improve solution correctness assessment and agent performance across various benchmarks.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 LLM-as-a-Verifier 引入了一个概率验证框架，该框架可跨多个维度扩展，以改进解决方案正确性评估和跨各种基准的代理性能。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Scaling pre-training, post-training, and test-time compute have become the central paradigms for improving the capabilities of LLMs. In this work, we identify verification, the ability to determine the correctness of a solution, as a new scaling axis. To unlock this and demonstrate its effectiveness, we introduce LLM-as-a-Verifier, a general-purpose verification framework that provides fine-grained feedback for agentic tasks without requiring additional training. Unlike standard LM judges that prompt LLMs to produce discrete scores for candidate solutions, LLM-as-a-Verifier computes the expectation over the distribution of scoring token logits to generate continuous scores. This probabilistic formulation enables verification to scale along multiple dimensions: (1) score granularity, (2) repeated evaluation, and (3) criteria decomposition. In particular, we show that scaling the scoring granularity leads to better separation between positive and negative solutions, resulting in more calibrated comparisons. Moreover, scaling repeated evaluation and criteria decomposition consistently lead to additional gains in verification accuracy through variance and complexity reduction. We further introduce a cost-efficient ranking algorithm for selecting the best solution among candidates using the verifier's continuous scores. LLM-as-a-Verifier achieves state-of-the-art performance on Terminal-Bench V2 (86.5%), SWE-Bench Verified (78.2%), RoboRewardBench (87.4%), and MedAgentBench (73.3%). Beyond verification, the fine-grained signals from LLM-as-a-Verifier can also serve as a proxy for estimating task progress. We build an extension for Claude Code, enabling developers to monitor and improve their own agentic systems. Finally, we show that LLM-as-a-Verifier can provide dense feedback for RL, improving the sample efficiency of SAC and GRPO on robotics and mathematical reasoning benchmarks.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 扩展训练前、训练后和测试时计算已成为提高 LLM 能力的核心范例。在这项工作中，我们将验证（确定解决方案正确性的能力）确定为新的缩放轴。为了解锁这一点并证明其有效性，我们引入了 LLM-as-a-Verifier，这是一种通用验证框架，可以为代理任务提供细粒度的反馈，而无需额外的培训。与标准的 LM 法官提示 LLM 为候选解决方案生成离散分数不同，LLM 作为验证者计算评分标记 logits 分布的期望以生成连续分数。这种概率公式使验证能够沿多个维度扩展：(1) 评分粒度，(2) 重复评估，以及 (3) 标准分解。特别是，我们表明，缩放评分粒度可以更好地分离正解和负解，从而产生更校准的比较。此外，通过减少方差和复杂性，扩展重复评估和标准分解始终可以带来验证准确性的额外收益。我们进一步引入了一种经济高效的排名算法，用于使用验证者的连续分数在候选者中选择最佳解决方案。 LLM-as-a-Verifier 在 Terminal-Bench V2 (86.5%)、SWE-Bench Verified (78.2%)、RoboRewardBench (87.4%) 和 MedAgentBench (73.3%) 上实现了最先进的性能。除了验证之外，来自 LLM-as-a-Verifier 的细粒度信号还可以充当估计任务进度的代理。我们为 Claude Code 构建了一个扩展，使开发人员能够监控和改进他们自己的代理系统。最后，我们证明 LLM-as-a-Verifier 可以为 RL 提供密集的反馈，提高 SAC 和 GRPO 在机器人和数学推理基准上的样本效率。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.05196" target="_blank">Unified Audio Intelligence Without Regressing on Text Intelligence</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>NVIDIA</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Zhifeng Kong, L0SG, Sang-gil Lee, Jaehyeon Kim, Boxin Wang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.05196" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.05196" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.05196.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract A unified audio-text large language model is presented that integrates audio and text processing through a shared transformer decoder, achieving superior performance across multiple audio and speech tasks while maintaining strong text reasoning capabilities.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 提出了一种统一的音频文本大语言模型，通过共享转换器解码器集成音频和文本处理，在多个音频和语音任务中实现卓越的性能，同时保持强大的文本推理能力。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Audio intelligence involves understanding, reasoning about, and generating both audio and speech. In this work, we introduce Nemotron-Labs-Audex-30B-A3B (Audex), a unified audio-text LLM built on Nemotron-Cascade-2-30B-A3B, a strong text-only MoE LLM. Audex adopts a simple unified design with a single Transformer decoder: audio inputs are encoded and projected into the text embedding space, while text tokens and quantized audio output tokens are treated uniformly during generation. This architecture enables strong audio-text fusion, seamless multimodal generation, and compatibility with standard LLM training and inference infrastructure. For training, we meticulously curate audio-text datasets comprising 157.4B audio tokens and 320.5B text tokens. We apply multi-stage supervised training on these datasets, followed by text-only Cascade RL and multi-domain on-policy distillation. Audex delivers state-of-the-art audio understanding, speech recognition and translation, text-to-speech, audio generation, and speech-to-speech generation, while preserving very compelling reasoning, alignment, knowledge, long-context, and agentic capabilities of its text-only LLM backbone with marginal or no regression. We release the model checkpoints to facilitate open research.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 音频智能涉及理解、推理以及生成音频和语音。在这项工作中，我们介绍了 Nemotron-Labs-Audex-30B-A3B (Audex)，这是一个基于 Nemotron-Cascade-2-30B-A3B（强大的纯文本 MoE LLM）构建的统一音频文本 LLM。 Audex 采用简单的统一设计，只有一个 Transformer 解码器：音频输入被编码并投影到文本嵌入空间中，而文本标记和量化音频输出标记在生成过程中被统一处理。该架构可实现强大的音频文本融合、无缝多模式生成以及与标准法学硕士培训和推理基础设施的兼容性。对于训练，我们精心策划了包含 157.4B 音频标记和 320.5B 文本标记的音频文本数据集。我们对这些数据集应用多阶段监督训练，然后是纯文本 Cascade RL 和多域策略蒸馏。 Audex 提供最先进的音频理解、语音识别和翻译、文本到语音、音频生成和语音到语音生成，同时保留其纯文本 LLM 骨干的非常引人注目的推理、对齐、知识、长上下文和代理功能，并且具有边际或无回归。我们发布模型检查点以促进开放研究。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.05376" target="_blank">MV-Forcing: Long Multi-View Video Generation via 4D-Grounded Spatio-Temporal Self-Forcing</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>galfiebelman, Gal Fiebelman, Hadar Averbuch-Elor, Sagie Benaim</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.05376" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.05376" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.05376.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract A video diffusion framework generates long, multi-view consistent videos by combining temporal and view-wise autoregression through 4D geometric bridging and spatio-temporal distillation techniques.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：视频扩散框架通过 4D 几何桥接和时空蒸馏技术结合时间和视图自回归，生成长的、多视图一致的视频。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Recent advances in video diffusion models have enabled either long single-view generation through temporal autoregression, or short multi-view synthesis through bidirectional attention. However, generating long, multi-view consistent videos of dynamic scenes remains unsolved. In this work, we present MV-Forcing, a framework that composes temporal and view-wise autoregression within a single diffusion model by introducing a 4D geometric bridge between sequentially generated views. Our key insight is that an autoregressive 3D reconstruction model naturally interfaces between autoregressively generated views. Given a completed source view, we reconstruct its 3D structure and render a geometric prior of the next target viewpoint, which the diffusion model refines into a high-quality video. To extend generation beyond the teacher's fixed temporal window, we introduce a joint denoising regime where both view slots are initialized from noise during training, enabling temporally unbounded generation. We distill the model via Distribution Matching Distillation with Spatio-Temporal Self-Forcing, closing the train-inference exposure bias gap for both temporal and view-sequential autoregression. Extensive experiments on both synthetic and real-world data demonstrate that MV-Forcing produces geometrically consistent multi-view videos of dynamic scenes at arbitrary lengths and viewpoint counts using a single few-step student model.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 视频扩散模型的最新进展已经实现了通过时间自回归的长单视图生成，或通过双向注意力的短多视图合成。然而，生成动态场景的长的、多视图一致的视频仍然没有解决。在这项工作中，我们提出了 MV-Forcing，这是一个框架，通过在顺序生成的视图之间引入 4D 几何桥，在单个扩散模型中组合时间和视图方面的自回归。我们的主要见解是，自回归 3D 重建模型自然地在自回归生成的视图之间进行交互。给定完整的源视图，我们重建其 3D 结构并渲染下一个目标视点的几何先验，扩散模型将其细化为高质量视频。为了将生成扩展到教师的固定时间窗口之外，我们引入了联合去噪机制，其中两个视图槽在训练期间从噪声中初始化，从而实现时间上无界的生成。我们通过时空自强迫的分布匹配蒸馏来提取模型，从而缩小了时间和视图顺序自回归的训练推理暴露偏差差距。对合成数据和真实世界数据的大量实验表明，MV-Forcing 使用单个几步学生模型可以生成任意长度和视点计数的动态场景的几何一致的多视图视频。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.01793" target="_blank">Safety Testing LLM Agents at Scale: From Risk Discovery to Evidence-Grounded Verification</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Ant Group</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yunhao Feng, Ruixiao Lin, Ming Wen, Qinqin He, Yanming Guo</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.01793" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.01793" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.01793.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Automated safety testing framework Vera uses a three-stage pipeline to identify and test safety risks in LLM agents through structured risk taxonomies, combinatorial case generation, and adaptive sandbox execution with evidence-based verification.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 自动化安全测试框架 Vera 使用三阶段管道，通过结构化风险分类法、组合案例生成以及基于证据的验证的自适应沙箱执行来识别和测试 LLM 代理中的安全风险。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct LLM agents increasingly perform autonomous actions through external tools, leading to complex and evolving safety risks. However, existing safety testing targets expert-designed safety violations, and the corresponding outcomes are evaluated by hard-coded rules, making them costly to extend as agents evolve. To this end, we present Vera, an end-to-end automated safety testing framework that instantiates software engineering testing principles for non-deterministic agents through a three-stage, self-reinforcing pipeline. First, a literature-driven exploration continuously discovers and structures emerging risks into taxonomies of safety risks, attack methods, and tool execution environments. Second, combinatorial composition across taxonomy dimensions produces executable safety cases, each specifying a concrete safety goal, a programmatically constructed initial state, and a deterministic verification predicate grounded in observable artifacts. Third, adaptive execution runs heterogeneous agents in isolated sandboxes where a control agent steers multi-turn interaction based on runtime observations, while evidence-grounded verifiers judge outcomes from environment state and tool-call evidence rather than model self-report. We evaluate Vera on four production agent frameworks (OpenClaw, Hermes, Codex, Claude Code), revealing substantial safety weaknesses, with average attack success rates reaching 93.9\% under multi-channel attacks; we also release Vera-Bench, comprising 1600 executable safety cases spanning 124 risk categories across three execution settings. These results indicate that modular, executable testing infrastructure is essential for rigorous and maintainable safety evaluation of rapidly evolving agentic systems at scale. The code is publicly available at https://github.com/Yunhao-Feng/Vera.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成，LLM 代理越来越多地通过外部工具执行自主操作，从而导致复杂且不断变化的安全风险。然而，现有的安全测试针对的是专家设计的安全违规行为，并且相应的结果是通过硬编码规则进行评估的，这使得随着代理的发展而扩展它们的成本很高。为此，我们提出了 Vera，一个端到端的自动化安全测试框架，它通过三阶段的自我强化管道实例化非确定性代理的软件工程测试原理。首先，文献驱动的探索不断发现新出现的风险，并将其构建为安全风险、攻击方法和工具执行环境的分类法。其次，跨分类维度的组合组合产生可执行的安全案例，每个案例指定具体的安全目标、以编程方式构建的初始状态以及基于可观察工件的确定性验证谓词。第三，自适应执行在隔离的沙箱中运行异构代理，其中控制代理根据运行时观察引导多轮交互，而基于证据的验证者根据环境状态和工具调用证据而不是模型自我报告来判断结果。我们在四种生产代理框架（OpenClaw、Hermes、Codex、Claude Code）上对 Vera 进行了评估，揭示了严重的安全弱点，在多通道攻击下平均攻击成功率达到 93.9%；我们还发布了 Vera-Bench，其中包含 1600 个可执行安全案例，涵盖三种执行设置的 124 个风险类别。这些结果表明，模块化、可执行的测试基础设施对于大规模快速发展的代理系统的严格且可维护的安全评估至关重要。该代码可在 https://github.com/Yunhao-Feng/Vera 上公开获取。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.02881" target="_blank">PraMem: Practice-derived Experiential Memory for Long-horizon Behavior Prediction</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Zhuoqun Li, Boxi Cao, Jiawei Chen, Hanshu Zhou, Ruoxi Xu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.02881" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.02881" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.02881.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Long-horizon behavior prediction is enhanced through PraMem, which transforms lengthy historical sequences into experiential memory for improved accuracy.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：通过 PraMem 增强了长视野行为预测，它将冗长的历史序列转换为经验记忆，以提高准确性。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Long-horizon behavior prediction aims to infer a user's next action based on a lengthy historical sequence, playing a crucial role in artificial intelligence field. The rise of large language models (LLMs) offers a promising direction for sequential behavior prediction, yet LLMs struggle with latent behavioral pattern induction and model-intrinsic cognitive biases when tackling long-horizon behavior prediction. Prior memory management methods follow a context-compression paradigm that attempts to address this task by alleviating the historical sequence burden, yet fail to resolve the core challenges. In this paper, we advocate a paradigm shift that reframes the lengthy historical sequence from a burden into a valuable resource to be exploited, and accordingly propose PraMem, which conducts beforehand practice over the lengthy historical sequence to build an experiential memory, thereby serving as the assisted input for accurate long-horizon behavior prediction. Extensive experiments across diverse tasks demonstrate that PraMem achieves superior performance than prior methods, and more in-depth analyses provide valuable insights into the mechanism and evolution of the experiential memory. Code: https://github.com/icip-cas/PraMem.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 长视野行为预测旨在根据较长的历史序列推断用户的下一步行动，在人工智能领域发挥着至关重要的作用。大语言模型 (LLM) 的兴起为顺序行为预测提供了一个有希望的方向，但 LLM 在处理长期行为预测时却面临潜在行为模式归纳和模型内在认知偏差的困扰。先前的内存管理方法遵循上下文压缩范例，试图通过减轻历史序列负担来解决此任务，但未能解决核心挑战。在本文中，我们提倡一种范式转变，将冗长的历史序列从负担重新构建为可利用的宝贵资源，并相应地提出了PraMem，它对冗长的历史序列进行事前练习以建立经验记忆，从而作为准确的长期行为预测的辅助输入。跨不同任务的大量实验表明，PraMem 比之前的方法具有更优越的性能，更深入的分析为体验记忆的机制和演化提供了有价值的见解。代码：https://github.com/icip-cas/PraMem。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2606.31145" target="_blank">SeKV: Resolution-Adaptive KV Cache with Hierarchical Semantic Memory for Long-Context LLM Inference</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Microsoft</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Amirhossein Abaskohi, Giuseppe Carenini, Peter West, Yuhang He</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2606.31145" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2606.31145" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2606.31145.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract SeKV introduces a resolution-adaptive semantic KV cache that compresses context into entropy-guided spans stored across GPU-CPU memory hierarchies, enabling efficient long-context processing with minimal memory overhead and preserved token-level detail.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 SeKV 引入了一种分辨率自适应语义 KV 缓存，它将上下文压缩为跨 GPU-CPU 内存层次结构存储的熵引导范围，从而以最小的内存开销和保留的令牌级细节实现高效的长上下文处理。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Large language models increasingly operate over long contexts, where the KV cache becomes a dominant memory bottleneck: its size grows linearly with sequence length and must be retained throughout decoding, making full GPU caching prohibitively expensive without compression. Existing KV cache compression methods struggle to balance efficiency with faithful context preservation. Token eviction discards information, while semantic grouping fixes compression decisions at prefill time; neither can recover token-level detail from a compressed span once it becomes relevant during generation. As a solution, we propose SeKV, a resolution-adaptive semantic KV cache that organizes context into entropy-guided semantic spans and stores them across a GPU-CPU memory hierarchy without discarding information. Each span keeps a lightweight summary vector on GPU for coarse routing and a low-rank SVD basis on CPU for on-demand token-level reconstruction. A trained zoom-in mechanism selectively expands query-relevant spans during decoding, enabling precise retrieval without materializing the full KV cache on GPU. SeKV enables adaptive token-level reconstruction while keeping the base LLM fully frozen and adding fewer than 0.05% trainable parameters. Across four benchmarks, SeKV improves over the strongest semantic compression baseline by 5.9% on average while reducing GPU memory by 53.3% versus full KV caching at 128K context. Code is available on https://github.com/AmirAbaskohi/SeKV.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 大型语言模型越来越多地在长上下文中运行，其中 KV 缓存成为主要的内存瓶颈：其大小随序列长度线性增长，并且必须在整个解码过程中保留，这使得在不压缩的情况下完整的 GPU 缓存成本高昂。现有的 KV 缓存压缩方法很难在效率与忠实的上下文保存之间取得平衡。令牌驱逐会丢弃信息，而语义分组会在预填充时修复压缩决策；一旦在生成过程中变得相关，它们都无法从压缩范围中恢复令牌级细节。作为一种解决方案，我们提出了 SeKV，一种分辨率自适应的语义 KV 缓存，它将上下文组织成熵引导的语义跨度，并将它们存储在 GPU-CPU 内存层次结构中，而不会丢弃信息。每个跨度在 GPU 上保留一个轻量级摘要向量以进行粗略路由，并在 CPU 上保留一个低秩 SVD 基础以进行按需令牌级重建。经过训练的放大机制可在解码过程中选择性地扩展与查询相关的范围，从而实现精确检索，而无需在 GPU 上实现完整的 KV 缓存。 SeKV 实现自适应令牌级重建，同时保持基本 LLM 完全冻结并添加少于 0.05% 的可训练参数。在四个基准测试中，SeKV 比最强语义压缩基准平均提高了 5.9%，同时与 128K 上下文下的完整 KV 缓存相比，GPU 内存减少了 53.3%。代码可在 https://github.com/AmirAbaskohi/SeKV 上获取。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.01764" target="_blank">Mastermind: Strategy-grounded Learning for Repository-Scale Vulnerability Reproduction</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Mingzhe Du, Luu Anh Tuan, Tianyi Wu, Renyang Liu, Zhijiang Guo</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.01764" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.01764" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.01764.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract A dual-loop framework named Mastermind is introduced that separates strategy learning from task-specific experience to improve vulnerability reproduction capabilities in software engineering agents.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 提出了一种名为 Mastermind 的双循环框架，它将策略学习与特定任务的经验分开，以提高软件工程代理的漏洞再现能力。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Repository-level vulnerability reproduction is a demanding software engineering (SE) task: an agent must inspect a codebase, infer the input grammar that reaches a vulnerable path, construct a proof-of-conceptv(PoC), and verify that the crash disappears on the patched build. Recent LLM agents can often execute these steps when the approach is correct, yet they still fail by choosing the wrong strategy. This paper argues that strategy, rather than the full action trajectory, is the right learning unit for such SE agents: it is compact enough to optimize, concrete enough to guide execution, and stable enough to store and reuse across attempts. We present Mastermind, a dual-loop framework that separates transferable strategy learning from task-specific experience. A trainable planner learns reusable vulnerability-reproduction strategies through SFT and milestone-based GRPO, while an experience loop maintains task-local strategy records that guide subsequent attempts. The planner is trained independently of the executor, allowing strategy learning to improve multiple frozen executors without modifying their action-generation capability. We evaluate Mastermind on CyberGym using 260 training tasks and 200 held-out evaluation tasks. With GPT-5.5 as the frozen executor, Mastermind achieves an 84.5% pass rate, outperforming open-book PoC context (60.0%), Best-of-8 sampling (63.0%), and iterative improvement (77.0%). The same planner also improves GPT-5.4 mini and GLM~5.1 from 45.0% and 58.5% to 60.0% and 71.0%. These results demonstrate that learning high-level strategies is an effective and transferable mechanism for improving repository-scale SE agents.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 存储库级漏洞重现是一项要求很高的软件工程 (SE) 任务：代理必须检查代码库、推断到达易受攻击路径的输入语法、构建概念验证 (PoC)，并验证崩溃是否在修补后的版本中消失。最近的 LLM 代理通常可以在方法正确时执行这些步骤，但他们仍然会因选择错误的策略而失败。本文认为，策略（而不是完整的行动轨迹）是此类 SE 代理的正确学习单元：它足够紧凑以进行优化，足够具体以指导执行，并且足够稳定以在尝试之间存储和重用。我们提出了 Mastermind，一个双环框架，它将可转移的策略学习与特定任务的经验分开。可训练的规划者通过 SFT 和基于里程碑的 GRPO 学习可重用的漏洞重现策略，而经验循环则维护指导后续尝试的任务本地策略记录。规划器的训练独立于执行器，允许策略学习改进多个冻结的执行器，而无需修改其动作生成能力。我们使用 260 个训练任务和 200 个保留的评估任务在 Cyber​​Gym 上评估 Mastermind。使用 GPT-5.5 作为冻结执行器，Mastermind 实现了 84.5% 的通过率，优于开卷 PoC 环境（60.0%）、Best-of-8 采样（63.0%）和迭代改进（77.0%）。同一规划器还将 GPT-5.4 mini 和 GLM~5.1 从 45.0% 和 58.5% 提高到 60.0% 和 71.0%。这些结果表明，学习高级策略是改进存储库规模 SE 代理的有效且可转移的机制。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.05390" target="_blank">Deform360: A Massive Multi-view Visuotactile Dataset for Deformable World Models</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Brown University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Hongyu Li, Wanjia Fu, Xiaoyan Cong, Zekun Li, Binghao Huang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.05390" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.05390" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.05390.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract A large-scale visuotactile dataset called Deform360 is introduced to study deformable object dynamics, enabling comparison between 2D video and 3D particle world models for robotic manipulation tasks.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：引入了名为 Deform360 的大规模视觉触觉数据集来研究可变形物体动力学，从而能够比较机器人操作任务的 2D 视频和 3D 粒子世界模型。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Predicting object dynamics (i.e., world modeling) is a fundamental challenge for robotic manipulation, and modeling deformable objects presents a particularly difficult case due to their high-dimensional state spaces and complex material properties. While current world models approach this through two distinct paradigms: learning the dynamics over the 2D pixel space or more explicit 3D geometric space. A systematic understanding of their relative strengths and limitations remains elusive due to the lack of diverse, large-scale real-world data. To address this, we present Deform360, a large-scale visuotactile dataset featuring 198 daily-life objects, 1,980 interaction sequences, and over 215 hours of observations from 41 surround-view cameras and bimanual tactile grippers to capture both global motion and contact-induced local deformations. Leveraging a novel markerless visuotactile 3D tracking pipeline to extract dense geometry and motion, we systematically evaluate current state-of-the-art world models, comparing 2D video models against 3D particle models. Finally, we provide a preliminary demonstration indicating the real-world applicability of our dataset by performing robot planning tasks on deformable objects. Our analysis reveals key insights into the trade-offs between structural priors and scalability, providing a solid benchmark for future research in generalizable deformable object-centric world modeling. Project website: https://deform360.lhy.xyz</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 预测对象动力学（即世界建模）是机器人操作的一项基本挑战，并且由于可变形对象的高维状态空间和复杂的材料属性，建模可变形对象呈现出特别困难的情况。当前的世界模型通过两种不同的范式来解决这个问题：学习 2D 像素空间或更明确的 3D 几何空间的动态。由于缺乏多样化、大规模的现实世界数据，对它们的相对优势和局限性的系统理解仍然难以实现。为了解决这个问题，我们推出了 Deform360，这是一个大型视觉触觉数据集，包含 198 个日常生活物体、1,980 个交互序列以及来自 41 个环视摄像头和双手触觉抓手的超过 215 小时的观察，以捕获全局运动和接触引起的局部变形。利用新型无标记视觉触觉 3D 跟踪管道来提取密集的几何形状和运动，我们系统地评估当前最先进的世界模型，将 2D 视频模型与 3D 粒子模型进行比较。最后，我们通过在可变形物体上执行机器人规划任务来提供初步演示，表明我们的数据集在现实世界中的适用性。我们的分析揭示了对结构先验和可扩展性之间权衡的关键见解，为未来以可变形对象为中心的世界建模的研究提供了坚实的基准。项目网站：https://deform360.lhy.xyz</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.03748" target="_blank">Bridging Interleaved Multi-Modal Reasoning as a Unified Decision Process</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Tencent</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Zican Hu, Xuyang Hu, Yiming Liu, Zuwei Long, Wei Liu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.03748" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.03748" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.03748.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract BRAID framework enables unified multi-modal reasoning by casting text-image interaction as a Markov decision process, allowing joint optimization through reinforcement learning with vision-language model guidance.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 BRAID 框架通过将文本-图像交互转换为马尔可夫决策过程来实现统一的多模态推理，允许通过视觉语言模型指导的强化学习进行联合优化。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Unified multi-modal models (UMMs) have shown promising interleaved text-image reasoning capabilities, yet effectively optimizing such multi-turn generation via reinforcement learning (RL) remains an open challenge. Existing approaches apply RL exclusively to text steps, relegating image generation to supervised surrogates, preventing policy gradients from propagating through the full interleaved trajectory across heterogeneous modalities. This leaves the potential of RL for UMMs largely untapped. In the paper, we introduce BRAID (Bridging inteRleAved multI-modal reasoning as a unified Decision process), a simple framework that casts multi-turn text-image-text reasoning as a unified Markov decision process (MDP), enabling joint optimization of textual and visual generation via a single, principled RL objective. BRAID computes a shared trajectory-level advantage and propagates it coherently into both text tokens and image denoising paths, each optimized through its modality-native policy gradient mechanism. To further address long-horizon credit assignment, BRAID employs a vision-language model (VLM) judge that scores each intermediate image on its reasoning utility, supplying dense turn-level feedback to sharpen learning at critical visual branches. Experiments on spatial reasoning and visual perception benchmarks show that BRAID consistently outperforms various baselines, confirming that a unified MDP formulation with vision-thinking guidance is essential for effective multi-modal reasoning.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成的统一多模态模型 (UMM) 已显示出有前景的交错文本图像推理能力，但通过强化学习 (RL) 有效优化此类多轮生成仍然是一个开放的挑战。现有方法仅将强化学习应用于文本步骤，将图像生成委托给受监督的代理，从而防止策略梯度通过异构模式的完整交错轨迹传播。这使得 UMM 的 RL 潜力在很大程度上尚未开发。在本文中，我们介绍了 BRAID（将交互多模态推理桥接为统一决策过程），这是一个简单的框架，它将多轮文本-图像-文本推理作为统一的马尔可夫决策过程 (MDP)，从而通过单个有原则的 RL 目标实现文本和视觉生成的联合优化。 BRAID 计算共享的轨迹级优势，并将其连贯地传播到文本标记和图像去噪路径中，每个路径都通过其模态本机策略梯度机制进行优化。为了进一步解决长期信用分配问题，BRAID 采用视觉语言模型 (VLM) 判断，对每个中间图像的推理效用进行评分，提供密集的回合级反馈，以提高关键视觉分支的学习能力。空间推理和视觉感知基准的实验表明，BRAID 始终优于各种基准，这证实了具有视觉思维指导的统一 MDP 公式对于有效的多模态推理至关重要。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2602.11688" target="_blank">GORGO: Online Tuning for Cross-Region Network-Aware LLM Serving</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>alessiotoniolo, Alessio Ricci Toniolo, Rome-1, Rome Thorstenson, Abinaya Dinesh</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2602.11688" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2602.11688" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2602.11688.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract GORGO is a proxy architecture that optimizes LLM inference load balancing by jointly considering network latency, prefill cost, and queueing delay through evolutionary strategy tuning on a new synthetic dataset.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 GORGO 是一种代理架构，通过对新的合成数据集进行进化策略调整，共同考虑网络延迟、预填充成本和排队延迟，从而优化 LLM 推理负载平衡。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Increasingly, LLM inference services proxy client requests to engine replicas distributed globally. Load-balancing policies must jointly account for factors including KV-cache locality, replica load, and variable network latency when optimizing for metrics like latency and TTFT. However, existing systems only evaluate a subset of these factors in their cost model, leading to uneven concentrations of load and KV-cache across replicas. We present GORGO, a proxy architecture that holistically factors network latency, prefill cost, and queueing delay using tunable parameters. Since open-source chat datasets such as LMSYS-Chat1M and WildChat-4.8M lack long-context, high prefix-reuse data, we release a synthetic dataset, ART-Chat-2.5M, from long-context production metadata. On a tuning window from ART-Chat-2.5M, evolutionary strategies guide the GORGO policy's parameters to directly optimize p95 TTFT. During held-out evaluation windows, we fix the parameter values learned from tuning and improve p95 TTFT by 6.9-15.5% and p95 end-to-end (E2E) latency by 14.3-30.9% over baseline load-balancing policies such as simple session affinity and prefix-cache. The code and ART-Chat-2.5M dataset can be found at https://github.com/Arcadia-Research-Team/GORGO.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 LLM 推理服务越来越多地将客户端请求代理到分布在全球的引擎副本。在优化延迟和 TTFT 等指标时，负载平衡策略必须共同考虑 KV 缓存局部性、副本负载和可变网络延迟等因素。然而，现有系统仅评估其成本模型中这些因素的子集，导致副本之间的负载和 KV 缓存集中度不均匀。我们提出了 GORGO，一种代理架构，它使用可调参数全面考虑网络延迟、预填充成本和排队延迟。由于 LMSYS-Chat1M 和 WildChat-4.8M 等开源聊天数据集缺乏长上下文、高前缀重用数据，因此我们从长上下文生产元数据中发布了一个合成数据集 ART-Chat-2.5M。在 ART-Chat-2.5M 的调整窗口上，进化策略指导 GORGO 策略的参数直接优化 p95 TTFT。在保留的评估窗口期间，我们修复了从调整中学到的参数值，并将 p95 TTFT 提高了 6.9-15.5%，p95 端到端 (E2E) 延迟比基线负载平衡策略（例如简单会话亲和性和前缀缓存）提高了 14.3-30.9%。代码和 ART-Chat-2.5M 数据集可以在 https://github.com/Arcadia-Research-Team/GORGO 找到。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2606.28393" target="_blank">Transition-Aware best-of-N sampling for Longitudinal Chest X-ray Reports</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Gevaert Lab</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Halil Ibrahim Gulluk, mxvp, Max Van Puyvelde, Wim Van Criekinge, Olivier Gevaert</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2606.28393" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2606.28393" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2606.28393.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract A novel training-free sampling method for chest X-ray report generation that leverages longitudinal patient history by encoding changes between prior and current examinations through set-to-set distance metrics.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：一种用于生成胸部 X 射线报告的新颖的免训练采样方法，通过设置到设置的距离度量对先前和当前检查之间的变化进行编码，从而利用纵向患者病史。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct In longitudinal clinical practice, every chest X-ray is read in the context of the patients prior exam, and much of what the radiologist communicates is the change from one visit to the next. To the best of our knowledge, we present the first training-free best-of-N sampling scheme for pre-trained chest X-ray report generators that is explicitly aware of this longitudinal prior to current transition. We call it transition-aware best-of-N sampling, each report is split into sentences and embedded into an unordered set in Rd; each (prior, current) pair is reduced to a fixed-dim directional vector via a set-to-set distance designed to encode the change between the two sets; and candidates are scored by cosine distance from their candidate transition vector to a cached bank of ground-truth training transition vectors, aggregated as min or kNN. We instantiate the framework with four directional set distances (mean-shift, novelty residual, directed-Hausdorff anchor, and cost-weighted optimal transport) and evaluate on a multi-visit AP-PA cohort, running inference under three prompts on three vision-language generators. Transition-aware best-of-N outperforms random selection across the board, with the largest relative gains on the Impression section.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 在纵向临床实践中，每张胸部 X 光片都是在患者之前检查的背景下阅读的，放射科医生传达的大部分信息是从一次就诊到下一次就诊的变化。据我们所知，我们为预先训练的胸部 X 射线报告生成器提出了第一个免训练的 N 次最佳采样方案，该方案在当前转换之前明确意识到了这一纵向。我们称之为转换感知的 best-of-N 采样，每个报告被分成句子并嵌入到 Rd 中的无序集合中；每个（先前的，当前的）对通过设计用于编码两个集合之间的变化的集合到集合的距离减少为固定暗淡的方向向量；候选者根据候选转换向量到缓存的地面实况训练转换向量库的余弦距离进行评分，聚合为 min 或 kNN。我们用四个方向设定距离（均值漂移、新颖性残差、定向 Hausdorff 锚点和成本加权最优传输）实例化该框架，并对多次访问 AP-PA 队列进行评估，在三个视觉语言生成器上的三个提示下运行推理。具有转换意识的 N 中最佳选择全面优于随机选择，其中印象部分的相对收益最大。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.04410" target="_blank">AI Wizards at EXIST 2026: Hierarchical Soft-Label Learning for Multimodal Sexism Identification in Memes</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>AI Wizards</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>MatteoFasulo, Matteo Fasulo, Antonio Gravina, Luca Tedeschini, Luca Babboni</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.04410" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.04410" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.04410.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract A multimodal sexism identification system for memes uses hierarchical conditional soft-label prediction with vision-language embeddings and a lightweight Gated MLP trained via KL divergence and uncertainty weighting.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 模因的多模态性别歧视识别系统使用具有视觉语言嵌入的分层条件软标签预测以及通过 KL 散度和不确定性加权训练的轻量级门控 MLP。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct We present the AI Wizards submission to EXIST 2026 for multimodal sexism identification in memes. The task is composed of three, increasingly harder subtasks. We model them hierarchically as conditional soft-label prediction over empirical annotator distributions. Our system maps fixed Gemini Embedding 2 vision-language representations through a lightweight Gated MLP trained with KL divergence and homoscedastic uncertainty weighting. Our submissions ranked first on Task 2.3 and fourth on Tasks 2.1 and 2.2 on the official Soft-Soft leaderboards. The code is available at https://github.com/NLP-AI-Wizards/EXIST-2026</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 我们向 EXIST 2026 提交了 AI Wizards 提交的内容，用于模因中的多模式性别歧视识别。该任务由三个难度逐渐增加的子任务组成。我们将它们分层建模为经验注释器分布的条件软标签预测。我们的系统通过使用 KL 散度和同方差不确定性加权训练的轻量级门控 MLP 来映射固定的 Gemini Embedding 2 视觉语言表示。在官方 Soft-Soft 排行榜上，我们提交的作品在任务 2.3 上排名第一，在任务 2.1 和 2.2 上排名第四。代码位于 https://github.com/NLP-AI-Wizards/EXIST-2026</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.02998" target="_blank">CONFLUX: A Latent Diusion Model for 3D Chest-CT Synthesis with RL Post-Training</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Gevaert Lab</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Max Van Puyvelde, Halil Ibrahim Gulluk, Wim Van Criekinge, Olivier Gevaert</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.02998" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.02998" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.02998.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract A 3D latent diffusion model for chest CT generation that achieves high-fidelity results while enabling control over clinical attributes through metadata conditioning and reinforcement learning refinement.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 用于胸部 CT 生成的 3D 潜在扩散模型，可实现高保真度结果，同时通过元数据调节和强化学习细化实现对临床属性的控制。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Controllable generative models of 3D medical images can synthesize volumes with specified clinical attributes, but this demands samples that are simultaneously high-fidelity, natively 3D, and faithful to the requested conditioning. We present CONFLUX, a latent diffusion model for chest computed tomography (CT): a 3D variational autoencoder compresses each volume, and a rectified-flow transformer generates in the latent space. Generation is conditioned on structured radiological metadata (18 abnormality findings, sex, age, and reconstruction kernel) through adaptive layer normalization. The model leads strong volumetric baselines on tri-planar Frechet distance (FID 32.3 vs. 74.6 for MAISI) while exposing direct control over clinical attributes. To strengthen that control we add an online reinforcement-learning post-training stage (group-relative policy optimization) that rewards how reliably a classifier recovers the requested findings from each generated volume. Judged by a separate, independent classifier, post-training removes 47% of the shortfall relative to real-scan reliability. We release the model and a ~200k synthetic chest-CT dataset with conditioning metadata spanning a wide variety of clinical findings.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 3D 医学图像的可控生成模型可以合成具有指定临床属性的体积，但这需要样本同时具有高保真度、原生 3D 并忠实于所要求的调节。我们提出了 CONFLUX，一种用于胸部计算机断层扫描 (CT) 的潜在扩散模型：3D 变分自动编码器压缩每个体积，并在潜在空间中生成整流流变压器。通过自适应层标准化，生成以结构化放射学元数据（18 个异常结果、性别、年龄和重建内核）为条件。该模型在三平面 Frechet 距离上具有强大的体积基线（FID 32.3 vs. MAISI 74.6），同时公开对临床属性的直接控制。为了加强这种控制，我们添加了一个在线强化学习后训练阶段（组相关策略优化），该阶段奖励分类器从每个生成的卷中恢复所需结果的可靠性。通过单独、独立的分类器进行判断，训练后消除了相对于真实扫描可靠性的 47% 的不足。我们发布了该模型和约 20 万个合成胸部 CT 数据集，其中包含涵盖各种临床发现的调节元数据。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.05369" target="_blank">GaP: A Graph-as-Policy Multi-Agent Self-Learning Harness For Variational Automation Tasks</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>UC Berkeley</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Kaiyuan Chen, Shuangyu Xie, Letian Fu, Justin Yu, William Pacini</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.05369" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.05369" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.05369.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Graph-as-Policy system combines modular robot skills with multi-agent coding to improve reliability in variable automation tasks through parallel simulation refinement.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要图即策略系统将模块化机器人技能与多智能体编码相结合，通过并行仿真细化来提高可变自动化任务的可靠性。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct For robots to work reliably in commercial and industrial applications, can recent advances in agentic coding systems combine interpretable robot programming with the open-world adaptability of model-free policies? We focus on "Variational Automation" (VA), a class of tasks that have larger variations in object geometry and pose than fixed automation. Model-free policies often struggle to close the reliability gap for VA tasks, which must be executed persistently and reliably in commercial and industrial applications. Motivated by prior work on Task and Motion Planning (TAMP) and the Robot Operating System (ROS), we introduce Graph-as-Policy (GaP), a multi-agent coding harness that generates directed computation graphs with perception, planning, and control nodes from a Modular Open Robot Skill Library (MORSL). GaP then generates an internal simulation environment to rehearse task instances with different graphs in parallel to iteratively refine the graph structure and parameters to improve success rates and throughput. Evaluation with 8 new open VA task benchmarks, 4 in-simulation and 4 in real-world, suggests that GaP can achieve success rates that significantly outperform baselines. Details, code, and data can be found online: https://graph-robots.github.io/gap</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 为了让机器人在商业和工业应用中可靠地工作，代理编码系统的最新进展能否将可解释的机器人编程与无模型策略的开放世界适应性结合起来？我们专注于“变量自动化”（VA），这是一类在对象几何形状和姿势上比固定自动化具有更大变化的任务。无模型策略通常很难缩小 VA 任务的可靠性差距，这些任务必须在商业和工业应用中持续可靠地执行。受任务和运动规划 (TAMP) 和机器人操作系统 (ROS) 先前工作的推动，我们引入了图即策略 (GaP)，这是一种多智能体编码工具，可从模块化开放机器人技能库 (MORSL) 中生成具有感知、规划和控制节点的定向计算图。然后，GaP 生成一个内部模拟环境，以并行演练具有不同图的任务实例，以迭代地细化图结构和参数，以提高成功率和吞吐量。使用 8 个新的开放 VA 任务基准（其中 4 个是模拟的，4 个是现实世界中的）进行的评估表明，GaP 可以实现显着优于基线的成功率。详细信息、代码和数据可以在线找到：https://graph-robots.github.io/gap</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.03751" target="_blank">Look Before You Leap: Distilling Tree Search into Action Evaluation for Frozen VLA Models</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Nanjing University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Xinyi Xie, Zican Hu, Zhanyu Liu, Yicheng Dong, Wenhao Wu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.03751" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.03751" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.03751.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract A framework called SVA is introduced that enhances Vision-Language-Action models by decoupling action generation from consequence evaluation, thereby improving generalization and task success rates while reducing computational costs.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 引入了一种称为 SVA 的框架，该框架通过将动作生成与结果评估解耦来增强视觉-语言-动作模型，从而提高泛化和任务成功率，同时降低计算成本。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Vision-Language-Action (VLA) models acquire broad embodied capabilities through large-scale pretraining, yet their generalization remains far more fragile than that of LLMs and VLMs. The prevailing remedy, post-training via supervised fine-tuning or reinforcement learning, improves task-specific performance but narrows the generalist capability that makes pretraining valuable. We identify a key bottleneck: VLA failures stem not only from action generation but also from action evaluation. A diagnostic pass@k study confirms that frozen VLAs already contain competent behaviors in their output distribution, with overall success rates rising from 33% at pass@1 to 92% at pass@32. Inspired by this, we propose SVA (Search, Value, and Act), a simple framework that equips frozen VLA policies with long-term consequence awareness. SVA first uses Monte-Carlo tree search in simulation to fully explore the VLA's output distribution and collect diverse trajectories annotated with empirical returns; this knowledge is then distilled into a lightweight Q-value model that predicts the expected consequence of candidate actions; at deployment, the frozen VLA proposes multiple candidates and the evaluator selects the one with the highest uncertainty-regularized Q-value, requiring no simulator access. By decoupling action proposal from consequence evaluation, SVA preserves the generalization capacity of the VLA backbone while substantially improving task success rates. Experiments across embodied benchmarks show that SVA consistently improves generalization on unseen tasks and exhibits strong test-time scaling behavior. Strikingly, SVA enables a 9B VLA to outperform a 27B VLA by 7 points at 27% lower inference latency, suggesting that scaling test-time evaluation is more cost-effective than scaling model size.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct Vision-Language-Action (VLA) 生成的模型通过大规模预训练获得了广泛的体现能力，但其泛化能力仍然比 LLM 和 VLM 脆弱得多。普遍的补救措施是通过监督微调或强化学习进行后训练，可以提高特定任务的表现，但会缩小使预训练变得有价值的通才能力。我们确定了一个关键瓶颈：VLA 失败不仅源于动作生成，还源于动作评估。一项诊断 pass@k 研究证实，冻结的 VLA 已在其输出分布中包含有效行为，总体成功率从 pass@1 时的 33% 上升到 pass@32 时的 92%。受此启发，我们提出了 SVA（搜索、价值和行动），这是一个简单的框架，为冻结的 VLA 政策提供长期后果意识。 SVA首先在模拟中使用蒙特卡洛树搜索来充分探索VLA的输出分布并收集带有经验回报注释的多样化轨迹；然后，这些知识被提炼成一个轻量级的 Q 值模型，该模型可以预测候选动作的预期结果；在部署时，冻结的 VLA 会提出多个候选者，评估者会选择具有最高不确定性正则化 Q 值的候选者，无需访问模拟器。通过将行动建议与结果评估分离，SVA 保留了 VLA 主干的泛化能力，同时大幅提高了任务成功率。跨具体基准的实验表明，SVA 持续改进了未见过的任务的泛化能力，并表现出强大的测试时间扩展行为。引人注目的是，SVA 使 9B VLA 的性能比 27B VLA 提高了 7 个百分点，推理延迟降低了 27%，这表明扩展测试时间评估比扩展模型大小更具成本效益。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.02904" target="_blank">Speaker-Aware Temporal Aggregation Strategies on Segment Representations for Depression Detection in Dyadic Interaction: A Benchmark Study</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>anishapat, Anisha Pattanayak, Huang-Cheng Chou, Shrikanth Narayanan, Sudarsana Reddy Kadiri</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.02904" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.02904" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.02904.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Temporal aggregation methods for speech-based depression detection show inconsistent performance across different backbones and training runs, highlighting the need for robust benchmarking criteria.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 基于语音的抑郁症检测的时间聚合方法在不同的骨干网络和训练运行中表现出不一致的性能，这凸显了对稳健基准测试标准的需求。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Speech-based depression detection compresses features from short audio segments into one speaker-level decision, a step called temporal aggregation rarely studied on its own. Most benchmarks fix a single self-supervised encoder and a single hand-picked layer, so a reported gain may reflect the pipeline rather than the aggregation method itself. We introduce DEPOOL, a controlled benchmark that compares six aggregation architectures with six frozen speech backbones on an English and a Mandarin depression corpus, where each configuration learns which backbone layers matter rather than fixing one by hand. Across the resulting 72-configuration grid, a third of configurations collapse into predicting a single class for every speaker, a failure tied to the backbone as much as to the method, and the architecture that is most stable in a single-seed run becomes unreliable when training repeats across seeds. Robustness to backbone and seed, rather than average accuracy across a single pipeline, should be a first-class benchmarking criterion for temporal aggregation in clinical speech.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 基于语音的抑郁检测将短音频片段的特征压缩为一个说话者级别的决策，这一步骤称为时间聚合，很少单独研究。大多数基准测试修复单个自监督编码器和单个手工挑选的层，因此报告的增益可能反映管道而不是聚合方法本身。我们引入了 DEPOOL，这是一种受控基准，它在英语和普通话抑郁语料库上将六种聚合架构与六种冻结语音主干进行比较，其中每种配置都了解哪些主干层重要，而不是手动修复一个。在生成的 72 个配置网格中，三分之一的配置崩溃为预测每个说话者的单个类别，这种失败与主干网和方法都相关，并且当跨种子重复训练时，在单种子运行中最稳定的架构变得不可靠。主干网和种子的鲁棒性，而不是单个管道的平均准确度，应该成为临床语音中时间聚合的一流基准标准。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.05392" target="_blank">SynCity 3000: Bootstrapping Scene-Scale 3D Diffusion</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>University of Oxford</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Paul Engstler, Iro Laina, Christian Rupprecht, Andrea Vedaldi</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.05392" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.05392" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.05392.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract SynCity 3000 generates large, coherent 3D scenes by adapting image-to-3D generators as convolutional operators through fine-tuning on synthetic scene data.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 SynCity 3000 通过对合成场景数据进行微调，将图像转 3D 生成器用作卷积算子，生成大型、连贯的 3D 场景。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct We present SynCity 3000, a framework for generating 3D scenes that are globally coherent while enabling fine-grained layout control. Building on the ability of current image-to-3D generators to produce complex 3D assets from a single image, we extend this capability to the scale of entire scenes by adapting the generator to be applicable as a convolutional operator. We achieve this by fine-tuning the model on scene-like data generated by a new synthetic data engine, which we propose to address the scarcity of 3D scene data for training. The convolutional generator is then applied to a dimetric image of the entire scene, generated from the user prompt, resulting in 3D scenes of arbitrary size and complexity. Across diverse prompts and layouts, SynCity 3000 produces large, coherent, and detailed scenes, addressing the shortcomings of prior approaches to 3D scene generation.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 我们推出了 SynCity 3000，这是一个用于生成全局一致的 3D 场景的框架，同时支持细粒度的布局控制。基于当前图像到 3D 生成器从单个图像生成复杂 3D 资源的能力，我们通过使生成器适合用作卷积算子，将此功能扩展到整个场景的规模。我们通过对新的合成数据引擎生成的类场景数据的模型进行微调来实现这一目标，我们建议使用该引擎来解决用于训练的 3D 场景数据的稀缺问题。然后，将卷积生成器应用于根据用户提示生成的整个场景的二度图像，从而生成任意大小和复杂度的 3D 场景。通过不同的提示和布局，SynCity 3000 可以生成大型、连贯且详细的场景，解决了先前 3D 场景生成方法的缺点。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.04064" target="_blank">Speaker-Disentangled Chunk-Wise Regression for Syllabic Tokenization</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Ryota Komatsu, Kota Kawakita, Takuma Okamoto, Takahiro Shinozaki</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.04064" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.04064" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.04064.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract A speaker-disentangled syllabic tokenizer regresses perturbed student representations toward clean teacher targets to improve syllable boundary detection and speech language modeling performance.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 说话人解缠音节标记器将受干扰的学生表示回归到干净的教师目标，以提高音节边界检测和语音语言建模性能。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Unsupervised syllabic tokenization aims to learn discrete syllabic tokens that capture latent linguistic content-related structure from raw speech. Recent syllabic tokenization methods employ teacher-student distillation of the pretrained HuBERT to organize latent speech frame representations into syllabic segments. However, when trained with an utterance-level cross-entropy objective, the model predicts speaker identity rather than linguistic content, thereby compromising the purity of syllabic tokens. To address this problem, we propose a speaker-disentangled syllabic tokenizer that regresses speaker-perturbed student representations toward clean teacher targets within fixed-length chunks. Experimental results demonstrate that our proposed method achieves state-of-the-art performance in syllable boundary detection and syllabic segment clustering. Moreover, a speech language model trained on our syllabic tokens achieves a 7% relative improvement in syntactic and semantic understanding over the phone-level SpiRit-LM.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 无监督音节标记化旨在学习离散音节标记，从原始语音中捕获潜在的语言内容相关结构。最近的音节标记化方法采用师生对预训练的 HuBERT 进行蒸馏，将潜在语音帧表示组织成音节段。然而，当使用话语级交叉熵目标进行训练时，该模型预测说话者身份而不是语言内容，从而损害了音节标记的纯度。为了解决这个问题，我们提出了一种与说话人分离的音节标记器，它将受说话人扰动的学生表示回归到固定长度块内的干净教师目标。实验结果表明，我们提出的方法在音节边界检测和音节段聚类方面实现了最先进的性能。此外，基于音节标记训练的语音语言模型在句法和语义理解方面比音素级 SpiRit-LM 提高了 7%。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.03068" target="_blank">PixCon: Clean-Positive Contrastive Learning for Foundation-Model Semi-Supervised Segmentation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Ebenworks Systems</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Ebenezer Tarubinga</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.03068" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.03068" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.03068.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract PixCon is a semi-supervised semantic segmentation framework that uses clean-positive pixel-contrastive learning with per-class memory banks to improve accuracy over existing methods.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 PixCon 是一种半监督语义分割框架，它使用干净正像素对比学习和每类内存库来提高现有方法的准确性。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Semi-supervised semantic segmentation (SSSS) has long turned on one question, which pseudo-labels to trust, and answered it with ever more careful confidence filtering. Foundation backbones change the regime: with a DINOv2 teacher a strict threshold already retains a measured 98%-clean pseudo-label set, so the accuracy that remains lives not in the filter but in how the embedding space is structured by class. We propose PixCon, a clean-positive pixel-contrastive framework. PixCon maintains a per-class memory bank that admits only labeled pixels the student already classifies correctly, guaranteeing a contamination-free positive set (ρ_F=0) by construction, unlike prior contrastive SSSS banks (ReCo, U^2PL) built from confidence-filtered pseudo-labels. It is a single branch over a consistency backbone, adds no inference-time parameters, and needs no bank-specific threshold. A first-order analysis of the supervised-InfoNCE gradient explains why contamination hurts: its false-positive term scales as ρ_F/(1-ρ_F), which we measure (0.018 on Pascal, 0.106 on ADE20K) rather than assume. Across Pascal VOC, Cityscapes, and ADE20K, PixCon matches or improves a strong DINOv2-based UniMatch V2 baseline in a compute-matched one-switch protocol: it improves every Pascal-1/8 seed (a per-seed gain of about +0.2 mIoU) and its three-seed mean reaches 87.90, the published UniMatch V2-B figure. Because contamination is already rare under foundation-model teachers, our analysis indicates the ρ_F=0 guarantee acts chiefly as robustness as teachers weaken, while the accuracy gain comes from cleaner positive supervision, making clean-positive contrast a robust, low-cost default for foundation-model SSSS.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 半监督语义分割 (SSSS) 长期以来一直致力于解决一个问题，即哪些伪标签值得信任，并通过更加仔细的置信度过滤来回答该问题。基金会主干改变了这一制度：对于 DINOv2 教师，严格的阈值已经保留了测量到的 98% 干净的伪标签集，因此保留的准确性不在于过滤器，而在于如何按类别构建嵌入空间。我们提出 PixCon，一个干净的正像素对比框架。 PixCon 维护一个每类记忆库，只接受学生已经正确分类的标记像素，通过构建保证无污染的正集 (ρ_F=0)，这与之前从置信度过滤的伪标签构建的对比 SSSS 库（ReCo、U^2PL）不同。它是一致性主干上的单个分支，不添加推理时间参数，并且不需要特定于银行的阈值。对监督 InfoNCE 梯度的一阶分析解释了为什么污染会造成伤害：它的假阳性项缩放为 ρ_F/(1-ρ_F)，我们测量（Pascal 上为 0.018，ADE20K 上为 0.106）而不是假设。在 Pascal VOC、Cityscapes 和 ADE20K 中，PixCon 在计算匹配的单开关协议中匹配或改进了基于 DINOv2 的强大 UniMatch V2 基线：它改进了每个 Pascal-1/8 种子（每种子增益约为 +0.2 mIoU），其三种子平均值达到 87.90（已发布的 UniMatch V2-B 数据）。由于在基础模型教师中污染已经很少见，我们的分析表明 ρ_F=0 保证主要在教师削弱时起到鲁棒性的作用，而准确性增益来自更清洁的积极监督，使清洁积极对比成为基础模型 SSSS 的稳健、低成本默认值。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.03296" target="_blank">Taste-aware music retrieval from audio embeddings</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Centro di Sonologia Computazionale</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>matteospanio, Matteo Spanio, Antonio Rodà</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.03296" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.03296" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.03296.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Audio encoders from HEAR families are evaluated for taste prediction, with gated late-fusion showing superior rank correlation and the best models achieving human-level accuracy on held-out music.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 对 HEAR 系列的音频编码器进行品味预测评估，门控后期融合显示出卓越的等级相关性，并且最佳模型在保留音乐上实现了人类水平的准确性。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Crossmodal correspondences between sound and taste are well established in psychology and neuroscience, but largely absent from content-based multimedia retrieval. We formalise taste-from-audio prediction as a content-based music information retrieval benchmark over a perceptually validated multi-source corpus, comparing ten frozen audio encoders from the four HEAR families under a shared multi-task regression head, with gated late-fusion as a configurable variant. In order to assess the effectiveness of the models, we compute absolute error and rank correlation. The strongest systems predict the five tastes within a macro RMSE of 0.134; on held-out real music their error is less than half a single rater's deviation from the consensus (RMSE 0.13 vs. 0.28), so the model tracks the group consensus more closely than an average human rater, and well below the previous state of the art baseline (0.219). On absolute error the encoders are statistically flat, with a single VGGish matching the best fusion, but gated late-fusion's advantage is confined to rank correlation (macro Pearson r 0.724 vs. 0.666). Operationalised as a content-based retrieval index, the predicted taste space ranks a 309-item pool far more faithfully than a CLAP-text baseline, which sits at chance; ridge probes and an audio-bandstop knockout read the strongest representations against documented sound-taste correspondences.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 声音和味道之间的跨模态对应关系在心理学和神经科学中已得到很好的确立，但在基于内容的多媒体检索中基本上不存在。我们将音频品味预测形式化为基于感知验证的多源语料库的基于内容的音乐信息检索基准，在共享多任务回归头下比较来自四个 HEAR 系列的 10 个冻结音频编码器，并使用门控后期融合作为可配置变体。为了评估模型的有效性，我们计算绝对误差和排名相关性。最强大的系统预测五种口味的宏观 RMSE 为 0.134；在保留的真实音乐上，他们的误差不到单个评估者与共识的偏差的一半（RMSE 0.13 vs. 0.28），因此该模型比平均人类评估者更接近地跟踪群体共识，并且远低于之前的最先进基线（0.219）。在绝对误差上，编码器在统计上是平坦的，单个 VGGish 匹配最佳融合，但门控后期融合的优势仅限于等级相关性（宏观 Pearson r 0.724 与 0.666）。作为基于内容的检索索引，预测的品味空间对 309 个项目池进行排名，比 CLAP 文本基线更忠实，后者是偶然的；脊探针和音频带阻淘汰读取了与记录的声音味道对应关系的最强表征。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2606.23993" target="_blank">Learning to Trigger: Reinforcement Learning at the Large Hadron Collider</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>University of Chicago</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Zixin Ding, Shaghayegh Emami, Giovanna Salvi, Cecilia Tosciri, Abhijith Gandrakota</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2606.23993" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2606.23993" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2606.23993.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Reinforcement learning agents optimize real-time trigger thresholds at particle colliders by adapting Group-Filtered Policy Optimization to streaming control, improving signal efficiency and background rate management on both simulated and real collision data.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 强化学习代理通过将组过滤策略优化应用于流控制来优化粒子碰撞器的实时触发阈值，提高模拟和真实碰撞数据的信号效率和后台速率管理。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct High-throughput scientific facilities such as the Large Hadron Collider depend on real-time event filtering (triggering) under tight constraints on bandwidth, latency, and storage. In practice, trigger menus are largely static and hand-tuned and can become suboptimal as detector conditions, pileup, and background composition drift over time. We cast online threshold tuning as a sequential decision-making problem: a reinforcement learning agent ingests streaming summaries of recent rates and signal-sensitive features and updates trigger thresholds to maximize signal efficiency while tracking a target background rate within a tolerance band. We adapt Group-Filtered Policy Optimization (GFPO) to streaming control and introduce two variants (GFPO-F, GFPO-FR) that enforce background rate feasibility during training. On a benchmark that emulates realistic collider operation, we study two representative triggers: a total transverse energy (H_{T}) trigger sensitive to pileup variation, and an anomaly-detection (AD) trigger based on reconstruction loss for rare or non-standard signatures. On Monte Carlo streams, our agent increases the fraction of in-tolerance time intervals by 48\% (H_T) and 28\% (AD), with a cumulative gain of up to 2\% in signal efficiency on those in-tolerance intervals. Transferring from simulation to real collision data (CMS Run 283408), the same agent, without fine-tuning, achieves a 56\% (H_T) and 28\% (AD) in-tolerance improvement over baselines, with further signal-efficiency gain on both triggers. To our knowledge, this is the first demonstration of RL-based trigger control on real Large Hadron Collider collision data. Code is available at https://github.com/Zixind/GFPO_LHC (see repo for details).</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 大型强子对撞机等高通量科学设施依赖于带宽、延迟和存储严格限制下的实时事件过滤（触发）。在实践中，触发菜单大部分是静态的和手动调整的，并且随着探测器条件、堆积和背景成分随着时间的推移而漂移，可能会变得次优。我们将在线阈值调整视为一个顺序决策问题：强化学习代理摄取最近速率和信号敏感特征的流式摘要，并更新触发阈值以最大化信号效率，同时跟踪容差范围内的目标背景速率。我们采用组过滤策略优化（GFPO）来进行流控制，并引入两种变体（GFPO-F、GFPO-FR），以在训练期间增强背景速率的可行性。在模拟真实对撞机操作的基准上，我们研究了两种代表性的触发器：对堆积变化敏感的总横向能量（H_{T}）触发器，以及基于罕见或非标准特征的重建损失的异常检测（AD）触发器。在蒙特卡罗流上，我们的代理将容差时间间隔的比例增加了 48% (H_T) 和 28% (AD)，这些容差间隔的信号效率累积增益高达 2%。从模拟传输到真实碰撞数据（CMS Run 283408），相同的代理无需微调，即可在基线上实现 56\% (H_T) 和 28\% (AD) 的公差改进，并在两个触发器上进一步提高信号效率。据我们所知，这是基于强化学习的触发控制在真实大型强子对撞机碰撞数据上的首次演示。代码可在 https://github.com/Zixind/GFPO_LHC 获取（有关详细信息，请参阅存储库）。</p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+        
+        <div class="nav-buttons">
+            <a href="2026-07-06.html" class="nav-btn">← 2026-07-06</a>
+            <a href="2026-07-08.html" class="nav-btn">2026-07-08 →</a>
+        </div>
+        
+        <footer>
+            Generated by <a href="https://github.com" target="_blank">HF Papers Daily</a>
+        </footer>
+    </div>
+    
+    <script>
+        function toggleAbstract(header) {
+            const toggle = header.querySelector('.abstract-toggle');
+            const content = header.nextElementSibling;
+            toggle.classList.toggle('expanded');
+            content.classList.toggle('expanded');
+        }
+    </script>
+</html>

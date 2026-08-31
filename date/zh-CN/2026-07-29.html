@@ -1,0 +1,1733 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hugging Face Papers - 2026-07-29 (zh-CN)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .date {
+            font-size: 1.2em;
+            color: #a0a0a0;
+        }
+        
+        .stats {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #888;
+        }
+        
+        .paper-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .paper-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(102, 126, 234, 0.5);
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.2);
+        }
+        
+        .paper-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        
+        .paper-title a {
+            color: #e0e0e0;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .paper-title a:hover {
+            color: #667eea;
+        }
+        
+        .paper-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            color: #a0a0a0;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .meta-label {
+            color: #888;
+        }
+        
+        .links {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .link-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .link-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .link-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .abstract-section {
+            margin-top: 15px;
+        }
+        
+        .abstract-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .abstract-header:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .abstract-toggle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+            transition: transform 0.3s;
+        }
+        
+        .abstract-toggle.expanded {
+            transform: rotate(180deg);
+        }
+        
+        .abstract-label {
+            font-weight: 500;
+            color: #667eea;
+        }
+        
+        .abstract-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding: 0 15px;
+        }
+        
+        .abstract-content.expanded {
+            max-height: 10000px;
+            padding: 15px;
+        }
+        
+        .abstract-text {
+            line-height: 1.7;
+            color: #c0c0c0;
+        }
+        
+        .summary-box {
+            background: rgba(102, 126, 234, 0.1);
+            border-left: 3px solid #667eea;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .summary-label {
+            font-size: 0.8em;
+            color: #667eea;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .summary-text {
+            color: #b0b0b0;
+            line-height: 1.5;
+        }
+        
+        .translation-box {
+            background: rgba(118, 75, 162, 0.1);
+            border-left: 3px solid #764ba2;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .translation-label {
+            font-size: 0.8em;
+            color: #764ba2;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .translation-text {
+            color: #b0b0b0;
+            line-height: 1.5;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding: 0 10px;
+        }
+        
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .nav-btn.disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: #666;
+            pointer-events: none;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .paper-title {
+                font-size: 1.1em;
+            }
+            
+            .links {
+                flex-wrap: wrap;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-btn {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Hugging Face Papers</h1>
+            <div class="date">2026-07-29</div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number">29</div>
+                    <div class="stat-label">Papers</div>
+                </div>
+            </div>
+        </header>
+        
+        <main>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.25895" target="_blank">HiFi-UMI: Learning Deployable Manipulation Policies from High-Fidelity UMI Data Alone</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Simple World Lab</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Simple AI, Yuteng Wei, Jinming Ma, Jiawei Wang, Weitao Zhou</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.25895" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.25895" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.25895.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Learning deployable manipulation policies is bottlenecked by the scarcity of data that is both high-fidelity and scalable. Real-robot teleoperation is accurate but costly to scale; robot-free UMI capture scales readily, and current practice uses the resulting data mainly for pre-training, adding a small real-robot "anchor" at post-training. We ask whether raising the fidelity of robot-free UMI data, rather than shrinking the real-robot fraction, can remove that anchor. We present HiFi-UMI, a portable UMI data-production system co-designed for trajectory accuracy, inter-gripper relative pose, synchronization, and field of view: head-mounted offline stereo-inertial SLAM, native rather than reconstructed relative pose, a shared microsecond GPIO trigger, and two wide-angle cameras per hand covering ~200 degrees. It reaches 3 mm workspace-local end-effector accuracy without external tracking infrastructure. Using this corpus, we demonstrate zero-robot post-training: a policy post-trained solely on HiFi-UMI demonstrations deploys directly on a real robot and matches in-domain teleoperation across three backbones spanning the vision-language-action and world-action-model families, with success-rate differences of -2.5, +3.1, and -0.6 percentage points on StarVLA-QwenPI, OpenPI-pi_0.5, and LingBot-VA; the strongest policy reaches 85% on a precision insertion task, even though the teleoperation baseline is collected in the evaluation scene and no HiFi-UMI trajectory is. Pre-training on 4,000 hours from the same corpus lowers action error on ten unseen tasks by 41% and, on StarVLA-QwenPI, raises real-robot success by a further 18.1 percentage points. We open-source HiFi-UMI-2K, 2,000 hours of microsecond-synchronized, ultra-wide-FoV demonstrations, each automatically reconstructed and validated through simulation replay, as a large-scale, high-fidelity resource for the robot-learning community.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 学习可部署的操作策略因缺乏高保真且可扩展的数据而受到瓶颈。真实的机器人远程操作是准确的，但规模化成本高昂；无机器人的 UMI 捕获很容易扩展，当前的实践主要使用所得数据进行预训练，并在训练后添加一个小型真实机器人“锚”。我们询问提高无机器人 UMI 数据的保真度（而不是缩小真实机器人的比例）是否可以消除该锚点。我们推出了 HiFi-UMI，这是一种便携式 UMI 数据生成系统，专为轨迹精度、夹具间相对位姿、同步和视场而设计：头戴式离线立体惯性 SLAM、原生而非重建相对位姿、共享微秒 GPIO 触发器以及每只手两个覆盖约 200 度的广角摄像头。它无需外部跟踪基础设施即可达到 3 毫米工作空间本地末端执行器精度。使用该语料库，我们演示了零机器人后训练：仅在 HiFi-UMI 演示上进行后训练的策略直接部署在真实机器人上，并匹配跨视觉-语言-动作和世界-动作模型系列的三个骨干网的域内远程操作，在 StarVLA-QwenPI、OpenPI-pi_0.5 和 LingBot-VA 上的成功率差异为 -2.5、+3.1 和 -0.6 个百分点；尽管在评估场景中收集了远程操作基线并且没有 HiFi-UMI 轨迹，但最强策略在精确插入任务上达到了 85%。对同一语料库进行 4,000 小时的预训练，可将 10 个未见过的任务的动作错误降低 41%，并且在 StarVLA-QwenPI 上，将真实机器人的成功率进一步提高 18.1 个百分点。我们开源了 HiFi-UMI-2K，这是 2,000 小时的微秒同步、超宽视场演示，每个演示都通过模拟回放自动重建和验证，作为机器人学习社区的大规模、高保真资源。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page   Add to collection         Community         Jarvis1111   Paper submitter     about 1 hour ago         Hi everyone! We’re excited to share HiFi-UMI: Learning Deployable Manipulation Policies from High-Fidelity UMI Data Alone.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 添加到集合 社区 Jarvis1111 论文提交者 大约 1 小时前 大家好！我们很高兴与大家分享 HiFi-UMI：仅从高保真 UMI 数据中学习可部署的操作策略。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.24223" target="_blank">A New Role for Relevance: Guiding Corpus Interaction in Agentic Search</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Tencent</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Jiangnan Li, Yuqing Li, Mo Yu, Jinchao Zhang, Jie Zhou</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.24223" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.24223" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.24223.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Relevance is a query-dependent estimate of whether a document or excerpt contains useful evidence. Existing retrieval agents use relevance to select top-k content, but document relevance alone cannot localize, compose, or verify the evidence required by complex questions. Direct Corpus Interaction (DCI) enables such fine-grained operations through grep-style exploration, but its relevance-agnostic search can expose useful clues late and delay convergence. Recent advances use relevance to narrow the corpus into a working space for interaction. Once interaction begins, however, relevance still does not directly guide which documents grep searches first or distinguish informative excerpts from a broad set of matches to let LLMs see them first. We introduce the Relevance-Aware RipGrep Search Agent (RARG), which turns relevance into an execution prior for corpus interaction. RARG provides coarse-to-fine relevance guidance: it orders documents for sequential 'ripgrep' traversal to expose globally relevant clues earlier, initializes promising entry points with query-relevant paragraphs, and reranks grep matches to surface informative excerpts that document-level ranking may otherwise obscure. Across challenging browse question answering and reasoning-intensive retrieval, RARG improves the accuracy--efficiency frontier over retrieval-based and direct-interaction agents. These results demonstrate that relevance-aware interaction enables faster and more reliable search convergence.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 相关性是对文档或摘录是否包含有用证据的依赖于查询的估计。现有的检索代理使用相关性来选择 top-k 内容，但仅凭文档相关性无法定位、撰写或验证复杂问题所需的证据。直接语料库交互 (DCI) 通过 grep 式的探索实现此类细粒度操作，但其相关性不可知的搜索可能会较晚暴露有用的线索并延迟收敛。最近的进展利用相关性将语料库缩小为交互的工作空间。然而，一旦交互开始，相关性仍然不能直接指导 grep 首先搜索哪些文档，也不能从广泛的匹配中区分信息摘录，让法学硕士首先看到它们。我们引入了相关性感知 RipGrep 搜索代理 (RARG)，它将相关性转化为语料库交互的执行优先级。 RARG 提供从粗到细的相关性指导：它对文档进行顺序“ripgrep”遍历，以便更早地公开全局相关线索，用与查询相关的段落初始化有希望的入口点，并对 grep 匹配重新排序，以显示文档级排名可能会掩盖的信息摘录。在具有挑战性的浏览问答和推理密集型检索中，RARG 提高了基于检索和直接交互代理的准确性和效率前沿。这些结果表明，相关性感知交互可以实现更快、更可靠的搜索收敛。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  23    Add to collection     Community         MindscapeRAG   Paper submitter     42 minutes ago         Relevance no longer only decides what enters the context. It guides where interaction begins, which documents are searched first, and which local excerpts remain visible.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 23 添加到集合 社区 MindscapeRAG 论文提交者 42 分钟前 相关性不再仅决定进入上下文的内容。它指导交互从哪里开始、首先搜索哪些文档以及哪些本地摘录仍然可见。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.25431" target="_blank">CodeNib: A Multi-View Data System for Serving Repository Context to Coding Agents</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>SysEvol AI Research</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Zhongming Yu, Hengjia Yu, Boqin Yuan, Shuting Zhao, Yizhao Chen</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.25431" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.25431" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.25431.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Coding agents repeatedly search, navigate, and retain context from evolving repositories, but disconnected indexes, language servers, and task-local histories force repeated discovery and obscure lifecycle costs. CodeNib builds reusable lexical, dense, and structural views per repository commit, maps outputs to repository-relative source ranges, maintains selected views across edits, and serves ranked search, symbol navigation, and bounded context through one runtime.
+  Across 100 snapshots, we map quality-cost frontiers across the repository-context lifecycle. When outputs match an independent rebuild, graph and vector updates are 8.7times and 25.4times faster at the median. On the static-navigation subset matching normalized live-server locations (63% of 1,000 requests), the median per-request live/static latency ratio is 4.7times. Across five models, selected context policies preserve localization with 50--87% fewer trajectory tokens than paired grep/read. Together, these results support multi-view repository-context serving with explicit, operation-specific validity boundaries.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 编码代理不断地从不断发展的存储库中搜索、导航和保留上下文，但断开连接的索引、语言服务器和任务本地历史迫使重复发现和模糊的生命周期成本。 CodeNib 在每次存储库提交时构建可重用的词汇、密集和结构视图，将输出映射到存储库相关的源范围，在编辑过程中维护选定的视图，并通过一个运行时提供排名搜索、符号导航和有界上下文。
+  通过 100 个快照，我们绘制了整个存储库上下文生命周期的质量成本边界。当输出与独立重建匹配时，图形和向量更新的速度中位数分别为 8.7 倍和 25.4 倍。在与标准化实时服务器位置匹配的静态导航子集中（1,000 个请求的 63%），每个请求实时/静态延迟比率的中位数为 4.7 倍。在五个模型中，选定的上下文策略保留本地化的轨迹标记比配对的 grep/read 少 50--87%。总之，这些结果支持具有明确的、特定于操作的有效性边界的多视图存储库上下文服务。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  7    Add to collection         Community         fishmingyu   Paper submitter     about 2 hours ago         Coding agents keep rediscovering the same repository. CodeNib treats repo context as a data-systems problem: build lexical, dense, and structural views once per commit, maintain each through its own incremental path, and serve them as bounded agent context.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 7 添加到集合 社区 Fishmingyu 论文提交者 大约 2 小时前 编码代理不断重新发现同一个存储库。 CodeNib 将存储库上下文视为数据系统问题：每次提交构建一次词汇、密集和结构视图，通过自己的增量路径维护每个视图，并将它们用作有界代理上下文。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.25565" target="_blank">ReDesign: Recovering Editable Design Structures from Images via Agentic Decomposition</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>KAIST AI</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Jooyeol Yun, Jintae Park, Hyesu Lim, Junha Hyung, Hyungjin Chung</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.25565" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.25565" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.25565.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Recovering an editable design file from a raster image is a common and costly bottleneck in modern design workflows, yet remains challenging since editability depends on recovering multi-modal attributes, such as typography, vector geometry, colors, grouping, and layer ordering. We present ReDesign, an agentic framework that grows an editable layer hierarchy by selecting and composing specialized tools across modalities. To keep this long decision process reliable despite imperfect tool outputs, we introduce graceful verification at each expansion, which provides local accept, prune, or retry feedback that prevents error accumulation and avoids large scale reruns. To evaluate editability at scale, we introduce the Figma Edit Replay Benchmark, consisting of 909 raw Figma files and 14,796 controlled edit instructions that replay edits on reconstructed outputs. Across this benchmark and standard reconstruction metrics, ReDesign achieves strong visual fidelity while delivering the highest editability across layout, color, and text edits, outperforming layered decomposition baselines and serial tool use pipelines.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：从光栅图像恢复可编辑设计文件是现代设计工作流程中常见且成本高昂的瓶颈，但仍然具有挑战性，因为可编辑性取决于恢复多模式属性，例如版式、矢量几何、颜色、分组和图层排序。我们提出了 ReDesign，这是一个代理框架，它通过跨模式选择和组合专用工具来增长可编辑的层层次结构。为了在工具输出不完美的情况下保持这个漫长的决策过程的可靠性，我们在每次扩展时引入了优雅的验证，它提供本地接受、修剪或重试反馈，以防止错误累积并避免大规模重新运行。为了大规模评估可编辑性，我们引入了 Figma 编辑重放基准，其中包含 909 个原始 Figma 文件和 14,796 个受控编辑指令，可在重建输出上重放编辑。在这一基准和标准重建指标中，ReDesign 实现了强大的视觉保真度，同时在布局、颜色和文本编辑方面提供了最高的可编辑性，优于分层分解基线和串行工具使用管道。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  0    Add to collection         Community         YeolJoo   Paper submitter     about 1 hour ago         Data also available at: https://huggingface.co/datasets/Jintae-Park/ReDesign-Figma909</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 0 添加到集合 社区 YeolJoo 论文提交者 大约 1 小时前 数据也可在以下位置获取：https://huggingface.co/datasets/Jintae-Park/ReDesign-Figma909</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.26057" target="_blank">Pass the Baton: Trajectory-Relayed On-Policy Distillation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Zhejiang University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Haolei Xu, Xiaowen Xu, Haiwen Hong, Zixuan Ni, Hongxing Li</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.26057" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.26057" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.26057.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  On-policy distillation (OPD) grounds token-level supervision in the student's own trajectory, yet suffers from prefix failure: once the student commits to a wrong reasoning direction, all subsequent generation builds on this deviation, producing misdirected continuations that elicit unreliable supervision and waste compute. We identify a teacher-student continuation asymmetry on failed prefixes, where the teacher tends to redirect while the student continues along the original direction, and convert it into a label-free handoff trigger in Relay On-Policy Distillation (Relay-OPD). During training, Relay-OPD constructs relay trajectories by letting the teacher briefly take over at detected trigger points to produce a teacher leg, after which the student resumes and is optimized on the resulting trajectory. A limited relay budget concentrates intervention on critical early positions while limiting departure from the student policy. With a Qwen3-4B-Instruct-2507 teacher and Qwen3-0.6B/1.7B-Non-Thinking students on eight mathematical reasoning benchmarks, Relay-OPD achieves the best or second-best results on every benchmark, outperforming standard OPD by +5.73% and the strongest baseline FastOPD by +1.49% on average for 1.7B, with consistent gains at 0.6B. Training trajectory length is reduced by over 50%.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 在策略蒸馏（OPD）将令牌级监督置于学生自己的轨迹中，但会遭受前缀失败：一旦学生犯了错误的推理方向，所有后续生成都会建立在这种偏差的基础上，产生误导的延续，从而引发不可靠的监督和浪费计算。我们发现了失败前缀上的师生继续不对称性，即教师倾向于重定向，而学生继续沿着原始方向继续，并将其转换为中继按策略蒸馏（Relay-OPD）中的无标签切换触发器。在训练期间，Relay-OPD 通过让教师在检测到的触发点短暂接管以产生教师腿来构建接力轨迹，之后学生恢复并在生成的轨迹上进行优化。有限的接力预算将干预集中在关键的早期位置，同时限制对学生政策的偏离。在 Qwen3-4B-Instruct-2507 教师和 Qwen3-0.6B/1.7B-Non-Thinking 学生的八个数学推理基准测试中，Relay-OPD 在每个基准测试中都取得了最好或第二好的结果，比标准 OPD 多出 +5.73%，比最强基线 FastOPD 平均多出 1.49%（1.7B），并始终保持 0.6B 的增益。训练轨迹长度减少 50% 以上。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub     Add to collection     Community         zjuxhl   Paper submitter     3 minutes ago         We introduce Relay-OPD 🏃 — on-policy distillation that fixes prefix failure: once a student commits to a wrong reasoning direction early, the entire rollout builds on the mistake, yielding unreliable supervision and wasted compute.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 添加到集合 社区 zjuxhl 论文提交者 3 分钟前 我们引入 Relay-OPD 🏃 — 修复前缀失败的策略蒸馏：一旦学生过早犯下错误的推理方向，整个部署都会建立在错误的基础上，从而产生不可靠的监督和浪费的计算。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.24904" target="_blank">Mage-VL: An Efficient Codec-Native Streaming Multimodal Foundation Model</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Microsoft</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Senqiao Yang, Kaichen Zhang, Zhaoyang Jia, Jinghao Guo, Yifei Shen</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.24904" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.24904" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.24904.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Standard vision-language models (VLMs) suffer from Moravec's paradox: they excel at complex offline visual reasoning but struggle with simple streaming perception tasks and process them inefficiently. We present Mage-VL, an efficient codec-native streaming foundation model for real-time multimodal understanding and interaction. At its core, our custom tokenizer, Mage-ViT, replaces uniform frame sampling by selectively encoding dynamic, entropy-rich regions using motion vectors and residual energy across sparse anchor (I) and predicted (P) frames. Operating at a 16 x 16 patch level, this reduces visual token consumption by over 75% while preserving spatiotemporal context. Trained from scratch on approximately 560M unlabeled images and 100M unlabeled video frames, Mage-ViT matches or outperforms flagship encoders trained on billions of image-text pairs. We establish AI4AI data pipelines encompassing prompt-code joint optimization for multimodal captioning and AI-driven performance diagnosis to guide training recipes. Furthermore, through a bio-inspired dual-system architecture - a lightweight System 1 event gate and a causal System 2 decoder - Mage-VL enables proactive streaming perception. Extensive evaluations show that Mage-VL-4B matches Qwen3-VL-4B on static tasks while achieving strong gains in video understanding and 2D/3D spatial reasoning, with up to a 3.5x wall-clock inference speedup, and comprehensively surpasses the 15B Phi-4-reasoning-vision baseline. Beyond model artifacts, we deliver seven key empirical findings covering pre-training data efficiency, variable-resolution scaling, codec system acceleration, VideoQA SFT redundancy, motion-spatial synergy, AI4AI data pipelines, and Zero-Vision SFT for multimodal RL.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 标准视觉语言模型（VLM）遭受莫拉维克悖论的困扰：它们擅长复杂的离线视觉推理，但难以处理简单的流式感知任务，并且处理效率低下。我们提出了 Mage-VL，这是一种高效的编解码器原生流媒体基础模型，用于实时多模态理解和交互。其核心是，我们的自定义标记器 Mage-ViT 通过使用稀疏锚点 (I) 和预测 (P) 帧上的运动向量和残余能量选择性地编码动态、熵丰富的区域来取代均匀帧采样。在 16 x 16 补丁级别运行，这可以减少超过 75% 的视觉标记消耗，同时保留时空上下文。 Mage-ViT 在大约 5.6 亿个未标记图像和 100M 个未标记视频帧上从头开始进行训练，其性能可与在数十亿图像文本对上训练的旗舰编码器相媲美或胜过。我们建立了 AI4AI 数据管道，包括多模态字幕的提示代码联合优化和人工智能驱动的性能诊断，以指导培训方案。此外，通过仿生双系统架构 - 轻量级系统 1 事件门和因果系统 2 解码器 - Mage-VL 可实现主动流感知。广泛的评估表明，Mage-VL-4B 在静态任务上与 Qwen3-VL-4B 相匹配，同时在视频理解和 2D/3D 空间推理方面取得了巨大进步，挂钟推理加速高达 3.5 倍，全面超越 15B Phi-4 推理视觉基线。除了模型工件之外，我们还提供了七个关键的实证研究结果，涵盖预训练数据效率、可变分辨率缩放、编解码器系统加速、VideoQA SFT 冗余、运动空间协同、AI4AI 数据管道和多模态 RL 的零视觉 SFT。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  776    Add to collection     Community         Senqiao   Paper submitter     31 minutes ago         🚀Project Page:  https://microsoft.github.io/Mage🔥 Code:  https://github.com/microsoft/Mage</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 776 添加到集合 社区 Senqiao 论文提交者 31 分钟前 🚀项目页面：https://microsoft.github.io/Mage🔥 代码：https://github.com/microsoft/Mage</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.24368" target="_blank">Keep It InMind: Benchmarking the Implicit-Association Blind Spot in Agent Memory</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>muset.ai</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Ruizhe Li, Mingxuan Du, Benfeng Xu, Zhendong Mao</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.24368" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.24368" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.24368.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Long-term memory systems store what a user says in an external store and retrieve it when a related query arrives. This interface rests on an assumption so natural that it is rarely stated: a memory that is needed will resemble the query that needs it. World knowledge breaks the assumption. A tree-nut allergy should change the answer to a macaron request through their almond-flour ingredient, yet the two texts share no cue a retriever can see. We call this failure mode the implicit-association blind spot and introduce InMind, a 125-task, expert-verified benchmark spanning ten life domains, with 113 tasks grounded in citable public sources. Its paired controls separate three explanations that existing evaluations conflate: the fact was never stored, the model lacks the bridging knowledge, or the fact was stored and never surfaced. The verdict is clean. With the decisive memory placed in context, the backbone answers 84.0 percent of indirect queries; when the same memory must be retrieved, six vector, graph, and agentic memory systems reach at most 14.4 percent, even though they recall the same facts on demand at up to 100 percent. An embedding with eight times the dimensionality raises answer-blind target recall for every system yet leaves the gap essentially intact. A minimal diagnostic probe that keeps memory visible before the query arrives recovers most of the gap, locating the failure in the query-conditioned interface itself and pointing to routing, deciding which facts must stay visible, as the open problem InMind is built to score.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 长期记忆系统将用户所说的内容存储在外部存储中，并在相关查询到达时检索它。该接口基于一个非常自然的假设，以至于很少有人指出：所需的内存将类似于需要它的查询。世界知识打破了这个假设。对树坚果过敏的人应该会通过杏仁粉成分来改变对马卡龙请求的答案，但这两个文本没有共享猎犬可以看到的线索。我们将这种失败模式称为隐式关联盲点，并介绍了 InMind，这是一个涵盖 125 项任务、经过专家验证的基准，跨越 10 个生活领域，其中 113 项任务基于可引用的公共资源。它的配对控制将现有评估混为一谈的三种解释分开：事实从未被存储，模型缺乏桥接知识，或者事实被存储但从未浮出水面。判决是干净的。通过将决定性记忆置于上下文中，主干网回答了 84.0% 的间接查询；当必须检索相同的记忆时，六个向量、图形和代理记忆系统最多只能达到 14.4%，即使它们按需回忆相同事实的速度高达 100%。八倍维度的嵌入提高了每个系统的盲答案目标回忆，但基本上保持了空白。在查询到达之前保持内存可见的最小诊断探针可以恢复大部分间隙，定位查询条件接口本身中的故障并指向路由，决定哪些事实必须保持可见，因为开放问题 InMind 是为了评分而构建的。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  1    Add to collection         Community         imlrz   Paper submitter     about 1 hour ago         We want to make a claim:</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 1 添加到集合 社区 imlrz 论文提交者 大约 1 小时前 我们想要提出声明：</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.26037" target="_blank">Wonder: Video World Model Done Better</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Adobe</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Jiacong Xu, Hanwen Jiang, Zhixin Shu, Kalyan Sunkavalli, Vishal M. Patel</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.26037" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.26037" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.26037.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  We present Wonder, a general-purpose video world model for real-time, camera-controllable world exploration. Given an image or a conditional video, Wonder constructs a playable world where users can navigate interactively by moving the camera, discovering unseen regions, and revisiting previously observed areas in real time and over a long-term horizon. Achieving this capability requires a system-level co-design of control method, memory mechanism, and training strategy. We introduce a novel camera conditioning with a dense coordinate field whose renderings provide spatially aligned motion and orientation cues, allowing the model to interpret camera motion directly as visual evidence. To support fast and precise memory retrieval over a growing generation context, we propose an efficient sparse attention-based memory mechanism, enabling the model to selectively attend to a small set of relevant context tokens at inference time, regardless of actual context length. We further develop several techniques to rectify the self-forcing-style distillation pipeline, improving the student model's ability to respect control signals, as well as maintaining diverse generation modes and long-term memory from the teacher. Together, these components enable Wonder to synthesize diverse, minute-scale videos at 16 FPS while preserving coherent geometry, appearance, and dynamics across long rollouts. Beyond image-to-video generation, Wonder naturally supports video-conditioned generation, allowing existing dynamic scenes to be re-shot in real time.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：我们提出了 Wonder，一种用于实时、摄像机控制的世界探索的通用视频世界模型。给定图像或条件视频，Wonder 构建了一个可玩的世界，用户可以通过移动相机进行交互导航，发现未见过的区域，并在长期范围内实时重新访问以前观察到的区域。实现这种能力需要控制方法、存储机制和训练策略的系统级协同设计。我们引入了一种新颖的相机调节，具有密集的坐标场，其渲染提供了空间对齐的运动和方向线索，允许模型将相机运动直接解释为视觉证据。为了支持在不断增长的一代上下文中快速、精确的记忆检索，我们提出了一种高效的基于稀疏注意力的记忆机制，使模型能够在推理时选择性地关注一小组相关的上下文标记，而不管实际的上下文长度如何。我们进一步开发了几种技术来纠正自强迫式蒸馏管道，提高学生模型尊重控制信号的能力，并保持教师的多样化生成模式和长期记忆。这些组件共同使 Wonder 能够以 16 FPS 合成多样化的分钟级视频，同时在长时间发布过程中保持连贯的几何形状、外观和动态。除了图像到视频的生成之外，Wonder 还自然支持视频调节生成，允许实时重新拍摄现有的动态场景。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page   Add to collection         Community   EditPreview      Upload images, audio, and videos by dragging in the text input, pasting, or clicking here. Tap or paste here to upload images        Comment · Sign up or log in to comment</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 添加到集合 社区 EditPreview 通过拖入文本输入、粘贴或单击此处上传图像、音频和视频。点击或粘贴此处上传图片 评论 · 注册或登录以发表评论</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.25857" target="_blank">Shieldstral</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Mistral AI_</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Antonia Calvi, Avinash Sooriyarachchi, Giada Pistilli, Guillaume Lample, Maarten Buyl</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.25857" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.25857" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.25857.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  We introduce Shieldstral, a 3B-parameter policy-adaptive multimodal safety classifier that matches or outperforms models nearly 7times its size on text safety benchmarks and sets a new state of the art on multimodal safety classification. Shieldstral formulates content moderation as a binary question-answering task. This simple formulation unifies diverse moderation tasks into a single yes/no problem, enabling heterogeneous safety datasets with divergent taxonomies to be consolidated under one training framework. We present the data construction recipe, covering curation and generation of approximately 54.1M samples and a fine-grained evaluation set to evaluate policy adaptability. Together, these enable a small adaptive model to match or outperform much larger models.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：我们介绍了 Shieldstral，一种 3B 参数策略自适应多模态安全分类器，它在文本安全基准上匹配或优于其大小近 7 倍的模型，并为多模态安全分类树立了新的技术水平。 Shieldstral 将内容审核制定为二元问答任务。这一简单的表述将不同的审核任务统一为一个是/否问题，从而使具有不同分类法的异构安全数据集能够在一个训练框架下进行整合。我们提出了数据构建方法，涵盖约 5410 万个样本的管理和生成以及用于评估政策适应性的细粒度评估集。总之，这些使得小型自适应模型能够匹配或优于更大的模型。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community   EditPreview      Upload images, audio, and videos by dragging in the text input, pasting, or clicking here. Tap or paste here to upload images        Comment · Sign up or log in to comment</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 EditPreview 通过拖入文本输入、粘贴或单击此处上传图像、音频和视频。点击或粘贴此处上传图片 评论 · 注册或登录以发表评论</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.23514" target="_blank">Novel Claim or Déjà Vu? Rethinking "Contamination-Free'' Dynamic Evaluation for Multimodal Automated Fact-Checking</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Haorui He, Xinwen Chen, Dacheng Wen, Reynold Cheng, Francis C. M. Lau</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.23514" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.23514" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.23514.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Multimodal automated fact-checking (MAFC) verifies claims by retrieving and reasoning over external evidence. However, most existing static benchmarks risk contamination: they primarily consist of outdated claims verifiable using an LLM's internal knowledge without external evidence. This can inflate performance estimates and fail to reflect true capability on novel claims that require up-to-date information. To address this, emerging dynamic benchmarks collect claims published after LLMs' knowledge cut-off dates, assuming they are uncontaminated. This work revisits this assumption by empirically studying contamination risks in both the state-of-the-art (SOTA) static AVeriTeC benchmark and our newly constructed dynamic ClaimReview2025Q4 benchmark, as well as their impact on MAFC evaluation. Our experiments yield 16 findings, highlighting three key results: (1) Dynamic evaluation reduces but does not eliminate contamination risks, as 17.09\%--29.30\% of post-cut-off claims remain potentially contaminated; (2) Many newly published claims can be verified either directly or by synthesizing multiple pieces of public knowledge available before the cut-off; and (3) Contamination can induce statistically significant inflation in MAFC performance, increasing Macro-F1 by up to 11.34 points and distorting system rankings. In light of these findings, we re-evaluate SOTA LLMs under a strictly contamination-controlled setting. Our study provides practical guidelines for trustworthy MAFC evaluation.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 多模式自动事实核查（MAFC）通过检索和推理外部证据来验证主张。然而，大多数现有的静态基准都有污染的风险：它们主要由过时的主张组成，可以使用法学硕士的内部知识进行验证，无需外部证据。这可能会夸大性能估计，并且无法反映需要最新信息的新颖声明的真实能力。为了解决这个问题，新兴的动态基准收集法学硕士知识截止日期之后发布的声明，假设它们没有受到污染。这项工作通过实证研究最先进的 (SOTA) 静态 AVeriTeC 基准和我们新构建的动态 ClaimReview2025Q4 基准中的污染风险及其对 MAFC 评估的影响，重新审视了这一假设。我们的实验得出了 16 项发现，突出了三个关键结果：（1）动态评估减少但没有消除污染风险，因为 17.09\%--29.30\% 的截止后索赔仍然存在潜在污染； （2）许多新发表的主张可以直接验证，也可以通过综合截止前的多个公开知识来验证； (3) 污染会导致 MAFC 性能出现统计上显着的膨胀，使 Macro-F1 提高高达 11.34 点，并扭曲系统排名。根据这些发现，我们在严格污染控制的环境下重新评估 SOTA 法学硕士。我们的研究为值得信赖的 MAFC 评估提供了实用指南。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  4    Add to collection     Community         HarryHe   Paper submitter     about 1 hour ago         “Novel Claim or Déjà Vu? Rethinking ‘Contamination-Free’ Dynamic Evaluation for Multimodal Automated Fact-Checking” (ACM MM 2026 Accepted)</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 4 添加到集合 社区 HarryHe 论文提交者大约 1 小时前“新颖的主张还是似曾相识？重新思考多模式自动事实核查的‘无污染’动态评估”（ACM MM 2026 已接受）</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.25537" target="_blank">Visual prompt engineering for video models</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>GoogleDeepMind</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Robert Geirhos, Yuxuan Li, Thaddäus Wiedemer, Neha Kalibhat, Zi Wang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.25537" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.25537" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.25537.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  In the age of foundation models, a model is only as good as its prompt. For this reason, prompt engineering has become an essential technique for improving language model performance. Since video models are currently becoming foundation models for visual tasks (e.g., visual reasoning), we here ask whether they similarly benefit from visual prompt engineering: automatically modifying the task image to improve model performance. For example, for a visual physics reasoning task ("Where does the ball land, after passing a set of obstacles?"), an abstract sketch-like scene can be turned into a photorealistic version with a simple call to an image editing model. We find that visual prompt engineering, or VIPE for short, improves video reasoning performance across tasks. In fact, for video models, visual prompt engineering can be even more effective than classic text-based prompt engineering or test-time scaling. Ultimately, just as text-based prompt engineering systematically improves language model performance, visual prompt engineering can serve as a simple, compute-efficient approach to elicit better visual reasoning performance from video models. Example videos on our project page at https://visual-prompt-engineering.github.io/.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 在基础模型时代，模型的好坏取决于它的提示。因此，即时工程已成为提高语言模型性能的重要技术。由于视频模型目前正在成为视觉任务（例如视觉推理）的基础模型，因此我们在这里询问它们是否同样受益于视觉提示工程：自动修改任务图像以提高模型性能。例如，对于视觉物理推理任务（“经过一组障碍物后，球落在哪里？”），只需调用图像编辑模型即可将抽象的草图式场景转换为逼真的版本。我们发现视觉提示工程（简称 VIPE）可以提高跨任务的视频推理性能。事实上，对于视频模型，视觉提示工程甚至比经典的基于文本的提示工程或测试时间缩放更有效。最终，正如基于文本的提示工程系统地提高了语言模型性能一样，视觉提示工程可以作为一种简单、计算高效的方法，从视频模型中获得更好的视觉推理性能。我们的项目页面上的示例视频位于 https://visual-prompt-engineering.github.io/。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page   Add to collection     Community   EditPreview      Upload images, audio, and videos by dragging in the text input, pasting, or clicking here. Tap or paste here to upload images        Comment · Sign up or log in to comment</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 添加到集合 社区 EditPreview 通过拖入文本输入、粘贴或单击此处上传图像、音频和视频。点击或粘贴此处上传图片 评论 · 注册或登录以发表评论</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.24957" target="_blank">PerceptionBench: Evaluating Atomic Visual Perception in Multimodal Large Language Models</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Moonshot AI</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Zichao Lin, Yifeng Xie, Bowen Qu, Haiming Wang, Jia Li</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.24957" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.24957" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.24957.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  We introduce PerceptionBench, a benchmark specifically designed to evaluate the atomic visual perception capabilities of Multimodal Large Language Models (MLLMs). Existing benchmarks often fail to isolate perception: holistic evaluations conflate perceptual errors with failures in reasoning or domain knowledge, while application-driven benchmarks only cover narrow, fragmented domains shaped by heuristic designs. To address these limitations, PerceptionBench adopts a bottom-up approach: by diagnosing the earliest failure points in the responses of frontier MLLMs across 42 existing benchmarks, we construct an error taxonomy whose perception branch defines ten atomic perceptual capabilities. Guided by this taxonomy, we construct 3,000 verified questions with short, unambiguous answers, each isolating a single capability, with difficulty stemming from perception rather than reasoning or knowledge. Benchmark results across sixteen frontier MLLMs reveal that atomic perception remains largely unsolved---no model reaches 60\% accuracy, perception-related hallucination is the weakest capability on average, and similar overall scores conceal sharply divergent capability profiles. PerceptionBench thus provides a capability-level standard for measuring and diagnosing the visual perception boundaries of MLLMs.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：我们介绍 PerceptionBench，这是一个专门为评估多模态大型语言模型 (MLLM) 的原子视觉感知能力而设计的基准。现有的基准通常无法隔离感知：整体评估将感知错误与推理或领域知识的失败混为一谈，而应用程序驱动的基准仅涵盖由启发式设计形成的狭窄、碎片化的领域。为了解决这些限制，PerceptionBench 采用了自下而上的方法：通过诊断 42 个现有基准中前沿 MLLM 响应中的最早故障点，我们构建了一个错误分类法，其感知分支定义了十个原子感知能力。在这种分类法的指导下，我们构建了 3,000 个经过验证的问题，并给出了简短、明确的答案，每个问题都隔离了一种能力，其困难源于感知而不是推理或知识。 16 个前沿 MLLM 的基准结果表明，原子感知在很大程度上仍未得到解决——没有模型达到 60% 的准确度，与感知相关的幻觉平均而言是最弱的能力，相似的总体分数掩盖了截然不同的能力概况。因此，PerceptionBench 为测量和诊断 MLLM 的视觉感知边界提供了能力级别标准。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community   EditPreview      Upload images, audio, and videos by dragging in the text input, pasting, or clicking here. Tap or paste here to upload images        Comment · Sign up or log in to comment</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 EditPreview 通过拖入文本输入、粘贴或单击此处上传图像、音频和视频。点击或粘贴此处上传图片 评论 · 注册或登录以发表评论</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.25948" target="_blank">MODUS: Decoder-Only Any-to-Any Modeling of Diverse Modalities</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>EPFL VILAB</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Mingqiao Ye, Zhaochong An, Zhitong Gao, Xian Liu, François Fleuret</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.25948" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.25948" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.25948.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Any-to-any models predict any modality from any combination of others within a single network, a formulation used in multimodal vision and vision-language models, and increasingly in scientific domains such as ecology and astronomy. Existing any-to-any models are typically trained from scratch using encoder-decoder or diffusion architectures, impacting their performance and preventing them from using strong pre-trained decoder-only models as a prior. In this work, we investigate decoder-only any-to-any multimodal modeling, which treats all modalities symmetrically and supports arbitrary modalities as inputs and outputs without modality-specific heads, losses, or task pipelines. Because every modality is both an input and an output of the same model, the resulting model, named Modus, can support a range of applications, such as chained generation through intermediate modalities or cross-modal self-verification by scoring the model's own outputs with another generated modality. Modus demonstrates strong out-of-the-box performance and is competitive with specialist and multitask baselines using a single model across various benchmarks. All materials are open-sourced at https://modus-multimodal.epfl.ch/.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 Any-to-any 模型可以从单个网络内的任何其他模态组合中预测任何模态，这是多模态视觉和视觉语言模型中使用的公式，并且越来越多地应用于生态学和天文学等科学领域。现有的任意到任意模型通常使用编码器-解码器或扩散架构从头开始训练，这会影响它们的性能并阻止它们使用强大的预训练仅解码器模型作为先验。在这项工作中，我们研究了仅解码器的任意多模态建模，该模型对称地处理所有模态并支持任意模态作为输入和输出，而无需特定模态的头、损失或任务管道。由于每种模态都是同一模型的输入和输出，因此生成的模型（名为 Modus）可以支持一系列应用，例如通过中间模态进行链式生成，或通过使用另一种生成模态对模型自己的输出进行评分来进行跨模态自我验证。 Modus 展示了强大的开箱即用性能，并且与跨各种基准使用单一模型的专业和多任务基准具有竞争力。所有材料均在 https://modus-multimodal.epfl.ch/ 上开源。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  16    Add to collection      Community         mqye   Paper submitter     about 4 hours ago         MODUS unifies any-to-any multimodal generation with one decoder, two experts, and zero task heads.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 16 添加到集合 社区 mqye 论文提交者 大约 4 小时前 MODUS 将任意多模式生成与一个解码器、两个专家和零个任务头统一起来。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.25970" target="_blank">Reinforcement Learning for Code Optimization</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>AI at Meta</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Pierre Chambon, Kunhao Zheng, Juliette Decugis, Benoit Sagot, Gabriel Synnaeve</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.25970" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.25970" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.25970.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  RL for code correctness is now established: have the model generate a program, run it against hidden test cases, and reward solutions that pass. Extending this to code optimization seems straightforward: just add execution time to the reward. But in practice, once timing drives the reward, small problems in measurement noise, reward sparsity, or GRPO instability overwhelm the signal and make RL fail: generated solutions are barely faster, and more of them can fail. We make execution time learnable through three stages: (1) how code is tested, by building DMC-Optim with large optimization tests and a calibrated sandbox; (2) how speed is turned into reward, by composing correctness and speed in the RL environment and using an offline simulator to predict the most promising configurations; and (3) how the model learns from that reward, by adapting GRPO and evaluation to the sparser, noisier timed-execution setting. On DMC-Optim, the strongest optimization-aware configurations improve strict top-50% pass@1 from 18.0% to 31.3% on Qwen 2.5 7B and from 30.7% to 50.4% on CWM 32B. These gains further increase at stricter percentiles such as top-30%, with 125% relative improvement for CWM 32B, while preserving pure-correctness scores. When the timing sandbox is degraded, robust optimization RL reaches 100% to 200% improvement over standard RLVR, depending on the evaluation criterion. On LCB, CWM 32B wins up to 83% of median-sample speed comparisons against standard RLVR. Relative to the fastest correct human submissions per problem, it reaches about half the human rate of complexity-class improvements (14% vs. 28%).</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">代码正确性的抽象强化学习现在已经建立：让模型生成一个程序，针对隐藏的测试用例运行它，并奖励通过的解决方案。将其扩展到代码优化似乎很简单：只需将执行时间添加到奖励中即可。但在实践中，一旦时序驱动了奖励，测量噪声、奖励稀疏性或 GRPO 不稳定等小问题就会淹没信号并导致 RL 失败：生成的解决方案几乎没有更快，而且更多的解决方案可能会失败。我们通过三个阶段使执行时间变得可学习：（1）如何测试代码，通过构建具有大型优化测试和校准沙箱的 DMC-Optim； （2）如何将速度转化为奖励，通过在 RL 环境中组合正确性和速度，并使用离线模拟器来预测最有希望的配置； (3) 模型如何通过使 GRPO 和评估适应稀疏、噪声较大的定时执行设置来从奖励中学习。在 DMC-Optim 上，最强大的优化感知配置将 Qwen 2.5 7B 上严格的 top-50% pass@1 从 18.0% 提高到 31.3%，将 CWM 32B 从 30.7% 提高到 50.4%。这些收益在更严格的百分位数（例如前 30%）中进一步增加，CWM 32B 的相对改进为 125%，同时保留纯粹正确性分数。当时序沙箱降级时，鲁棒优化 RL 比标准 RLVR 提高 100% 到 200%，具体取决于评估标准。在 LCB 上，与标准 RLVR 相比，CWM 32B 在中值样本速度比较中获胜高达 83%。相对于每个问题最快正确的人类提交速度，它达到了人类复杂性级别改进率的一半左右（14% 与 28%）。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community         pierrechambon   Paper submitter     about 1 hour ago • edited about 1 hour ago</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 pierrechambon 论文提交者 大约 1 小时前 • 编辑 大约 1 小时前</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.26004" target="_blank">Parallel Decoding Distillation for Fast Image and Video Generation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>NVIDIA</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Neta Shaul, Chao Liu, Arash Vahdat, Julius Berner</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.26004" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.26004" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.26004.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Generation in video diffusion or flow models is computationally expensive due to the slow and iterative sampling process. Current state-of-the-art (SOTA) acceleration methods heavily rely on variational score distillation (VSD) and adversarial losses to distill diffusion models into few-step generators. Albeit achieving high-quality video generation, these training losses are notoriously hard to optimize and suffer from mode collapse, leading to loss of video diversity and lack of motion. In this paper, we introduce Parallel Decoding Distillation (PDD), a simplified and scalable trajectory-based distillation method for fast inference of diffusion and flow matching models. Our architecture and training procedure are compatible with any pre-trained model and support sampling with a varying number of function evaluations (NFE). PDD accelerates generation by predicting multiple denoising steps per network evaluation. Conceptually, it learns a representation of the mean velocity without regressing its derivative using JVPs or finite-difference approximations. Our method achieves SOTA performance with 4-8 NFE on LTX-2.3 Text-to-Video/Audio, Wan 14B Text-to-Video, and Qwen-Image Text-to-Image. Moreover, PDD presents a significant improvement in generated video diversity.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 由于采样过程缓慢且迭代，视频扩散或流模型的生成在计算上是昂贵的。当前最先进的（SOTA）加速方法严重依赖变分分数蒸馏（VSD）和对抗性损失将扩散模型蒸馏为少步生成器。尽管实现了高质量的视频生成，但这些训练损失非常难以优化，并且会遭受模式崩溃的影响，从而导致视频多样性的损失和缺乏运动。在本文中，我们介绍了并行解码蒸馏（PDD），这是一种简化且可扩展的基于轨迹的蒸馏方法，用于快速推断扩散和流动匹配模型。我们的架构和训练程序与任何预训练模型兼容，并支持具有不同数量的功能评估 (NFE) 的采样。 PDD 通过预测每个网络评估的多个去噪步骤来加速生成。从概念上讲，它学习平均速度的表示，而不使用 JVP 或有限差分近似对其导数进行回归。我们的方法在 LTX-2.3 文本到视频/音频、Wan 14B 文本到视频和 Qwen-Image 文本到图像上实现了 4-8 NFE 的 SOTA 性能。此外，PDD 在生成的视频多样性方面呈现出显着的改进。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  874    Add to collection     Community         julberner   Paper submitter     about 3 hours ago</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 874 添加到集合 社区 julberner 论文提交者 大约 3 小时前</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.25669" target="_blank">OmniDelta: Skill-Driven Budget Allocation for Token Compression in OmniLLMs</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Haoyang Huang, Wenjie Huang, Tianqi Xu, Hongyaoxing Gu, Kang Tan</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.25669" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.25669" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.25669.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Emerging Omni-modal Large Language Models (OmniLLMs) enable unified understanding of text, audio, and video, but their long audio-video token sequences introduce substantial memory and inference costs. Existing compression methods mainly focus on selecting important tokens under fixed budgets, leaving the preceding budget-allocation problem underexplored. We show that direct query-to-audio/video similarity is unreliable for inter-modal budget allocation, and that uniform intra-modal budgets can miss key evidence while retaining redundant content. To address these limitations, we propose OmniDelta, a training-free, skill-driven framework that couples intent-aware inter-modal allocation with content-aware intra-modal allocation. OmniDelta first constructs audio and video skill pools to shift the fixed retained-token budget according to query demand, then reallocates modality budgets over audio segments and video frames using local complexity and temporal redundancy. The resulting local budgets can be combined with existing pruning strategies, preserving the total retained-token ratio while changing where the budget is spent. Experiments on four audio-video benchmarks with two Qwen2.5-Omni models show that OmniDelta establishes a new accuracy-efficiency Pareto frontier across pruning ratios. At 25% token retention on Qwen2.5-Omni-7B, OmniDelta reduces GPU memory by 22.0% and achieves a 1.64x end-to-end speedup over full-token inference.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 新兴的全模态大语言模型（OmniLLM）可以实现对文本、音频和视频的统一理解，但它们的长音频-视频标记序列会带来大量的内存和推理成本。现有的压缩方法主要集中在固定预算下选择重要的代币，而对前面的预算分配问题没有得到充分的探讨。我们表明，直接查询到音频/视频的相似性对于模态间预算分配来说是不可靠的，并且统一的模态内预算可能会在保留冗余内容的同时错过关键证据。为了解决这些限制，我们提出了 OmniDelta，这是一种免培训、技能驱动的框架，它将意图感知的模态间分配与内容感知的模态内分配结合起来。 OmniDelta 首先构建音频和视频技能池，以根据查询需求转移固定的保留令牌预算，然后使用局部复杂性和时间冗余在音频片段和视频帧上重新分配模态预算。由此产生的本地预算可以与现有的修剪策略相结合，在改变预算支出的同时保留总保留代币比率。使用两个 Qwen2.5-Omni 模型对四个音视频基准进行的实验表明，OmniDelta 在剪枝率上建立了一个新的准确率-效率帕累托前沿。在 Qwen2.5-Omni-7B 上的令牌保留率为 25% 时，OmniDelta 将 GPU 内存减少了 22.0%，并且与全令牌推理相比，实现了 1.64 倍的端到端加速。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community   EditPreview      Upload images, audio, and videos by dragging in the text input, pasting, or clicking here. Tap or paste here to upload images        Comment · Sign up or log in to comment</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 EditPreview 通过拖入文本输入、粘贴或单击此处上传图像、音频和视频。点击或粘贴此处上传图片 评论 · 注册或登录以发表评论</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.25091" target="_blank">Towards Robust Reinforcement Learning for Small-Scale Language Model Agents</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Md Rezwanul Haque, Md. Milon Islam, Fakhri Karray</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.25091" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.25091" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.25091.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  The alignment of Small Language Models (SLMs) in the 70--500M parameter range using reinforcement learning is often considered unstable, though the underlying failure mechanisms have not been systematically investigated. In the State-of-the-Art (SOTA) research, fifteen (model, corpus) configurations were trained using Proximal Policy Optimization (PPO). The experiments included Pythia-70M, 160M, 410M and SmolLM2-135M, 360M on the TinyStories, CNN/DailyMail, and Wikitext-103 corpora. Three reproducible failure modes were identified in small-scale language models: silent LoRA parameter freezing in standard PEFT/TRL pipelines, numerical overflow in importance ratios when using bfloat16, and catastrophic policy collapse due to reward-model error. These issues were addressed using a merge-and-reinitialize adapter technique, float32 precision during PPO updates, and a three-layer safety mechanism comprising reward whitening, importance-ratio guarding, and weight rollback. In this paper, a capacity-headroom hypothesis is proposed, which states that PPO performance at the SLM scale depends on both a fluent supervised model (PPL&lt;20) and a discriminative reward signal, rather than on the number of model parameters. The proposed system converged stably in all experiments and improved preference win rate over the SFT baseline in configurations with a fluent prior and an informative reward signal. Furthermore, it outperformed instruction-tuned baselines while requiring significantly less training data. All checkpoints, preference datasets, and training scripts are publicly released^§.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：尽管尚未系统地研究潜在的故障机制，但使用强化学习在 70--500M 参数范围内对齐小语言模型 (SLM) 通常被认为是不稳定的。在最先进的 (SOTA) 研究中，使用近端策略优化 (PPO) 训练了 15 种（模型、语料库）配置。实验包括 TinyStories、CNN/DailyMail 和 Wikitext-103 语料库上的 Pythia-70M、160M、410M 和 SmolLM2-135M、360M。在小规模语言模型中发现了三种可重现的故障模式：标准 PEFT/TRL 管道中的静默 LoRA 参数冻结、使用 bfloat16 时重要性比率的数值溢出以及由于奖励模型错误而导致的灾难性策略崩溃。这些问题已通过合并并重新初始化适配器技术、PPO 更新期间的 float32 精度以及包括奖励白化、重要性比防护和权重回滚的三层安全机制得到解决。本文提出了容量净空假设，该假设指出，SLM 规模的 PPO 性能取决于流畅的监督模型（PPL<20）和判别性奖励信号，而不是模型参数的数量。所提出的系统在所有实验中都稳定收敛，并且在具有流畅先验和信息丰富的奖励信号的配置中，相对于 SFT 基线提高了偏好获胜率。此外，它的性能优于指令调整的基线，同时需要的训练数据显着减少。所有检查点、偏好数据集和训练脚本均公开发布^§。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub  2    Add to collection     Community         mr3haque   Paper submitter     about 2 hours ago         Proceedings of the 2026 IEEE International Conference on Systems, Man, and Cybernetics (SMC), Bellevue, WA, USA</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF GitHub 2 添加到集合 社区 mr3haque 论文提交者 大约 2 小时前 2026 年 IEEE 国际系统、人与控制论 (SMC) 会议记录，美国华盛顿州贝尔维尤</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.24176" target="_blank">Where Quality Breaks in Compressed Short-Text Generation: Staged Bottleneck Localization</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>ITMO University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>aogavrilov, Alexey Gavrilov, Alan-Barsag Gazzaev, Sergey Muravyov</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.24176" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.24176" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.24176.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Compressed short-text generators can fail in two different places: the codec may discard information before generation starts, or the latent generator may produce weak codes. Without separating these failure modes, researchers can spend compute improving the wrong component. We study this problem in a controlled 64-to-16 TinyStories case study built from a hierarchical VQ-VAE-2 codec and a masked discrete diffusion generator (MDLM). We use a staged validation protocol that separates codec reconstruction fidelity, latent generation quality, and auxiliary latent diagnostics under one shared external GPT-2 scorer, while reporting complementary semantic metrics for the geometry study. In the tested configuration, codec reconstruction alone raises median external perplexity from 15.17 to 27.36 (+80.4%) and p95 from 25.10 to 98.91 (+294.1%), showing that the dominant quality loss appears before latent generation begins. Under the same scorer, code-space MDLM remains materially stronger than token-space diffusion, reducing mean, median, and p95 by 32.9%, 30.9%, and 36.6%, respectively. Geometry-aware regularization improves local latent proxies but does not improve decoded-text metrics in the available runs. The contribution is methodological rather than algorithmic: the paper presents a reusable staged diagnosis for one concrete pipeline and shows that, in this setting, codec fidelity rather than latent denoising sets the practical quality ceiling.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 压缩短文本生成器可能在两个不同的地方失败：编解码器可能在生成开始之前丢弃信息，或者潜在生成器可能生成弱代码。如果不区分这些故障模式，研究人员可能会花费计算来改进错误的组件。我们在受控的 64 到 16 TinyStories 案例研究中研究了这个问题，该案例由分层 VQ-VAE-2 编解码器和掩模离散扩散生成器 (MDLM) 构建。我们使用分阶段验证协议，在一个共享的外部 GPT-2 评分器下分离编解码器重建保真度、潜在生成质量和辅助潜在诊断，同时报告几何研究的补充语义指标。在测试的配置中，单独的编解码器重建将中值外部困惑度从 15.17 提高到 27.36 (+80.4%)，p95 从 25.10 提高到 98.91 (+294.1%)，这表明主要的质量损失出现在潜在生成开始之前。在相同的评分器下，代码空间 MDLM 仍然明显强于标记空间扩散，平均值、中位数和 p95 分别降低了 32.9%、30.9% 和 36.6%。几何感知正则化改进了本地潜在代理，但没有改进可用运行中的解码文本指标。其贡献是方法论而非算法：本文提出了一种针对一个具体管道的可重复使用的分阶段诊断，并表明，在这种情况下，编解码器保真度而不是潜在去噪设定了实际质量上限。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page   Add to collection      Community         aogavrilov  Paper author  Paper submitter     about 2 hours ago         Most quality degradation occurs before latent generation even begins.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 添加到集合 社区 aogavrilov 论文作者 论文提交者 大约 2 小时前 大多数质量下降发生在潜在生成甚至开始之前。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.25236" target="_blank">VisualPatchWorld: Code World Models as Latent Structured Representations for Planning</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>HKBU Knowledge Computation Lab</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Jiaxin Bai, Jiaxuan Xiong</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.25236" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.25236" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.25236.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Different research lines use the term world model in different ways, yet they share a common aim: to capture how the world evolves under action in a form that supports perception, simulation, and planning. Two prominent realizations are neural predictors that learn dynamics in continuous vector spaces, and hand-built physics engines that expose explicit state and physical laws. Neural predictors scale from data but leave the form of the dynamics implicit; physics engines are inspectable and editable but difficult to construct at scale. We introduce VisualPatchWorld (VPW), which represents world dynamics as code. VPW first selects a qualitative dynamical form with short active probes, then fits that form's free parameters from recorded state-action traces by minimizing multi-step prediction error. The resulting programs can be rolled forward like a simulator, inspected in source form, and used inside model-predictive control; image-derived scene graphs can supply the live state at replan time. Across comparisons with prior code-based world models, VPW attains 69.0% mean planning success and exceeds the strongest code baseline by 23.5 points. The largest gains arise when choosing the correct qualitative dynamics is essential. Under the same planner, the induced models approach ground-truth engine success on navigation and grasp-rich control; a residual gap remains for contact-rich pushing, and checking a shortlist of promising plans in the engine closes most of that gap. These results establish a practical route toward automatically constructed code world models that are useful for planning. Code is available at https://github.com/HKBU-KnowComp/VisualPatchWorld/.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 不同的研究方向以不同的方式使用“世界模型”一词，但它们有一个共同的目标：以支持感知、模拟和规划的形式捕捉世界在行动下如何演变。两个突出的实现是在连续向量空间中学习动力学的神经预测器，以及暴露明确状态和物理定律的手工构建的物理引擎。神经预测器根据数据进行扩展，但保留了隐含的动态形式；物理引擎是可检查和可编辑的，但难以大规模构建。我们引入了 VisualPatchWorld (VPW)，它将世界动态表示为代码。 VPW 首先选择具有短主动探针的定性动力学形式，然后通过最小化多步预测误差来从记录的状态动作轨迹中拟合该形式的自由参数。生成的程序可以像模拟器一样向前滚动，以源代码形式进行检查，并在模型预测控制中使用；图像派生的场景图可以在重新规划时提供实时状态。与之前基于代码的世界模型相比，VPW 的平均规划成功率达到 69.0%，比最强的代码基线高出 23.5 个百分点。当选择正确的定性动态至关重要时，就会产生最大的收益。在同一规划器下，诱导模型在导航和丰富控制方面接近地面实况引擎的成功；接触丰富的推动仍然存在剩余差距，检查引擎中有希望的计划的候选名单可以弥补大部分差距。这些结果为自动构建代码世界模型建立了一条实用途径，这对规划很有用。代码可在 https://github.com/HKBU-KnowComp/VisualPatchWorld/ 获取。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub  1    Add to collection     Community         jbai0318   Paper submitter     about 2 hours ago         VisualPatchWorld (VPW) learns programmatic dynamics from LeWM expert trajectories on four environments (Two-room, Reacher, PushT, Cube), then evaluates them with fair frozen CEM / library-shoot planners.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF GitHub 1 添加到集合 社区 jbai0318 论文提交者 大约 2 小时前 VisualPatchWorld (VPW) 从四种环境（两室、Reacher、PushT、Cube）的 LeWM 专家轨迹中学习程序动态，然后使用公平冻结的 CEM/库拍摄规划器对其进行评估。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.25337" target="_blank">Temporal-Distance JEPA: Plan-Aware Representation Learning for Latent World Model Predictive Control</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>HKBU Knowledge Computation Lab</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Jiaxin Bai, Jiaxuan Xiong</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.25337" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.25337" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.25337.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Joint-Embedding Predictive Architectures (JEPAs) learn world models by predicting in representation space rather than reconstructing pixels, making them a natural backbone for latent model predictive control from offline demonstration logs. JEPA-style training optimizes short-horizon latent prediction, whereas planning requires a multi-step ranking of imagined futures by goal progress. Prior JEPA planners often inherit that ranking from embedding geometry, typically latent Euclidean distance, which arises as a byproduct of representation learning rather than as a progress cost mined from the logs. We propose temporal-distance JEPA (TD-JEPA), which retains the LeWM encoder--predictor backbone and mines a directed temporal cost from reward-free trajectories: same-trajectory step order supplies positive targets, cross-trajectory pairs act as heuristic negatives, and a rollout-consistency term matches the planner horizon. The mined supervision serves two roles: as the deployed planning cost when progress is topological, and as a representation signal that improves Euclidean planning when contact geometry dominates. Under locked evaluation, deploying the mined cost raises Two-Room success to 100.0% versus LeWM's 97.4%, while shared Euclidean planning on the same temporally trained checkpoint raises OGB-Cube by 14.2 points over LeWM and improves Push-T. Against LeWM and the concurrent RC-aux baseline under locked evaluation, TD-JEPA matches or exceeds both methods on every environment. Ablations show that the directed head, cross-trajectory negatives, and rollout consistency each contribute. TD-JEPA narrows the train--plan gap for JEPA world-model planners by discovering temporal progress structure in offline logs and co-designing cost form with plan-time deployment. Code is available at https://github.com/HKBU-KnowComp/TD-JEPA.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要联合嵌入预测架构（JEPA）通过在表示空间中进行预测而不是重建像素来学习世界模型，使它们成为离线演示日志中潜在模型预测控制的自然支柱。 JEPA 式训练优化了短期潜在预测，而规划则需要按目标进度对想象的未来进行多步骤排序。以前的 JEPA 规划者经常从嵌入几何图形继承该排名，通常是潜在的欧几里得距离，它是表示学习的副产品，而不是从日志中挖掘的进度成本。我们提出时间距离 JEPA (TD-JEPA)，它保留了 LeWM 编码器 - 预测器主干，并从无奖励轨迹中挖掘有向时间成本：相同轨迹步骤顺序提供正目标，交叉轨迹对充当启发式负数，并且推出一致性项与规划器范围相匹配。挖掘监督有两个作用：当进度是拓扑时作为部署的规划成本，以及当接触几何占主导地位时作为改进欧几里得规划的表示信号。在锁定评估下，部署挖掘成本将两室成功率提高到 100.0%，而 LeWM 为 97.4%，而在同一时间训练检查点上共享欧几里得规划使 OGB-Cube 比 LeWM 提高了 14.2 个点，并改进了 Push-T。相对于 LeWM 和锁定评估下的并发 RC-aux 基线，TD-JEPA 在每个环境上都匹配或超过了这两种方法。消融表明，定向头、交叉轨迹负数和推出一致性各有贡献。 TD-JEPA 通过发现离线日志中的时间进度结构并与计划时间部署共同设计成本形式，缩小了 JEPA 世界模型规划者的训练-计划差距。代码可在 https://github.com/HKBU-KnowComp/TD-JEPA 获取。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub  1    Add to collection     Community         jbai0318   Paper submitter     about 3 hours ago         TD-JEPA keeps the LeWM encoder–predictor and SIGReg backbone, and mines a directed temporal cost from reward-free demonstration logs. Same-trajectory step order supplies positive targets, cross-trajectory pairs act as heuristic negatives, and a rollout-consistency term matches the planner horizon.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF GitHub 1 添加到集合 社区 jbai0318 论文提交者 大约 3 小时前 TD-JEPA 保留 LeWM 编码器预测器和 SIGReg 主干，并从无奖励演示日志中挖掘定向时间成本。相同轨迹步骤顺序提供正目标，交叉轨迹对充当启发式负数，并且推出一致性项与规划器范围相匹配。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.25572" target="_blank">Mapping CVEs to MITRE ATT&CK Techniques: A Curated Gold-Set Classifier and the Limits of LLM-Assisted Label Expansion</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Computer Incident Response Center Luxembourg</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Cédric Bonhomme, Alexandre Dulaunoy</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.25572" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.25572" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.25572.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  We present a reproducible pipeline for mapping Common Vulnerabilities and Exposures (CVEs) to MITRE ATT&amp;CK Enterprise techniques from free-text vulnerability descriptions. Rather than relying on the CWE->CAPEC->ATT&amp;CK derivation chain, whose table-expansion artifacts we quantify, we train a multi-label classifier on a curated gold dataset of 1,207 CVEs from expert MITRE Center for Threat-Informed Defense mappings. The resulting model approximately doubles recall@5 compared with a zero-shot embedding-similarity baseline and improves every ranking metric. We then investigate whether LLM-assisted labeling can extend the gold dataset. Initial experiments suggest contradictory conclusions: a single run indicates degraded performance, while averaging over five random seeds suggests a small gain. However, an independent replication and an expansion-size study (100--984 additional CVEs) show that the apparent improvement is an evaluation artifact. LLM-generated labels, with approximately 0.39 agreement with expert annotations, provide no reliable improvement at any expansion size and reduce rare-technique coverage at around 1,000 added CVEs (macro-F1 decreases by 0.04). The root cause is evaluation noise. Selecting checkpoints on a small test split effectively maximizes over many noisy evaluations, producing recall@5 differences of up to 0.05 between otherwise identical runs. Using a corrected protocol based on validation-split checkpoint selection, the gold-only model achieves recall@5 of (0.673 \pm 0.019), and repeating the decisive experiment confirms the null result for LLM expansion. A final scaling study shows that additional expert-curated data consistently improves performance, whereas LLM-labeled data does not, indicating that the classifier is limited by label quality rather than dataset size. All datasets, models, code, and training logs are publicly released.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：我们提出了一个可重复的管道，用于将常见漏洞和暴露 (CVE) 从自由文本漏洞描述映射到 MITRE ATT&CK Enterprise 技术。我们没有依赖 CWE->CAPEC->ATT&CK 推导链（我们对其表扩展工件进行了量化），而是在来自专家 MITRE 威胁知情防御映射中心的 1,207 个 CVE 的精选黄金数据集上训练多标签分类器。与零样本嵌入相似性基线相比，所得模型的recall@5大约增加了一倍，并改进了每个排名指标。然后我们研究 LLM 辅助标记是否可以扩展黄金数据集。最初的实验得出了相互矛盾的结论：单次运行表明性能下降，而对五个随机种子进行平均表明性能略有提高。然而，一项独立的复制和扩展规模研究（100--984 个额外的 CVE）表明，明显的改进是评估伪影。 LLM 生成的标签与专家注释的一致性约为 0.39，在任何扩展大小上都没有提供可靠的改进，并且在添加约 1,000 个 CVE 时减少了稀有技术覆盖率（宏 F1 减少了 0.04）。根本原因是评估噪声。在小测试分割上选择检查点可以有效地最大化许多嘈杂的评估，在其他相同的运行之间产生高达 0.05 的recall@5 差异。使用基于验证分割检查点选择的校正协议，纯黄金模型实现了 (0.673 \pm 0.019) 的recall@5，并且重复决定性实验确认了 LLM 扩展的无效结果。最终的扩展研究表明，额外的专家策划数据持续提高性能，而 LLM 标记的数据则不然，这表明分类器受到标签质量而不是数据集大小的限制。所有数据集、模型、代码和训练日志均公开发布。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  3    Add to collection     Community         cedricbonhomme   Paper submitter     about 2 hours ago         We present a reproducible pipeline for mapping Common Vulnerabilities and Exposures (CVEs) to MITRE ATT&amp;CK Enterprise techniques from free-text vulnerability descriptions. Rather than relying on the CWE-&gt;CAPEC-&gt;ATT&amp;CK derivation chain, whose table-expansion artifacts we quantify, we train a multi-label classifier on a curated gold dataset of 1,207 CVEs from expert MITRE Center for Threat-Informed Defense mappings. The resulting model approximately doubles recall@5 compared with a zero-shot embedding-similarity baseline and improves every ranking metric. We then investigate whether LLM-assisted labeling can extend the gold dataset. Initial experiments suggest contradictory conclusions: a single run indicates degraded performance, while averaging over five random seeds suggests a small gain. However, an independent replication and an expansion-size study (100--984 additional CVEs) show that the apparent improvement is an evaluation artifact. LLM-generated labels, with approximately 0.39 agreement with expert annotations, provide no reliable improvement at any expansion size and reduce rare-technique coverage at around 1,000 added CVEs (macro-F1 decreases by 0.04). The root cause is evaluation noise. Selecting checkpoints on a small test split effectively maximizes over many noisy evaluations, producing recall@5 differences of up to 0.05 between otherwise identical runs. Using a corrected protocol based on validation-split checkpoint selection, the gold-only model achieves recall@5 of (0.673 \pm 0.019), and repeating the decisive experiment confirms the null result for LLM expansion. A final scaling study shows that additional expert-curated data consistently improves performance, whereas LLM-labeled data does not, indicating that the classifier is limited by label quality rather than dataset size. All datasets, models, code, and training logs are publicly released.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 3 添加到集合 社区 cedricbonhomme 论文提交者 大约 2 小时前 我们提出了一个可重复的管道，用于将常见漏洞和暴露 (CVE) 从自由文本漏洞描述映射到 MITRE ATT&CK Enterprise 技术。我们没有依赖 CWE->CAPEC->ATT&CK 推导链（我们对其表扩展工件进行量化），而是在来自专家 MITRE 威胁知情防御映射中心的 1,207 个 CVE 的精选黄金数据集上训练多标签分类器。与零样本嵌入相似性基线相比，所得模型的recall@5大约增加了一倍，并改进了每个排名指标。然后我们研究 LLM 辅助标记是否可以扩展黄金数据集。最初的实验得出了相互矛盾的结论：单次运行表明性能下降，而对五个随机种子进行平均表明性能略有提高。然而，一项独立的复制和扩展规模研究（100--984 个额外的 CVE）表明，明显的改进是评估伪影。 LLM 生成的标签与专家注释的一致性约为 0.39，在任何扩展大小上都没有提供可靠的改进，并且在添加约 1,000 个 CVE 时减少了稀有技术覆盖率（宏 F1 减少了 0.04）。根本原因是评估噪声。在小测试分割上选择检查点可以有效地最大化许多嘈杂的评估，在其他相同的运行之间产生高达 0.05 的recall@5 差异。使用基于验证分割检查点选择的校正协议，纯黄金模型实现了 (0.673 \pm 0.019) 的recall@5，并且重复决定性实验确认了 LLM 扩展的无效结果。最终的扩展研究表明，额外的专家策划数据持续提高性能，而 LLM 标记的数据则不然，这表明分类器受到标签质量而不是数据集大小的限制。所有数据集、模型、代码和训练日志均公开发布。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.24882" target="_blank">Agent Retrieval Bench: Evaluating Repository Context Retrieval for Coding Agents</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>eyuansu71, Bowen Qin, Yi Xie</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.24882" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.24882" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.24882.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Modern coding agents are usually evaluated by whether they eventually produce a correct patch, but patch generation depends on an earlier context-acquisition stage: finding the repository files needed for the task. We introduce Agent Retrieval Bench, a file-level benchmark for this upstream retrieval problem. Samples are built from real coding-workflow signals and evaluated against frozen base-commit repositories, with relevance defined by what an agent needs next rather than direct query-file semantic similarity. The benchmark covers four positive-retrieval tasks: code2test, comment2context, trace2code, and edit2ripple; a fifth subset evaluates selective retrieval using natural evidence-backed no-gold cases and counterfactual wrong-repository controls. Agent Retrieval Bench contains 427 samples across 25 repositories: 345 positive examples, 50 natural no-gold examples, and 32 counterfactual controls. The corpus includes 308 base-commit snapshots, 392,000 files, and 7.9 million chunks. We evaluate lexical retrieval, RepoMap, open-source embeddings, selective abstention, and logged agent context selection. No single retrieval family dominates: Qwen3-Embedding-4B has the best sample-weighted MRR on positive samples, Qwen3-Embedding-8B the best Recall@20, and RepoMap the best budgeted context yield at 8K tokens, with task-level winners differing substantially. Selective thresholds calibrated with counterfactual controls do not improve selective success on natural no-gold cases, revealing a calibration gap. Logged trajectories also miss every gold file on 27-35 percent of samples. A controlled seed-intervention pilot finds that retrieval-derived initial context yields higher file F1 with less post-seed exploration than random non-gold context, while oracle gold context shows substantial remaining headroom.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 现代编码代理通常通过它们最终是否生成正确的补丁来进行评估，但补丁的生成取决于早期的上下文获取阶段：查找任务所需的存储库文件。我们引入了 Agent Retrieval Bench，这是针对此上游检索问题的文件级基准。样本是根据真实的编码工作流程信号构建的，并根据冻结的基本提交存储库进行评估，其相关性由代理接下来需要的内容定义，而不是直接查询文件语义相似性。该基准测试涵盖四个正检索任务：code2test、comment2context、trace2code 和 edit2ripple；第五个子集使用自然证据支持的无黄金案例和反事实错误存储库控制来评估选择性检索。 Agent Retrieval Bench 包含 25 个存储库中的 427 个样本：345 个正样本、50 个自然无黄金样本和 32 个反事实对照。该语料库包括 308 个基本提交快照、392,000 个文件和 790 万个块。我们评估词汇检索、RepoMap、开源嵌入、选择性弃权和记录的代理上下文选择。没有单一检索家族占主导地位：Qwen3-Embedding-4B 在正样本上具有最佳样本加权 MRR，Qwen3-Embedding-8B 是最佳 Recall@20，而 RepoMap 在 8K 令牌上具有最佳预算上下文产量，任务级别的获胜者差异很大。用反事实控制校准的选择性阈值并不能提高自然无金案例的选择性成功，揭示了校准差距。记录的轨迹还遗漏了 27-35% 样本的每个黄金文件。受控种子干预试验发现，与随机非黄金上下文相比，检索衍生的初始上下文产生更高的文件 F1，且种子后探索更少，而预言机黄金上下文显示出大量剩余空间。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  1    Add to collection     Community         eyuansu71  Paper author  Paper submitter     about 1 hour ago • edited about 1 hour ago        Excited to share Agent Retrieval Bench—a benchmark for the often-overlooked first step of coding agents: finding the repository context they need before writing a patch.ARB includes 427 real-workflow samples across 25 repositories, covering test discovery, review-context retrieval, failure-trace debugging, and change-impact analysis—plus natural and counterfactual cases where agents should abstain. Our results show no single retriever wins everywhere, and current confidence scores still struggle to identify when local repository context is unhelpful.We’d love feedback, reproductions, and new retrieval baselines.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 1 添加到集合 社区 eyuansu71 论文作者 论文提交者 大约 1 小时前 • 大约 1 小时前编辑 很高兴分享 Agent Retrieval Bench——一个经常被忽视的编码代理第一步的基准：在编写补丁之前找到他们需要的存储库上下文。ARB 包括跨 25 个存储库的 427 个真实工作流程样本，涵盖测试发现、审查上下文检索、故障跟踪调试和变革影响分析——加上代理人应该放弃的自然和反事实案例。我们的结果显示，没有任何一个检索器能够在所有地方获胜，并且当前的置信度分数仍然难以识别本地存储库上下文何时无用。我们希望获得反馈、复制品和新的检索基线。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.19712" target="_blank">How Fast Can Reward Models Score? A Systems Study of C++ and PyTorch Inference Runtimes for RLHF</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Venkata Naga Sai Vishnu Rohit Pulipaka, Anish Katta, Deva Rohit Reddy Peddireddy</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.19712" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.19712" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.19712.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  In RLHF pipelines, reward scoring blocks policy updates. Slow scoring bottlenecks the entire loop, since no update runs until every rollout gets a score. And yet most setups just default to PyTorch eager mode or torch.compile, no one checks if that's actually fastest. Scoring itself is small. Rollout generation eats far more of a typical RLHF step. But scoring and generation fight over the same CPU and GPU resources, so a faster scoring engine doesn't shrink step time on its own. It mainly frees up capacity generation can use instead. We built a native C++ inference engine on ONNX Runtime. First step: confirm correctness. Output matched the PyTorch reference to 5.7 x 10^-6 on CPU and 4.2 x 10^-3 on GPU, close enough to trust. Then we tested it against PyTorch eager mode, torch.compile, and FastAPI, on both CPU and GPU. CPU was decisive. Our engine beat every baseline, confidence intervals didn't even overlap. GPU gave a different view: we beat PyTorch and FastAPI, but torch.compile came out ahead. Further testing traced the speedup to ONNX Runtime itself, not C++ as a language. And batching strategy mattered more than either the language or the runtime choice, more than we expected. The results are from repeated, independent runs, since single runs just aren't reliable enough to trust.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 在 RLHF 管道中，奖励评分会阻止策略更新。缓慢的评分会成为整个循环的瓶颈，因为在每次推出都获得分数之前不会运行任何更新。然而大多数设置只是默认为 PyTorch eager 模式或 torch.compile，没有人检查这是否实际上是最快的。得分本身很小。推出一代消耗了更多典型的 RLHF 步骤。但评分和生成会争夺相同的 CPU 和 GPU 资源，因此更快的评分引擎本身并不会缩短步骤时间。它主要是释放发电能力来代替使用。我们在 ONNX Runtime 上构建了本机 C++ 推理引擎。第一步：确认正确性。输出与 PyTorch 参考相匹配，CPU 上为 5.7 x 10^-6，GPU 上为 4.2 x 10^-3，足够接近，值得信赖。然后我们在 CPU 和 GPU 上针对 PyTorch eager 模式、torch.compile 和 FastAPI 进行了测试。 CPU是决定性的。我们的引擎超越了每条基线，置信区间甚至没有重叠。 GPU 给出了不同的观点：我们击败了 PyTorch 和 FastAPI，但 torch.compile 领先。进一步的测试将加速追溯到 ONNX 运行时本身，而不是 C++ 作为一种语言。批处理策略比语言或运行时选择更重要，超出了我们的预期。结果来自重复的独立运行，因为单次运行不够可靠，值得信赖。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  0    Add to collection     Community         pulipakav-1   Paper submitter     about 1 hour ago         We’re excited to share our paper on reward model serving for RLHF: How Fast Can Reward Models Score? A Systems Study of C++ and PyTorch Inference Runtimes for RLHF. We built and benchmarked a native C++ ONNX Runtime engine against PyTorch eager mode, torch.compile, and FastAPI on CPU and GPU, with repeated independent launches for statistical rigor. The paper shows that on CPU the C++/ONNX Runtime path clearly outperforms PyTorch baselines, while on GPU torch.compile is faster at both median and tail latency. We also found that batching strategy matters more than language wrapper choice: naive padding hurts throughput badly, while length-aware bucketing helps only on GPU.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 0 添加到集合 社区 pulipakav-1 论文提交者 大约 1 小时前 我们很高兴分享我们关于为 RLHF 提供奖励模型的论文：奖励模型得分有多快？ RLHF 的 C++ 和 PyTorch 推理运行时的系统研究。我们针对 CPU 和 GPU 上的 PyTorch eager 模式、torch.compile 和 FastAPI 构建了本机 C++ ONNX 运行时引擎并进行了基准测试，并重复独立启动以保证统计的严谨性。该论文表明，在 CPU 上，C++/ONNX 运行时路径明显优于 PyTorch 基线，而在 GPU 上，torch.compile 的中值延迟和尾部延迟都更快。我们还发现批处理策略比语言包装器选择更重要：简单的填充会严重损害吞吐量，而长度感知分桶仅在 GPU 上有帮助。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.25310" target="_blank">Human-in-the-Loop Signature Bootstrapping for UAV Hyperspectral PFM-1 Mine Detection</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Rochester Institute of Technology</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Sagar Lekhak, prasannareddyp, Prasanna Reddy Pulakurthi, Emmett J. Ientilucci</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.25310" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.25310" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.25310.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Hyperspectral imaging (HSI) is useful for material discrimination, but operational mine screening also depends on how many false alarms must be inspected before targets are found. This paper studies PFM-1 landmine detection in unmanned aerial vehicle (UAV) visible and near-infrared (VNIR) HSI using spectral angle mapper (SAM), matched filter (MF), adaptive coherence estimator (ACE), and constrained energy minimization (CEM). We compare a ground-measured SVC signature, a fully informed in-scene core-pixel signature, and a simulated human-in-the-loop signature bootstrap. Besides receiver operating characteristic area under the curve and average precision, we report target-discovery curves and spatial candidate-review counts. Full-review bootstrapping reaches the fully informed in-scene signature case after all seven target regions are verified, but the required inspection effort varies strongly: ACE confirms all regions in two rounds and nine candidate inspections, whereas the SAM variants need thousands of candidate reviews for their final target locations. Code is available at https://github.com/SagarLekhak/IEEE_WHISPERS_2026_UAV_HSI_PFM1.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 高光谱成像 (HSI) 对于物质识别很有用，但操作性地雷筛查还取决于在发现目标之前必须检查多少误报。本文使用光谱角度映射器 (SAM)、匹配滤波器 (MF)、自适应相干估计器 (ACE) 和约束能量最小化 (CEM) 研究无人机 (UAV) 可见光和近红外 (VNIR) HSI 中的 PFM-1 地雷检测。我们比较了地面测量的 SVC 签名、完全知情的场景内核心像素签名和模拟的人在环签名引导程序。除了曲线下的接收者操作特征面积和平均精度之外，我们还报告目标发现曲线和空间候选评论计数。在验证所有七个目标区域后，全面审查引导程序即可达到完全知情的现场签名情况，但所需的检查工作差异很大：ACE 在两轮和九次候选检查中确认所有区域，而 SAM 变体需要对其最终目标位置进行数千次候选审查。代码可在 https://github.com/SagarLekhak/IEEE_WHISPERS_2026_UAV_HSI_PFM1 获取。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub  2    Add to collection     Community         prasannareddyp  Paper author  Paper submitter     about 2 hours ago         In a UAV hyperspectral scene where PFM-1 mines are 0.0042% of pixels (248 of 5.9M), every reasonable detector looks great by ROC-AUC (&gt;0.99 for MF/ACE/CEM). But the number of false candidates an operator must physically walk up to and inspect before all seven mines are found ranges from 9 to 4,558 depending on which detector you picked. Aggregate scores hide nearly all of the operational difference.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF GitHub 2 添加到集合 社区 prasannareddyp 论文作者 论文提交者 大约 2 小时前 在无人机高光谱场景中，PFM-1 地雷占像素的 0.0042%（590 万像素中的 248 个），每个合理的探测器通过 ROC-AUC 看起来都很棒（对于 MF/ACE/CEM，>0.99）。但是，在发现所有七个地雷之前，操作员必须亲自走到并检查的虚假候选者数量从 9 到 4,558 个不等，具体取决于您选择的探测器。总分几乎掩盖了所有的操作差异。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.25108" target="_blank">OPERA: Offline Policy-guided Expert Routing and Adaptation for Universal Biomedical Image Analysis</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>University of Washington</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Zihan Li, Feiyang Liu, Dandan Shan, Ruibo Wang, Qingqi Hong</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.25108" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.25108" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.25108.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Biomedical image analysis spans diverse modalities and tasks, yet real-world deployment is hindered by severe distribution shifts across scanners, protocols, and patient populations. High-performing models consequently require repeated domain-specific fine-tuning, which is a costly cycle that becomes impractical when labels are scarce or privacy constraints limit data sharing. We propose OPERA (Offline Policy-guided Expert Routing and Adaptation), a multi-agent ensemble framework that addresses this deployment bottleneck by treating expert weight assignment as an offline policy learning problem: a routing policy is learned from a small validation set without gradient updates to any expert agent, then deployed with test-time adaptation to handle distribution shift. OPERA coordinates heterogeneous specialist agents through complementary mechanisms. The expert profiling module learns selection policies offline, enabling informed allocation of expertise. Each agent undergoes confidence calibration through temperature adjustment, ensuring more reliable probabilistic outputs. OPERA also incorporates distribution aware adaptation, where class weights are dynamically adjusted at the batch level using statistics derived from unlabeled test data. Instance level routing assigns each sample to the most suitable expert by leveraging inter model agreement and predictive entropy. We evaluate OPERA on 9 datasets covering fundus photography, chest X-ray, CT, MRI, and multimodal diagnostic benchmarks, comparing against 30+ baselines across classification, segmentation, and multimodal settings. OPERA consistently improves performance and calibration quality, demonstrating that offline policy-guided expert agents coordination is a practical path to deployable biomedical AI without retraining. Code is on https://github.com/HUANGLIZI/OPERA{GitHub}.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 生物医学图像分析涵盖多种模式和任务，但现实世界的部署受到扫描仪、协议和患者群体之间严重分布变化的阻碍。因此，高性能模型需要反复进行特定领域的微调，这是一个成本高昂的循环，当标签稀缺或隐私约束限制数据共享时，这种循环就变得不切实际。我们提出了 OPERA（离线策略引导的专家路由和适应），这是一种多智能体集成框架，通过将专家权重分配视为离线策略学习问题来解决此部署瓶颈：从小型验证集中学习路由策略，无需对任何专家智能体进行梯度更新，然后通过测试时适应进行部署以处理分布变化。 OPERA 通过互补机制协调异构专业代理。专家分析模块离线学习选择策略，从而实现专业知识的明智分配。每个智能体都通过温度调整进行置信度校准，确保概率输出更可靠。 OPERA 还结合了分布感知适应，其中使用从未标记的测试数据导出的统计数据在批次级别动态调整类别权重。实例级路由通过利用模型间协议和预测熵将每个样本分配给最合适的专家。我们在涵盖眼底摄影、胸部 X 光、CT、MRI 和多模态诊断基准的 9 个数据集上评估 OPERA，并与分类、分割和多模态设置的 30 多个基线进行比较。 OPERA 不断提高性能和校准质量，证明离线策略指导的专家代理协调是无需重新培训即可部署的生物医学人工智能的实用途径。代码位于 https://github.com/HUANGLIZI/OPERA{GitHub}。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  1    Add to collection     Community         zl111   Paper submitter     about 1 hour ago         We propose OPERA (Offline Policy-guided Expert Routing and Adaptation), a multi-agent ensemble framework that addresses this deployment bottleneck by treating expert weight assignment as an offline policy learning problem: a routing policy is learned from a small validation set without gradient updates to any expert agent, then deployed with test-time adaptation to handle distribution shift. OPERA coordinates heterogeneous specialist agents through complementary mechanisms. The expert profiling module learns selection policies offline, enabling informed allocation of expertise. Each agent undergoes confidence calibration through temperature adjustment, ensuring more reliable probabilistic outputs.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 1 添加到集合 社区 zl111 论文提交者 大约 1 小时前 我们提出了 OPERA（离线策略引导专家路由和适应），这是一个多智能体集成框架，通过将专家权重分配视为离线策略学习问题来解决此部署瓶颈：从小型验证集中学习路由策略，无需对任何专家智能体进行梯度更新，然后通过测试时适应进行部署以处理分布变化。 OPERA 通过互补机制协调异构专业代理。专家分析模块离线学习选择策略，从而实现专业知识的明智分配。每个智能体都通过温度调整进行置信度校准，确保概率输出更可靠。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.22117" target="_blank">Projection Pursuit CPCANet for Domain Generalization</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>The University of Melbourne</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yu-Hsi Chen, Abd-Krim Seghouane</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.22117" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.22117" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.22117.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Domain Generalization (DG) aims to learn representations robust to distribution shifts. Recent geometric alignment methods, such as CPCANet, extract domain-invariant structures through batch-wise Common Principal Component Analysis (CPCA). However, CPCANet suffers from rank-deficient covariance estimation due to the small-sample-size issue in mini-batch training. To address this limitation, we propose Projection Pursuit CPCANet (PP-CPCANet), a covariance-free framework that learns a global orthogonal basis on the Stiefel manifold and jointly optimizes it with network parameters via the Cayley transform. We further introduce a symmetry-breaking detached-median PP dispersion objective to extract common principal components (CPCs) with dense and robust optimization signals. Experiments on four DG benchmarks show that PP-CPCANet achieves SOTA performance while maintaining stable training.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 域泛化（DG）旨在学习对分布变化具有鲁棒性的表示。最近的几何对齐方法，例如 CPCANet，通过批量公共主成分分析 (CPCA) 提取域不变结构。然而，由于小批量训练中的小样本问题，CPCANet 面临着秩亏协方差估计的问题。为了解决这一限制，我们提出了投影追踪 CPCANet (PP-CPCANet)，这是一种无协方差框架，可在 Stiefel 流形上学习全局正交基，并通过凯莱变换与网络参数联合对其进行优化。我们进一步引入了对称性破缺的分离中值 PP 色散目标，以提取具有密集且鲁棒的优化信号的公共主成分 (CPC)。在四个 DG 基准上的实验表明，PP-CPCANet 在保持稳定训练的同时实现了 SOTA 性能。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub     Add to collection     Community         wish44165   Paper submitter     10 minutes ago         We propose Projection Pursuit CPCANet (PP-CPCANet), a covariance-free framework for domain generalization that avoids rank-deficient covariance estimation in mini-batch training. By jointly optimizing a global orthogonal basis on the Stiefel manifold via the Cayley transform and a robust PP dispersion objective, PP-CPCANet learns common principal components with stable optimization. Experiments on four DG benchmarks demonstrate SOTA performance.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF GitHub 添加到集合 社区 Wish44165 论文提交者 10 分钟前 我们提出投影追踪 CPCANet (PP-CPCANet)，这是一种用于领域泛化的无协方差框架，可避免小批量训练中的秩缺陷协方差估计。通过凯莱变换和稳健的 PP 色散目标联合优化 Stiefel 流形上的全局正交基，PP-CPCANet 可以稳定优化地学习公共主成分。四个 DG 基准测试的实验证明了 SOTA 性能。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.17674" target="_blank">Uncovering Latent Reasoning Strategies in Language Models</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Yale University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Awni Altabaa, John Lafferty</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.17674" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.17674" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.17674.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  A language model p_θ(y mid x) trained on reasoning tasks learns to solve problems via multiple distinct strategies, yet these strategies are implicit and entangled within the model's response distribution. We study the problem of decomposing the response distribution of a given pretrained language model into a structured, strategy-conditioned representation. Specifically, we learn a latent-variable factorization p_θ(y mid x) leadsto (r_ϕ(z mid x), g_ϕ(y mid x,z)), where a router r maps each input to a distribution over latent strategies z and a generator g produces the response conditioned on that strategy. A key challenge is that the generator, initialized from the base model, already represents p_θ(y mid x) without using z. Standard variational inference therefore gives the model no incentive to route information through z and can yield a severe form of posterior collapse. To address this, we propose a variational objective that measures fractional information gain relative to the base model's response loss and concentrates reconstruction pressure on tokens with high base model surprisal, encouraging z to encode strategy-relevant response variation. We introduce a benchmark of multi-strategy algorithmic tasks and show that this objective recovers latent codes aligned with distinct reference strategies while preserving the base model's response distribution.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 在推理任务上训练的语言模型 p_θ(y mid x) 学习通过多种不同的策略来解决问题，但这些策略是隐式的并纠缠在模型的响应分布中。我们研究将给定预训练语言模型的响应分布分解为结构化的、策略条件表示的问题。具体来说，我们学习一个潜在变量分解 p_θ(y mid x) 导致 (r_phi(z mid x), g_phi(y mid x,z))，其中路由器 r 将每个输入映射到潜在策略 z 上的分布，并且生成器 g 生成以该策略为条件的响应。一个关键的挑战是，从基础模型初始化的生成器已经表示 p_θ(y mid x)，而不使用 z。因此，标准变分推理使模型没有动力通过 z 路由信息，并且可能产生严重形式的后验崩溃。为了解决这个问题，我们提出了一个变分目标，该目标测量相对于基本模型响应损失的分数信息增益，并将重建压力集中在具有高基本模型意外性的标记上，鼓励 z 编码与策略相关的响应变化。我们引入了多策略算法任务的基准，并表明该目标恢复了与不同参考策略一致的潜在代码，同时保留了基本模型的响应分布。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub  1    Add to collection     Community         awni00   Paper submitter     about 1 hour ago         A language model trained on reasoning tasks learns a response distribution that mixes several distinct solution strategies, but these strategies remain implicit and entangled within the model’s response distribution, with no explicit variable for identifying or controlling the strategy used during generation.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF GitHub 1 添加到集合 社区 agni00 论文提交者 大约 1 小时前 在推理任务上训练的语言模型学习混合了几种不同解决方案策略的响应分布，但这些策略仍然隐式且纠缠在模型的响应分布中，没有显式变量用于识别或控制生成过程中使用的策略。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.22135" target="_blank">GLI-AL: A Multi-Modal Glioma MRI Label Resource with Unified Anatomy-Lesion Labels</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yuxan222, Xingyu Xiang, Shuang Hao, Fan Wang, Jianhua Ma</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.22135" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.22135" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.22135.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Existing BraTS-GLI datasets provide a widely used benchmark for adult glioma MRI segmentation, but their task definition focuses on tumor subregions and does not systematically represent coexisting white matter hyperintensities (WMH). In joint segmentation settings, such unlabeled abnormalities introduce task-specific label noise by treating pathological regions as normal tissue. To address this limitation, we introduce BraTS-GLI Anatomy-Lesion, a controlled-access, labels-only derived resource built from the BraTS 2023-GLI training cohort. The resource provides 1,251 unified eight-class anatomy-lesion label sets aligned with the original four-modal MRI cases, including image-repair labels for 116 cases requiring repaired imaging inputs. The cohort is organized into a 394-case purified subset and an 857-case extended subset, with case-level metadata covering label source, image-repair requirements, quality-control status, access conditions, checksums, and release boundaries. Compared with the original BraTS-GLI annotations, the resource substantially expands foreground supervision by incorporating healthy brain tissues and previously unlabeled coexisting abnormalities within a unified label space. A validation study using MedNeXt and T1/FLAIR inputs suggests that WMH-aware supervision preserves healthy-tissue segmentation performance across both in-domain GLI and external WMH datasets, while improving sensitivity to coexisting lesions relative to noisy-control training. The resource is intended for scientific research and supports joint anatomy-lesion supervision, label-noise analysis, and reproducible evaluation. Data are available at https://www.synapse.org/Synapse:syn75210889/wiki/, and code is available at https://github.com/xyx200/brats-gli-anatomy-lesion-code. The data resource DOI is https://doi.org/10.7303/SYN75210889.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：现有的 BraTS-GLI 数据集为成人胶质瘤 MRI 分割提供了广泛使用的基准，但其任务定义侧重于肿瘤亚区域，并没有系统地代表共存的白质高信号 (WMH)。在关节分割设置中，这种未标记的异常通过将病理区域视为正常组织而引入特定于任务的标签噪声。为了解决这一限制，我们引入了 BraTS-GLI Anatomy-Lesion，这是一种基于 BraTS 2023-GLI 培训队列构建的受控访问、仅标签的衍生资源。该资源提供了 1,251 个统一的八类解剖病变标签集，与原始的四模态 MRI 病例一致，包括 116 个需要修复成像输入的病例的图像修复标签。该队列被组织为 394 个案例的纯化子集和一个 857 个案例的扩展子集，案例级元数据涵盖标签源、图像修复要求、质量控制状态、访问条件、校验和和发布边界。与原始的 BraTS-GLI 注释相比，该资源通过将健康的脑组织和以前未标记的共存异常纳入统一的标签空间，大大扩展了前台监督。使用 MedNeXt 和 T1/FLAIR 输入的验证研究表明，WMH 感知监督可以在域内 GLI 和外部 WMH 数据集上保留健康组织分割性能，同时相对于噪声控制训练提高对共存病变的敏感性。该资源旨在用于科学研究，并支持联合解剖病变监督、标签噪声分析和可重复评估。数据可在 https://www.synapse.org/Synapse:syn75210889/wiki/ 获取，代码可在 https://github.com/xyx200/brats-gli-anatomy-lesion-code 获取。数据资源 DOI 为 https://doi.org/10.7303/SYN75210889。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  0    Add to collection      Community         Yuxan222  Paper author  Paper submitter     18 minutes ago         We are excited to share GLI-AL, a WMH-aware label resource for joint anatomy-lesion segmentation in BraTS-GLI.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 0 添加到集合 社区 Yuxan222 论文作者 论文提交者 18 分钟前 我们很高兴分享 GLI-AL，这是一个用于 BraTS-GLI 中联合解剖病变分割的 WMH 感知标签资源。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.12544" target="_blank">Edge-Aware Thermal Infrared UAV Swarm Tracking</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>The University of Melbourne</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yu-Hsi Chen</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.12544" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.12544" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.12544.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Thermal infrared (TIR) imaging is essential for UAV swarm operations in visually degraded environments. However, tracking tiny UAVs remains challenging due to limited appearance cues, frequent occlusions, and rapid maneuvers. Despite significant progress driven by benchmarks such as the Anti-UAV challenge, existing methods primarily prioritize accuracy while overlooking the computational constraints of real-time edge deployment. The standard Kalman Filter (KF) offers the efficiency required for edge devices, yet its constant-velocity assumption often breaks down under highly dynamic UAV motion and thermal sensor jitter. More sophisticated nonlinear estimators can improve robustness but often introduce additional computational costs. To address this gap, we propose an edge-aware online tracking pipeline centered on the Adaptive Kinematic Kalman Filter (AKKF), which augments the linear KF with state-dependent kinematic modeling while preserving real-time efficiency. Combined with transient false-positive suppression and kinematics-driven predictive coasting, the presented pipeline improves trajectory continuity under challenging TIR conditions. Experiments on the Beyond Strong Baseline (BSB) benchmark provide a starting point for edge-aware UAV tracking by jointly evaluating tracking performance and computational efficiency, offering insights toward future real-time deployment.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 热红外（TIR）成像对于视觉退化环境中无人机群操作至关重要。然而，由于外观线索有限、频繁遮挡和快速机动，跟踪微型无人机仍然具有挑战性。尽管反无人机挑战等基准测试推动了重大进展，但现有方法主要优先考虑准确性，而忽略了实时边缘部署的计算限制。标准卡尔曼滤波器 (KF) 提供了边缘设备所需的效率，但其恒速假设在高度动态的无人机运动和热传感器抖动下通常会失效。更复杂的非线性估计器可以提高鲁棒性，但通常会带来额外的计算成本。为了解决这一差距，我们提出了一种以自适应运动学卡尔曼滤波器（AKKF）为中心的边缘感知在线跟踪管道，它通过状态相关的运动学建模增强了线性 KF，同时保持了实时效率。结合瞬态假阳性抑制和运动学驱动的预测滑行，所提出的流程在具有挑战性的 TIR 条件下提高了轨迹连续性。超越强基线 (BSB) 基准测试的实验通过联合评估跟踪性能和计算效率，为边缘感知无人机跟踪提供了一个起点，为未来的实时部署提供见解。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community         wish44165   Paper submitter     14 minutes ago • edited 14 minutes ago        We present an edge-aware online tracking pipeline for tiny UAVs in challenging thermal infrared environments. Our Adaptive Kinematic Kalman Filter (AKKF) improves motion modeling while maintaining real-time efficiency, complemented by false-positive suppression and kinematics-driven predictive coasting for robust trajectory continuity.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 Wish44165 论文提交者 14 分钟前 • 编辑 14 分钟前 我们为具有挑战性的热红外环境中的微型无人机提供边缘感知在线跟踪管道。我们的自适应运动学卡尔曼滤波器 (AKKF) 改进了运动建模，同时保持实时效率，并辅以误报抑制和运动学驱动的预测滑行，以实现稳健的轨迹连续性。</p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+        
+        <div class="nav-buttons">
+            <a href="2026-07-28.html" class="nav-btn">← 2026-07-28</a>
+            <a href="2026-07-30.html" class="nav-btn">2026-07-30 →</a>
+        </div>
+        
+        <footer>
+            Generated by <a href="https://github.com" target="_blank">HF Papers Daily</a>
+        </footer>
+    </div>
+    
+    <script>
+        function toggleAbstract(header) {
+            const toggle = header.querySelector('.abstract-toggle');
+            const content = header.nextElementSibling;
+            toggle.classList.toggle('expanded');
+            content.classList.toggle('expanded');
+        }
+    </script>
+</html>

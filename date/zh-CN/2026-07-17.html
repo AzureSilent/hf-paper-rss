@@ -1,0 +1,1731 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hugging Face Papers - 2026-07-17 (zh-CN)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .date {
+            font-size: 1.2em;
+            color: #a0a0a0;
+        }
+        
+        .stats {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #888;
+        }
+        
+        .paper-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .paper-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(102, 126, 234, 0.5);
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.2);
+        }
+        
+        .paper-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        
+        .paper-title a {
+            color: #e0e0e0;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .paper-title a:hover {
+            color: #667eea;
+        }
+        
+        .paper-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            color: #a0a0a0;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .meta-label {
+            color: #888;
+        }
+        
+        .links {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .link-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .link-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .link-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .abstract-section {
+            margin-top: 15px;
+        }
+        
+        .abstract-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .abstract-header:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .abstract-toggle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+            transition: transform 0.3s;
+        }
+        
+        .abstract-toggle.expanded {
+            transform: rotate(180deg);
+        }
+        
+        .abstract-label {
+            font-weight: 500;
+            color: #667eea;
+        }
+        
+        .abstract-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding: 0 15px;
+        }
+        
+        .abstract-content.expanded {
+            max-height: 10000px;
+            padding: 15px;
+        }
+        
+        .abstract-text {
+            line-height: 1.7;
+            color: #c0c0c0;
+        }
+        
+        .summary-box {
+            background: rgba(102, 126, 234, 0.1);
+            border-left: 3px solid #667eea;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .summary-label {
+            font-size: 0.8em;
+            color: #667eea;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .summary-text {
+            color: #b0b0b0;
+            line-height: 1.5;
+        }
+        
+        .translation-box {
+            background: rgba(118, 75, 162, 0.1);
+            border-left: 3px solid #764ba2;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .translation-label {
+            font-size: 0.8em;
+            color: #764ba2;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .translation-text {
+            color: #b0b0b0;
+            line-height: 1.5;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding: 0 10px;
+        }
+        
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .nav-btn.disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: #666;
+            pointer-events: none;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .paper-title {
+                font-size: 1.1em;
+            }
+            
+            .links {
+                flex-wrap: wrap;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-btn {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Hugging Face Papers</h1>
+            <div class="date">2026-07-17</div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number">29</div>
+                    <div class="stat-label">Papers</div>
+                </div>
+            </div>
+        </header>
+        
+        <main>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.14935" target="_blank">VideoChat3: Fully Open Video MLLM for Efficient and Generalist Video Understanding</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Multimedia Computing Group-Nanjing University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Xinhao Li, Yuhan Zhu, Xiangyu Zeng, Yuhao Dong, Haoning Wu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.14935" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.14935" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.14935.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Recent advances in video understanding have spanned motion, long video, and streaming interaction, driving this field toward real-world applications. Despite this progress, current open-source models remain limited in several ways. They often struggle to generalize across diverse video types, making them effective only in specific domains. High computational demands further restrict their efficiency and scalability. Moreover, most models are only partially open, with key components such as training code, strategy, or datasets unavailable, which hinders reproducibility and slows community-driven development. To address these issues, we introduce VideoChat3, a fully open, efficient, and generalist video-centric MLLM. VideoChat3 advances video understanding through two complementary designs. For efficiency, we introduce Inflated 3D Vision Transformer (I3D-ViT) and Adaptive Frame Resolution for Streaming Video Perception, which enables efficient spatiotemporal representation and reduces the cost of processing video inputs during training and inference. For effectiveness, we develop a scalable video data synthesis pipeline that curates three diverse, high-quality training datasets: VideoChat3-Academic2M, VideoChat3-LV116K, and VideoChat3-OL617K, covering general, long-form, and streaming video scenarios, improving the model's generalization across domains. By integrating these designs, VideoChat3 achieves a rare balance of broad generalization and computational efficiency. Experiments across general, long-form, and streaming benchmarks demonstrate that VideoChat3 surpasses prior open-source models with equal or larger parameter counts with only 4B parameters and higher efficiency.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 视频理解领域的最新进展涵盖了运动、长视频和流交互，推动该领域走向现实世界的应用。尽管取得了这些进展，当前的开源模型在几个方面仍然受到限制。他们通常很难概括不同的视频类型，从而使其仅在特定领域有效。高计算需求进一步限制了它们的效率和可扩展性。此外，大多数模型只是部分开放，训练代码、策略或数据集等关键组件不可用，这阻碍了可重复性并减慢了社区驱动的开发。为了解决这些问题，我们推出了 VideoChat3，这是一个完全开放、高效且通用的以视频为中心的 MLLM。 VideoChat3 通过两种互补的设计提高视频理解能力。为了提高效率，我们引入了充气 3D 视觉变换器 (I3D-ViT) 和用于流视频感知的自适应帧分辨率，它可以实现高效的时空表示，并降低训练和推理期间处理视频输入的成本。为了提高效率，我们开发了一个可扩展的视频数据合成管道，可提供三个多样化的高质量训练数据集：VideoChat3-Academic2M、VideoChat3-LV116K 和 VideoChat3-OL617K，涵盖一般、长格式和流视频场景，提高模型跨领域的泛化能力。通过集成这些设计，VideoChat3 在广泛的泛化性和计算效率之间实现了罕见的平衡。跨通用、长格式和流媒体基准测试的实验表明，VideoChat3 超越了之前的开源模型，参数数量相同或更大，参数数量仅为 4B，效率更高。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  3    Add to collection     Community         lmwang   Paper submitter    34 minutes ago         We introduce VideoChat3, a fully open, efficient, and generalist video-centric MLLM. VideoChat3 advances video understanding through two complementary designs. For efficiency, we introduce Inflated 3D Vision Transformer (I3D-ViT) and Adaptive Frame Resolution for Streaming Video Perception, which enables efficient spatiotemporal representation and reduces the cost of processing video inputs during training and inference. For effectiveness, we develop a scalable video data synthesis pipeline that curates three diverse, high-quality training datasets: VideoChat3-Academic2M, VideoChat3-LV116K, and VideoChat3-OL617K, covering general, long-form, and streaming video scenarios, improving the model's generalization across domains. By integrating these designs, VideoChat3 achieves a rare balance of broad generalization and computational efficiency. Experiments across general, long-form, and streaming benchmarks demonstrate that VideoChat3 surpasses prior open-source models with equal or larger parameter counts with only 4B parameters and higher efficiency.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 3 添加到集合 社区 lmwang 论文提交者 34 分钟前 我们推出 VideoChat3，一个完全开放、高效、通才的以视频为中心的 MLLM。 VideoChat3 通过两种互补的设计提高视频理解能力。为了提高效率，我们引入了充气 3D 视觉变换器 (I3D-ViT) 和用于流视频感知的自适应帧分辨率，它可以实现高效的时空表示，并降低训练和推理期间处理视频输入的成本。为了提高效率，我们开发了一个可扩展的视频数据合成管道，可提供三个多样化的高质量训练数据集：VideoChat3-Academic2M、VideoChat3-LV116K 和 VideoChat3-OL617K，涵盖一般、长格式和流视频场景，提高模型跨领域的泛化能力。通过集成这些设计，VideoChat3 在广泛的泛化性和计算效率之间实现了罕见的平衡。跨通用、长格式和流媒体基准测试的实验表明，VideoChat3 超越了之前的开源模型，参数数量相同或更大，参数数量仅为 4B，效率更高。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.14777" target="_blank">SEED: Self-Evolving On-Policy Distillation for Agentic Reinforcement Learning</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Jinyang Wu, Shuo Yang, Zhengxi Lu, Fan Zhang, Yuhao Shen</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.14777" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.14777" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.14777.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Large language models are increasingly trained as interactive agents for long-horizon tasks involving multi-turn interaction, tool use, and environment feedback. Outcome-based reinforcement learning (RL) provides a practical optimization paradigm, but its sparse trajectory-level rewards offer limited guidance on intermediate decisions, leaving a supervision gap between episode-level outcomes and token-level policy learning. We propose SEED (SElf-Evolving On-Policy Distillation), a self-evolving framework that converts completed on-policy trajectories into training-time hindsight skills and distills their behavioral effect back into the policy model. SEED first fine-tunes the policy to analyze completed trajectories and generate natural-language skills that capture reusable workflows, decisive observations, or failure-avoidance rules. During RL, the current policy both collects trajectories and serves as the analyzer that extracts hindsight skills from them. Policy updates therefore improve subsequent decision making and skill analysis together, allowing hindsight supervision to evolve with the policy. SEED then re-scores the sampled actions under ordinary and skill-augmented contexts, converting the skill-induced probability shift into a dense token-level on-policy distillation signal. This signal is jointly optimized with outcome-based RL, keeping the auxiliary supervision aligned with the current trajectory distribution. Extensive experiments on text-based and vision-based agentic tasks show that SEED consistently improves performance and sample efficiency, exhibiting robust generalization to unseen scenarios. Our code is available at https://github.com/jinyangwu/SEED.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 大型语言模型越来越多地被训练为交互式代理，用于涉及多轮交互、工具使用和环境反馈的长期任务。基于结果的强化学习（RL）提供了一种实用的优化范式，但其稀疏的轨迹级奖励对中间决策的指导有限，在情节级结果和代币级策略学习之间留下了监督差距。我们提出了 SEED（SElf-Evolving On-Policy Distillation），这是一种自我进化框架，可将完整的在政策轨迹转换为训练时的后见之明技能，并将其行为效果提炼回政策模型。 SEED 首先对策略进行微调，以分析完整的轨迹并生成自然语言技能，以捕获可重用的工作流程、决定性的观察结果或故障避免规则。在强化学习期间，当前策略既收集轨迹，又充当分析器，从中提取事后技能。因此，政策更新可以共同改善后续决策和技能分析，从而使事后监督能够随着政策的发展而发展。然后，SEED 在普通和技能增强的环境下对采样的操作进行重新评分，将技能引起的概率转变转换为密集的代币级策略蒸馏信号。该信号与基于结果的强化学习联合优化，使辅助监督与当前轨迹分布保持一致。对基于文本和基于视觉的代理任务的大量实验表明，SEED 不断提高性能和样本效率，对未见过的场景表现出强大的泛化能力。我们的代码可在 https://github.com/jinyangwu/SEED 获取。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  19    Add to collection     Community         Jinyang23   Paper submitter    about 1 hour ago</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 19 添加到集合 社区 Jinyang23 论文提交者 大约 1 小时前</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.14952" target="_blank">LongStraw: Long-Context RL Beyond 2M Tokens under a Fixed GPU Budget</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Mind Lab</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Changhai Zhou, Kieran Liu, Yuhua Zhou, Qian Qiao, Jun Gao</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.14952" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.14952" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.14952.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  A growing gap separates inference context lengths from RL post-training: inference systems are approaching million-token contexts, while post-training workloads often remain at 256K tokens or below and rely on length generalization at deployment. The gap is especially important for AI agents, whose observations, tool outputs, documents, and prior decisions accumulate over long trajectories. LongStraw is an architecture-aware execution stack for million-token RL post-training under a fixed GPU budget, instantiated with Group Relative Policy Optimization (GRPO). It evaluates the shared prompt without autograd, retains only model-specific state needed by later tokens, and replays short response branches one at a time, reducing the live training graph at the cost of additional replay time. We implement it for the hybrid recurrent and full-attention Qwen3.6-27B and the compressed-attention mixture-of-experts GLM-5.2. On eight H20 GPUs, LongStraw completes grouped Qwen scoring and response backward at 2.1M positions for groups of 2 and 8; increasing the group size adds only 0.21 GB of peak allocated memory, while a separate stress test reaches 4.46M positions. On 32 H20 GPUs, we validate the end-to-end LongStraw execution path for a 2.1M-token prompt across all 78 layers of GLM-5.2. These experiments establish execution capacity rather than complete training correctness because the captured prompt state is detached and some distributed forward and gradient composition paths remain incomplete.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 推理上下文长度与 RL 训练后的差距越来越大：推理系统正在接近百万个令牌上下文，而训练后工作负载通常保持在 256K 令牌或更低，并且依赖于部署时的长度泛化。这种差距对于人工智能代理来说尤其重要，因为人工智能代理的观察、工具输出、文档和先前的决策都是在很长的轨迹上积累的。 LongStraw 是一个架构感知执行堆栈，用于在固定 GPU 预算下进行百万代币 RL 后训练，并通过组相对策略优化 (GRPO) 进行实例化。它在没有自动分级的情况下评估共享提示，仅保留后续令牌所需的特定于模型的状态，并一次重播一个短响应分支，以额外重播时间为代价减少实时训练图。我们将其实现为混合循环和全注意力 Qwen3.6-27B 和压缩注意力专家混合 GLM-5.2。在 8 个 H20 GPU 上，LongStraw 在 2 组和 8 组的 210 万个位置上完成分组 Qwen 评分和响应；增加组大小仅增加 0.21 GB 峰值分配内存，而单独的压力测试达到 4.46M 位置。在 32 个 H20 GPU 上，我们验证了 GLM-5.2 所有 78 层中 210 万个令牌提示的端到端 LongStraw 执行路径。这些实验建立的是执行能力而不是完整的训练正确性，因为捕获的提示状态是分离的，并且一些分布式前向和梯度合成路径仍然不完整。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub  0    Add to collection     Community         xtma   Paper submitter    about 1 hour ago         We present LongStraw, an architecture-aware execution stack for million-token RL post-training under a fixed GPU budget, instantiated with Group Relative Policy Optimization (GRPO). LongStraw evaluates the shared prompt once without automatic differentiation, retains only the model-specific state required by later tokens, and replays short response branches one at a time under autograd. This reduces the live training graph from the full prompt and response sequence to a single response branch, trading additional replay time for lower GPU memory usage. We implement LongStraw for two substantially different model families: the hybrid recurrent and full-attention Qwen3.6-27B, and the compressed-attention mixture-of-experts GLM-5.2.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF GitHub 0 添加到集合 社区 xtma 论文提交者 大约 1 小时前 我们推出了 LongStraw，这是一个架构感知执行堆栈，用于在固定 GPU 预算下进行百万代币 RL 后训练，并使用组相对策略优化 (GRPO) 进行实例化。 LongStraw 在没有自动微分的情况下对共享提示进行一次评估，仅保留后续标记所需的特定于模型的状态，并在 autograd 下一次重放一个简短的响应分支。这将实时训练图从完整的提示和响应序列减少到单个响应分支，以额外的重放时间换取更低的 GPU 内存使用量。我们为两个截然不同的模型系列实现了 LongStraw：混合循环和全注意力 Qwen3.6-27B，以及压缩注意力混合专家 GLM-5.2。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.15257" target="_blank">SearchOS-V1: Towards Robust Open-Domain Information-Seeking Agent Collaboration</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Ant Group</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yuyao Zhang, Junjie Gao, Zhengxian Wu, Jiaming Fan, Jin Zhang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.15257" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.15257" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.15257.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Recent advances in Tool-Integrated Large Language Models have made web search a core capability of information-seeking agents. However, as interaction histories grow, agents increasingly struggle to track task progress. When search attempts fail to yield useful evidence, current single- and multi-agent systems can become trapped in repetitive loops, wasting search budgets and ultimately compromising the quality and completeness of the final output. We introduce SearchOS, a system-level multi-agent framework that turns fragile, implicit search progress into explicit, persistent, and shared state. First, we formulate open-domain information seeking as relational schema completion with grounded citations, where agents discover entities, populate attributes across linked tables, and anchor each value to source evidence. Then we design Search-Oriented Context Management (SOCM), which externalizes the evolving state into Frontier Task, an Evidence Graph, a Coverage Map, and Failure Memory. Built on SOCM, SearchOS applies a pipeline-parallel scheduling mechanism that overlaps the execution of sub-agents and continuously refills freed slots with tasks targeting unresolved coverage gaps to improve utilization and throughput. To schedule and control the execution of search agents, SearchOS introduces a Search Tool Middleware Harness that intercepts model and tool interactions to record grounded evidence and react to stalls or budget exhaustion, and provides a reusable hierarchical skill system comprising strategy and access skills to augment the agents' search process and avoid repeating failed search patterns across runs. On WideSearch and GISA, SearchOS leads all metrics among the evaluated single- and multi-agent baselines, paving the way toward robust information-seeking collaboration.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 工具集成大语言模型的最新进展使网络搜索成为信息查找代理的核心能力。然而，随着交互历史的增长，代理越来越难以跟踪任务进度。当搜索尝试未能产生有用的证据时，当前的单智能体和多智能体系统可能会陷入重复循环，浪费搜索预算并最终损害最终输出的质量和完整性。我们引入了 SearchOS，这是一个系统级多代理框架，它将脆弱的、隐式的搜索进度转变为显式的、持久的和共享的状态。首先，我们将开放域信息搜索制定为具有基础引用的关系模式完成，其中代理发现实体，跨链接表填充属性，并将每个值锚定到源证据。然后我们设计面向搜索的上下文管理（SOCM），它将演化状态具体化为前沿任务、证据图、覆盖图和故障记忆。 SearchOS 基于 SOCM 构建，采用管道并行调度机制，该机制与子代理的执行重叠，并不断用针对未解决的覆盖间隙的任务重新填充空闲槽，以提高利用率和吞吐量。为了安排和控制搜索代理的执行，SearchOS 引入了搜索工具中间件框架，该工具可拦截模型和工具交互以记录证据并对停滞或预算耗尽做出反应，并提供可重用的分层技能系统，其中包括策略和访问技能，以增强代理的搜索过程并避免在运行中重复失败的搜索模式。在 WideSearch 和 GISA 上，SearchOS 在评估的单代理和多代理基线中的所有指标均领先，为强大的信息寻求协作铺平了道路。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub  32    Add to collection         Community   EditPreview      Upload images, audio, and videos by dragging in the text input, pasting, or clicking here. Tap or paste here to upload images        Comment · Sign up or log in to comment</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF GitHub 32 添加到集合 社区 EditPreview 通过拖入文本输入、粘贴或单击此处上传图像、音频和视频。点击或粘贴此处上传图片 评论 · 注册或登录以发表评论</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.15207" target="_blank">BadWAM: When World-Action Models Dream Right but Act Wrong</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Qi Li, Xingyi Yang, Xinchao Wang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.15207" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.15207" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.15207.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  World-action models (WAMs) are emerging as a promising foundation for embodied control: rather than predicting actions alone, they learn representations that couple action generation with future world prediction. This coupling is often viewed as a source of robustness, interpretability, and safety, as a robot's action can in principle be checked against its imagined future. In this paper, we show that this assumption is fragile. We introduce BadWAM, a unified framework for modeling and evaluating World-Action Drift Attacks: a new class of WAM-specific adversarial attacks that use small visual perturbations to break the alignment between what a WAM imagines and what it executes. BadWAM characterizes this attack surface along two natural criteria: attack strength and stealthiness. When the adversary prioritizes disruption, BadWAM instantiates an action-only adversarial attack, which directly drives the model toward task-failing actions. When the adversary additionally prioritizes stealth, BadWAM instantiates an imagination-preserving adversarial attack, which seeks to induce harmful action shifts while keeping the model's predicted future close to its clean imagination. Together, these two attacks capture a spectrum of WAM-specific failures: from overt action hijacking to stealthier cases where the model appears to imagine a plausible future but executes a desynchronized action. We evaluate BadWAM across different variants of WAMs. Results show that our attacks substantially reduce task success rates under closed-loop execution. For example, our action-only attack reduces the model performance from 96.5% to 43.1% success. The results of our imagination-preserving attack further exposes a WAM-specific vulnerability: moderate future-preserving regularization can maintain strong attack performance while reducing future imagination drift.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 世界动作模型（WAM）正在成为体现控制的有希望的基础：它们不是单独预测动作，而是学习将动作生成与未来世界预测相结合的表示。这种耦合通常被视为鲁棒性、可解释性和安全性的来源，因为机器人的动作原则上可以根据其想象的未来进行检查。在本文中，我们表明这种假设是脆弱的。我们引入了 BadWAM，这是一个用于建模和评估世界动作漂移攻击的统一框架：一种新型的特定于 WAM 的对抗性攻击，它使用小的视觉扰动来打破 WAM 想象和执行之间的一致性。 BadWAM 按照两个自然标准来描述此攻击面：攻击强度和隐蔽性。当对手优先考虑破坏时，BadWAM 会实例化仅采取行动的对抗性攻击，这会直接推动模型采取任务失败的行动。当对手额外优先考虑隐身时，BadWAM 会实例化一种保留想象力的对抗性攻击，旨在引发有害的行动转变，同时使模型的预测未来接近其干净的想象力。这两种攻击共同捕获了一系列特定于 WAM 的故障：从公开的操作劫持到模型似乎想象了一个合理的未来但执行不同步操作的隐秘情况。我们评估了不同 WAM 变体的 BadWAM。结果表明，我们的攻击大大降低了闭环执行下的任务成功率。例如，我们的纯行动攻击将模型性能从 96.5% 成功率降低到 43.1%。我们的想象力保留攻击的结果进一步暴露了 WAM 特有的漏洞：适度的未来保留正则化可以保持强大的攻击性能，同时减少未来的想象力漂移。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  9    Add to collection     Community         LIQIIIII   Paper submitter    about 1 hour ago         BadWAM models World-Action Drift Attacks: a new class of WAM-specific adversarial attacks that use small visual perturbations to break the alignment between what a WAM imagines and what it executes. It instantiates two complementary objectives. The action-only adversarial attack prioritizes disruption by driving the model toward task-failing actions. The imagination-preserving adversarial attack additionally keeps the predicted future close to the clean imagination, producing a stealthier failure mode.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 9 添加到集合 社区 LIQIIIIII 论文提交者 大约 1 小时前 BadWAM 对 World-Action Drift Attacks 进行建模：一类新的特定于 WAM 的对抗性攻击，它使用小的视觉扰动来打破 WAM 想象和执行之间的一致性。它实例化了两个互补的目标。仅采取行动的对抗性攻击通过将模型推向任务失败的行动来优先考虑破坏。保留想象力的对抗性攻击还使预测的未来接近干净的想象力，从而产生更隐蔽的故障模式。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.14202" target="_blank">KeyFrame-Compass: Towards Comprehensive Evaluation of Keyframe-Conditioned Video Generation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Kling Team</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yuqi Tang, Tengfei Liu, Yizheng Lai, Yuran Wang, Yang Shi</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.14202" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.14202" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.14202.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Video generation increasingly relies on keyframe-based workflows, where creators specify a sequence of reference images to guide generation. Although recent models support multi-keyframe conditioning, it remains unclear whether they can faithfully reproduce the prescribed keyframes while maintaining overall video quality. We present KeyFrame-Compass, the first comprehensive benchmark for evaluating keyframe-conditioned video generation. The benchmark contains 386 carefully curated samples spanning three application domains, two video structures, two prompt granularities, two conditioning formats, and four keyframe densities, enabling controlled analysis under diverse generation settings. We further introduce an automated evaluation framework that jointly measures keyframe execution and overall video quality. Specifically, we decompose keyframe execution into six complementary metrics covering presence, fidelity, temporal ordering, localization, persistence, and uniqueness, while assessing overall video quality through evidence-grounded MLLM judgments augmented with specialized perception models. Experiments on nine representative video generation systems reveal several fundamental limitations. Current models exhibit a clear trade-off between faithful keyframe execution and natural video synthesis. Their performance further degrades as keyframe constraints become denser and most open-source models also fail to interpret storyboard-grid inputs as temporally ordered keyframe sequences.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 视频生成越来越依赖于基于关键帧的工作流程，其中创建者指定一系列参考图像来指导生成。尽管最近的模型支持多关键帧调节，但仍不清楚它们是否能够忠实地再现规定的关键帧，同时保持整体视频质量。我们推出了 KeyFrame-Compass，这是第一个用于评估关键帧调节视频生成的综合基准。该基准测试包含 386 个精心策划的样本，涵盖三个应用领域、两种视频结构、两种提示粒度、两种调节格式和四种关键帧密度，从而能够在不同的生成设置下进行受控分析。我们进一步引入了一个自动评估框架，可以联合测量关键帧执行和整体视频质量。具体来说，我们将关键帧执行分解为六个互补指标，涵盖存在性、保真度、时间顺序、本地化、持久性和唯一性，同时通过基于证据的 MLLM 判断并辅以专门的感知模型来评估整体视频质量。对九个代表性视频生成系统的实验揭示了几个基本局限性。当前模型在忠实关键帧执行和自然视频合成之间表现出明显的权衡。随着关键帧约束变得更加密集，并且大多数开源模型也无法将故事板网格输入解释为按时间排序的关键帧序列，它们的性能进一步下降。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub     Add to collection     Community         DogNeverSleep   Paper submitter    12 minutes ago         Video generation increasingly relies on keyframe-based workflows, where creators specify a sequence of reference images to guide generation. Although recent models support multi-keyframe conditioning, it remains unclear whether they can faithfully reproduce the prescribed keyframes while maintaining overall video quality. We present KeyFrame-Compass, the first comprehensive benchmark for evaluating keyframe-conditioned video generation. The benchmark contains 386 carefully curated samples spanning three application domains, two video structures, two prompt granularities, two conditioning formats, and four keyframe densities, enabling controlled analysis under diverse generation settings. We further introduce an automated evaluation framework that jointly measures keyframe execution and overall video quality. Specifically, we decompose keyframe execution into six complementary metrics covering presence, fidelity, temporal ordering, localization, persistence, and uniqueness, while assessing overall video quality through evidence-grounded MLLM judgments augmented with specialized perception models. Experiments on nine representative video generation systems reveal several fundamental limitations. Current models exhibit a clear trade-off between faithful keyframe execution and natural video synthesis. Their performance further degrades as keyframe constraints become denser and most open-source models also fail to interpret storyboard-grid inputs as temporally ordered keyframe sequences.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF GitHub 添加到集合 社区 DogNeverSleep 论文提交者 12 分钟前 视频生成越来越依赖于基于关键帧的工作流程，其中创建者指定一系列参考图像来指导生成。尽管最近的模型支持多关键帧调节，但仍不清楚它们是否能够忠实地再现规定的关键帧，同时保持整体视频质量。我们推出了 KeyFrame-Compass，这是第一个用于评估关键帧调节视频生成的综合基准。该基准测试包含 386 个精心策划的样本，涵盖三个应用领域、两种视频结构、两种提示粒度、两种调节格式和四种关键帧密度，从而能够在不同的生成设置下进行受控分析。我们进一步引入了一个自动评估框架，可以联合测量关键帧执行和整体视频质量。具体来说，我们将关键帧执行分解为六个互补指标，涵盖存在性、保真度、时间顺序、本地化、持久性和唯一性，同时通过基于证据的 MLLM 判断并辅以专门的感知模型来评估整体视频质量。对九个代表性视频生成系统的实验揭示了几个基本局限性。当前模型在忠实关键帧执行和自然视频合成之间表现出明显的权衡。随着关键帧约束变得更加密集，并且大多数开源模型也无法将故事板网格输入解释为按时间排序的关键帧序列，它们的性能进一步下降。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.14189" target="_blank">MultiRef-Compass: Towards Comprehensive Evaluation of Multi-Reference-to-Audio-Video Generation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Kling Team</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Xiaohan Zhang, Yuqing Wen, Junlin Chen, Yuqi Tang, Yiting He</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.14189" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.14189" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.14189.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Multi-reference-to-audio-video (MR2AV) generation aims to generate coherent audio-video content conditioned on multiple references and textual instructions. Existing benchmarks mainly focus on text-driven generation, single-reference subject preservation, or isolated audio-video alignment, leaving the emerging MR2AV setting largely unexplored. Compared with these settings, MR2AV requires models to jointly reason over multiple references while generating synchronized visual and audio content. Models must not only preserve each reference faithfully but also correctly bind and compose multiple referenced entities into coherent audio-visual events. To address this gap, we introduce MultiRef-Compass, a unified benchmark for MR2AV generation. It comprises 350 carefully curated samples constructed through a scalable and controllable asset-composition pipeline, covering multi-view subject preservation, multi-entity binding, and human-object-scene composition. To provide interpretable assessment, MultiRef-Compass defines an evaluation protocol with four dimensions: Basic Quality, Reference Consistency, Audio-Visual Consistency, and Instruction Following, using 14 sub-metrics. MultiRef-Compass integrates automatic metrics with a rejudging-enhanced MLLM-as-a-Judge framework, enabling scalable and auditable evaluation of both perceptual fidelity and reference-conditioned composition. Extensive experiments on eight representative MR2AV systems reveal substantial room for improvement across multiple evaluation dimensions, underscoring the need for a comprehensive benchmark and positioning MultiRef-Compass as a foundation for future MR2AV research.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 多参考音频视频（MR2AV）生成旨在根据多个参考和文本指令生成连贯的音频视频内容。现有的基准测试主要关注文本驱动的生成、单参考主题保存或独立的音频-视频对齐，而新兴的 MR2AV 设置在很大程度上尚未得到探索。与这些设置相比，MR2AV 要求模型对多个参考进行联合推理，同时生成同步的视觉和音频内容。模型不仅必须忠实地保存每个引用，而且必须正确地将多个引用实体绑定并组合成连贯的视听事件。为了解决这一差距，我们引入了 MultiRef-Compass，这是 MR2AV 生成的统一基准。它包含通过可扩展且可控的资产组合管道构建的 350 个精心策划的样本，涵盖多视图主题保存、多实体绑定和人物场景组合。为了提供可解释的评估，MultiRef-Compass 使用 14 个子指标定义了具有四个维度的评估协议：基本质量、参考一致性、视听一致性和指令遵循。 MultiRef-Compass 将自动指标与重新判断增强型 MLLM-as-a-Judge 框架集成在一起，从而能够对感知保真度和参考条件合成进行可扩展且可审核的评估。对八个代表性 MR2AV 系统进行的广泛实验揭示了多个评估维度的巨大改进空间，强调了对综合基准的需求，并将 MultiRef-Compass 定位为未来 MR2AV 研究的基础。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub     Add to collection     Community         DogNeverSleep   Paper submitter    6 minutes ago         Multi-reference-to-audio-video (MR2AV) generation aims to generate coherent audio-video content conditioned on multiple references and textual instructions. Existing benchmarks mainly focus on text-driven generation, single-reference subject preservation, or isolated audio-video alignment, leaving the emerging MR2AV setting largely unexplored. Compared with these settings, MR2AV requires models to jointly reason over multiple references while generating synchronized visual and audio content. Models must not only preserve each reference faithfully but also correctly bind and compose multiple referenced entities into coherent audio-visual events. To address this gap, we introduce MultiRef-Compass, a unified benchmark for MR2AV generation. It comprises 350 carefully curated samples constructed through a scalable and controllable asset-composition pipeline, covering multi-view subject preservation, multi-entity binding, and human-object-scene composition. To provide interpretable assessment, MultiRef-Compass defines an evaluation protocol with four dimensions: Basic Quality, Reference Consistency, Audio-Visual Consistency, and Instruction Following, using 14 sub-metrics. MultiRef-Compass integrates automatic metrics with a rejudging-enhanced MLLM-as-a-Judge framework, enabling scalable and auditable evaluation of both perceptual fidelity and reference-conditioned composition. Extensive experiments on eight representative MR2AV systems reveal substantial room for improvement across multiple evaluation dimensions, underscoring the need for a comprehensive benchmark and positioning MultiRef-Compass as a foundation for future MR2AV research.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF GitHub 添加到集合 社区 DogNeverSleep 论文提交者 6 分钟前 音频视频多引用 (MR2AV) 生成旨在生成以多个引用和文本指令为条件的连贯音频视频内容。现有的基准测试主要关注文本驱动的生成、单参考主题保存或独立的音频-视频对齐，而新兴的 MR2AV 设置在很大程度上尚未得到探索。与这些设置相比，MR2AV 要求模型对多个参考进行联合推理，同时生成同步的视觉和音频内容。模型不仅必须忠实地保存每个引用，而且必须正确地将多个引用实体绑定并组合成连贯的视听事件。为了解决这一差距，我们引入了 MultiRef-Compass，这是 MR2AV 生成的统一基准。它包含通过可扩展且可控的资产组合管道构建的 350 个精心策划的样本，涵盖多视图主题保存、多实体绑定和人物场景组合。为了提供可解释的评估，MultiRef-Compass 使用 14 个子指标定义了具有四个维度的评估协议：基本质量、参考一致性、视听一致性和指令遵循。 MultiRef-Compass 将自动指标与重新判断增强型 MLLM-as-a-Judge 框架集成在一起，从而能够对感知保真度和参考条件合成进行可扩展且可审核的评估。对八个代表性 MR2AV 系统进行的广泛实验揭示了多个评估维度的巨大改进空间，强调了对综合基准的需求，并将 MultiRef-Compass 定位为未来 MR2AV 研究的基础。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.14076" target="_blank">From Pixels to States: Rethinking Interactive World Models as Game Engines</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Alaya Studio</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Zhen Li, Zian Meng, Shuwei Shi, Mingliang Zhai, Jiaming Tan</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.14076" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.14076" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.14076.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Building interactive worlds that respond coherently to player actions has long been a shared goal of computer graphics, games, and artificial intelligence. Recent video generative models provide a data-driven route toward this goal by predicting future observations conditioned on user actions, and are increasingly regarded as potential next-generation game engines. Realizing a genuinely interactive game world, however, requires interaction outcomes that follow rules over evolving game conditions, consequences that persist over long horizons, and a generation loop that operates in real time. Conventional game engines realize these properties through a recurrent action-state-observation loop, in which player actions update an explicit game state according to predefined rules and observations are rendered from the resulting state. Taking this loop as an organizing lens, this paper examines interactive game world modeling along four dimensions: player action control, game state dynamics, state-observation persistence, and real-time interactive generation. For each dimension, we start from the capabilities required by an interactive game world, group existing approaches into representative families, and discuss the strengths and trade-offs of each family. Complementing this analysis, we present a scalable data engine for Black Myth: Wukong that collects over 90 hours of gameplay with frame-aligned player actions, ground-truth game states, and visual observations, together with structured and semantic annotations, as a resource for state-aware game world modeling. We hope this paper offers a clear picture of where the field stands and fosters progress toward interactive game worlds.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 构建对玩家动作做出连贯响应的交互世界长期以来一直是计算机图形学、游戏和人工智能的共同目标。最近的视频生成模型通过预测以用户行为为条件的未来观察结果，提供了实现这一目标的数据驱动途径，并且越来越被视为潜在的下一代游戏引擎。然而，实现真正的交互式游戏世界需要遵循不断变化的游戏条件规则的交互结果、长期持续的后果以及实时运行的生成循环。传统的游戏引擎通过循环动作-状态-观察循环来实现这些属性，其中玩家动作根据预定义的规则更新显式游戏状态，并根据结果状态呈现观察结果。以此循环为组织镜头，本文从四个维度研究了交互式游戏世界建模：玩家动作控制、游戏状态动态、状态观察持久性和实时交互生成。对于每个维度，我们从交互式游戏世界所需的功能出发，将现有方法分为代表性的系列，并讨论每个系列的优势和权衡。作为对这一分析的补充，我们为《黑神话：悟空》提供了一个可扩展的数据引擎，该引擎收集超过 90 小时的游戏玩法，包括帧对齐的玩家动作、真实的游戏状态和视觉观察，以及结构化和语义注释，作为状态感知游戏世界建模的资源。我们希望本文能够清晰地展示该领域的现状，并促进交互式游戏世界的进步。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub  405    Add to collection      Community         kpzhang996   Paper submitter    about 2 hours ago         Building interactive worlds that respond coherently to player actions has long been a shared goal of computer graphics, games, and artificial intelligence. Recent video generative models provide a data-driven route toward this goal by predicting future observations conditioned on user actions, and are increasingly regarded as potential next-generation game engines. Realizing a genuinely interactive game world, however, requires interaction outcomes that follow rules over evolving game conditions, consequences that persist over long horizons, and a generation loop that operates in real time. Conventional game engines realize these properties through a recurrent action-state-observation loop, in which player actions update an explicit game state according to predefined rules and observations are rendered from the resulting state. Taking this loop as an organizing lens, this paper examines interactive game world modeling along four dimensions: player action control, game state dynamics, state-observation persistence, and real-time interactive generation. For each dimension, we start from the capabilities required by an interactive game world, group existing approaches into representative families, and discuss the strengths and trade-offs of each family. Complementing this analysis, we present a scalable data engine for Black Myth: Wukong that collects over 90 hours of gameplay with frame-aligned player actions, ground-truth game states, and visual observations, together with structured and semantic annotations, as a resource for state-aware game world modeling. We hope this paper offers a clear picture of where the field stands and fosters progress toward interactive game worlds.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF GitHub 405 添加到集合 社区 kpzhang996 论文提交者 大约 2 小时前 构建对玩家操作做出一致响应的交互式世界长期以来一直是计算机图形学、游戏和人工智能的共同目标。最近的视频生成模型通过预测以用户行为为条件的未来观察结果，提供了实现这一目标的数据驱动途径，并且越来越被视为潜在的下一代游戏引擎。然而，实现真正的交互式游戏世界需要遵循不断变化的游戏条件规则的交互结果、长期持续的后果以及实时运行的生成循环。传统的游戏引擎通过循环动作-状态-观察循环来实现这些属性，其中玩家动作根据预定义的规则更新显式游戏状态，并根据结果状态呈现观察结果。以此循环为组织镜头，本文从四个维度研究了交互式游戏世界建模：玩家动作控制、游戏状态动态、状态观察持久性和实时交互生成。对于每个维度，我们从交互式游戏世界所需的功能出发，将现有方法分为代表性的系列，并讨论每个系列的优势和权衡。作为对这一分析的补充，我们为《黑神话：悟空》提供了一个可扩展的数据引擎，该引擎收集超过 90 小时的游戏玩法，包括帧对齐的玩家动作、真实的游戏状态和视觉观察，以及结构化和语义注释，作为状态感知游戏世界建模的资源。我们希望本文能够清晰地展示该领域的现状，并促进交互式游戏世界的进步。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.13188" target="_blank">Concurrent Image Understanding and Generation: Self-Correcting Coupled Markov Jump Processes</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Google</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Minh-Quan Le, Armand Comas, Alexandros Lattas, Stylianos Moschoglou, Pedro Vélez</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.13188" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.13188" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.13188.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Human cognition does not separate understanding and generation. A teacher at a whiteboard speaks and draws together, each modality reshapes the other. In this paper, we bring this coupled loop to artificial systems. Masked Diffusion Models (MDMs) are ideally suited to this task, yet existing samplers either decode text and image interleavedly or independently update them in parallel branches that share only previous-step history, but not the other modality's latest decisions within the same step; combined with MDMs' inability to remask, cross-modal contradictions are neither detected nor repaired. We introduce Self-Correcting Coupled Markov Jump Processes (SC-CMJP), a framework in which one modality's transition rates are functionals of the other modality's confidence score, as weighted by cross-modal attention. Furthermore, a remasking jump retracts commitments the moment cross-modal evidence turns against them. In conjunction with SC-CMJP, we introduce CO_2Jump (Self-text{CO}rrecting text{CO}upled text{Jump}), a novel training-free single-pass sampler for joint multimodal geneneration. For training and evaluation purposes, we have created and will release three large-scale joint multimodal generation corpora: JEdit-1M, JMaze-200K, JNono-200K, with matching in- and out-of-distribution benchmarks. CO_2Jump achieves best joint performance for image understanding and editing as well as visual reasoning (maze and nonogram solving). The performance of the sampler scales monotonically with the number of denoising steps, evidence that the benefits of cross-modal coupling compound across the trajectory. Project page: https://coupled-jump.github.io</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 人类认知并不将理解和生成分开。老师在白板上讲话并一起画画，每种形式都重塑了另一种形式。在本文中，我们将这种耦合循环引入人工系统。掩蔽扩散模型 (MDM) 非常适合此任务，但现有采样器要么交替解码文本和图像，要么在并行分支中独立更新它们，这些并行分支仅共享前一步历史记录，但不共享同一步骤中其他模态的最新决策；再加上 MDM 无法重新屏蔽，跨模式矛盾既无法检测也无法修复。我们引入了自校正耦合马尔可夫跳跃过程（SC-CMJP），这是一个框架，其中一种模态的转换率是另一种模态置信度的函数，由跨模态注意力加权。此外，当跨模式证据对承诺不利时，重新屏蔽跳转就会收回承诺。结合 SC-CMJP，我们引入了 CO_2Jump（Self-text{CO}rrecting text{CO}upled text{Jump}），这是一种用于联合多模态生成的新型免训练单通道采样器。出于培训和评估的目的，我们已经创建并将发布三个大规模联合多模态生成语料库：JEdit-1M、JMaze-200K、JNono-200K，并具有匹配的分布内和分布外基准。 CO_2Jump 在图像理解和编辑以及视觉推理（迷宫和非图解）方面实现了最佳联合性能。采样器的性能随着去噪步骤的数量单调变化，这证明了跨模式耦合复合在整个轨迹上的好处。项目页面：https:// Coupled-jump.github.io</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page   Add to collection     Community         lmquan   Paper submitter    about 1 hour ago</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 添加到收藏集 社区 lmquan 论文提交者 大约 1 小时前</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.12800" target="_blank">UniVR: Thinking in Visual Space for Unified Visual Reasoning</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>ByteDance</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Zhongwei Ren, Yunchao Wei, Yao Zhao, Weibo Gong, Xiao Liu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.12800" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.12800" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.12800.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Learning broad world knowledge directly from raw visual data is a fundamental capability of intelligence. We introduce UniVR, the first investigation into simultaneously learning complex reasoning, fine-grained physical dynamics, and long-term planning from pure visual demonstrations. At its core, UniVR features VR-GRPO, a reinforcement learning paradigm with complementary global and step-level rewards. This approach enforces logical coherence and physical consistency throughout the reasoning process without requiring task-specific heuristics or image-text pairs. To train and evaluate UniVR, we construct VR-X, a large-scale benchmark curated from 16 diverse sources spanning long-horizon manipulation, spatial puzzles, and physical reasoning. It is the first comprehensive suite to assess these heterogeneous capabilities under a purely visual protocol. Remarkably, UniVR achieves up to a 25% improvement on VR-X, and its superior visual reasoning also boosts performance on various multimodal understanding benchmarks. These findings underscore the vast potential of reasoning within visual spaces, with all code, data, and models are open-sourced for further research.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 直接从原始视觉数据中学习广泛的世界知识是智能的一项基本能力。我们介绍 UniVR，这是第一个通过纯视觉演示同时学习复杂推理、细粒度物理动力学和长期规划的研究。 UniVR 的核心特点是 VR-GRPO，这是一种具有互补的全局和阶梯级奖励的强化学习范式。这种方法在整个推理过程中强制逻辑连贯性和物理一致性，而不需要特定于任务的启发法或图像文本对。为了训练和评估 UniVR，我们构建了 VR-X，这是一个从 16 个不同来源策划的大型基准，涵盖长视界操作、空间谜题和物理推理。它是第一个在纯视觉协议下评估这些异构功能的综合套件。值得注意的是，UniVR 比 VR-X 提升了 25%，其卓越的视觉推理能力也提升了各种多模态理解基准的性能。这些发现强调了视觉空间中推理的巨大潜力，所有代码、数据和模型都是开源的以供进一步研究。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  6    Add to collection     Community         maverickrzw   Paper submitter    about 3 hours ago         Learning broad world knowledge directly from raw visual data is a fundamental capability of intelligence. We introduce UniVR, the first investigation into simultaneously learning complex reasoning, fine-grained physical dynamics, and long-term planning from pure visual demonstrations. At its core, UniVR features VR-GRPO, a reinforcement learning paradigm with complementary global and step-level rewards. This approach enforces logical coherence and physical consistency throughout the reasoning process without requiring task-specific heuristics or image-text pairs. To train and evaluate UniVR, we construct VR-X, a large-scale benchmark curated from 16 diverse sources spanning long-horizon manipulation, spatial puzzles, and physical reasoning. It is the first comprehensive suite to assess these heterogeneous capabilities under a purely visual protocol. Remarkably, UniVR achieves up to a 25% improvement on VR-X, and its superior visual reasoning also boosts performance on various multimodal understanding benchmarks. These findings underscore the vast potential of reasoning within visual spaces, with all code, data, and models to be open-sourced for further research.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 6 添加到集合 社区 maverickrzw 论文提交者 大约 3 小时前 直接从原始视觉数据中学习广泛的世界知识是智能的一项基本能力。我们介绍 UniVR，这是第一个通过纯视觉演示同时学习复杂推理、细粒度物理动力学和长期规划的研究。 UniVR 的核心特点是 VR-GRPO，这是一种具有互补的全局和阶梯级奖励的强化学习范式。这种方法在整个推理过程中强制逻辑连贯性和物理一致性，而不需要特定于任务的启发法或图像文本对。为了训练和评估 UniVR，我们构建了 VR-X，这是一个从 16 个不同来源策划的大型基准，涵盖长视界操作、空间谜题和物理推理。它是第一个在纯视觉协议下评估这些异构功能的综合套件。值得注意的是，UniVR 比 VR-X 提升了 25%，其卓越的视觉推理能力也提升了各种多模态理解基准的性能。这些发现强调了视觉空间内推理的巨大潜力，所有代码、数据和模型都将开源以供进一步研究。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.03065" target="_blank">Spectral Rewiring for Exploration, Purification, and Model Merging</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Zhilong Zhang, Hongli Yu, Huan-ang Gao, Hanlin Wu, Yuxuan Song</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.03065" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.03065" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.03065.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Reinforcement learning has become a standard post-training recipe for large language models, but dense full-parameter updates create two deployment-relevant bottlenecks: suppressed reasoning performance, often reflected by premature saturation of test-time scaling, and interference when consolidating multiple capabilities through multi-domain training or model merging. We show that the reasoning-effective component of these updates is largely concentrated in the base model's spectral space, motivating Subspace-Aligned Rewiring (SAR), a post-hoc editing method that retains this spectral core while removing orthogonal components. SAR therefore preserves reasoning gains and filters residual update directions that suppress performance or amplify cross-domain interference. Across several model families and scales, SAR extracts compact reasoning cores using as little as approximately 0.58% of total parameters: it preserves over 99% of post-training performance and improves high-k exploration in mathematical reasoning, and generalizes to agentic coding by improving six of seven open benchmarks on an in-house model. SAR also purifies mixed-domain training updates by releasing suppressed coding capability while maintaining math reasoning and instruction following. It further enables model merging across experts, yielding cross-domain generalization that surpasses previous merging baselines and even the best single-domain experts. Overall, SAR shows that extracting reasoning-effective updates from parameter geometry can serve as a training-free mechanism to improve reasoning and multi-domain performance.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 强化学习已成为大型语言模型的标准训练后配方，但密集的全参数更新会产生两个与部署相关的瓶颈：推理性能受到抑制，通常表现为测试时间缩放的过早饱和，以及通过多域训练或模型合并来巩固多种能力时的干扰。我们表明，这些更新的推理有效组件主要集中在基础模型的光谱空间中，从而激发了子空间对齐重新布线（SAR），这是一种事后编辑方法，可以保留该光谱核心，同时删除正交组件。因此，SAR 保留了推理增益并过滤了抑制性能或放大跨域干扰的残余更新方向。在多个模型系列和规模中，SAR 使用少至约 0.58% 的总参数来提取紧凑推理核心：它保留了超过 99% 的训练后性能，并改进了数学推理中的高 k 探索，并通过改进内部模型的七个开放基准中的六个来推广到代理编码。 SAR 还通过释放抑制编码能力来净化混合域训练更新，同时保持数学推理和指令遵循。它进一步实现了跨专家的模型合并，产生的跨领域泛化能力超越了以前的合并基线，甚至超越了最好的单领域专家。总体而言，SAR 表明从参数几何中提取推理有效的更新可以作为一种免训练机制来提高推理和多域性能。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community         c7w   Paper submitter    about 1 hour ago         Reinforcement learning has become a standard post-training recipe for large language models, but dense full-parameter updates create two deployment-relevant bottlenecks: suppressed reasoning performance, often reflected by premature saturation of test-time scaling, and interference when consolidating multiple capabilities through multi-domain training or model merging. We show that the reasoning-effective component of these updates is largely concentrated in the base model's spectral space, motivating Subspace-Aligned Rewiring (SAR), a post-hoc editing method that retains this spectral core while removing orthogonal components. SAR therefore preserves reasoning gains and filters residual update directions that suppress performance or amplify cross-domain interference. Across several model families and scales, SAR extracts compact reasoning cores using as little as approximately 0.58% of total parameters: it preserves over 99% of post-training performance and improves high-k exploration in mathematical reasoning, and generalizes to agentic coding by improving six of seven open benchmarks on an in-house model. SAR also purifies mixed-domain training updates by releasing suppressed coding capability while maintaining math reasoning and instruction following. It further enables model merging across experts, yielding cross-domain generalization that surpasses previous merging baselines and even the best single-domain experts. Overall, SAR shows that extracting reasoning-effective updates from parameter geometry can serve as a training-free mechanism to improve reasoning and multi-domain performance.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 c7w 论文提交者 大约 1 小时前 强化学习已成为大型语言模型的标准训练后配方，但密集的全参数更新会产生两个与部署相关的瓶颈：抑制推理性能（通常通过测试时间扩展的过早饱和反映出来），以及通过多域训练或模型合并来巩固多种功能时的干扰。我们表明，这些更新的推理有效组件主要集中在基础模型的光谱空间中，从而激发了子空间对齐重新布线（SAR），这是一种事后编辑方法，可以保留该光谱核心，同时删除正交组件。因此，SAR 保留了推理增益并过滤了抑制性能或放大跨域干扰的残余更新方向。在多个模型系列和规模中，SAR 使用少至约 0.58% 的总参数来提取紧凑推理核心：它保留了超过 99% 的训练后性能，并改进了数学推理中的高 k 探索，并通过改进内部模型的七个开放基准中的六个来推广到代理编码。 SAR 还通过释放抑制编码能力来净化混合域训练更新，同时保持数学推理和指令遵循。它进一步实现了跨专家的模型合并，产生的跨领域泛化能力超越了以前的合并基线，甚至超越了最好的单领域专家。总体而言，SAR 表明从参数几何中提取推理有效的更新可以作为一种免训练机制来提高推理和多域性能。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.15038" target="_blank">Video = World + Event Stream</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Wan-AI</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Lianghua Huang, Zhi-Fan Wu, Yupeng Shi, Wei Wang, Mengyang Feng</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.15038" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.15038" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.15038.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  We present Wan-Streamer v0.3, which reframes our native-streaming interaction model under a single organizing view: a video is a world plus an event stream. The world is the persistent context in which a video unfolds, including the environment, scene, subjects, ambient acoustic conditions, voice characteristics, and other relatively stable conditions. The event stream is everything that changes over time within that world, including scene or environmental changes, subject behavior, speech, and other sounds. This yields a general-purpose pretraining task over large amounts of real video: given a world and incoming input, predict how the world moves, changes, and responds in real time. The resulting competence can be specialized to a broad family of real-time downstream tasks. We instantiate it on real-time full-duplex audio-visual interaction, where the event stream is the agent's speech together with free-form behavior. Functionally, the model's multimodal understanding process is vision-language-action-like: it maps multimodal user input to language-form speech and behavior actions. Wan-Streamer v0.3 preserves the v0.2 operating point: 640x368 video at 25 FPS, a 160 ms streaming unit, approximately 200 ms model-side response latency, and approximately 550 ms total interaction latency under a 350 ms bidirectional network budget.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：我们提出了 Wan-Streamer v0.3，它在单一组织视图下重新构建了我们的原生流媒体交互模型：视频是一个世界加上一个事件流。世界是视频展开的持续上下文，包括环境、场景、主体、环境声学条件、语音特征和其他相对稳定的条件。事件流是该世界中随时间变化的一切，包括场景或环境变化、主体行为、语音和其他声音。这产生了针对大量真实视频的通用预训练任务：给定一个世界和传入输入，预测世界如何实时移动、变化和响应。由此产生的能力可以专门用于一系列广泛的实时下游任务。我们在实时全双工视听交互上实例化它，其中事件流是代理的语音和自由形式的行为。从功能上讲，该模型的多模态理解过程类似于视觉-语言-动作：它将多模态用户输入映射到语言形式的语音和行为动作。 Wan-Streamer v0.3 保留了 v0.2 的操作点：25 FPS 的 640x368 视频、160 毫秒的流媒体单元、大约 200 毫秒的模型端响应延迟以及在 350 毫秒的双向网络预算下大约 550 毫秒的总交互延迟。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page   Add to collection            Community         lhhuang   Paper submitter    about 1 hour ago • edited about 1 hour ago        Wan Streamer v0.3 learns a persistent world and the events unfolding within it. This general video pretraining brings free-form behavior to real-time full-duplex audio-visual interaction — still 640×368 at 25 fps, with the same ~200 ms model-side latency.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 添加到集合 社区 lhhuang 论文提交者 大约 1 小时前 • 编辑 大约 1 小时前 Wan Streamer v0.3 了解一个持久的世界以及其中展开的事件。这种通用视频预训练为实时全双工视听交互带来了自由形式的行为——在 25 fps 下仍为 640×368，具有相同的约 200 毫秒模型端延迟。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.13399" target="_blank">Demystifying On-Policy Distillation: Roles, Pathologies, and Regulations</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Rui Wang, Hongru Wang, Yi Chen, Boyang Xue, Tianqing Fang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.13399" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.13399" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.13399.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  On-policy distillation (OPD) has become a key paradigm in LLM post-training, yet its training dynamics remain poorly understood. We present a systematic study examining the role, pathologies, and regulations of OPD. We first clarify the role of OPD as an exploration catalyst: it steers the student toward correct reasoning paths via dense token-level guidance, without expanding capability ceiling. We confirm this by showing that prompt diversity matters more than per-problem sampling numbers, and critically, that the effectiveness of OPD hinges entirely on the quality of its guiding signal. This dependency exposes two pathologies that derail exploration. The Student-Teacher Mismatch occurs when a large teacher-student distributional gap causes the guiding signal to misalign with task correctness, steering exploration in counterproductive directions. Length Exploitation arises when the aggregated token-level objective creates length-dependent shortcuts, allowing the student to game the reward landscape through response truncation or redundant padding, exploring degenerate length modes rather than reasoning strategies. To tame these pathologies, we investigate lightweight signal regulations: advantage clipping and log-scale compression, ensuring exploration is guided by faithful signals. Experiments across seven benchmarks demonstrate that these regulations alleviate length exploitation and enable effective distillation, stably surpassing OPD variants and RLVR baselines, thereby confirming that well-regulated signal quality, rather than mere teacher scale, governs successful exploration in OPD.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 在策略蒸馏（OPD）已成为法学硕士后期培训的关键范式，但其培训动态仍然知之甚少。我们提出了一项系统研究，探讨 OPD 的作用、病理学和调节。我们首先阐明 OPD 作为探索催化剂的作用：它通过密集的令牌级指导引导学生走向正确的推理路径，而不扩大能力上限。我们通过证明即时多样性比每个问题的采样数量更重要来证实这一点，并且至关重要的是，OPD 的有效性完全取决于其引导信号的质量。这种依赖性暴露了两种使探索脱轨的病态。当师生分配差距过大导致指导信号与任务正确性不一致，从而将探索引向适得其反的方向时，就会出现师生不匹配的情况。当聚合的令牌级目标创建依赖于长度的捷径时，就会出现长度利用，允许学生通过响应截断或冗余填充来玩奖励景观，探索退化长度模式而不是推理策略。为了克服这些病态，我们研究了轻量级信号调节：优势剪辑和对数尺度压缩，确保探索由可靠的信号引导。七个基准的实验表明，这些规定减轻了长度利用并实现了有效的蒸馏，稳定地超越了 OPD 变体和 RLVR 基线，从而证实了良好监管的信号质量，而不仅仅是教师规模，控制着 OPD 的成功探索。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community         Ray121381   Paper submitter    31 minutes ago         Role: OPD acts as an exploration catalyst, guiding student reasoning via dense token-level signals without raising capability ceilings. Its success hinges on signal quality.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 Ray121381 论文提交者 31 分钟前 角色：OPD 充当探索催化剂，通过密集的令牌级信号指导学生推理，而不提高能力上限。其成功取决于信号质量。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.15275" target="_blank">RoboTTT: Context Scaling for Robot Policies</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>NVIDIA</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yunfan Jiang, Yevgen Chebotar, Ruijie Zheng, Fengyuan Hu, Yunhao Ge</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.15275" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.15275" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.15275.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Recent robot foundation models operate with single-step or short-history visuomotor context. We introduce Test-Time-Training Robot Policies (RoboTTT), a robot model and training recipe that scale visuomotor context to 8K timesteps, three orders of magnitude beyond state-of-the-art policies, without growing inference latency. At this context length, we unlock new robot capabilities: one-shot in-context imitation from human video demonstrations, on-the-fly policy improvement, robustness to perturbations, and stronger performance on multi-stage, long-horizon tasks. We also observe, for the first time, steady gains in closed-loop performance as pretraining context length scales. At its core, RoboTTT integrates Test-Time Training into robot foundation models such as Vision-Language-Action policies, yielding a sequence model whose recurrent state consists of fast weights, parameters updated by gradient descent during both training and inference, compressing histories into weight space and retrieving contextual information for long-context conditioning. To scale training context length, the recipe combines sequence action forcing with truncated backpropagation through time. On challenging real-robot manipulation tasks, RoboTTT improves overall performance by 87% over the single-step context baseline and fully completes a five-minute, ten-stage assembly task, which no baseline ever does. RoboTTT trained with 8K-timestep context outperforms the same model pretrained with 1K timesteps by 62%, suggesting context length as a new scaling axis for robot foundation models. Videos are available at https://research.nvidia.com/labs/gear/robottt/</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 最近的机器人基础模型在单步或短历史视觉运动环境下运行。我们引入了测试时间训练机器人策略 (RoboTTT)，这是一种机器人模型和训练方法，可将视觉运动上下文扩展到 8K 时间步长，比最先进的策略高出三个数量级，并且不会增加推理延迟。在这一上下文长度下，我们解锁了新的机器人功能：从人类视频演示中进行一次性上下文模仿、动态策略改进、对扰动的鲁棒性以及在多阶段、长期任务上的更强性能。我们还首次观察到，随着预训练上下文长度的增加，闭环性能稳步提高。 RoboTTT 的核心是将测试时训练集成到机器人基础模型（例如视觉-语言-动作策略）中，生成一个序列模型，其循环状态由快速权重、训练和推理期间梯度下降更新的参数、将历史压缩到权重空间并检索用于长上下文调节的上下文信息组成。为了扩展训练上下文的长度，该方法将序列动作强制与随时间截断的反向传播结合起来。在具有挑战性的真实机器人操作任务中，RoboTTT 的整体性能比单步上下文基线提高了 87%，并完全完成了 5 分钟、10 阶段的组装任务，这是任何基线都无法做到的。使用 8K 时间步长上下文训练的 RoboTTT 比使用 1K 时间步长预训练的相同模型性能高出 62%，这表明上下文长度可以作为机器人基础模型的新缩放轴。视频可在 https://research.nvidia.com/labs/gear/robottt/ 获取</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page   Add to collection         Community   EditPreview      Upload images, audio, and videos by dragging in the text input, pasting, or clicking here. Tap or paste here to upload images        Comment · Sign up or log in to comment</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 添加到集合 社区 EditPreview 通过拖入文本输入、粘贴或单击此处上传图像、音频和视频。点击或粘贴此处上传图片 评论 · 注册或登录以发表评论</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.15273" target="_blank">MeanFlowNFT: Bringing Forward-Process RL to Average-Velocity Generators</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Tencent Hunyuan</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yushi Huang, Xiangxin Zhou, Jun Zhang, Liefeng Bo, Tianyu Pang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.15273" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.15273" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.15273.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  MeanFlow generators achieve fast few-step sampling by predicting average velocities over time intervals, making them attractive for efficient generation. Reinforcement learning (RL) has become a powerful way to align diffusion and flow models with human preferences and task-specific objectives. In particular, DiffusionNFT offers an efficient forward-process RL framework that does not require reverse-process trajectories or likelihood estimation. However, applying such RL methods to MeanFlow remains underexplored. DiffusionNFT optimizes instantaneous velocities, whereas MeanFlow samples with average velocities. To bridge this gap, we introduce MeanFlowNFT. Inspired by the MeanFlow identity, which bridges average and instantaneous velocities, we construct an induced instantaneous-velocity predictor. We apply the DiffusionNFT objective to this predictor, making reward optimization well-defined for MeanFlow. Sampling remains based on the average velocity, preserving MeanFlow's fast few-step generation. We further prove that MeanFlowNFT inherits DiffusionNFT's strict policy-improvement guarantee. Experiments on image and video generation show that MeanFlowNFT consistently improves baselines. Moreover, it outperforms prior state-of-the-art RL-tuned few-step generators on most metrics (6 of 8 on SD3.5-M), and can even surpass multi-step RL-tuned diffusion while using only a few sampling steps. For instance, on Wan 2.1, 4-step MeanFlowNFT reaches a VBench score of 84.33, surpassing 50-step LongCat-Video RL (82.57).</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 MeanFlow 生成器通过预测时间间隔内的平均速度来实现快速的几步采样，这使得它们对于高效生成具有吸引力。强化学习 (RL) 已成为将扩散和流动模型与人类偏好和特定任务目标结合起来的强大方法。特别是，DiffusionNFT 提供了一种高效的前向过程 RL 框架，不需要逆向过程轨迹或似然估计。然而，将此类 RL 方法应用于 MeanFlow 的探索仍未充分。 DiffusionNFT 优化瞬时速度，而 MeanFlow 以平均速度采样。为了弥补这一差距，我们引入了 MeanFlowNFT。受到连接平均速度和瞬时速度的 MeanFlow 恒等式的启发，我们构建了诱导瞬时速度预测器。我们将 DiffusionNFT 目标应用于该预测器，为 MeanFlow 明确定义了奖励优化。采样仍然基于平均速度，保留了 MeanFlow 的快速几步生成。我们进一步证明MeanFlowNFT继承了DiffusionNFT严格的策略改进保证。图像和视频生成实验表明，MeanFlowNFT 持续改进基线。此外，它在大多数指标上都优于先前最先进的 RL 调整的少步生成器（SD3.5-M 上 8 个中的 6 个），甚至可以在仅使用几个采样步骤的情况下超越多步 RL 调整的扩散。例如，在 Wan 2.1 上，4 步 MeanFlowNFT 的 VBench 得分为 84.33，超过了 50 步 LongCat-Video RL（82.57）。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  5    Add to collection     Community   EditPreview      Upload images, audio, and videos by dragging in the text input, pasting, or clicking here. Tap or paste here to upload images        Comment · Sign up or log in to comment</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 5 添加到集合 社区 EditPreview 通过拖入文本输入、粘贴或单击此处上传图像、音频和视频。点击或粘贴此处上传图片 评论 · 注册或登录以发表评论</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.14749" target="_blank">WanSong v1.0 Technical Report</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Wan-AI</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Binghui Chen, Pandeng Li, Yu Liu, Jingren Zhou</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.14749" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.14749" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.14749.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Music generation foundation models have recently attracted significant industry attention. However, achieving efficient generation and high-fidelity long-form audio while supporting controllability remains challenging. To address these needs, we present WanSong, a simple yet powerful approach for long-form, commercial-grade song generation. Unlike autoregressive (AR) and cascaded multi-stage pipelines (\eg, AR followed by diffusion), WanSong is a pure diffusion-based model that directly generates high-fidelity, multilingual songs up to 5 minutes and outputs dual stems (vocals and background music) in a single run. In addition, our diffusion framework enables faster inference through step-distillation, and offers an efficient pathway for fine-tuning and customization to support downstream editing tasks.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 音乐生成基础模型最近引起了业界的广泛关注。然而，在支持可控性的同时实现高效生成和高保真长格式音频仍然具有挑战性。为了满足这些需求，我们推出了 WanSong，这是一种简单但功能强大的长格式商业级歌曲生成方法。与自回归 (AR) 和级联多级管道（例如，AR 后扩散）不同，WanSong 是一种纯粹的基于扩散的模型，可直接生成长达 5 分钟的高保真多语言歌曲，并在一次运行中输出双干（人声和背景音乐）。此外，我们的扩散框架可以通过逐步蒸馏实现更快的推理，并提供有效的微调和定制途径以支持下游编辑任务。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community   EditPreview      Upload images, audio, and videos by dragging in the text input, pasting, or clicking here. Tap or paste here to upload images        Comment · Sign up or log in to comment</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 EditPreview 通过拖入文本输入、粘贴或单击此处上传图像、音频和视频。点击或粘贴此处上传图片 评论 · 注册或登录以发表评论</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.13491" target="_blank">DeepLoop: Depth Scaling for Looped Transformers</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Shuzhen Li, Yifan Zhang, Jiacheng Guo, Quanquan Gu, Mengdi Wang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.13491" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.13491" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.13491.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Looped Transformers scale sequential computation by applying a compact stack of physical blocks for multiple rounds, increasing unrolled depth without increasing stored parameters. This reuse changes the residual-scaling problem: in an untied Transformer, each residual branch receives and applies its own parameter update, whereas in a looped Transformer one shared update aggregates gradients from repeated visits and is read back by those same visits in the next linearized forward pass. We formalize this tied-depth effect through a first-order perturbation bound controlled by a visit-alignment coefficient κ_R. The bound recovers the DeepNorm exponent when visits decorrelate, but in the conservative aligned regime it requires the exponent to increase from 1/4 to 1/2 as loop count grows at fixed physical depth. The resulting method, DeepLoop, keeps the Post-LN DeepNorm architecture and sets α=(2N)^{1/2} and β=(8N)^{-1/2} for unrolled depth N. On GPT-style looped language models at GPT-2 small and GPT-2 medium scale, DeepLoop is neutral when no physical block is revisited and improves validation loss and downstream accuracy once recurrent depth is activated. These results show that stable recurrent depth requires residual scaling rules that account for parameter visits, not only nominal layer count.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 Looped Transformer 通过在多轮中应用紧凑的物理块堆栈来扩展顺序计算，在不增加存储参数的情况下增加展开深度。这种重用改变了残差缩放问题：在未绑定的 Transformer 中，每个残差分支接收并应用自己的参数更新，而在循环 Transformer 中，一个共享更新聚合来自重复访问的梯度，并由下一个线性化前向传递中的相同访问读回。我们通过由访问对齐系数 κ_R 控制的一阶扰动界限来形式化这种束缚深度效应。当访问去相关时，界限恢复 DeepNorm 指数，但在保守的对齐机制中，随着循环计数以固定物理深度增长，它要求指数从 1/4 增加到 1/2。由此产生的方法 DeepLo​​op 保留了 Post-LN DeepNorm 架构，并为展开深度 N 设置 α=(2N)^{1/2} 和 β=(8N)^{-1/2}。在 GPT-2 小规模和 GPT-2 中规模的 GPT 式循环语言模型上，DeepLo​​op 在没有重新访问物理块时是中性的，一旦激活循环深度，DeepLo​​op 就会提高验证损失和下游准确性。这些结果表明，稳定的循环深度需要考虑参数访问的剩余缩放规则，而不仅仅是名义层数。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community         yifAI   Paper submitter    23 minutes ago         DeepLoop: Depth Scaling for Looped Transformers</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 yifAI 论文提交者 23 分钟前 DeepLo​​op：循环变压器的深度缩放</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.14660" target="_blank">VIABench: A Comprehensive Video Benchmark Collected from Blind Individuals for Visual Impairment Assistance</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Nanjing University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yunfeng Liu, Yuandong Yang, Jiarui Han, Zhenpeng Huang, Yuqing Tang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.14660" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.14660" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.14660.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Visually impaired individuals (VIIs) encounter significant daily challenges due to limited access to visual information. Although Multimodal Large Language Models (MLLMs) have achieved impressive results on general vision and language tasks, their practical utility in real-world blind assistance still remains largely underexplored. To fill this gap, we introduce VIABench, a comprehensive video benchmark specifically designed to evaluate MLLMs in Visually Impaired Assistance scenarios using first-person videos recorded or shared by VIIs themselves. VIABench defines three core tasks, each targeting a distinct requirement in visual assistance. Proactive Reminder: Assesses the model's ability to interpret ongoing video content while proactively anticipating and verbally describing upcoming navigation-critical events; Visual Question Answering (VQA): Evaluates the model's capacity to answer user-posed questions about the environment or objects within the video; Vision-Guided Interaction: Tests context-aware reasoning to accomplish intentional interactions between user and environment. To ensure a robust and fair evaluation, we propose a rigorous benchmarking pipeline that supports both online (real-time) and offline settings. Our experiments demonstrate that current MLLMs still struggle to deliver comprehensive support for VIIs, especially in the Proactive Reminder task, which demands accurate anticipation and real-time responsiveness. We hope VIABench will drive future research toward developing customized MLLMs for real-world assistance, ultimately improving navigation and interaction experiences for visually impaired individuals. Code and data will be released at https://github.com/MCG-NJU/VIABench.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 由于视觉信息的获取有限，视障人士 (VII) 每天面临着重大挑战。尽管多模态大语言模型（MLLM）在一般视觉和语言任务上取得了令人印象深刻的成果，但它们在现实世界盲人辅助中的实用性仍然很大程度上尚未得到充分探索。为了填补这一空白，我们引入了 VIABench，这是一个综合视频基准测试，专门设计用于使用 VII 自己录制或共享的第一人称视频来评估视障辅助场景中的 MLLM。 VIABench 定义了三个核心任务，每个任务都针对视觉辅助的不同要求。主动提醒：评估模型解释当前视频内容的能力，同时主动预测和口头描述即将发生的导航关键事件；视觉问答（VQA）：评估模型回答用户提出的有关视频中环境或物体的问题的能力；视觉引导交互：测试上下文感知推理以完成用户和环境之间的有意交互。为了确保稳健和公平的评估，我们提出了一个严格的基准测试管道，支持在线（实时）和离线设置。我们的实验表明，当前的 MLLM 仍然难以为 VII 提供全面的支持，特别是在主动提醒任务中，这需要准确的预测和实时响应。我们希望 VIABench 能够推动未来的研究，开发定制的 MLLM 以提供现实世界的帮助，最终改善视障人士的导航和交互体验。代码和数据将在https://github.com/MCG-NJU/VIABench发布。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub     Add to collection     Community         Lanxingxuan   Paper submitter    7 minutes ago         We introduce VIABench, a comprehensive, time-aligned video benchmark for evaluating multimodal large language models (MLLMs) in real-world visual assistance scenarios for blind and visually impaired people.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF GitHub 添加到集合 社区 Lanxingxuan 论文提交者 7 分钟前 我们推出 VIABench，一个全面的、时间一致的视频基准测试，用于评估盲人和视障人士在现实世界视觉辅助场景中的多模态大语言模型 (MLLM)。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.14431" target="_blank">Smarter and Cheaper at Once: Byte-Exact KV-Cache Grafting Turns a Frozen Small Model into a Verified-Knowledge Flywheel</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Corbenic</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Sietse Schelpe</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.14431" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.14431" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.14431.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  We report a way to make a frozen small language model both more capable and dramatically cheaper at once, without changing any weights. Verified knowledge is deposited once as a byte-exact key-value (KV) state artifact and later restored, by graft, into a fresh inference context. The restore is bit-exact: under a pinned deterministic configuration, the grafted logits are byte-for-byte identical to a fresh computation (SHA-256 equality), with zero KL divergence and 100% argmax agreement over fifty samples. We show that own-position graft is the unique numerically exact operating point on a model with floating-point rotary encoding, and we verify byte-exactness on two model scales (12B, 31B) and two GPU targets, one through a pre-registered replay. On AIME 2025, a frozen Gemma-4-12B moves from 80.0% to 93.3% once a verified solution library is grafted, above its own 77.5% and its 31B sibling's 89.2% published anchors. On the recurring case, eight problems the base model never solves within a 401,026-token budget are answered from cached verified solutions in 61 total decode tokens, a factor of 6,574 fewer tokens and about 8,700x less energy; the capability claim proper rests on held-out transfer (7 of 7 at 31B). The same byte-exact store widens usable context from 32,768 to 2,854,766 tokens at zero extra accelerator memory, and moves byte-identical between machines of the same architecture. We describe the system at the behavior level; the engine is proprietary, and every reported number is backed by committed input and output hashes so the scoring can be re-checked without it.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：我们报告了一种方法，可以在不改变任何权重的情况下，使冻结的小语言模型变得更强大，并且成本大大降低。经过验证的知识作为字节精确的键值 (KV) 状态工件存储一次，然后通过移植恢复到新的推理上下文中。恢复是位精确的：在固定的确定性配置下，嫁接的 logits 与新计算（SHA-256 等式）逐字节相同，在 50 个样本上具有零 KL 散度和 100% argmax 一致性。我们证明，自身位置移植是具有浮点旋转编码的模型上唯一的数值精确操作点，并且我们在两个模型尺度（12B、31B）和两个 GPU 目标（其中一个通过预注册重放）上验证字节精确性。在 AIME 2025 上，一旦嫁接了经过验证的解决方案库，冻结的 Gemma-4-12B 就会从 80.0% 上升到 93.3%，高于其自己的 77.5% 和其 31B 兄弟的 89.2% 已发布的锚点。在重复出现的情况下，基本模型在 401,026 个令牌预算内从未解决的八个问题是通过缓存的经过验证的解决方案在 61 个总解码令牌中得到解答，令牌减少了 6,574 个因素，能量减少了约 8,700 倍；能力声明完全依赖于保留的转移（31B 中的 7 中的 7）。相同的字节精确存储在零额外加速器内存下将可用上下文从 32,768 个令牌扩大到 2,854,766 个令牌，并在相同架构的机器之间移动字节相同。我们在行为层面描述系统；该引擎是专有的，每个报告的数字都由提交的输入和输出哈希值支持，因此无需它即可重新检查评分。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page   Add to collection     Community         Corbenic   Paper submitter    about 1 hour ago         This Sunday on stage for agisummit</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 添加到集合 社区 Corbenic 论文提交者 大约 1 小时前 这周日在 agisummit 的舞台上</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.15277" target="_blank">Partition, Prompt, Aggregate: Statistical Self-Consistency in Language Models</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Patrik Wolf, Thomas Kleine Buening, Andreas Krause, Celestine Mendler-Dünner</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.15277" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.15277" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.15277.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  In-context learning is commonly interpreted as a form of conditional inference, in which the prompt specifies a context and the model's output is treated as an estimate of the corresponding conditional distribution. If this interpretation holds, then LLM estimates should satisfy basic probabilistic identities. In particular, the law of total probability asserts that prior-weighted conditional distributions aggregate into population-level marginals over any valid partition of the population. In this work, we investigate to what extent LLM estimates adhere to this self-consistency principle. We use binary trees as an evaluation scaffold to recursively partition a population into increasingly fine-grained subpopulations. We then prompt LLMs with verbalized subpopulation descriptions in context, aggregate the resulting estimates back into population-level estimates, and compare them across partitions of varying granularity. Applying this protocol across problem domains and state-of-the-art frontier models, we show widespread violations of basic consistency properties. An in-depth study of persona prompting reveals a pattern we call the macro fallacy: estimates reconstructed from more fine-grained subpopulation responses are often better aligned with human reference data than direct population-level estimates. This effect persists across variations in tree structure and estimation task, and can be partially recovered through implicit prompting. Together, these findings suggest that models possess relevant subpopulation knowledge but do not reliably propagate it into aggregate estimates. This gap establishes statistical self-consistency as an unsaturated, reference-free criterion for evaluating LLMs.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 上下文学习通常被解释为条件推理的一种形式，其中提示指定上下文，模型的输出被视为相应条件分布的估计。如果这种解释成立，那么 LLM 估计应该满足基本概率恒等式。特别是，总概率定律断言，先验加权条件分布在任何有效的总体划分上聚合成总体水平边际。在这项工作中，我们调查了法学硕士的估计在多大程度上遵守了这种自我一致性原则。我们使用二叉树作为评估支架，将群体递归地划分为越来越细粒度的子群体。然后，我们向法学硕士提供上下文中的口头亚总体描述，将所得估计值汇总回总体水平估计值，并在不同粒度的分区之间进行比较。跨问题域和最先进的前沿模型应用该协议，我们发现了对基本一致性属性的广泛违反。对角色提示的深入研究揭示了一种我们称之为宏观谬误的模式：从更细粒度的亚群体反应中重建的估计通常比直接的群体水平估计更符合人类参考数据。这种效应在树结构和估计任务的变化中持续存在，并且可以通过隐式提示部分恢复。总之，这些发现表明模型拥有相关的亚群知识，但不能可靠地将其传播到总体估计中。这一差距确立了统计上的自我一致性，作为评估法学硕士的不饱和、无参考标准。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub  0    Add to collection     Community         patrikwolf   Paper submitter    about 2 hours ago         We test whether LLM estimates obey the law of total probability, revealing widespread self-consistency failures and a macro fallacy in which aggregating fine-grained subpopulation estimates outperforms direct population-level prompting.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF GitHub 0 添加到集合 社区 patrikwolf 论文提交者 大约 2 小时前 我们测试 LLM 估计是否遵守总概率定律，揭示了广泛的自我一致性失败和宏观谬误，其中聚合细粒度子总体估计优于直接总体水平提示。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.14187" target="_blank">RxBrain: Embodied Cognition Foundation Model with Joint Language-Visual Reasoning and Imagination</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Haotian Liang, Mingkang Chen, Yufei Huang, Yuchun Guo, Xiaomeng Zhu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.14187" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.14187" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.14187.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Embodied cognition requires agents to connect high-level task reasoning with the physical states to be achieved. We introduce Hy-Embodied-RxBrain, an embodied cognition foundation model with joint language-visual reasoning and imagination. Unlike vision-language models that emphasize scene understanding and textual decision making, or generative world models that mainly predict future visual states, RxBrain represents embodied plans in a single planning sequence where language and visual imagination play complementary roles. Language provides the abstract structure of a plan, including task decomposition, planning primitives, constraints, temporal order, and decision logic, while visual imagination grounds this structure through world state prediction and joint subgoal planning, associating each planning step with intermediate and final physical states. RxBrain adopts a unified multimodal Mixture-of-Transformers architecture that supports language, image, and video understanding and generation within one model. To train this capability, we build an automatic pipeline that converts embodied videos into joint text-visual planning supervision by decomposing videos into planning steps and aligning them with visual state transitions. We further introduce RxBrain-Bench to evaluate whether models can represent embodied plans through joint textual and visual components rather than separate understanding or generation. Experiments show that RxBrain maintains embodied understanding and generation abilities, and produces plans with coupled textual reasoning, world state prediction, and joint subgoal planning. We also extend RxBrain to continuous robot action generation, where it shows promising real-robot performance without large-scale action-data pretraining. These results provide an initial step toward foundation models for embodied cognition.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 具身认知要求智能体将高级任务推理与要实现的物理状态联系起来。我们介绍 Hy-Embodied-RxBrain，一种具有联合语言视觉推理和想象力的具身认知基础模型。与强调场景理解和文本决策的视觉语言模型或主要预测未来视觉状态的生成世界模型不同，RxBrain 表示单个规划序列中的具体计划，其中语言和视觉想象力发挥互补作用。语言提供了计划的抽象结构，包括任务分解、计划原语、约束、时间顺序和决策逻辑，而视觉想象力通过世界状态预测和联合子目标规划来支撑该结构，将每个计划步骤与中间和最终物理状态相关联。 RxBrain 采用统一的多模态 Mixture-of-Transformers 架构，支持在一个模型内理解和生成语言、图像和视频。为了训练这种能力，我们构建了一个自动管道，通过将视频分解为规划步骤并将其与视觉状态转换对齐，将具体视频转换为联合文本视觉规划监督。我们进一步引入 RxBrain-Bench 来评估模型是否可以通过联合文本和视觉组件而不是单独的理解或生成来表示具体计划。实验表明，RxBrain 保持了具体理解和生成能力，并通过耦合文本推理、世界状态预测和联合子目标规划来生成计划。我们还将 RxBrain 扩展到连续的机器人动作生成，它在无需大规模动作数据预训练的情况下显示出有前景的真实机器人性能。这些结果为构建具身认知的基础模型迈出了第一步。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub     Add to collection     Community         hhyhrhy   Paper submitter    8 minutes ago         Excited to share Hy-Embodied-RxBrain, a foundation model for embodied cognition that jointly represents plans through language reasoning and visual imagination. RxBrain couples task decomposition, constraints, temporal logic, world-state prediction, and visual subgoals in a unified planning sequence. We also introduce an automatic text-visual supervision pipeline and RxBrain-Bench for evaluating joint embodied planning. The model further shows promising real-robot action generation performance without large-scale action-data pretraining.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 添加到集合 社区 hhyhrhy 论文提交者 8 分钟前 很高兴分享 Hy-Embodied-RxBrain，这是一个体现认知的基础模型，通过语言推理和视觉想象力共同表示计划。 RxBrain 将任务分解、约束、时序逻辑、世界状态预测和视觉子目标结合在一个统一的规划序列中。我们还引入了自动文本视觉监督管道和 RxBrain-Bench 来评估联合具体化规划。该模型进一步显示了无需大规模动作数据预训练即可实现的真实机器人动作生成性能。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.10995" target="_blank">AsySplat: Efficient Asymmetric 3D Gaussian Splatting for Long-Sequence Scene Modeling</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>HKUST</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yingji Zhong, Dave Zhenyu Chen, Fuzhao Ou, Youyu Chen, Zhihao Li</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.10995" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.10995" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.10995.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Recent generalizable 3D Gaussian Splatting models have advanced long-sequence novel view synthesis (NVS), but at the cost of substantial redundant computation. We identify that the redundancy can be mitigated based on two observations: (i) high-precision geometry is not strictly required for high-quality NVS; (ii) appearance learning is generally easier than geometry recovery. Motivated by these insights, we propose an asymmetric architecture that decouples geometry and appearance modeling. The geometry branch processes coarse-grained tokens with most of the parameters for multi-view reconstruction, while the appearance branch operates on fine-grained tokens to capture details using significantly fewer parameters. The two branches interact through bilateral connections, enabling mutual guidance for their respective tasks. This task-aware asymmetry reduces the computational redundancy and allocates the computation more judiciously, thereby increasing parameter efficiency and enabling smaller models to achieve strong performance. On 32-view 960P inputs, our model matches optimization-based methods while delivering nearly 800x speedup, and surpasses the zero-shot performance of state-of-the-art generalizable models with markedly fewer parameters and reduced training/inference overhead, achieving an overall efficiency improvement.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：最近的可推广 3D 高斯 Splatting 模型具有先进的长序列新颖视图合成 (NVS)，但代价是大量冗余计算。我们认为，基于两个观察结果可以减轻冗余：(i) 高质量 NVS 并不严格要求高精度几何结构； (ii) 外观学习通常比几何恢复更容易。受这些见解的启发，我们提出了一种将几何和外观建模解耦的非对称架构。几何分支使用大多数参数处理粗粒度标记以进行多视图重建，而外观分支对细粒度标记进行操作，以使用更少的参数来捕获细节。两个部门通过双边联系进行互动，能够相互指导各自的任务。这种任务感知的不对称性减少了计算冗余并更明智地分配计算，从而提高了参数效率并使较小的模型能够实现强大的性能。在 32 视图 960P 输入上，我们的模型匹配基于优化的方法，同时提供近 800 倍的加速，并超越了最先进的可推广模型的零样本性能，参数显着减少，训练/推理开销减少，实现了整体效率的提高。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  5    Add to collection     Community         zzhongyj   Paper submitter    about 1 hour ago</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 5 添加到集合 社区 zzhongyj 论文提交者 大约 1 小时前</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.10463" target="_blank">GRASP: GRanularity-Aware Search Policy for Agentic RAG</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Varun Gandhi, Jaewook Lee, Shantanu Todmal, Franck Dernoncourt, Ryan Rossi</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.10463" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.10463" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.10463.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Agentic retrieval-augmented generation (RAG) extends static RAG by allowing language models to iteratively reason, generate search queries, retrieve evidence, and predict answers. However, it remains challenging for models to decide when to retrieve, whether to use lexical matching or semantic similarity, and how to control context granularity to prevent irrelevant tokens from interfering with agent reasoning. In this paper, we introduce GRASP, a reinforcement learning (RL) framework for training agents to adaptively coordinate complementary retrieval tools during multi-step reasoning. GRASP provides the agent with semantic search, keyword search, and paragraph-reading actions, enabling it to retrieve sentence-level evidence and expand further context only when needed. We train the policy with a reward that jointly accounts for answer accuracy, grounded reading, complementary search, and turn efficiency. Experiments on multi-hop reasoning benchmarks show that GRASP improves both retrieval recall and downstream question answering performance compared with single-step retrieval, prompting-based agentic RAG, and RL-based retrieval baselines. Qualitative and ablation analyses show that the learned policy develops interpretable skimming and scanning behavior: it uses semantic search for broad exploration, paragraph reading for local verification, and keyword search for entity-specific evidence. These results suggest that learning to coordinate retrieval signals and context granularity is critical for agent's correct reasoning.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 代理检索增强生成 (RAG) 通过允许语言模型迭代推理、生成搜索查询、检索证据和预测答案来扩展静态 RAG。然而，模型决定何时检索、是否使用词汇匹配或语义相似性以及如何控制上下文粒度以防止不相关的标记干扰代理推理仍然具有挑战性。在本文中，我们介绍了 GRASP，这是一种强化学习（RL）框架，用于训练智能体在多步骤推理过程中自适应地协调互补检索工具。 GRASP 为代理提供语义搜索、关键字搜索和段落阅读操作，使其能够检索句子级证据并仅在需要时扩展进一步的上下文。我们用奖励来训练策略，该奖励共同考虑了答案准确性、接地阅读、互补搜索和转向效率。多跳推理基准实验表明，与单步检索、基于提示的代理 RAG 和基于 RL 的检索基线相比，GRASP 提高了检索召回率和下游问答性能。定性和消融分析表明，学习的策略形成了可解释的略读和扫描行为：它使用语义搜索进行广泛探索，使用段落阅读进行本地验证，以及使用关键字搜索来获取特定于实体的证据。这些结果表明，学习协调检索信号和上下文粒度对于代理的正确推理至关重要。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community         Franck-Dernoncourt   Paper submitter    about 1 hour ago    This comment has been hidden               EditPreview      Upload images, audio, and videos by dragging in the text input, pasting, or clicking here. Tap or paste here to upload images        Comment · Sign up or log in to comment</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 Franck-Dernoncourt 论文提交者 大约 1 小时前 此评论已被隐藏 EditPreview 通过拖入文本输入、粘贴或单击此处上传图像、音频和视频。点击或粘贴此处上传图片 评论 · 注册或登录以发表评论</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.15058" target="_blank">SUFLECA: Scaling Up Feature Learning for CAD-to-image Alignment</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Saad Ejaz, Miguel Fernandez-Cortizas, Javier Civera, Holger Voos, Jose Luis Sanchez-Lopez</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.15058" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.15058" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.15058.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  CAD-to-image alignment aims to estimate an object's 9D pose (rotation, translation, and anisotropic scale) from a single RGB image, enabling applications in robotics and augmented reality. Recent zero-shot methods use visual foundation models to match image regions to CAD models, yet typically their correspondences are appearance-driven and degrade under occlusion or sim-to-real domain shift. To address these limitations, we introduce SUFLECA (Scaling Up Feature LEarning for CAD Alignment), a weakly-supervised framework for zero-shot CAD alignment with two key contributions. First, SUFLECA scales up geometry-grounded feature learning from pretrained visual representations through Normalized Object Coordinates (NOCs) supervision on 674K images spanning 12 real and synthetic datasets, learning compact geometry-aware features that generalize across domains. Second, we propose a geometrically consistent matching algorithm that establishes reliable one-to-one CAD-to-image correspondences. Together, these contributions enable accurate, sub-second alignment per object instance without iterative pose refinement. On ScanNet25k, SUFLECA achieves 33.4%/42.3% category/instance accuracy, outperforming, with a smaller computational footprint, the strongest zero-shot baseline by 10.3/12.2 percentage points and, for the first time on this benchmark, even surpassing fully supervised methods. Code is available at: https://github.com/snt-arg/SUFLECA</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 CAD 到图像对齐旨在从单个 RGB 图像估计对象的 9D 姿态（旋转、平移和各向异性比例），从而实现机器人和增强现实中的应用。最近的零样本方法使用视觉基础模型将图像区域与 CAD 模型进行匹配，但它们的对应关系通常是外观驱动的，并且在遮挡或模拟到真实域转换的情况下会退化。为了解决这些限制，我们引入了 SUFLECA（CAD 对齐的扩展特征学习），这是一种用于零样本 CAD 对齐的弱监督框架，具有两个关键贡献。首先，SUFLECA 通过对跨越 12 个真实和合成数据集的 674K 图像进行规范化对象坐标 (NOC) 监督，从预训练的视觉表示中扩展基于几何的特征学习，学习跨领域泛化的紧凑的几何感知特征。其次，我们提出了一种几何一致的匹配算法，可建立可靠的一对一 CAD 与图像对应关系。这些贡献共同实现了每个对象实例的精确、亚秒级对齐，而无需迭代姿态细化。在 ScanNet25k 上，SUFLECA 实现了 33.4%/42.3% 的类别/实例准确率，以更小的计算占用量、最强的零样本基线提高了 10.3/12.2 个百分点，并且首次在该基准测试中甚至超越了完全监督的方法。代码位于：https://github.com/snt-arg/SUFLECA</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub     Add to collection     Community         saadejazz   Paper submitter    2 minutes ago         An adapter over DUNE for generating visual features grounded in 3D object geometry for accurate and fast zero-shot CAD-to-image alignment</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF GitHub 添加到集合 社区 saadejazz 论文提交者 2 分钟前 DUNE 上的适配器，用于生成基于 3D 对象几何形状的视觉特征，以实现准确、快速的零样本 CAD 到图像对齐</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.15278" target="_blank">Hierarchical Denoising For Multi-Step Visual Reasoning</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Zezhong Qian, Xiaowei Chi, Chak-Wing Mak, Tianze Zhou, Ruibin Yuan</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.15278" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.15278" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.15278.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Video models are evolving into vision foundation models, yet they still lack human-like multi-step reasoning. Streaming autoregressive diffusion models are efficient but limited in reasoning, while bidirectional diffusion enables global revision with high inference costs due to dense frame-level denoising. Both paradigms struggle to achieve logical consistency and low-latency streaming for complex reasoning tasks. We propose HDR (Hierarchical Denoising for Visual Reasoning), a unified framework that integrates hierarchical latents into causal video generation for multi-step reasoning. HDR organizes video latents into a tree-structured hierarchy, enabling coarse-to-fine reasoning before streaming output. Coarse denoising layers preserve uncertain hypotheses for global planning, while finer layers progressively refine them into concrete visual states. A sparse hierarchical attention pattern (SHAP) further reduces temporal attention costs. We introduce a level-stratified multi-step video reasoning benchmark with out-of-distribution cases, covering six tasks: maze navigation, Tower of Hanoi, one-line drawing, sliding puzzle, Sokoban, and water pouring. Compared with streaming autoregressive diffusion baselines, HDR improves success from 34.22 to 60.29 (76.2% relative gain) and increases average progress from 76.00 to 89.56, demonstrating more consistent reasoning trajectories. HDR maintains low-latency streaming at 0.70 seconds per latent, achieving 54.2 times faster inference than bidirectional diffusion. It also retains 82.9% of full-data performance with only 2% training data, compared with 52.0% for bidirectional diffusion. Real-world robot experiments further demonstrate HDR's potential for physical interaction and world modeling. Project demo: https://hierarchical-diffusion-reasoning.github.io/.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要视频模型正在演进为视觉基础模型，但它们仍然缺乏类人的多步骤推理。流式自回归扩散模型虽然高效，但推理能力有限，而双向扩散则可实现全局修正，但由于密集的帧级去噪，推理成本较高。这两种范式都在努力实现复杂推理任务的逻辑一致性和低延迟流。我们提出了 HDR（视觉推理分层去噪），这是一个统一的框架，它将分层潜伏集成到因果视频生成中以进行多步推理。 HDR 将视频潜在层组织成树状结构的层次结构，从而在流式输出之前实现从粗到细的推理。粗略的去噪层为全局规划保留了不确定的假设，而更精细的层则逐渐将它们细化为具体的视觉状态。稀疏分层注意力模式（SHAP）进一步降低了时间注意力成本。我们引入了一种具有分布外情况的分层多步视频推理基准，涵盖六个任务：迷宫导航、汉诺塔、单线绘制、滑动拼图、推箱子和倒水。与流式自回归扩散基线相比，HDR 将成功率从 34.22 提高到 60.29（相对增益 76.2%），并将平均进度从 76.00 提高到 89.56，展示了更一致的推理轨迹。 HDR 将低延迟流保持在每个延迟 0.70 秒，推理速度比双向扩散快 54.2 倍。它还仅用 2% 的训练数据保留了 82.9% 的全数据性能，而双向扩散的性能为 52.0%。真实世界的机器人实验进一步证明了 HDR 在物理交互和世界建模方面的潜力。项目演示：https://hierarchical-diffusion-reasoning.github.io/。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page   Add to collection     Community         Mark7121983123   Paper submitter    4 minutes ago</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 添加到集合 社区 Mark7121983123 论文提交者 4 分钟前</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.14106" target="_blank">Token Time Continuous Diffusion for Language Modeling</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>University of Texas at Austin</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Parikshit Bansal, Sujay Sanghavi</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.14106" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.14106" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.14106.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  In this paper we introduce token time continuous diffusion (TTCD), a new diffusion language model which (a) operates in continuous space, deterministically mapping Gaussian noise to a final token canvas with no further sampling, and crucially (b) incorporates a new notion of per-token times, with some tokens proceeding from noise to token at a faster rate than others. Continuous space modeling helps TTCD avoid the parallel sampling of multiple tokens, which is a key source of inaccuracy at high speedups for models that iterate purely in discrete space. The notion of per-token times helps TTCD to better model conditional generation, allows for more sure tokens to proceed at a faster rate, and allows for differentiated inter-token influences during refinement. TTCD outperforms discrete models at high speedups. We train a 160M parameter TTCD model on OpenWebText, and then self-distill it; we find that at high speedups we are comparable in unconditional generation quality, and outperform in conditional generation, several existing models of similar size trained, on the same data, and self-distilled. We achieve similar gains in Sudoku solving as well.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：在本文中，我们介绍了令牌时间连续扩散（TTCD），这是一种新的扩散语言模型，它（a）在连续空间中运行，确定性地将高斯噪声映射到最终令牌画布，无需进一步采样，并且至关重要的是（b）结合了每个令牌时间的新概念，一些令牌以比其他令牌更快的速度从噪声到令牌。连续空间建模有助于 TTCD 避免多个标记的并行采样，这是纯粹在离散空间中迭代的模型高速加速时不准确的一个关键来源。每个令牌时间的概念有助于 TTCD 更好地模拟条件生成，允许更确定的令牌以更快的速度进行，并允许在细化过程中区分令牌间的影响。 TTCD 在高加速下的性能优于离散模型。我们在OpenWebText上训练一个160M参数的TTCD模型，然后自蒸馏；我们发现，在高加速下，我们在无条件生成质量方面具有可比性，并且在条件生成方面表现优于条件生成，几个现有的类似大小的模型在相同的数据上进行训练并自我蒸馏。我们在数独求解中也取得了类似的成果。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community         pbansal   Paper submitter    about 1 hour ago         We present a continuous diffusion framework for language modeling, wherein during the forward process noise gets added to tokens at different rates, instead of adding equal amount of noise to all tokens. This enables better conditional learning and naturally extends to prefix conditioned generation. This model has state-of-the-art results in the extreme few-shot regime, outperforming and/or matching prior discrete and continuous diffusion models for language.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 pbansal 论文提交者 大约 1 小时前 我们提出了一个用于语言建模的连续扩散框架，其中在前向过程中，噪声以不同的速率添加到令牌中，而不是向所有令牌添加等量的噪声。这可以实现更好的条件学习，并自然地扩展到前缀条件生成。该模型在极少样本情况下具有最先进的结果，优于和/或匹配先前的离散和连续语言扩散模型。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.14387" target="_blank">Chat2Scenic: An Iterative RAG-Based Framework for Scenario Generation in Autonomous Driving</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>TUM - Professorship of Autonomous Vehicle Systems</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yuan Gao, Wenting Miao, Mattia Piccinini, Haoyu Wang, Qunying Song</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.14387" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.14387" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.14387.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Validating autonomous driving systems requires diverse, regulation-compliant test scenarios. In simulation-based testing, scenarios are defined as executable scripts. Yet automatically generating such scripts from regulatory descriptions remains an open challenge, and existing approaches face fundamental trade-offs. Retrieval-assemble methods achieve reasonable compilation rates but lack scalability, whereas retrieval-based full-script generation suffers from low compilation success rates. We present Chat2Scenic, the first iterative retrieval-augmented framework to generate scenario scripts in Domain Specific Language (DSL). Specifically, Chat2Scenic provides a chatbot interface that supports interactive scenario refinement and integrates Retrieval-augmented Generation (RAG) to ground scenario generation in regulatory knowledge and DSL syntax. Furthermore, we propose an open benchmark for scenario generation comprising 123 scenarios from various regulations, including NHTSA and United Nations Vehicle Regulations, as well as other sources. Extensive evaluation with State-of-the-Art (SOTA) Large Language Models (LLMs) demonstrates that Chat2Scenic achieves 76.42% Compilation Success Rate (CSR) and 58.17% Framework Accuracy (FA), outperforming existing methods (Retrieval Assemble with 30.08% CSR, 11.03% FA and Retrieval full script generation with 16.26% CSR, 10.86% FA). To facilitate future research, we release our code as open source at https://github.com/TUM-AVS/chat2scenic.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 验证自动驾驶系统需要多样化、符合法规的测试场景。在基于模拟的测试中，场景被定义为可执行脚本。然而，从监管描述自动生成此类脚本仍然是一个开放的挑战，现有方法面临着根本性的权衡。检索组装方法实现了合理的编译率，但缺乏可扩展性，而基于检索的全脚本生成则编译成功率较低。我们推出了 Chat2Scenic，这是第一个以领域特定语言 (DSL) 生成场景脚本的迭代检索增强框架。具体来说，Chat2Scenic 提供了一个聊天机器人界面，支持交互式场景细化，并将检索增强生成 (RAG) 集成到监管知识和 DSL 语法中的基础场景生成。此外，我们提出了场景生成的开放基准，其中包括来自各种法规（包括 NHTSA 和联合国车辆法规）以及其他来源的 123 个场景。对最先进 (SOTA) 大型语言模型 (LLM) 的广泛评估表明，Chat2Scenic 实现了 76.42% 的编译成功率 (CSR) 和 58.17% 的框架准确性 (FA)，优于现有方法（检索汇编为 30.08% CSR、11.03% FA，检索完整脚本生成为 16.26%）企业社会责任，10.86% FA）。为了促进未来的研究，我们在 https://github.com/TUM-AVS/chat2scenic 上开源了我们的代码。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  4    Add to collection      Community         Yuan-avs   Paper submitter    about 1 hour ago         Accepted at 2026 IEEE International Conference on Intelligent Robots and Systems (IROS)</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 4 添加到集合 社区 Yuan-avs 论文提交者 大约 1 小时前 在 2026 年 IEEE 智能机器人与系统国际会议 (IROS) 上接受</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.12227" target="_blank">Rethinking the Evaluation of Harness Evolution for Agents</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>University of Washington</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yike Wang, Huaisheng Zhu, Zhengyu Hu, Yige Yuan, Zhengyu Chen</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.12227" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.12227" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.12227.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  We revisit the evaluation of automatic harness evolution for LLM agents. Existing harness evolution methods use unit test cases to search for harness configurations and then report final performance on the same public benchmark. This protocol raises two fundamental concerns. First, harness evolution is itself an iterative search procedure that repeatedly evaluates and revises candidate harnesses using task feedback. As in agentic test-time scaling, it should therefore be compared with simple task-level search baselines under matched feedback and inference budgets to determine whether its gains arise from improved harness design or from additional search alone. Second, because the search and the final evaluation share the same benchmark, the reported gains risk overfitting to that specific task set. To address these concerns, we conduct an extensive evaluation comparing harness evolution with simple test-time scaling and discovery baselines under comparable feedback and inference budgets, and also evaluate evolved harnesses on held-out tasks to assess whether the discovered improvements generalize. Experiments on Terminal-Bench 2.1 with GPT-5.4 and Claude Opus 4.6 show that automatic harness evolution does not consistently outperform simple test-time scaling methods and exhibits limited generalization. Our results raise important questions about the effectiveness of automatic harness evolution and highlight the need for fairer evaluation protocols and benchmarks for automatic harness design. Our code is available at https://github.com/rethinking-harness-evolution.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：我们重新审视 LLM 代理的自动工具进化评估。现有的线束演化方法使用单元测试用例来搜索线束配置，然后在同一公共基准上报告最终性能。该协议提出了两个基本问题。首先，线束演化本身就是一个迭代搜索过程，它使用任务反馈反复评估和修改候选线束。与代理测试时间扩展一样，因此应将其与匹配反馈和推理预算下的简单任务级搜索基线进行比较，以确定其收益是否来自改进的线束设计或仅来自额外的搜索。其次，由于搜索和最终评估共享相同的基准，因此报告的增益风险过度拟合该特定任务集。为了解决这些问题，我们在可比较的反馈和推理预算下，对工具的演变与简单的测试时间扩展和发现基线进行了广泛的比较，并评估了保留任务的进化工具，以评估所发现的改进是否具有普遍性。使用 GPT-5.4 和 Claude Opus 4.6 在 Terminal-Bench 2.1 上进行的实验表明，自动线束演化并不总是优于简单的测试时间缩放方法，并且泛化能力有限。我们的结果提出了有关自动线束进化有效性的重要问题，并强调了对自动线束设计更公平的评估协议和基准的需要。我们的代码可在 https://github.com/rethinking-harness-evolution 获取。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub     Add to collection     Community         TTTXXX01   Paper submitter     28 minutes ago         In this work, we revisit how automatic harness evolution should be evaluated.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 添加到集合 社区 TTTXXX01 论文提交者 28 分钟前 在这项工作中，我们重新审视应如何评估自动线束演化。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.09061" target="_blank">On Locality and Length Generalization in Visual Reasoning</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Qualcomm</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Pulkit Madan, Sanjay Haresh, Reza Ebrahimi, Sunny Panchal, Apratim Bhattacharyya</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.09061" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.09061" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.09061.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  A striking feature of the human visual system is that it ingests visual information through a series of local foveated glimpses, rather than a single global computation. This makes human vision distinctly different from most popular computer vision models in use today, which input images globally and in a single shot. A natural question therefore is whether local, sequential vision models may provide any fundamental computational benefits in addition to being biologically more plausible than global models. In this work, we investigate this question from the perspective of visual state tracking and length generalization. Inspired by recent studies of length generalization in language models, we study the behavior of vision models trained on simple vision tasks that require the aggregation of local information across an image. Our experiments reveal that, similar to language models, vision models can learn to exploit global shortcuts and thereby fail to generalize over task length or complexity. We also show that recurrent vision policies based on strictly local perception can mitigate these failures, thereby allowing models to generalize on these tasks. Our results show that local attention may be an essential overlooked requirement for robust compositional generalization.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 人类视觉系统的一个显着特征是，它通过一系列局部注视点的瞥见而不是单一的全局计算来摄取视觉信息。这使得人类视觉与当今使用的最流行的计算机视觉模型明显不同，后者在全局和单次拍摄中输入图像。因此，一个自然的问题是，除了在生物学上比全局模型更合理之外，局部顺序视觉模型是否可以提供任何基本的计算优势。在这项工作中，我们从视觉状态跟踪和长度泛化的角度研究这个问题。受最近语言模型中长度泛化研究的启发，我们研究了在需要聚合图像上的局部信息的简单视觉任务上训练的视觉模型的行为。我们的实验表明，与语言模型类似，视觉模型可以学习利用全局捷径，从而无法概括任务长度或复杂性。我们还表明，基于严格局部感知的循环视觉策略可以减轻这些失败，从而使模型能够泛化这些任务。我们的结果表明，局部注意力可能是鲁棒组合泛化的一个被忽视的基本要求。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection      Community         rezaebrahimi   Paper submitter     about 2 hours ago • edited about 2 hours ago        Your eyes don't see a whole scene at once — they dart around in a sequence of foveated glimpses. Modern vision models take in the whole image in one shot. That difference decides if a model can generalize to scenarios that are out-of-distribution.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到收藏集 社区 rezaebrahimi 论文提交者 大约 2 小时前 • 大约 2 小时前编辑 您的眼睛不会立即看到整个场景 - 它们以一系列注视点的方式快速移动。现代视觉模型一次拍摄整个图像。这种差异决定了模型是否可以推广到分布外的场景。</p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+        
+        <div class="nav-buttons">
+            <a href="2026-07-16.html" class="nav-btn">← 2026-07-16</a>
+            <a href="2026-07-18.html" class="nav-btn">2026-07-18 →</a>
+        </div>
+        
+        <footer>
+            Generated by <a href="https://github.com" target="_blank">HF Papers Daily</a>
+        </footer>
+    </div>
+    
+    <script>
+        function toggleAbstract(header) {
+            const toggle = header.querySelector('.abstract-toggle');
+            const content = header.nextElementSibling;
+            toggle.classList.toggle('expanded');
+            content.classList.toggle('expanded');
+        }
+    </script>
+</html>
