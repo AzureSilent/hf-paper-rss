@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hugging Face Papers - 2026-07-09 (zh-CN)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .date {
+            font-size: 1.2em;
+            color: #a0a0a0;
+        }
+        
+        .stats {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #888;
+        }
+        
+        .paper-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .paper-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(102, 126, 234, 0.5);
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.2);
+        }
+        
+        .paper-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        
+        .paper-title a {
+            color: #e0e0e0;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .paper-title a:hover {
+            color: #667eea;
+        }
+        
+        .paper-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            color: #a0a0a0;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .meta-label {
+            color: #888;
+        }
+        
+        .links {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .link-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .link-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .link-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .abstract-section {
+            margin-top: 15px;
+        }
+        
+        .abstract-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .abstract-header:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .abstract-toggle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+            transition: transform 0.3s;
+        }
+        
+        .abstract-toggle.expanded {
+            transform: rotate(180deg);
+        }
+        
+        .abstract-label {
+            font-weight: 500;
+            color: #667eea;
+        }
+        
+        .abstract-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding: 0 15px;
+        }
+        
+        .abstract-content.expanded {
+            max-height: 10000px;
+            padding: 15px;
+        }
+        
+        .abstract-text {
+            line-height: 1.7;
+            color: #c0c0c0;
+        }
+        
+        .summary-box {
+            background: rgba(102, 126, 234, 0.1);
+            border-left: 3px solid #667eea;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .summary-label {
+            font-size: 0.8em;
+            color: #667eea;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .summary-text {
+            color: #b0b0b0;
+            line-height: 1.5;
+        }
+        
+        .translation-box {
+            background: rgba(118, 75, 162, 0.1);
+            border-left: 3px solid #764ba2;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .translation-label {
+            font-size: 0.8em;
+            color: #764ba2;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .translation-text {
+            color: #b0b0b0;
+            line-height: 1.5;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding: 0 10px;
+        }
+        
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .nav-btn.disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: #666;
+            pointer-events: none;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .paper-title {
+                font-size: 1.1em;
+            }
+            
+            .links {
+                flex-wrap: wrap;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-btn {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Hugging Face Papers</h1>
+            <div class="date">2026-07-09</div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number">18</div>
+                    <div class="stat-label">Papers</div>
+                </div>
+            </div>
+        </header>
+        
+        <main>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.07708" target="_blank">Accurate, Interdisciplinary and Transparent Structure-property Understanding with Deep Native Structural Reasoning</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>shanghai ailab</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Chen Tang, Yizhou Wang, Jianyu Wu, Lintao Wang, Shixiang Tang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.07708" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.07708" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.07708.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract SciReasoner is a multimodal scientific foundation model that enables interpretable structural reasoning across proteins, molecules, and crystals by discretizing structural elements into a unified vocabulary for enhanced prediction and scientific inference.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 SciReasoner 是一种多模态科学基础模型，通过将结构元素离散化为统一的词汇表，实现跨蛋白质、分子和晶体的可解释结构推理，以增强预测和科学推理。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Structure-property relationships are foundational to biology, chemistry and materials science, where function, reactivity and physical response emerge from spatial, chemical and periodic organization. Mechanistically explaining these relationships requires interpreting structural evidence through scientific principles and physical constraints, from stereochemistry and bonding to symmetry, energetics and periodic order. However, applying artificial intelligence to this process presents a joint challenge of representation and reasoning: models must preserve domain-native structural information while showing how specific evidence supports predictions under these constraints. Here we introduce SciReasoner, a multimodal scientific foundation model for native structural reasoning across proteins, small molecules and inorganic crystals. SciReasoner discretizes coordinates, topologies and periodic connectivities into a unified structure-aware vocabulary, treating structural tokens as addressable evidence units during reasoning. In homology-controlled Gene Ontology prediction, SciReasoner improves Cellular Component annotation for low-homology and orphan-like proteins, increasing F_{max} from 0.42 to 0.55. In chemistry, it raises single-step retrosynthesis accuracy from 0.63 to 0.72 while generating fragment-level disconnection and precursor-verification traces. In materials science, its representations separate elemental and compound phases and resolve high- and low-band-gap regimes. Across 86 benchmarks, SciReasoner achieves state-of-the-art performance on 67 tasks. Double-blind expert evaluation rates its reasoning traces as preferred or at least comparable to those of a frontier large language model in 98% of cases. By making structure an inspectable substrate for reasoning under scientific constraints, SciReasoner connects accurate prediction with interpretable scientific inference.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 结构-性质关系是生物学、化学和材料科学的基础，其中功能、反应性和物理响应来自空间、化学和周期性组织。从机械上解释这些关系需要通过科学原理和物理约束来解释结构证据，从立体化学和键合到对称性、能量学和周期顺序。然而，将人工智能应用于这一过程提出了表示和推理的共同挑战：模型必须保留领域本机结构信息，同时显示特定证据如何支持这些约束下的预测。在这里，我们介绍 SciReasoner，这是一种多模式科学基础模型，用于蛋白质、小分子和无机晶体的本机结构推理。 SciReasoner 将坐标、拓扑和周期性连接离散化为统一的结构感知词汇，在推理过程中将结构标记视为可寻址的证据单元。在同源控制的基因本体预测中，SciReasoner 改进了低同源性和孤儿样蛋白的细胞成分注释，将 F_{max} 从 0.42 增加到 0.55。在化学中，它将单步逆合成精度从 0.63 提高到 0.72，同时生成片段级断开和前体验证痕迹。在材料科学中，它的表示分离元素相和化合物相并解决高带隙和低带隙状态。在 86 个基准测试中，SciReasoner 在 67 项任务上实现了最先进的性能。在 98% 的情况下，双盲专家评估将其推理轨迹评为首选或至少与前沿大型语言模型相当。通过使结构成为科学约束下推理的可检查基础，SciReasoner 将准确的预测与可解释的科学推理联系起来。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.07608" target="_blank">Dual Latent Memory in Vision-Language-Action Models for Robotic Manipulation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Hongyu Qu, Jianzhe Gao, Xiaobin Hu, Shaohuan Yang, Xinlei Yu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.07608" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.07608" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.07608.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract LaMem-VLA introduces a latent-memory-native framework that integrates historical experience into vision-language-action reasoning through coordinated memory components operating in the same latent space.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 LaMem-VLA 引入了一种潜在记忆本机框架，通过在同一潜在空间中运行的协调记忆组件，将历史经验整合到视觉-语言-动作推理中。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Mainstream Vision-Language-Action (VLA) models predict actions primarily from the current observation under a Markovian assumption, thus struggling with long-horizon, temporally dependent tasks. Existing memory-augmented VLAs either expand the observation window or retrieve history from the memory bank as auxiliary policy-side context. However, they leave memory outside the native latent embedding space of VLA reasoning, preventing historical experience from being fluidly interleaved with multimodal reasoning and action formation. To this end, we introduce LaMem-VLA, a latent-memory-native framework that reconstructs historical experience into latent memory tokens and directly interweaves them with VLA reasoning. At its core, LaMem-VLA introduces four coordinated components: (i) a curator that organizes historical experience into two complementary short-term and long-term memory vaults; (ii) a seeker that queries both vaults using the multimodal cognition to retrieve context-relevant evidence; (iii) a condenser that reconstructs the retrieved evidence into compact short-term and long-term latent memory tokens; and (iv) a weaver that injects these memory tokens with the current observation and instruction into one continuous embedding sequence. By representing, retrieving, and consuming historical experience entirely in the same continuous latent space, LaMem-VLA enables memory to directly participate in VLA reasoning and guide action generation under a bounded context. Extensive experiments on SimplerEnv and LIBERO demonstrate the superiority of our LaMem-VLA.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 主流视觉-语言-动作 (VLA) 模型主要根据马尔可夫假设下的当前观察来预测动作，从而难以应对长期的、时间相关的任务。现有的记忆增强 VLA 要么扩大观察窗口，要么从记忆库中检索历史作为辅助策略侧上下文。然而，它们将记忆留在了 VLA 推理的原生潜在嵌入空间之外，从而阻止了历史经验与多模态推理和行动形成的流畅交织。为此，我们引入了 LaMem-VLA，这是一种潜在记忆原生框架，它将历史经验重构为潜在记忆标记，并直接将它们与 VLA 推理交织在一起。 LaMem-VLA 的核心引入了四个协调组成部分：（i）一个策展人，将历史经验组织成两个互补的短期和长期记忆库； (ii) 搜寻者使用多模态认知查询两个金库以检索上下文相关证据； (iii) 将检索到的证据重建为紧凑的短期和长期潜在记忆标记的冷凝器； (iv) 编织器将这些内存标记与当前观察和指令一起注入到一个连续的嵌入序列中。通过完全在同一个连续潜在空间中表示、检索和消费历史经验，LaMem-VLA 使记忆能够直接参与 VLA 推理并在有界上下文下指导动作生成。在 SimplerEnv 和 LIBERO 上进行的大量实验证明了我们的 LaMem-VLA 的优越性。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.07675" target="_blank">Scaling Mixture-of-Experts Video Pretraining for Embodied Intelligence</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Shuailei Ma, Jiaqi Liao, Xinyang Wang, Jingjing Wang, Chaoran Feng</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.07675" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.07675" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.07675.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract LingBot-Video presents a DiT-based video pretraining framework with Mixture-of-Experts architecture, specialized data augmentation, and multi-dimensional reward system for embodied intelligence applications.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 LingBot-Video 提出了一种基于 DiT 的视频预训练框架，具有专家混合架构、专门的数据增强和用于具体智能应用的多维奖励系统。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Despite the recent promise in robot control, video generative models suffer from a domain mismatch due to their primary focus on content creation. For example, their design inherently prioritizes visual fidelity and creativity over computational efficiency and physical realism. In this work, we present LingBot-Video, a DiT-based video pretraining paradigm specifically tailored for embodied intelligence. From the architecture perspective, we adopt the Mixture-of-Experts (MoE), instead of dense, framework to achieve a better trade-off between modeling capacity and inference efficiency, and manage to scale it up from scratch. From the data perspective, we construct a data profiling engine that augments standard internet videos with extensive robot-oriented footage, encompassing manipulation, navigation, and egocentric perspectives, to equip the base model with an intrinsic understanding of actions and world dynamics. From the training perspective, we develop a multi-dimensional reward system to enforce the alignment regarding physical rationality and task completion, going beyond standard criteria such as aesthetics, prompt-following, and motion consistency. Comprehensive evaluations validate its performance and efficiency as a video foundation model. We contribute LingBot-Video as the inaugural large-scale, open-source MoE video foundation model to the community, in a pioneering effort to bridge digital creativity and physical actuation.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 尽管最近在机器人控制方面前景广阔，但视频生成模型由于主要关注内容创建而遭受领域不匹配的困扰。例如，他们的设计本质上优先考虑视觉保真度和创造力，而不是计算效率和物理真实感。在这项工作中，我们提出了 LingBot-Video，这是一种专门为体现智能量身定制的基于 DiT 的视频预训练范例。从架构的角度来看，我们采用混合专家（MoE）而不是密集的框架来实现建模能力和推理效率之间的更好权衡，并设法从头开始扩展。从数据角度来看，我们构建了一个数据分析引擎，通过广泛的面向机器人的镜头增强标准互联网视频，包括操纵、导航和以自我为中心的视角，以使基本模型具备对行为和世界动态的内在理解。从训练的角度来看，我们开发了一个多维度的奖励系统，以强化身体理性和任务完成的一致性，超越美学、提示跟随和动作一致性等标准标准。综合评估验证了其作为视频基础模型的性能和效率。我们将 LingBot-Video 作为首个大型开源 MoE 视频基础模型贡献给社区，这是连接数字创造力和物理驱动的开创性努力。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.07534" target="_blank">Infinite Worlds with Versatile Interactions</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Zelin Gao, Qiuyu Wang, Jiapeng Zhu, Jingye Chen, Zichen Liu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.07534" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.07534" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.07534.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract An advanced world modeling system with extended interaction capabilities, real-time processing, diverse interactive elements, and multi-agent behavior control for collaborative virtual environments.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 一种先进的世界建模系统，具有扩展的交互能力、实时处理、多样化的交互元素以及协作虚拟环境的多智能体行为控制。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct We present LingBot-World 2.0 (also known as LingBot-World-Infinity), an advanced iteration of LingBot-World featuring four distinct upgrades. (1) Our model achieves an unbounded interaction horizon while maintaining consistent output quality, benefiting from a carefully crafted causal pretraining paradigm. (2) Through distilling a real-time variant from the base model, our system guarantees rapid response time, sufficient to drive 720p video streams at 60 fps. (3) Compared to the previous version, this update introduces highly diverse interactive elements, comprising a broader spectrum of actions (e.g., attacking, archery, spell-casting, and shooting) alongside a richer variety of text-driven events. (4) We pioneer the integration of an agentic harness within the domain of world modeling, wherein a pilot agent is tasked with planning and executing character behaviors, while a director agent is responsible for synthesizing novel environmental elements as the scene progresses. Additionally, to facilitate a shared experience, we develop an interface that permits multiple players to simultaneously immerse themselves in this vivid world simulator. We pair our primary 14B model with a lightweight 1.3B counterpart, which supports effortless deployment on a single GPU.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 我们推出 LingBot-World 2.0（也称为 LingBot-World-Infinity），这是 LingBot-World 的高级迭代，具有四个不同的升级。 (1) 我们的模型实现了无限的交互范围，同时保持一致的输出质量，受益于精心设计的因果预训练范例。 (2) 通过从基本模型中提取实时变体，我们的系统保证了快速响应时间，足以驱动 60 fps 的 720p 视频流。 (3) 与之前的版本相比，本次更新引入了高度多样化的交互元素，包括更广泛的动作（例如攻击、射箭、施法、射击）以及更丰富的文本驱动事件。 (4) 我们率先在世界建模领域集成代理控制，其中飞行员代理的任务是规划和执行角色行为，而导演代理则负责随着场景的进展合成新颖的环境元素。此外，为了促进共享体验，我们开发了一个界面，允许多个玩家同时沉浸在这个生动的世界模拟器中。我们将主要 14B 模型与轻量级 1.3B 模型配对，后者支持在单个 GPU 上轻松部署。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.07508" target="_blank">Single-Rollout Asynchronous Optimization for Agentic Reinforcement Learning</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Z.ai</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Zhenyu Hou, Yujiang Li, Jie Tang, Yuxiao Dong</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.07508" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.07508" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.07508.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Asynchronous reinforcement learning with single-rollout optimization addresses stability issues in LLM training for complex tasks, outperforming existing methods in coding and reasoning benchmarks.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：具有单次推出优化的异步强化学习解决了复杂任务的 LLM 训练中的稳定性问题，在编码和推理基准方面优于现有方法。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Reinforcement learning (RL) is becoming increasingly important for post-training large language models (LLMs). Previous RL pipelines for LLMs were mostly synchronous and batch-interleaved, which is inefficient for long-horizon agentic tasks. Recently, asynchronous RL has emerged as a more efficient alternative by updating the model as rollouts arrive. However, existing asynchronous RL systems often emphasize throughput, while leaving training stability and task effectiveness largely underexplored. For example, a key challenge is that group-wise sampling in the widely-used GRPO framework does not naturally fit asynchronous agentic training. In this paper, we present Single-rollout Asynchronous Optimization (SAO) to address the stability and off-policy challenges in asynchronous RL. To reduce off-policy effects and improve generalization, we replace group-wise sampling with single-rollout sampling, that is, using one rollout per prompt. We further improve this single-rollout strategy with practical value-model training designs. To improve optimization stability, we introduce a strict double-side token-level clipping strategy. SAO is able to train stably for one thousand steps and consistently outperform GRPO and its variants on agentic coding and reasoning benchmarks, such as SWE-Bench Verified, BeyondAIME, and IMOAnswerBench. We also demonstrate that single-rollout RL is particularly effective in a simulated online learning setting, where the model must adapt to changing evolving environments. To this end, SAO is successfully deployed in the agentic RL pipeline for training the open GLM-5.2 model (750B-A40B).</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 强化学习 (RL) 对于训练后大型语言模型 (LLM) 变得越来越重要。以前的 LLM 的 RL 管道大多是同步和批量交错的，这对于长期代理任务来说效率低下。最近，异步强化学习通过在推出时更新模型而成为一种更有效的替代方案。然而，现有的异步强化学习系统通常强调吞吐量，而训练稳定性和任务有效性在很大程度上尚未得到充分探索。例如，一个关键的挑战是广泛使用的 GRPO 框架中的分组采样并不自然适合异步代理训练。在本文中，我们提出了单次推出异步优化（SAO）来解决异步强化学习中的稳定性和离策略挑战。为了减少离策略效应并提高泛化能力，我们将分组采样替换为单转出采样，即每个提示使用一次转出。我们通过实用的价值模型培训设计进一步改进了这种单一推出策略。为了提高优化稳定性，我们引入了严格的双边令牌级别裁剪策略。 SAO 能够稳定训练一千步，并且在代理编码和推理基准上始终优于 GRPO 及其变体，例如 SWE-Bench Verified、BeyondAIME 和 IMOAnswerBench。我们还证明，单次推出的强化学习在模拟在线学习环境中特别有效，其中模型必须适应不断变化的环境。为此，SAO 成功部署在代理 RL 管道中，用于训练开放的 GLM-5.2 模型 (750B-A40B)。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2606.30111" target="_blank">Automating the Design of Embodied Agent Architectures</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Australian Institute for Machine Learning</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Jian Zhou, Sihao Lin, Jin Li, Shuai Fu, Gengze Zhou</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2606.30111" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2606.30111" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2606.30111.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Automated agent architecture search demonstrates potential for improving embodied agent performance while revealing challenges related to optimization signals, local optima, and credit assignment in simulation-based training.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：自动化代理架构搜索展示了提高具体代理性能的潜力，同时揭示了基于模拟的训练中与优化信号、局部最优和信用分配相关的挑战。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Embodied agents are typically built as hand-designed compositions of perception, memory, planning, and action modules. This modularity exposes a large architectural design space, but current systems still rely on researcher intuition to choose where information is stored, how observations are processed, and how model calls are connected. Agent Architecture Search (AAS) automates such design for text-domain agents, but has not been systematically evaluated on perceptual embodied agents through simulator rollouts. We study this transfer. We introduce AgentCanvas, a typed-graph runtime that hosts embodied executors as editable node-and-wire programs with simulator-aware execution and episode-level logs, and KDLoop, a coding-agent search procedure that cycles through proposal, critique, experiment, and distillation, with triggered reflection after stalls. We evaluate three AAS variants across four embodied executors spanning vision-language navigation, embodied question answering, and language-conditioned manipulation. The resulting 3x4 matrix shows that architecture-level search can produce deployable and directional success-rate gains on embodied tasks, while one apparent high-scoring candidate is rejected as leak-bearing. At the same time, the experiments expose constraints that are muted in text-domain AAS: optimization signals can be masked by rollout noise, search can become trapped in local edit basins, and episode-level credit assignment only partially emerges even when detailed logs are available. These results characterize both the promise and the current limits of automated architecture search for embodied agents.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 体现代理通常构建为手工设计的感知、记忆、规划和行动模块组合。这种模块化暴露了巨大的架构设计空间，但当前的系统仍然依赖研究人员的直觉来选择信息存储位置、观察结果如何处理以及模型调用如何连接。代理架构搜索（AAS）自动化了文本域代理的此类设计，但尚未通过模拟器的推出对感知体现代理进行系统评估。我们研究这种转移。我们引入了 AgentCanvas，一个类型化图运行时，它将具体执行器托管为可编辑的节点和连线程序，具有模拟器感知的执行和情节级日志，以及 KDLoop，一个编码代理搜索过程，循环通过提案、批评、实验和蒸馏，并在停顿后触发反射。我们评估了四个具体执行器的三个 AAS 变体，涵盖视觉语言导航、具体问答和语言条件操作。由此产生的 3x4 矩阵表明，架构级搜索可以在具体任务上产生可部署的、定向的成功率增益，而一个明显的高分候选者会因为存在泄漏而被拒绝。与此同时，这些实验暴露了文本域 AAS 中静音的约束：优化信号可能会被推出噪声掩盖，搜索可能陷入本地编辑盆地，即使有详细日志可用，情节级别的信用分配也只能部分出现。这些结果描述了针对具体代理的自动化架构搜索的前景和当前限制。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.04434" target="_blank">RoboDojo: A Unified Sim-and-Real Benchmark for Comprehensive Evaluation of Generalist Robot Manipulation Policies</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>RoboDojo-Benchmark</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Tianxing Chen, Yue Chen, Zixuan Li, Junyuan Tang, Kailun Su</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.04434" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.04434" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.04434.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract RoboDojo presents a unified sim-and-real benchmark for evaluating generalist robot manipulation policies across diverse tasks and evaluation dimensions.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 RoboDojo 提出了一个统一的模拟与真实基准，用于评估跨不同任务和评估维度的通用机器人操作策略。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Generalist robot manipulation policies have advanced rapidly, yet existing benchmarks remain limited in systematically evaluating their capabilities. Many rely on simple, short-horizon, or skill-narrow tasks with limited capability coverage, and are often conducted only in simulation or only in the real world. Simulation enables scalable feedback but misses physical deployment challenges, while real-world evaluation is costly, time-consuming, and difficult to reproduce. We introduce RoboDojo, a unified sim-and-real benchmark for comprehensive evaluation of generalist robot manipulation policies. RoboDojo includes 42 simulation tasks and 18 real-world tasks covering diverse and complementary manipulation capabilities. The simulation benchmark evaluates five dimensions: generalization, memory, precision, long-horizon execution, and open-vocabulary instruction following, while the real-world benchmark exposes policies to challenging physical-world deployment conditions. RoboDojo supports scalable evaluation through heterogeneous parallel simulation in Isaac Sim and provides RoboDojo-RealEval, a reproducible real-world evaluation system with remote cloud access, standardized hardware, scene reset, evaluation protocol, and deployment interface. Together with XPolicyLab, policies can be integrated once and evaluated across simulation and real-world settings with minimal adaptation. We integrate 30 policies into XPolicyLab and evaluate them on RoboDojo, establishing a public leaderboard and systematic analysis of current policy performance. The website is available at http://robodojo-benchmark.com/.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 通才型机器人操纵策略发展迅速，但现有基准在系统评估其能力方面仍然有限。许多任务依赖于能力范围有限的简单、短期或技能狭窄的任务，并且通常仅在模拟或现实世界中进行。模拟可以实现可扩展的反馈，但会忽略物理部署的挑战，而现实世界的评估成本高昂、耗时且难以重现。我们推出了 RoboDojo，这是一个统一的模拟与真实基准，用于综合评估通用机器人操纵策略。 RoboDojo 包括 42 个模拟任务和 18 个现实世界任务，涵盖多样化和互补的操作功能。模拟基准评估五个维度：泛化、内存、精度、长期执行和开放词汇指令遵循，而现实世界基准则将策略暴露给具有挑战性的物理世界部署条件。 RoboDojo 通过 Isaac Sim 中的异构并行仿真支持可扩展评估，并提供 RoboDojo-RealEval，这是一个可重现的现实世界评估系统，具有远程云访问、标准化硬件、场景重置、评估协议和部署接口。与 XPolicyLab 一起，策略可以集成一次，并在模拟和现实环境中进行评估，只需进行最小程度的调整。我们将 30 项政策集成到 XPolicyLab 中，并在 RoboDojo 上对其进行评估，建立公共排行榜并对当前政策绩效进行系统分析。该网站位于 http://robodojo-benchmark.com/。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.07386" target="_blank">Sparse Delta Memory: Scaling the State of Linear RNNs through Sparsity</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>AI at Meta</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Loïc Cabannes, Pierre-Emmanuel Mazaré, Gergely Szilvasy, Matthijs Douze, Maria Lomeli</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.07386" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.07386" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.07386.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Sparse Delta Memory extends gated linear RNNs with sparse addressing to dramatically increase hidden state capacity for improved long-context learning and retrieval while maintaining computational efficiency.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 稀疏增量内存通过稀疏寻址扩展了门控线性 RNN，以显着提高隐藏状态容量，从而改进长上下文学习和检索，同时保持计算效率。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Linear attention models allow a fixed state size and a fixed amount of compute per token. However, due to their limited state size, linear attention models fall behind in long-context recall compared to softmax-attention-based transformer architectures. Increasing the state size of linear attention improves recall performance but at the cost of higher FLOPs. In this work, we introduce Sparse Delta Memory (SDM), an architecture that scales the hidden state of gated linear RNNs to orders of magnitude higher capacity using a sparse addressing scheme. SDM extends the Gated DeltaNet architecture by replacing the dense key-value outer product with sparse reads and writes to a large explicit memory. We show that, under an isoFLOP constraint and with an identical number of parameters, a higher state memory capacity significantly improves performance on in-context learning and long-context retrieval tasks. Moreover, by learning the initial state of the SDM memory and therefore using it as a parametric memory, we show that the model further improves on a wide range of common-knowledge and reasoning tasks.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 线性注意力模型允许固定的状态大小和每个令牌的固定计算量。然而，由于状态大小有限，线性注意力模型在长上下文召回方面落后于基于 softmax 注意力的变压器架构。增加线性注意力的状态大小可以提高召回性能，但代价是更高的 FLOPs。在这项工作中，我们引入了稀疏增量内存（SDM），这是一种使用稀疏寻址方案将门控线性 RNN 的隐藏状态扩展到更高数量级的容量的架构。 SDM 通过将密集的键值外积替换为对大型显式内存的稀疏读取和写入，扩展了门控 DeltaNet 架构。我们表明，在 isoFLOP 约束和相同数量的参数下，较高的状态记忆容量可显着提高上下文学习和长上下文检索任务的性能。此外，通过学习 SDM 存储器的初始状态并将其用作参数存储器，我们表明该模型进一步改进了广泛的常识和推理任务。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.06624" target="_blank">AgentLens: Production-Assessed Trajectory Reviews for Coding Agent Evaluation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Andrey Podivilov, Vadim Lomshakov, Sergey Savin, Matvei Startsev, Roman Pozharskiy</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.06624" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.06624" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.06624.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  We present AgentLens, a production-assessed benchmark for interactive code agents. Most code-agent benchmarks reduce a run to a single bit -- did the task pass? -- but the people who actually use these agents experience the entire trajectory: how the agent follows instructions, uses its tools, verifies its own work, recovers from mistakes, and talks to them along the way. AgentLens evaluates that whole trajectory. It pairs formal verification, where an objective check exists, with LLM-written trajectory reviews and side-by-side comparisons, so that each run yields a readable explanation of why the score is what it is. This makes AgentLens useful for more than ranking models: we use it to diagnose model behavior, compare successive versions of our own agent, and catch product regressions in a nightly evaluation pipeline. We release the benchmark as open source at https://github.com/agent-lens/agent-lens-bench.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 我们提出了 AgentLens，这是交互式代码代理的生产评估基准。大多数代码代理基准测试将运行次数减少到一位——任务通过了吗？ ——但实际使用这些代理的人会经历整个轨迹：代理如何遵循指令、使用其工具、验证自己的工作、从错误中恢复以及一路与他们交谈。 AgentLens 评估整个轨迹。它将形式验证（存在客观检查）与法学硕士编写的轨迹审查和并排比较相结合，以便每次运行都会产生一个可读的解释，解释为什么分数是这样的。这使得 AgentLens 不仅仅适用于对模型进行排名：我们用它来诊断模型行为、比较我们自己的代理的连续版本，并在夜间评估管道中捕获产品回归。我们在 https://github.com/agent-lens/agent-lens-bench 上以开源方式发布了基准测试。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  4    Add to collection     Community         vadimlo   Paper submitter    30 minutes ago         Github: https://github.com/agent-lens/agent-lens-benchLeaderboard: https://agent-lens.github.io/agent-lens-bench/Blog post: https://explyt.ai/en/blog/agent-lens-bench</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 4 添加到集合 社区 vadimlo 论文提交者 30 分钟前 Github：https://github.com/agent-lens/agent-lens-benchLeaderboard：https://agent-lens.github.io/agent-lens-bench/博客文章：https://explyt.ai/en/blog/agent-lens-bench</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.06838" target="_blank">WildCity: A Real-World City-Scale Testbed for Rendering, Simulation, and Spatial Intelligence</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>NVIDIA</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Xiangyu Han, Mengyu Yang, Jiaqi Li, Bowen Chang, Ziyu Chen</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.06838" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.06838" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.06838.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract WildCity presents a large-scale multimodal dataset for urban navigation and spatial representation, enabling research into AI systems that can perceive and reason about city-scale environments similar to human cognitive capabilities.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 WildCity 提供了用于城市导航和空间表示的大规模多模态数据集，使研究能够感知和推理类似于人类认知能力的城市规模环境的人工智能系统成为可能。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Humans can navigate an unfamiliar city and gradually form a coherent spatial mental map spanning tens of square kilometers. Can AI build spatial representations at a comparable scale? Although recent foundation models have advanced scene reconstruction and embodied intelligence, scaling to entire cities remains an open challenge, primarily due to the lack of city-scale data. To bridge the gap, we introduce WildCity, a real-world multimodal dataset collected by autonomous fleets traversing complex urban environments. Our dataset includes 18 trajectories, each averaging 83.7 kilometers in length, and preserves the core challenges of in-the-wild perception, e.g., dynamic objects, lighting variations, and imperfect camera poses. We further establish an urban-tailored reconstruction baseline and convert the reconstructed environments into a closed-loop simulator. Beyond the dataset and baseline, we systematically analyze the key challenges on the path to simulation-ready urban digital twins: scalability, extrapolation, and uncertainty. Ultimately, WildCity aims to catalyze progress not only in city-scale rendering, but more broadly in the pursuit of AI that can perceive, remember, and reason across space at a scale comparable to human cognition. Project page: https://han-xiangyu.github.io/Wild-City/</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 人类可以在陌生的城市中航行，并逐渐形成跨越数十平方公里的连贯的空间心理地图。人工智能能否构建同等规模的空间表征？尽管最近的基础模型具有先进的场景重建和体现智能，但扩展到整个城市仍然是一个开放的挑战，这主要是由于缺乏城市规模的数据。为了弥补这一差距，我们引入了 WildCity，这是一个由穿越复杂城市环境的自主车队收集的真实世界多模式数据集。我们的数据集包括 18 条轨迹，每条平均长度为 83.7 公里，并保留了野外感知的核心挑战，例如动态物体、光照变化和不完美的相机姿势。我们进一步建立了适合城市的重建基线，并将重建的环境转换为闭环模拟器。除了数据集和基线之外，我们还系统地分析了模拟就绪城市数字孪生之路上的关键挑战：可扩展性、外推法和不确定性。最终，WildCity 的目标不仅是促进城市规模渲染方面的进步，而且更广泛地追求能够以与人类认知相当的规模跨空间感知、记忆和推理的人工智能。项目页面：https://han-xiangyu.github.io/Wild-City/</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.03723" target="_blank">OmniTacTune: Policy-Agnostic Real-World RL for Tactile Residual Adaptation of Visual Policies</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>University of Maryland College Park</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>KelinYu1, Kelin Yu, Haode Zhang, Harish Ravichandar, Yunhai Han</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.03723" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.03723" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.03723.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract OmniTacTune enables efficient adaptation of tactile feedback to visual robot policies through a two-stage reinforcement learning approach that improves success rates in contact-rich manipulation tasks.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 OmniTacTune 通过两阶段强化学习方法实现触觉反馈与视觉机器人策略的有效适应，从而提高接触丰富的操作任务的成功率。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Visual policies learned from human videos, teleoperation, and robot demonstrations offer scalable motion priors, but often fail in contact-rich manipulation, where success significantly depends on local force and contact geometry. Tactile sensing provides these complementary signals, yet tactile data remain costly to collect and hard to generalize across sensors, robots, and tasks. We introduce OmniTacTune, a policy-agnostic real-world RL pipeline that adapts tactile feedback to pretrained visual policies through residual correction. OmniTacTune uses a two-stage design: it first bootstraps tactile-aware learning from autonomous base-policy rollouts, then learns a lightweight tactile residual policy through online interaction. Extensive experiments show that OmniTacTune generalizes across diverse contact-rich tasks, visual base policies, and tactile representations. Across four real-world contact-rich tasks, it improves visual base policies from 5-40% success to 85-100% within 40-80 minutes, demonstrating an efficient path for adapting tactile feedback to scalable visual robot policies. Project page: https://colinyu1.github.io/omnitactune-site/</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 从人类视频、远程操作和机器人演示中学习的视觉策略提供了可扩展的运动先验，但在接触丰富的操作中经常失败，其中成功很大程度上取决于局部力和接触几何形状。触觉传感提供了这些补充信号，但触觉数据的收集成本仍然很高，而且很难在传感器、机器人和任务之间进行推广。我们引入了 OmniTacTune，这是一种与策略无关的现实世界 RL 管道，它通过残差校正使触觉反馈适应预训练的视觉策略。 OmniTacTune 采用两阶段设计：首先从自主基本策略推出中引导触觉感知学习，然后通过在线交互学习轻量级触觉残留策略。大量实验表明，OmniTacTune 可以泛化各种接触丰富的任务、视觉基础策略和触觉表征。在四个现实世界中接触丰富的任务中，它在 40-80 分钟内将视觉基础策略的成功率从 5-40% 提高到 85-100%，展示了一种将触觉反馈适应可扩展视觉机器人策略的有效路径。项目页面：https://colinyu1.github.io/omnitactune-site/</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.08766" target="_blank">OPSD-V: On-Policy Self-Distillation for Post-Training Few-Step Autoregressive Video Generators</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>MeiGen-AI</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Hongyu Liu, Chun Wang, Feng Gao, Xuanhua He, Yue Ma</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.08766" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.08766" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.08766.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract OPSD-V enhances few-step autoregressive video diffusion models by using real long-video data for temporal context during training, providing dense trajectory-level supervision that improves visual quality and motion dynamics without altering inference mechanisms.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 OPSD-V 通过在训练期间使用真实的长视频数据作为时间上下文来增强少步自回归视频扩散模型，提供密集的轨迹级监督，从而在不改变推理机制的情况下提高视觉质量和运动动态。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct We propose OPSD-V, an on-policy self-distillation paradigm for post-training few-step autoregressive (AR) video diffusion models. Existing few-step AR video generators can produce long videos with low latency, but still suffer from error accumulation and weakened motion dynamics during long autoregressive rollout. OPSD-V reduces long-horizon degradation while preserving the original few-step inference path. The key idea is to introduce real long-video data as temporal context during training and use it to provide dense trajectory-level supervision. Specifically, the student follows the exact inference-time rollout, generating each chunk conditioned on its own previously generated KV cache. In parallel, the teacher is evaluated at the same student-visited denoising states, but uses a cleaner AR-consistent temporal cache in which older history can be replaced by real-video context. This provides dense denoising-level corrective targets under on-policy AR cache dynamics, without changing the sampler, number of denoising steps, or inference-time cache mechanism. We apply OPSD-V to representative few-step AR video models, including Self-Forcing and LongLive. Experiments show consistent improvements in visual quality, motion dynamics, and VBenchLong scores. A user study with 10 participants comparing 20 video pairs shows that OPSD-V is preferred over the base models in 66.0% of overall-preference judgments (82.5% excluding ties).</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 我们提出了 OPSD-V，这是一种用于训练后少步自回归 (AR) 视频扩散模型的策略自蒸馏范例。现有的几步 AR 视频生成器可以生成低延迟的长视频，但在长时间自回归部署过程中仍然会遇到错误积累和运动动态减弱的问题。 OPSD-V 减少了长期退化，同时保留了原始的几步推理路径。关键思想是在训练期间引入真实的长视频数据作为时间上下文，并用它来提供密集的轨迹级监督。具体来说，学生遵循精确的推理时间推出，根据其自己之前生成的 KV 缓存生成每个块。同时，教师在与学生访问的相同去噪状态下进行评估，但使用更干净的 AR 一致时间缓存，其中较旧的历史可以被真实视频上下文替换。这在策略 AR 缓存动态下提供了密集的去噪级别校正目标，而无需更改采样器、去噪步骤数或推理时间缓存机制。我们将 OPSD-V 应用于代表性的几步 AR 视频模型，包括 Self-Forcing 和 LongLive。实验表明视觉质量、运动动力学和 VBenchLong 分数得到持续改善。一项由 10 名参与者参与比较 20 个视频对的用户研究表明，在 66.0% 的总体偏好判断中，OPSD-V 优于基本模型（82.5% 不包括平局）。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.06018" target="_blank">RoboTALES: Learning Reasoning-Guided Robot Policies via Task-Aligned Simulated Futures</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>University of California San Diego</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Hanan Gani, Tejal Kulkarni, Madhoolika Chodavarapu, Nicklas Hansen, Manmohan Chandraker</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.06018" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.06018" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.06018.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract RoboTALES introduces a two-stage framework that combines LLM-based planning and VLM-based criticism to improve task-aligned video generation and robotic policy training.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 RoboTALES 引入了一个两阶段框架，该框架结合了基于 LLM 的规划和基于 VLM 的批评，以改进任务对齐的视频生成和机器人策略培训。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Pretrained video generative models are promising backbones for visuomotor control, but their imagined futures often drift from task intent and are not reliably action-conditional. As a result, these models can be difficult to use for planning or policy extraction. To address these limitations, we propose RoboTALES, a single-stage framework that learns task-aligned simulated futures and uses them to train robot policies. Our approach introduces two key innovations: (1) a hierarchical LLM-based planner that breaks complex tasks into a sequence of subgoals to guide the model's imagination; and (2) a VLM-based critic that evaluates these ``imagined'' futures and uses reward-based feedback to keep the model's internal representations focused on the goal. By anchoring the video generator in abstract reasoning, we produce temporally consistent rollouts and more coherent actions. We evaluate RoboTALES on diverse manipulation tasks from RoboCasa and LIBERO10, and show that our method consistently outperforms existing methods, especially in long-horizon tasks. Our code and models are publicly available at https://github.com/hananshafi/RoboTALES.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 预训练视频生成模型是视觉运动控制的有前途的支柱，但它们想象的未来经常偏离任务意图，并且不可靠地以动作为条件。因此，这些模型可能难以用于规划或政策提取。为了解决这些限制，我们提出了 RoboTALES，这是一个单阶段框架，可以学习与任务一致的模拟未来，并使用它们来训练机器人策略。我们的方法引入了两个关键创新：（1）基于 LLM 的分层规划器，将复杂的任务分解为一系列子目标，以指导模型的想象力； (2) 基于 VLM 的批评家，评估这些“想象的”未来，并使用基于奖励的反馈来保持模型的内部表征专注于目标。通过将视频生成器锚定在抽象推理中，我们可以产生时间一致的滚动和更连贯的动作。我们在 RoboCasa 和 LIBERO10 的各种操作任务上评估了 RoboTALES，并表明我们的方法始终优于现有方法，尤其是在长期任务中。我们的代码和模型可在 https://github.com/hananshafi/RoboTALES 上公开获取。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.04939" target="_blank">Teaching LLMs a Low-Resource Language: Enhancing Code Completion in Pharo</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Kilian Kier, Devy1, Alessandro Giagnorio, Omar AbedelKader, Oleksandr Zaitsev</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.04939" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.04939" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.04939.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Large language models can be adapted for low-resource programming languages through specialized training pipelines and benchmarks, achieving superior code completion performance compared to general-purpose models.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 大型语言模型可以通过专门的训练管道和基准测试来适应低资源编程语言，与通用模型相比，实现卓越的代码完成性能。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Large Language Models (LLMs) unlocked new possibilities in automated code writing, becoming the backbone of most code completion tools. While LLMs excel in mainstream languages, they often lack support for the so-called low-resource languages where training data is scarce. As a result, these languages lag behind in the quality of code completion tooling available to their communities. A concrete example is Pharo, a Smalltalk-inspired language whose IDE currently offers only single-token completion. In this work, we report on our experience bringing LLM-based code completion to Pharo. First, we describe an end-to-end pipeline that combines Pharo-specific data curation, continued pre-training and fine-tuning of open code LLMs. Second, we introduce a set of Pharo code completion benchmarks designed to evaluate whether models (i) learn Pharo's syntax and (ii) accurately complete masked Pharo code from real-world GitHub repositories. Third, we show empirically that Pharo-specialized models substantially outperform their original base checkpoints and also exceed the accuracy of substantially larger code LLMs on Pharo completion. Overall, our case study demonstrates the feasibility of bringing strong LLM-based code completion to low-resource programming languages, with models small enough to provide ``real-time'' in-IDE support.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成的大型语言模型 (LLM) 开启了自动化代码编写的新可能性，成为大多数代码完成工具的支柱。虽然法学硕士在主流语言方面表现出色，但他们往往缺乏对训练数据稀缺的所谓低资源语言的支持。因此，这些语言在其社区可用的代码完成工具的质量方面落后。一个具体的例子是 Pharo，这是一种受 Smalltalk 启发的语言，其 IDE 目前仅提供单令牌完成功能。在这项工作中，我们报告了将基于 LLM 的代码完成引入 Pharo 的经验。首先，我们描述了一个端到端的管道，它结合了 Pharo 特定的数据管理、持续的预训练和开放代码 LLM 的微调。其次，我们引入了一组 Pharo 代码完成基准，旨在评估模型是否 (i) 学习 Pharo 的语法和 (ii) 准确地完成来自真实 GitHub 存储库的屏蔽 Pharo 代码。第三，我们凭经验证明 Pharo 专用模型大大优于其原始基础检查点，并且也超过了 Pharo 完成上更大代码 LLM 的准确性。总体而言，我们的案例研究证明了将强大的基于 LLM 的代码完成引入低资源编程语言的可行性，模型足够小以提供“实时”IDE 内支持。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.06309" target="_blank">Token-Based Dual-view Fusion and Adaptation of Large Vision Models for Breast Cancer Classification</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>aysangh, Aysan Ghayouri Pirsoltan, Shima Babakordi, Mohammad Reza Mohammadi</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.06309" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.06309" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.06309.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract A token-centric dual-view learning framework unifies prompt-based adaptation and cross-view fusion in a frozen vision transformer to improve breast cancer classification from mammography images.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：以标记为中心的双视图学习框架将基于提示的适应和跨视图融合统一在冻结视觉转换器中，以改进乳房 X 线摄影图像的乳腺癌分类。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Accurate breast cancer classification from mammography requires effective integration of complementary information from craniocaudal (CC) and mediolateral oblique (MLO) views, which provide a more complete characterization of breast abnormalities. However, existing multi-view learning approaches typically rely on feature-level aggregation or single-stage cross-attention, which can entangle view-specific and shared representations and restrict interaction to limited network depths. To address these limitations, we propose a token-centric dual-view learning framework that unifies prompt-based adaptation and cross-view fusion within a frozen vision transformer backbone. The framework reformulates inter-view interaction as structured token-level communication, where dedicated fusion tokens explicitly encode bidirectional information exchange between CC and MLO views via cross-attention, serving as intermediate carriers of cross-view dependencies rather than relying on direct feature fusion. Unlike conventional methods that apply fusion at a single layer, fusion modules are inserted at multiple transformer depths, enabling progressive and repeated interaction across the encoder hierarchy. Fusion tokens are reintegrated into the token sequence and refined by subsequent transformer layers, facilitating hierarchical propagation of complementary information while preserving view-specific structure. Experiments on VinDr-Mammo and CMMD datasets demonstrate consistent improvements over linear probing, prompt-only adaptation, and conventional fusion baselines. On the VinDr-Mammo BI-RADS classification task, the framework achieves 50.40% F1-score and 0.8090 AUC, including a 0.10 AUC improvement over a dual-view fusion baseline in the binary setting. Ablation studies further validate the effectiveness of token-based fusion and multi-depth interaction design.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 根据乳房 X 光检查进行准确的乳腺癌分类需要有效整合来自头尾 (CC) 和内侧斜 (MLO) 视图的补充信息，从而提供更完整的乳房异常特征。然而，现有的多视图学习方法通​​常依赖于特征级聚合或单阶段交叉注意，这可能会纠缠特定视图和共享表示，并将交互限制在有限的网络深度。为了解决这些限制，我们提出了一种以令牌为中心的双视图学习框架，该框架将基于提示的适应和跨视图融合统一在冻结的视觉变压器主干中。该框架将视图间交互重新表述为结构化令牌级通信，其中专用融合令牌通过交叉注意力显式编码 CC 和 MLO 视图之间的双向信息交换，充当跨视图依赖关系的中间载体，而不是依赖于直接特征融合。与在单层应用融合的传统方法不同，融合模块插入到多个变压器深度，从而实现跨编码器层次结构的渐进和重复交互。融合令牌被重新集成到令牌序列中，并通过后续的转换器层进行细化，从而促进补充信息的分层传播，同时保留特定于视图的结构。 VinDr-Mammo 和 CMMD 数据集上的实验表明，相对于线性探测、仅提示适应和传统融合基线，有一致的改进。在 VinDr-Mammo BI-RADS 分类任务中，该框架实现了 50.40% 的 F1 分数和 0.8090 AUC，其中比二元设置中的双视图融合基线提高了 0.10 AUC。消融研究进一步验证了基于令牌的融合和多深度交互设计的有效性。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.05966" target="_blank">Imagined Rollouts are Kinematic, Not Dynamic: A Diagnosis of Long-Horizon World-Model Failure</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>TUM - Professorship of Autonomous Vehicle Systems</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Finn Rasmus Schäfer, Korbinian Moller, Yuan Gao, Christian Oefinger, Sebastian Schmidt</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.05966" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.05966" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.05966.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract World models exhibit long-horizon failures due to kinematic rather than dynamic imagination, as demonstrated by measuring imagined kinematic-consistency error which remains flat while policy rewards collapse across friction boundaries.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 世界模型由于运动学而不是动态想象力而表现出长期失败，正如通过测量想象的运动一致性误差所证明的那样，该误差在政策奖励跨越摩擦边界时崩溃时保持平坦。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Long-horizon failure in world models is conventionally attributed to compounding error, a generic framing that does not distinguish what kind of error compounds. We propose a kinematic-vs-dynamic reframing: world models tend to imagine kinematically rather than dynamically. We operationalize this as the imagined Kinematic-Consistency Error, a per-step diagnostic that measures how far a rollout departs from a closed-form kinematic null, paired with a perturbation protocol that tests whether iKCE responds when physical conditions cross a regime boundary. We instantiate the diagnostic on a released DreamerV3 checkpoint trained on DMC walker-walk, where imagined iKCE runs roughly two orders of magnitude above that of matched real-physics rollouts. Across a friction sweep that crosses the gait-collapse boundary, the model's iKCE stays statistically flat even as the trained policy's reward collapses through the same range, providing the kinematic-not-dynamic signature. The diagnostic distinguishes kinematic from dynamic imagination at horizons longer than the embodiment's gait period.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 世界模型中的长期失败通常归因于复合误差，这是一种不区分复合误差类型的通用框架。我们提出了运动学与动态的重构：世界模型倾向于以运动学而非动态的方式进行想象。我们将其操作为想象中的运动学一致性误差，这是一种每步诊断，用于测量推出与封闭式运动学零值的偏离程度，并与一个扰动协议相结合，该协议测试当物理条件跨越状态边界时 iKCE 是否做出响应。我们在 DMC walker-walk 上训练的已发布 DreamerV3 检查点上实例化诊断，其中想象的 iKCE 运行速度比匹配的真实物理部署大约高出两个数量级。在跨越步态崩溃边界的摩擦扫描中，即使训练策略的奖励在相同范围内崩溃，模型的 iKCE 仍保持统计平坦，从而提供了运动学而非动态特征。该诊断在比实施例的步态周期更长的视野中区分运动学和动态想象。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.03949" target="_blank">TESSERA v2: Scaling Pixel-wise Earth Foundation Models</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>TESSERA geospatial</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Zhengpeng Feng, Sadiq Jaffer, Ira Shokar, Jovana Knezevic, Mark Elvers</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.03949" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.03949" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.03949.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Large-scale controlled experiments reveal optimal scaling strategies for Earth-observation foundation models, enabling efficient training and deployment through encoder growth, downstream performance selection, and model distillation.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 大规模受控实验揭示了地球观测基础模型的最佳扩展策略，通过编码器增长、下游性能选择和模型蒸馏实现高效训练和部署。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Pixel-wise Earth-observation (EO) foundation models are now achieving state-of-the-art performance via generated spatial embeddings. However, how these models scale and how best to spend a pretraining budget remain poorly understood. We present the largest controlled scaling study for EO to date: 395 training runs on 1,024 GH200 superchips within a fixed pixel-wise Barlow Twins family, each evaluated on 15 downstream tasks. We find that pretraining loss barely predicts downstream performance (|Pearson r| &lt; 0.2), so selecting models by loss wastes a large share of the compute. We also find that, as the training budget grows, the encoder and the data should grow together while the projector stays fixed, which gives a simple rule for allocating compute. Using this rule, we train a family of pixel-wise models (0.5B and 1B, with a 2B model in training) and distill them into compact students for embeddings-as-data deployment. The 21-million-parameter distilled TESSERA v2-1B-M in aggregate outperforms all open and proprietary models tested, some of which are orders of magnitude larger. These students produce Matryoshka representations that are inexpensive to serve: a 16-dimensional prefix keeps 92% of the full 128-dimensional performance at 1/8 of the storage. Upon completion of training we plan to release v2 global embeddings covering 2017-2025. Together, these results give a concrete, empirically grounded recipe for scaling pixel-wise EO foundation models: train large encoders, select by downstream performance, and distil into flexible student models. All code will be released at https://github.com/ucam-eo/tessera.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成的逐像素地球观测 (EO) 基础模型现在通过生成的空间嵌入实现了最先进的性能。然而，人们对这些模型如何扩展以及如何最好地使用预训练预算仍然知之甚少。我们提出了迄今为止最大的 EO 受控扩展研究：在固定像素 Barlow Twins 系列中的 1,024 个 GH200 超级芯片上运行了 395 次训练，每个训练都针对 15 个下游任务进行了评估。我们发现预训练损失几乎无法预测下游性能（|Pearson r| < 0.2），因此通过损失选择模型会浪费很大一部分计算量。我们还发现，随着训练预算的增长，编码器和数据应该一起增长，而投影仪保持固定，这给出了分配计算的简单规则。使用此规则，我们训练一系列像素级模型（0.5B 和 1B，训练中的 2B 模型），并将它们提炼为紧凑的学生，以进行嵌入数据部署。 2100 万个参数的蒸馏 TESSERA v2-1B-M 总体性能优于所有测试的开放和专有模型，其中一些模型的性能要大几个数量级。这些学生生成的俄罗斯套娃表示形式的服务成本低廉：16 维前缀将 92% 的完整 128 维性能保持在 1/8 的存储空间中。培训完成后，我们计划发布 2017-2025 年的 v2 全局嵌入。总之，这些结果给出了一个具体的、基于经验的方法，用于缩放像素级 EO 基础模型：训练大型编码器，根据下游性能进行选择，并提炼成灵活的学生模型。所有代码将在 https://github.com/ucam-eo/tessera 发布。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.00302" target="_blank">Wake up for Touch! Mask-isolated Tactile Alignment Learning in MLLMs</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Ewha Womans University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yoonhyung Park, xxinzzi, Minji Kim, Sungwon Moon, Jiyoung Lee</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.00302" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.00302" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.00302.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Splash is a mask-isolated tactile alignment learning framework that enables multimodal LLMs to acquire tactile sensing capabilities without sacrificing vision-language reasoning through selective parameter updating that prevents catastrophic forgetting.  Generated by Qwen/Qwen2.5-Coder-32B-Instruct</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 Splash 是一种掩模隔离的触觉对齐学习框架，通过选择性参数更新防止灾难性遗忘，使多模式法学硕士能够在不牺牲视觉语言推理的情况下获得触觉感知能力。  由 Qwen/Qwen2.5-Coder-32B-Instruct 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by Qwen/Qwen2.5-Coder-32B-Instruct Touch supplies the physical grounding needed to perceive intrinsic material properties, such as friction and compliance, that vision alone often cannot resolve. Recent efforts for equipping multimodal LLMs with this tactile sense, however, expose a zero-sum trade-off: the limited parameter budget of compact models forces a choice between acquiring the new sensory modality and preserving the established vision-language reasoning. We present Splash, a mask-isolated tactile alignment learning framework for MLLMs. Splash quantifies the significance of each pretrained parameter, and partitions the parameter space into a dormant and critical subspace. While the frozen critical subspace acts as a stable anchor to safeguard general visual knowledge, Splash updates the isolated dormant subspace to internalize tactile alignment towards LLMs. This selective, non-destructive expansion effectively prevents catastrophic forgetting and ensures non-destructive modality expansion. Extensive experiments show that Splash effectively achieves tactile reasoning without additional inference overhead in the LLM part, demonstrating state-of-the-art performance on visuo-tactile benchmarks, including SSVTP, TVL, and TacQuad, while preserving its original general-purpose capabilities.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Qwen/Qwen2.5-Coder-32B-Instruct 生成 触摸提供了感知内在材料特性（例如摩擦力和顺应性）所需的物理基础，而仅凭视觉通常无法解决这些问题。然而，最近为多模态法学硕士配备这种触觉的努力暴露了零和权衡：紧凑模型的有限参数预算迫使人们在获取新的感觉模态和保留已建立的视觉语言推理之间做出选择。我们推出了 Splash，一种用于 MLLM 的掩模隔离触觉对齐学习框架。 Splash 量化每个预训练参数的重要性，并将参数空间划分为休眠子空间和关键子空间。虽然冻结的关键子空间充当了保护一般视觉知识的稳定锚点，但 Splash 更新了孤立的休眠子空间，以将触觉对齐内化为法学硕士。这种选择性的、非破坏性的扩展有效地防止了灾难性的遗忘，并确保了非破坏性的模态扩展。大量的实验表明，Splash 可以有效地实现触觉推理，而无需在 LLM 部分增加额外的推理开销，在包括 SSVTP、TVL 和 TacQuad 在内的视觉触觉基准上展示了最先进的性能，同时保留了其原有的通用功能。</p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+        
+        <div class="nav-buttons">
+            <a href="2026-07-08.html" class="nav-btn">← 2026-07-08</a>
+            <a href="2026-07-10.html" class="nav-btn">2026-07-10 →</a>
+        </div>
+        
+        <footer>
+            Generated by <a href="https://github.com" target="_blank">HF Papers Daily</a>
+        </footer>
+    </div>
+    
+    <script>
+        function toggleAbstract(header) {
+            const toggle = header.querySelector('.abstract-toggle');
+            const content = header.nextElementSibling;
+            toggle.classList.toggle('expanded');
+            content.classList.toggle('expanded');
+        }
+    </script>
+</html>

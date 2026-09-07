@@ -1,0 +1,1428 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hugging Face Papers - 2026-07-24 (zh-CN)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .date {
+            font-size: 1.2em;
+            color: #a0a0a0;
+        }
+        
+        .stats {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #888;
+        }
+        
+        .paper-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .paper-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(102, 126, 234, 0.5);
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.2);
+        }
+        
+        .paper-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        
+        .paper-title a {
+            color: #e0e0e0;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .paper-title a:hover {
+            color: #667eea;
+        }
+        
+        .paper-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            color: #a0a0a0;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .meta-label {
+            color: #888;
+        }
+        
+        .links {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .link-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .link-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .link-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .abstract-section {
+            margin-top: 15px;
+        }
+        
+        .abstract-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .abstract-header:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .abstract-toggle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+            transition: transform 0.3s;
+        }
+        
+        .abstract-toggle.expanded {
+            transform: rotate(180deg);
+        }
+        
+        .abstract-label {
+            font-weight: 500;
+            color: #667eea;
+        }
+        
+        .abstract-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding: 0 15px;
+        }
+        
+        .abstract-content.expanded {
+            max-height: 10000px;
+            padding: 15px;
+        }
+        
+        .abstract-text {
+            line-height: 1.7;
+            color: #c0c0c0;
+        }
+        
+        .summary-box {
+            background: rgba(102, 126, 234, 0.1);
+            border-left: 3px solid #667eea;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .summary-label {
+            font-size: 0.8em;
+            color: #667eea;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .summary-text {
+            color: #b0b0b0;
+            line-height: 1.5;
+        }
+        
+        .translation-box {
+            background: rgba(118, 75, 162, 0.1);
+            border-left: 3px solid #764ba2;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .translation-label {
+            font-size: 0.8em;
+            color: #764ba2;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .translation-text {
+            color: #b0b0b0;
+            line-height: 1.5;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding: 0 10px;
+        }
+        
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .nav-btn.disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: #666;
+            pointer-events: none;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .paper-title {
+                font-size: 1.1em;
+            }
+            
+            .links {
+                flex-wrap: wrap;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-btn {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Hugging Face Papers</h1>
+            <div class="date">2026-07-24</div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number">22</div>
+                    <div class="stat-label">Papers</div>
+                </div>
+            </div>
+        </header>
+        
+        <main>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.21461" target="_blank">AREX: Towards a Recursively Self-Improving Agent for Deep Research</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Beijing Academy of Artificial Intelligence</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Shuqi Lu, cfli, Chaofan Li, Lk123, Kun Luo</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.21461" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.21461" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.21461.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Deep research requires agents to find answers that jointly satisfy multiple constraints. Discovering such answers is costly, whereas verifying a candidate can often be decomposed into tractable constraint-wise checks. This discovery--verification asymmetry suggests that a research agent should do more than simply search longer: it should recursively improve its current answer by verifying intermediate results and using the partially verified state to guide subsequent refinement. We introduce AREX, a family of Recursively Self-Improving (RSI) deep research agents. AREX alternates between an inner research loop that gathers evidence and constructs a provisional answer, and an outer self-improvement loop that audits the answer constraint-wise, identifies unresolved claims, and launches targeted follow-up research. To sustain RSI over long horizons, AREX learns an autonomous context-update tool that compresses growing interaction history into a compact improvement state preserving verified evidence and unresolved constraints, without relying on an external model. We train AREX on verified synthetic tasks and high-quality trajectories through agentic mid-training and long-horizon reinforcement learning. To mitigate sparse final rewards during long horizon learning, we emphasize key steps where decisive evidence is acquired or erroneous research directions are corrected. We instantiate a dense 4B model and a 122B-A10B Mixture-of-Experts model. Across BrowseComp, WideSearch, DeepSearchQA, Humanity's Last Exam (HLE), and other reasoning and tool-use benchmarks, AREX substantially outperforms comparable-scale baselines and remains competitive with models using substantially more activated parameters.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 深度研究要求智能体找到共同满足多个约束的答案。发现这样的答案成本高昂，而验证候选者通常可以分解为易于处理的约束检查。这一发现——验证不对称表明，研究代理应该做的不仅仅是简单地搜索更长的时间：它应该通过验证中间结果并使用部分验证的状态来指导后续的细化来递归地改进其当前答案。我们介绍 AREX，这是一系列递归自我改进 (RSI) 深度研究代理。 AREX 在收集证据并构建临时答案的内部研究循环和以约束方式审核答案、识别未解决的主张并启动有针对性的后续研究的外部自我改进循环之间交替。为了长期维持 RSI，AREX 学习了一种自主上下文更新工具，该工具将不断增长的交互历史压缩为紧凑的改进状态，保留经过验证的证据和未解决的约束，而不依赖于外部模型。我们通过代理中期训练和长期强化学习，在经过验证的综合任务和高质量轨迹上训练 AREX。为了减轻长期学习过程中最终奖励稀疏的问题，我们强调获取决定性证据或纠正错误研究方向的关键步骤。我们实例化一个密集的 4B 模型和一个 122B-A10B 专家混合模型。在 BrowseComp、WideSearch、DeepSearchQA、Humanity's Last Exam (HLE) 以及其他推理和工具使用基准测试中，AREX 的性能大大优于可比规模的基准，并且与使用更多激活参数的模型相比仍然具有竞争力。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  11    Add to collection     Community         lz1001   Paper submitter     about 20 hours ago         
+The model weights have been publicly released at: https://huggingface.co/collections/BAAI/arex
+The models have also been integrated into our online application: https://arex-research.com/
+
+  See translation   👍 2 2    +  Reply       EditPreview      Upload images, audio, and videos by dragging in the text input, pasting, or clicking here. Tap or paste here to upload images        Comment · Sign up or log in to comment</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 11 添加到集合 社区 lz1001 论文提交者 大约 20 小时前         
+模型权重已公开发布于：https://huggingface.co/collections/BAAI/arex
+这些模型也已集成到我们的在线应用程序中：https://arex-research.com/
+
+  查看翻译 👍 2 2 + 回复 编辑预览 通过拖入文本输入、粘贴或单击此处上传图像、音频和视频。点击或粘贴此处上传图片 评论 · 注册或登录以发表评论</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.20061" target="_blank">ReferTrack: Referring Then Tracking for Embodied Visual Tracking</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Tencent</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Hanjing Ye, Tianle Zeng, Jiazhao Zhang, Shaoan Wang, Zibo Zhang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.20061" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.20061" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.20061.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Embodied visual tracking (EVT) requires a mobile agent to continuously follow a specific target described in natural language using only onboard vision. While recent vision-language-action (VLA) policies unify target identification and trajectory planning, their chain-of-thought (CoT) reasoning often operates in abstract spatial latents that are difficult to supervise and weakly aligned with explicit image-space detections. To address this, we introduce ReferTrack, a referring-then-tracking paradigm that grounds EVT using a single forward-facing camera. Our model first selects the target from an indexed set of bounding boxes, then decodes tracking waypoints conditioned on this image-grounded decision. To preserve target motion cues over time, ReferTrack maintains a sliding-window queue of previously selected bounding boxes, injecting their geometric features into the visual history via temporal-viewpoint-bbox indicator (TVBI) tokens. We further enhance target identification by co-training on a custom Refer-QA dataset. On EVT-Bench, ReferTrack achieves state-of-the-art single-view performance with success rates of 89.4%, 73.3%, and 74.1% on the single-target, distracted, and ambiguity tracking splits, respectively -- matching or even surpassing several multi-camera baselines on identification-heavy tasks. Finally, real-world deployments on legged and humanoid robots validate its robust sim-to-real transfer capabilities. Code is available at https://github.com/MedlarTea/referTrack.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 具身视觉跟踪（EVT）要求移动代理仅使用机载视觉连续跟踪以自然语言描述的特定目标。虽然最近的视觉-语言-动作（VLA）策略统一了目标识别和轨迹规划，但它们的思想链（CoT）推理通常在抽象的空间潜伏中进行，这些潜伏难以监督，并且与显式图像空间检测的一致性较弱。为了解决这个问题，我们引入了 ReferTrack，这是一种先参考后跟踪的范例，它使用单个前置摄像头来实现 EVT。我们的模型首先从一组索引的边界框中选择目标，然后根据该基于图像的决策解码跟踪路径点。为了随着时间的推移保留目标运动线索，ReferTrack 维护先前选择的边界框的滑动窗口队列，通过时间视点 bbox 指示器 (TVBI) 标记将其几何特征注入视觉历史记录。我们通过在自定义 Refer-QA 数据集上进行联合训练来进一步增强目标识别。在 EVT-Bench 上，ReferTrack 实现了最先进的单视图性能，在单目标、分散注意力和模糊性跟踪分割上的成功率分别为 89.4%、73.3% 和 74.1%，在识别繁重的任务上匹配甚至超过了多个多摄像头基线。最后，在腿式和人形机器人上的实际部署验证了其强大的模拟到真实传输能力。代码可在 https://github.com/MedlarTea/referTrack 获取。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  18    Add to collection     Community         tianlezeng   Paper submitter     about 19 hours ago</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 18 添加到集合 社区 tianlezeng 论文提交者 大约 19 小时前</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2605.09635" target="_blank">K12-KGraph: A Curriculum-Aligned Knowledge Graph for Benchmarking and Training Educational LLMs</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Peking University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>lhpku20010120, Hao Liang, Qihan Lin, Zhaoyang Han, Xiaochen Ma</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2605.09635" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2605.09635" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2605.09635.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Large language models are increasingly used in K-12 education, but existing benchmarks mainly test exam question answering rather than understanding how curriculum knowledge is structured and visually presented. We call this capability curriculum cognition. It covers prerequisite chains, concept taxonomies, experiment-concept links, pedagogical sequencing, and visual grounding. We introduce K12-KGraph, a curriculum-aligned knowledge graph extracted from official People's Education Press textbooks in mathematics, physics, chemistry, and biology across primary, middle, and high school. It contains nine node types and fourteen relation types covering curriculum structure and visual grounding. From this graph, we derive K12-Bench, a 23,640-question multi-select benchmark with five task families: Ground, Prereq, Neighbor, Evidence, and Locate. We also build K12-Train, a graph-guided supervised fine-tuning corpus of 7,335 samples, including 2,267 text-only QA pairs and 5,068 multimodal VQA pairs. On K12-Bench, Gemini-3-Flash achieves only 57 percent exact match and Gemma-4-31B-IT reaches 46 percent, with Prereq and Neighbor being the hardest tasks. Our training experiments show that domain-specific supervision can reduce this gap. Under a matched 2,300-sample budget, K12-Train-Text consistently outperforms equally sized subsets of eight mainstream instruction-tuning corpora on GaokaoBench and EduEval. For vision-language models, K12-Train-Full achieves the best overall results on Gaokao-MM, MDK12-medium, and K12Vista among all compared training configurations, despite using fewer samples than the full DataFlow and WizardLM baselines. It also surpasses both text-only and multimodal-only variants, showing that textual and visual supervision are complementary. We release the graph, benchmark, training data, and complete construction pipeline.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 大语言模型越来越多地应用于 K-12 教育中，但现有基准主要测试考试问答，而不是理解课程知识的结构和视觉呈现方式。我们将这种能力称为课程认知。它涵盖先决条件链、概念分类、实验概念链接、教学排序和视觉基础。我们推出了 K12-KGraph，这是一个从人民教育出版社官方小学、初中和高中数学、物理、化学和生物教科书中提取的与课程一致的知识图谱。它包含九种节点类型和十四种关系类型，涵盖课程结构和视觉基础。从该图中，我们得出了 K12-Bench，这是一个包含 23,640 个问题的多选基准测试，具有五个任务系列：Ground、Prereq、Neighbor、Evidence 和 Locate。我们还构建了 K12-Train，这是一个由 7,335 个样本组成的图形引导监督微调语料库，其中包括 2,267 个纯文本 QA 对和 5,068 个多模态 VQA 对。在 K12-Bench 上，Gemini-3-Flash 仅实现 57% 的精确匹配，Gemma-4-31B-IT 达到 46%，其中 Prereq 和 Neighbor 是最难的任务。我们的训练实验表明，特定领域的监督可以缩小这种差距。在匹配的 2,300 个样本预算下，K12-Train-Text 始终优于 GaukaoBench 和 EduEval 上八个主流指令调优语料库的同等大小的子集。对于视觉语言模型，尽管使用的样本少于完整的 DataFlow 和 WizardLM 基线，但在所有比较的训练配置中，K12-Train-Full 在 Gaukao-MM、MDK12-medium 和 K12Vista 上实现了最佳总体结果。它还超越了纯文本和纯多模式变体，表明文本和视觉监督是互补的。我们发布图表、基准、训练数据和完整的构建管道。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  49    Add to collection     Community         lhpku20010120  Paper author  Paper submitter     about 16 hours ago         Hi everyone! We’re excited to share K12-KGraph, a curriculum-aligned knowledge graph for benchmarking and training educational LLMs.Instead of only testing whether a model can answer isolated questions, we study whether it understands how knowledge is organized—such as prerequisites, concept relations, visual evidence, and pedagogical order.The updated v2 includes 9 node types, 14 relation types, 23,640 benchmark questions, and 7,335 training samples, including 5,068 multimodal VQA samples. Our experiments show that combining textual and visual supervision leads to stronger curriculum understanding.The graph, benchmark, training data, and construction pipeline are all open-sourced. We welcome your feedback and hope K12-KGraph can support further research on educational and multimodal LLMs! 🚀</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 49 添加到集合 社区 lhpku20010120 论文作者 论文提交者 大约 16 小时前 大家好！我们很高兴分享 K12-KGraph，这是一个与课程一致的知识图，用于基准测试和培训教育法学硕士。我们不是只测试模型是否可以回答孤立的问题，而是研究它是否理解知识的组织方式，例如先决条件、概念关系、视觉证据和教学顺序。更新的 v2 包括 9 个节点类型、14 个关系类型、23,640 个基准问题和 7,335 个训练样本，其中包括 5,068 个多模态 VQA 样本。我们的实验表明，结合文本和视觉监督可以增强课程理解。图表、基准、训练数据和构建管道都是开源的。我们欢迎您的反馈，并希望 K12-KGraph 能够支持教育和多模式法学硕士的进一步研究！ 🚀</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.21556" target="_blank">Visual Contrastive Self-Distillation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>University of Maryland College Park</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yijun Liang, Yunjie Tian, Yijiang Li, Yuqi Jia, Furong Huang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.21556" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.21556" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.21556.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  On-policy self-distillation (OPSD) is promising as it removes the external teacher required by on-policy distillation (OPD), yet it still needs asymmetric information between teacher and student to ensure that the self-teacher provides a stronger learning signal than the student. Existing methods create this asymmetry either through privileged answers or visual evidence. We ask whether both can be removed, yielding a simpler form of OPSD driven purely by input conditioning. For this purpose, we propose Visual Contrastive Self-Distillation, namely VCSD, which converts image-content removal into an on-policy self-distillation signal. At each student-generated response prefix, the EMA teacher produces two next-token distributions under the same prompt and prefix -- one conditioned on the original image and the other on a content-erased control. Their token-wise log-probability difference highlights candidates whose likelihood is specifically increased by the instance-level visual content. We use this contrast to sharpen the teacher's original-image distribution within its plausible support, and distill the resulting full-distribution target into the student. Using ViRL39K dataset, VCSD consistently outperforms matched OPSD across Qwen3-VL and Qwen3.5 models. For example, on Qwen3-VL, it improves the seven-benchmark aggregate from 62.27% rightarrow 67.04% at 2B, 71.30% rightarrow 73.16% at 4B, and 72.51% rightarrow 76.26% at 8B. Furthermore, VCSD requires no external teacher, privileged answers, visual evidence signals, reasoning traces, or additional inference-time cost.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 在策略自蒸馏（OPSD）是有前途的，因为它消除了在策略蒸馏（OPD）所需的外部教师，但它仍然需要教师和学生之间的不对称信息来确保自教师提供比学生更强的学习信号。现有方法通过特权答案或视觉证据造成这种不对称。我们询问是否可以将两者删除，从而产生纯粹由输入条件驱动的更简单形式的 OPSD。为此，我们提出了视觉对比自蒸馏，即 VCSD，它将图像内容去除转换为策略自蒸馏信号。对于每个学生生成的响应前缀，EMA 教师在相同的提示和前缀下生成两个下一个令牌分布 - 一个以原始图像为条件，另一个以内容擦除控件为条件。它们的标记对数概率差异突出显示了其可能性因实例级视觉内容而特别增加的候选者。我们利用这种对比来锐化教师在其合理支持范围内的原始图像分布，并将最终的完整分布目标提炼到学生身上。使用 ViRL39K 数据集，VCSD 在 Qwen3-VL 和 Qwen3.5 模型中始终优于匹配的 OPSD。例如，在 Qwen3-VL 上，它将 7 个基准总计从 2B 的 62.27% 右箭头 67.04%、4B 的 71.30% 右箭头 73.16% 和 8B 的 72.51% 右箭头 76.26% 提高。此外，VCSD 不需要外部教师、特权答案、视觉证据信号、推理痕迹或额外的推理时间成本。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  4    Add to collection      Community         joliang17   Paper submitter     about 18 hours ago         
+	
+		
+	
+	
+		🚀 Visual Contrastive Self-Distillation (VCSD)
+	
+
+Can on-policy self-distillation improve Vision-Language Models without privileged answers or auxiliary visual evidence? Yes.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 4 添加到集合 社区 joliang17 论文提交者 大约 18 小时前         
+	
+		
+	
+	
+		🚀 视觉对比自蒸馏 (VCSD)
+	
+
+在没有特权答案或辅助视觉证据的情况下，政策自蒸馏能否改善视觉语言模型？是的。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.21072" target="_blank">Show, Don't Tell: Evaluating Spatial Cognition in Generative Pixels Rather Than LLM Text</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>ZJU-OmniAI</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>wx91726, Xu Wang, Kaixiang Yao, Miao Pan, Xiaohe Zhou</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.21072" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.21072" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.21072.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Spatial intelligence is essential for agents to move from static semantic understanding toward interacting with the physical world. Many spatial tasks are grounded in continuous visual scenes, where locations, regions, and paths are more naturally expressed by pointing, marking, or drawing than by reporting precise coordinates or discrete textual symbols. Yet existing spatial reasoning benchmarks usually require coordinates, options, or text, creating an answer-interface mismatch for image-generation models. This makes it difficult to evaluate image-generation models under the same task semantics as text-output VLMs, despite their ability to externalize spatial judgments directly in pixel space. We propose ProVisE (Protocolized Visual Evaluation), a benchmark-agnostic framework that elicits protocol-constrained visual answers from image-generation models and parses them into structured predictions compatible with original metrics. ProVisE also includes an Agentic builder that constructs and validates task-specific protocols for new benchmarks. We further introduce SpatialGen-Bench, a curated diagnostic benchmark of 470 samples across 14 spatial subtasks, four capability levels, and diverse answer forms. We evaluate representative text-output VLMs and image-generation models in a unified setting and validate Agentic protocol construction on six external spatial benchmarks. Results show that image-generation models are competitive when spatial answers can be externalized directly in pixel space, while text-output VLMs retain a clear advantage in compositional spatial reasoning. These findings reveal complementary strengths of pixel-space expression and text-based reasoning and establish a metric-compatible testbed for studying spatial cognition in image-generation models.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 空间智能对于智能体从静态语义理解转向与物理世界交互至关重要。许多空间任务都基于连续的视觉场景，其中位置、区域和路径通过指向、标记或绘图来表达比通过报告精确坐标或离散文本符号更自然。然而，现有的空间推理基准通常需要坐标、选项或文本，从而导致图像生成模型的答案界面不匹配。这使得在与文本输出 VLM 相同的任务语义下评估图像生成模型变得困难，尽管它们能够直接在像素空间中外部化空间判断。我们提出了 ProVisE（协议化视觉评估），这是一个与基准无关的框架，它从图像生成模型中得出协议约束的视觉答案，并将其解析为与原始指标兼容的结构化预测。 ProVisE 还包括一个 Agentic 构建器，可以为新基准构建和验证特定于任务的协议。我们进一步介绍 SpatialGen-Bench，这是一个精心策划的诊断基准，包含 14 个空间子任务、四个能力级别和多种答案形式的 470 个样本。我们在统一的环境中评估代表性文本输出 VLM 和图像生成模型，并在六个外部空间基准上验证 Agentic 协议构建。结果表明，当空间答案可以直接在像素空间中外化时，图像生成模型具有竞争力，而文本输出 VLM 在组合空间推理中保留明显的优势。这些发现揭示了像素空间表达和基于文本的推理的互补优势，并建立了一个用于研究图像生成模型中的空间认知的度量兼容的测试平台。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  16    Add to collection         Community         zwq2018   Paper submitter     about 18 hours ago         Spatial intelligence is often easier to show than tell. We introduce ProVisE, a benchmark-agnostic evaluation framework that enables image-generation models to answer spatial tasks directly in pixels. ProVisE converts these visual responses into the structured predictions required by each benchmark and scores them using its original metrics. Using SpatialGen-Bench (470 samples, 14 subtasks) and six external benchmarks, we evaluate 31 text- and image-answering systems. The two interfaces reveal complementary strengths: visual answering performs particularly well when spatial states can be expressed directly in pixels, while text VLMs remain stronger on compositional reasoning tasks. Notably, GPT Image 2 correctly solves 37% of the spatial cases missed by GPT-5.4.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 16 添加到集合 社区 zwq2018 论文提交者 大约 18 小时前 空间智能往往更容易展示而不是讲述。我们引入了 ProVisE，这是一种与基准无关的评估框架，使图像生成模型能够直接以像素形式回答空间任务。 ProVisE 将这些视觉响应转换为每个基准所需的结构化预测，并使用其原始指标对其进行评分。使用 SpatialGen-Bench（470 个样本，14 个子任务）和 6 个外部基准，我们评估了 31 个文本和图像应答系统。这两个界面揭示了互补的优势：当空间状态可以直接用像素表达时，视觉回答表现得特别好，而文本 VLM 在组合推理任务上仍然更强。值得注意的是，GPT Image 2 正确解决了 GPT-5.4 遗漏的 37% 的空间情况。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.20709" target="_blank">NVIDIA-labs OO Agents: Native Python Object-Oriented Agents</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>NVIDIA</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Paul Furgale, Severin Klingler, James Nolan, Matt Staats, Gaia Di Lorenzo</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.20709" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.20709" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.20709.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Traditional agent development is split across prompt templates, tool schemas, callback code, and workflow graphs. We present NVIDIA Object-Oriented Agents (NOOA), a model-agnostic Python framework for building reliable AI agents. NOOA takes a simpler approach: an agent is a Python object. Its methods are the actions the model can take, fields are its state, docstrings are its prompts, and its type annotations are contracts. A method whose code body consists of "..." is completed at runtime by an LLM-driven agent loop, while methods with normal bodies remain standard deterministic Python. This gives developers and agents the same interface, so agent behavior can be tested, traced, refactored, and improved just like other software.
+  This paper makes three contributions. (1) We present the agent-as-a-Python-object programming model and the design principles behind it. Where Python has existing abstractions, we adopt them directly. Agent-specific capabilities--context, events, state rendering, long-term memory, and validated LLM loops--are exposed through simple Pythonic APIs, so both developers and agents share one familiar programming model. (2) We identify six model-facing ideas that NOOA is, to our knowledge, the first to combine on a single surface: typed input/output, pass-by-reference over live objects, code as action, programmable loop engineering, explicit object state, and model-callable harness APIs for context and events. We find the community already converging on several of these ideas--often as experimental or partial features--and present the comparison to encourage further adoption. (3) We demonstrate that current models use this interface effectively, both in targeted capability tests and on agentic and reasoning benchmarks such as SWE-bench Verified and Terminal-Bench 2.0 and ARC-AGI-3.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 传统代理开发分为提示模板、工具模式、回调代码和工作流程图。我们推出 NVIDIA 面向对象代理 (NOOA)，这是一个与模型无关的 Python 框架，用于构建可靠的 AI 代理。 NOOA 采用更简单的方法：代理是一个 Python 对象。它的方法是模型可以采取的操作，字段是它的状态，文档字符串是它的提示，它的类型注释是契约。代码主体由“...”组成的方法在运行时由 LLM 驱动的代理循环完成，而具有正常主体的方法仍然是标准的确定性 Python。这为开发人员和代理提供了相同的界面，因此可以像其他软件一样测试、跟踪、重构和改进代理行为。
+  本文做出了三点贡献。 (1) 我们提出了代理作为 Python 对象编程模型及其背后的设计原则。如果 Python 有现有的抽象，我们就直接采用它们。特定于代理的功能（上下文、事件、状态渲染、长期记忆和经过验证的 LLM 循环）通过简单的 Pythonic API 公开，因此开发人员和代理共享一种熟悉的编程模型。 (2) 我们确定了六种面向模型的想法，据我们所知，NOOA 是第一个在单个表面上组合的想法：类型化输入/输出、对活动对象的引用传递、代码即操作、可编程循环工程、显式对象状态以及用于上下文和事件的模型可调用线束 API。我们发现社区已经集中在其中一些想法上（通常是实验性或部分功能），并进行比较以鼓励进一步采用。 (3) 我们证明当前模型在目标能力测试以及代理和推理基准（例如 SWE-bench Verified、Terminal-Bench 2.0 和 ARC-AGI-3）中有效地使用了该接口。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community   EditPreview      Upload images, audio, and videos by dragging in the text input, pasting, or clicking here. Tap or paste here to upload images        Comment · Sign up or log in to comment</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 EditPreview 通过拖入文本输入、粘贴或单击此处上传图像、音频和视频。点击或粘贴此处上传图片 评论 · 注册或登录以发表评论</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.20911" target="_blank">Tencent WorkBuddy Bench: A Multi-Domain Coding-Agent Benchmark with Contamination-Resistant Task Construction</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Tencent</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Tencent WorkBuddy Bench Team, Siqi Cai, Shaopeng Chen, Xiang Fei, Yong Mao</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.20911" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.20911" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.20911.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  We introduce Tencent WorkBuddy Bench, a multi-domain evaluation suite for coding agents; this report documents its construction methodology, scoring protocol, and a cross-model leaderboard. At its core is a unified evaluation framework for constructing and running distribution-informed coding-agent tasks across four work domains - Code, Web, Office, and Security. Rather than adapting public issue text, every task is reverse-engineered from a real commit, pull request, or business scenario and rewritten as a short, colloquial, role-played request, so that a task's prompt is not recoverable by web-searching the underlying issue, pull request, or commit thread. Because the dataset is released openly - task directories, environment images, evaluation harness, tests, and reference solutions - contamination resistance rests on this construction together with dataset versioning rather than on secrecy. The four subsets - repository-level engineering, front-end development, office and business workflows, and red-/blue-team security - probe complementary facets of real work, each with its own verification style. All are packaged in a uniform task-directory format and run, under a uniform and reproducible protocol, on two agent harnesses (CodeBuddy Code and Claude Code); the full open release makes the benchmark reproducible end to end and directly auditable, since any third party can re-run each task and inspect its content. Because each subset uses a different scoring instrument, scores are not comparable across subsets and the suite reports no suite-wide average. We report a cross-model leaderboard across several model families.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：我们介绍了腾讯 WorkBuddy Bench，一个针对编码代理的多领域评估套件；该报告记录了其构建方法、评分协议和跨模型排行榜。其核心是一个统一的评估框架，用于跨四个工作领域（代码、Web、Office 和安全）构建和运行分布通知的编码代理任务。每个任务不是采用公共问题文本，而是从真实的提交、拉取请求或业务场景进行逆向工程，并重写为简短的、口语的、角色扮演的请求，因此任务的提示无法通过网络搜索底层问题、拉取请求或提交线程来恢复。由于数据集是公开发布的（任务目录、环境图像、评估工具、测试和参考解决方案），因此抗污染性取决于此结构以及数据集版本控制，而不是保密。四个子集——存储库级工程、前端开发、办公室和业务工作流程以及红/蓝队安全——探索实际工作的互补方面，每个子集都有自己的验证风格。所有这些都以统一的任务目录格式打包，并在统一且可重复的协议下在两个代理工具（CodeBuddy Code 和 Claude Code）上运行；完整的开放版本使基准测试可端到端地重现并可直接审核，因为任何第三方都可以重新运行每个任务并检查其内容。由于每个子集使用不同的评分工具，因此子集之间的分数不可比较，并且套件不会报告套件范围内的平均值。我们报告了多个模型系列的跨模型排行榜。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page   Add to collection     Community   EditPreview      Upload images, audio, and videos by dragging in the text input, pasting, or clicking here. Tap or paste here to upload images        Comment · Sign up or log in to comment</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 添加到集合 社区 EditPreview 通过拖入文本输入、粘贴或单击此处上传图像、音频和视频。点击或粘贴此处上传图片 评论 · 注册或登录以发表评论</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.12746" target="_blank">Color Pass-Through via Camera-Display Coupling</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>MMLab-CUHK</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Lyricccco, Ruikang Li, Molin Li, Jiarui Wu, Zhe Wei</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.12746" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.12746" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.12746.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  When a real-world scene is captured by a smartphone camera and viewed on its screen, the displayed image often differs noticeably from the original scene in color, brightness, and contrast. This gap persists despite substantial advances in both modern cameras and displays. A key reason is that most pipelines factor the high-dimensional capture-to-display process into two separately calibrated camera and display stages, and then connect them through low-dimensional color transforms, leading to information bottlenecks and inevitable error accumulation. To address this systemic challenge, we propose Color Pass-Through, an end-to-end learned framework that operates directly on captured images. Our key insight is to treat the camera and display as a coupled system rather than calibrating them in isolation. Coupling the camera and display yields two practical advantages: (1) it brings the entire real-world scenes to the display via end-to-end optimization, and (2) it allows efficient one-step calibration for each distinct observer via complete capture-to-display path. We validate Color Pass-Through using both digital and human observers. Compared with representative baselines, our method achieves an average gain of +2.0 points on a 5-point user study and more than 2x improvement on quantitative metrics, demonstrating improved reproduction of the perceived color of the original scene.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 当智能手机摄像头捕捉现实世界场景并在屏幕上查看时，显示的图像通常在颜色、亮度和对比度方面与原始场景存在明显差异。尽管现代相机和显示器取得了巨大进步，但这种差距仍然存在。一个关键原因是，大多数管道将高维捕获到显示的过程分解为两个单独校准的相机和显示阶段，然后通过低维颜色变换将它们连接起来，导致信息瓶颈和不可避免的错误积累。为了解决这一系统性挑战，我们提出了颜色传递，这是一种直接对捕获的图像进行操作的端到端学习框架。我们的主要见解是将相机和显示器视为一个耦合系统，而不是单独校准它们。将相机和显示器耦合起来有两个实际优势：（1）它通过端到端优化将整个现实世界场景带到显示器上，（2）它允许通过完整的捕获到显示路径为每个不同的观察者进行高效的一步校准。我们使用数字观察者和人类观察者来验证颜色传递。与代表性基线相比，我们的方法在 5 点用户研究中实现了 +2.0 点的平均增益，并且在定量指标上实现了 2 倍以上的改进，证明了原始场景感知颜色的再现得到了改善。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  38    Add to collection      Community         Lyricccco  Paper author  Paper submitter     about 17 hours ago         Color Pass-Through aims to make an image captured by a camera and reproduced on a display perceptually match the real scene as viewed through the device. Instead of calibrating the camera and display independently through a predefined intermediate color space, we learn the complete camera-display path end to end for each device.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 38 添加到集合 社区 Lyricccco 论文作者 论文提交者 大约 17 小时前 颜色传递旨在使相机捕获并在显示器上再现的图像在感知上与通过设备查看的真实场景相匹配。我们不是通过预定义的中间色彩空间独立校准相机和显示器，而是学习每个设备端到端的完整相机显示路径。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.20734" target="_blank">LLMs Get Lost in Evolving User Intent</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Microsoft Research</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>jihoontack, Jihoon Tack, Philippe Laban, Jennifer Neville</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.20734" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.20734" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.20734.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  As LLMs become more capable, they are increasingly deployed as collaborative agents, taking on user-delegated tasks through iterative interaction. Yet genuine interaction is inherently dynamic: users rarely specify their intent upfront, instead disclosing, revising, and reshaping it as the conversation unfolds. Despite this, LLMs are still predominantly evaluated or trained in single-turn, fully-specified settings, leaving open a fundamental question: how well do LLMs track and act on user intent as it evolves over the course of a conversation? To study this, we introduce a framework that transforms static, single-turn tasks into dynamic multi-turn conversations in which the user's intent evolves across turns--incrementally revealed, revised, and at times redirected mid-conversation--while preserving each task's original evaluation protocol, enabling existing benchmarks to be reused as controlled testbeds without new annotation. Across multiple tasks, we surface a consistent phenomenon: strong static-setting performance does not transfer to the evolving-intent setting, with substantial drops across model families. Our findings point to a fundamental gap: today's LLMs do not yet faithfully track and act on the user's evolving intent, a capability invisible to static evaluation yet critical for future collaborative agents.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 随着法学硕士的能力越来越强，它们越来越多地被部署为协作代理，通过迭代交互来承担用户委托的任务。然而，真正的交互本质上是动态的：用户很少预先明确他们的意图，而是随着对话的展开而披露、修改和重塑它。尽管如此，法学硕士仍然主要在单轮、完全指定的设置中进行评估或训练，这留下了一个基本问题：法学硕士在对话过程中不断变化的用户意图跟踪和行动的效果如何？为了研究这个问题，我们引入了一个框架，将静态的单轮任务转换为动态的多轮对话，其中用户的意图在轮次中不断演变——增量地揭示、修改，有时在对话中重定向——同时保留每个任务的原始评估协议，使现有的基准测试能够重新用作受控测试平台，而无需新的注释。在多个任务中，我们发现了一个一致的现象：强大的静态设置性能不会转移到不断变化的意图设置，模型系列之间的性能大幅下降。我们的研究结果指出了一个根本性的差距：当今的法学硕士尚未忠实地跟踪用户不断变化的意图并采取行动，这种能力对于静态评估来说是不可见的，但对于未来的协作代理至关重要。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub  1    Add to collection     Community         jihoontack  Paper author  Paper submitter     about 17 hours ago         As LLMs become more capable, they are increasingly deployed as collaborative agents, taking on user-delegated tasks through iterative interaction. Yet genuine interaction is inherently dynamic: users rarely specify their intent upfront, instead disclosing, revising, and reshaping it as the conversation unfolds. Despite this, LLMs are still predominantly evaluated or trained in single-turn, fully-specified settings, leaving open a fundamental question: how well do LLMs track and act on user intent as it evolves over the course of a conversation? To study this, we introduce a framework that transforms static, single-turn tasks into dynamic multi-turn conversations in which the user's intent evolves across turns--incrementally revealed, revised, and at times redirected mid-conversation--while preserving each task's original evaluation protocol, enabling existing benchmarks to be reused as controlled testbeds without new annotation. Across multiple tasks, we surface a consistent phenomenon: strong static-setting performance does not transfer to the evolving-intent setting, with substantial drops across model families. Our findings point to a fundamental gap: today's LLMs do not yet faithfully track and act on the user's evolving intent, a capability invisible to static evaluation yet critical for future collaborative agents.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF GitHub 1 添加到集合 社区 jihoontack 论文作者 论文提交者 大约 17 小时前 随着法学硕士变得越来越有能力，他们越来越多地被部署为协作代理，通过迭代交互承担用户委托的任务。然而，真正的交互本质上是动态的：用户很少预先明确他们的意图，而是随着对话的展开而披露、修改和重塑它。尽管如此，法学硕士仍然主要在单轮、完全指定的设置中进行评估或训练，这留下了一个基本问题：法学硕士在对话过程中不断变化的用户意图跟踪和行动的效果如何？为了研究这个问题，我们引入了一个框架，将静态的单轮任务转换为动态的多轮对话，其中用户的意图在轮次中不断演变——增量地揭示、修改，有时在对话中重定向——同时保留每个任务的原始评估协议，使现有的基准测试能够重新用作受控测试平台，而无需新的注释。在多个任务中，我们发现了一个一致的现象：强大的静态设置性能不会转移到不断变化的意图设置，模型系列之间的性能大幅下降。我们的研究结果指出了一个根本性的差距：当今的法学硕士尚未忠实地跟踪用户不断变化的意图并采取行动，这种能力对于静态评估来说是不可见的，但对于未来的协作代理至关重要。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.21553" target="_blank">SANA-Video 2.0: Hybrid Linear Attention with Attention Residuals for Efficient Video Generation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>NVIDIA</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Junsong Chen, Jincheng Yu, Yitong Li, Shuchen Xue, Haozhe Liu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.21553" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.21553" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.21553.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  We introduce SANA-Video 2.0, a hybrid video diffusion transformer instantiated at 5B and 14B scales under a unified architecture. Designed to generate high-quality video up to 720p on a single GPU, SANA-Video 2.0 matches full-softmax video DiTs in quality while retaining the favorable long-sequence scaling of linear attention. To avoid quadratic attention throughout, Hybrid Linear-Softmax Attention combines gated linear attention for O(N)-dominated mixing with periodic gated-softmax anchors at a 3:1 ratio, restoring the full-rank token interactions that pure linear attention lacks. To propagate these refreshed representations across depth, Block Attention Residuals (AttnRes) route completed block summaries into later linear layers, enabling anchor-feature reuse and boosting deep-layer effective rank by ~12%. Through from-scratch training, SANA-Video 2.0 learns the complete hybrid directly rather than linearizing pretrained models, with reduced-resolution proxy studies establishing 25% softmax as the optimal quality-efficiency trade-off. With 40-step sampling, SANA-Video 2.0 achieves a VBench score of 84.30 in 13.2s at 480p on a single H100, remaining competitive with far larger softmax video DiTs at a fraction of the latency. Its compiled DiT forward pass is 3.2x faster than a matched full-softmax baseline at 720p/60s, a gap that expands with video duration. Furthermore, full-stack Sol-Engine optimization (kernel fusion, caching, and sparse attention) accelerates this hardware-friendly backbone by a further 3.58x, bringing the 5B pipeline to 13.06s at 720p/5s and making it 120x faster than Wan 2.2-A14B on one H100. Overall, our hybrid design recovers softmax-level expressiveness at substantially reduced cost, unlocking scalable long, high resolution video generation.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：我们介绍了 SANA-Video 2.0，这是一种在统一架构下以 5B 和 14B 规模实例化的混合视频扩散转换器。 SANA-Video 2.0 旨在在单个 GPU 上生成高达 720p 的高质量视频，其质量可与全 softmax 视频 DiT 相匹配，同时保留线性注意力有利的长序列缩放。为了避免整个过程中的二次注意力，混合线性 Softmax 注意力将 O(N) 主导混合的门控线性注意力与周期性门控 Softmax 锚点以 3:1 的比例结合起来，恢复纯线性注意力所缺乏的全秩令牌交互。为了跨深度传播这些刷新的表示，块注意力残差 (AttnRes) 将完成的块摘要路由到后面的线性层，从而实现锚点特征重用并将深层有效排名提高约 12%。通过从头开始训练，SANA-Video 2.0 直接学习完整的混合模型，而不是线性化预训练模型，并通过降低分辨率的代理研究确定 25% softmax 作为最佳质量效率权衡。通过 40 步采样，SANA-Video 2.0 在单个 H100 上以 480p 的速度在 13.2 秒内实现了 84.30 的 VBench 分数，与更大的 softmax 视频 DiT 相比，其延迟仅为一小部分。其编译的 DiT 前向传播速度比 720p/60s 下匹配的全 softmax 基线快 3.2 倍，这一差距随着视频时长的增加而扩大。此外，全栈 Sol-Engine 优化（内核融合、缓存和稀疏注意力）将这种硬件友好型骨干网的速度进一步提高了 3.58 倍，使 5B 管道在 720p/5 秒时达到 13.06 秒，比 H100 上的 Wan 2.2-A14B 快 120 倍。总体而言，我们的混合设计以大幅降低的成本恢复了 softmax 级别的表现力，解锁了可扩展的长、高分辨率视频生成。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page   Add to collection         Community         Lawrence-cj   Paper submitter     about 11 hours ago         We introduce SANA-Video 2.0, a hybrid video diffusion transformer instantiated at 5B and 14B scales under a unified architecture. Designed to generate high-quality video up to 720p on a single GPU, SANA-Video 2.0 matches full-softmax video DiTs in quality while retaining the favorable long-sequence scaling of linear attention. To avoid quadratic attention throughout, Hybrid Linear-Softmax Attention combines gated linear attention for O(N)-dominated mixing with periodic gated-softmax anchors at a 3:1 ratio, restoring the full-rank token interactions that pure linear attention lacks. To propagate these refreshed representations across depth, Block Attention Residuals (AttnRes) route completed block summaries into later linear layers, enabling anchor-feature reuse and boosting deep-layer effective rank by ~12%. Through from-scratch training, SANA-Video 2.0 learns the complete hybrid directly rather than linearizing pretrained models, with reduced-resolution proxy studies establishing 25% softmax as the optimal quality-efficiency trade-off. With 40-step sampling, SANA-Video 2.0 achieves a VBench score of 84.30 in 13.2s at 480p on a single H100, remaining competitive with far larger softmax video DiTs at a fraction of the latency. Its compiled DiT forward pass is 3.2x faster than a matched full-softmax baseline at 720p/60s, a gap that expands with video duration. Furthermore, full-stack Sol-Engine optimization (kernel fusion, caching, and sparse attention) accelerates this hardware-friendly backbone by a further 3.58x, bringing the 5B pipeline to 13.06s at 720p/5s and making it 120x faster than Wan 2.2-A14B on one H100. Overall, our hybrid design recovers softmax-level expressiveness at substantially reduced cost, unlocking scalable long, high resolution video generation.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 添加到集合 社区 Lawrence-cj 论文提交者 大约 11 小时前 我们介绍 SANA-Video 2.0，一种在统一架构下以 5B 和 14B 比例实例化的混合视频扩散转换器。 SANA-Video 2.0 旨在在单个 GPU 上生成高达 720p 的高质量视频，其质量可与全 softmax 视频 DiT 相匹配，同时保留线性注意力有利的长序列缩放。为了避免整个过程中的二次注意力，混合线性 Softmax 注意力将 O(N) 主导混合的门控线性注意力与周期性门控 Softmax 锚点以 3:1 的比例结合起来，恢复纯线性注意力所缺乏的全秩令牌交互。为了跨深度传播这些刷新的表示，块注意力残差 (AttnRes) 将完成的块摘要路由到后面的线性层，从而实现锚点特征重用并将深层有效排名提高约 12%。通过从头开始训练，SANA-Video 2.0 直接学习完整的混合模型，而不是线性化预训练模型，并通过降低分辨率的代理研究确定 25% softmax 作为最佳质量效率权衡。通过 40 步采样，SANA-Video 2.0 在单个 H100 上以 480p 的速度在 13.2 秒内实现了 84.30 的 VBench 分数，与更大的 softmax 视频 DiT 相比，其延迟仅为一小部分。其编译的 DiT 前向传播速度比 720p/60s 下匹配的全 softmax 基线快 3.2 倍，这一差距随着视频时长的增加而扩大。此外，全栈 Sol-Engine 优化（内核融合、缓存和稀疏注意力）将这种硬件友好型骨干网的速度进一步提高了 3.58 倍，使 5B 管道在 720p/5 秒时达到 13.06 秒，比 H100 上的 Wan 2.2-A14B 快 120 倍。总体而言，我们的混合设计以大幅降低的成本恢复了 softmax 级别的表现力，解锁了可扩展的长、高分辨率视频生成。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.21576" target="_blank">Self-Supervised Learning of Structured Dynamics from Videos</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Fundamental AI Lab at UTN</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Lukas431, Lukas Knobel, Andrew Zisserman, Yuki M. Asano</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.21576" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.21576" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.21576.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Understanding motion in video is a fundamental challenge for visual learning, as frame-to-frame change entangles two sources of dynamics: camera motion and object motion. This decomposition has remained underexplored in representation learning, partly because these factors are tightly coupled in natural videos and difficult to supervise separately. Yet recovering it is important for learning robust motion representations that separate meaningful object dynamics from camera-induced variation. We study whether such structured motion representations can be recovered from frozen features of a pretrained image vision transformer. We propose the Structured Dynamics Model (SDM), which explicitly separates the dominant source of temporal change from residual dynamics through future-feature prediction, rather than representing video change with a single entangled latent or with unstructured, spatially dense transition tokens. Training combines self-supervised learning on real video with weak supervision of scene dynamics on synthetic Kubric data. We evaluate SDM on ProbeMotion, a new evaluation suite spanning synthetic and real videos with camera motion, object motion, and combined dynamics. SDM outperforms backbone baselines using global CLS or average-pooled features, and compares favorably to strongly supervised representations such as VGGT on several probes, despite using substantially weaker supervision. These results suggest that pretrained image models can be readily repurposed into structured video-dynamics representations, providing a useful inductive bias for learning and analyzing latent video dynamics.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 理解视频中的运动是视觉学习的一个基本挑战，因为帧与帧的变化涉及两个动态来源：相机运动和物体运动。这种分解在表示学习中仍未得到充分探索，部分原因是这些因素在自然视频中紧密耦合并且难以单独监督。然而，恢复它对于学习鲁棒的运动表示非常重要，该表示可以将有意义的对象动态与相机引起的变化分开。我们研究是否可以从预训练图像视觉变换器的冻结特征中恢复这种结构化运动表示。我们提出了结构化动态模型（SDM），它通过未来特征预测将时间变化的主要来源与残留动态明确分开，而不是用单个纠缠潜在或非结构化的空间密集转换标记来表示视频变化。训练结合了对真实视频的自监督学习和对合成库布里克数据的场景动态的弱监督。我们在 ProbeMotion 上评估 SDM，这是一个新的评估套件，涵盖具有摄像机运动、物体运动和组合动态的合成视频和真实视频。 SDM 的性能优于使用全局 CLS 或平均池化特征的骨干基线，并且在多个探针上与强监督表示（例如 VGGT）相比，尽管使用的监督要弱得多，但 SDM 的性能优于主干基线。这些结果表明，预训练的图像模型可以很容易地重新用于结构化视频动态表示，为学习和分析潜在视频动态提供有用的归纳偏差。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  5    Add to collection     Community         Lukas431  Paper author  Paper submitter     about 13 hours ago • edited about 12 hours ago        Check out our project page: https://lukasknobel.github.io/projects/StructuredDynamics</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 5 添加到集合 社区 Lukas431 论文作者 论文提交者 大约 13 小时前 • 大约 12 小时前编辑 查看我们的项目页面：https://lukasknobel.github.io/projects/StructuredDynamics</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.21594" target="_blank">Streaming Multi-Agent Autoregressive Diffusion Model with World State Registers</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Sicheng Mo, Yuheng Li, Ziyang Leng, Krishna Kumar Singh, Bolei Zhou</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.21594" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.21594" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.21594.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Multi-agent interactive world models should not only generate consistent observations, but also maintain world states that persist across agents and evolve across views. Existing autoregressive video diffusion pipelines carry forward observation history as conditioning context, which makes shared state difficult to maintain in multi-agent and multi-view settings. We present WorldWeaver (W^2), a streaming multi-agent video diffusion model that augments rollout with cross-agent world state registers: learnable tokens that store shared world information, track individual agent status, and are dynamically updated after each generated chunk. We ground these registers with supervision signals spanning individual agent status, global state views including bird's-eye views, and scene text. We further improve the architecture with a Mixture-of-Transformers design that uses separate weights for world state modeling and visual frame modeling. Extensive experiments in two-agent Minecraft video generation show that explicit world-state modeling improves logical consistency and generation quality.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 多智能体交互式世界模型不仅应该生成一致的观察结果，还应该维持跨智能体持续存在并跨视图演变的世界状态。现有的自回归视频扩散管道将观察历史记录作为调节上下文，这使得在多代理和多视图设置中难以维护共享状态。我们提出了 WorldWeaver (W^2)，一种流式多智能体视频传播模型，它通过跨智能体世界状态寄存器增强了部署：可学习的令牌存储共享世界信息、跟踪单个智能体状态，并在每个生成块后动态更新。我们将这些寄存器与涵盖个体代理状态、全局状态视图（包括鸟瞰图）和场景文本的监督信号结合起来。我们通过混合变形金刚设计进一步改进了架构，该设计使用单独的权重进行世界状态建模和视觉框架建模。双智能体 Minecraft 视频生成的大量实验表明，显式世界状态建模提高了逻辑一致性和生成质量。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page   Add to collection         Community   EditPreview      Upload images, audio, and videos by dragging in the text input, pasting, or clicking here. Tap or paste here to upload images        Comment · Sign up or log in to comment</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 添加到集合 社区 EditPreview 通过拖入文本输入、粘贴或单击此处上传图像、音频和视频。点击或粘贴此处上传图片 评论 · 注册或登录以发表评论</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.21051" target="_blank">Sample-Efficient Learning from Agent Experience</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>gouc, Chenhui Gou, Haoqin Tu, Yunhao Fang, Jianfei Cai</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.21051" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.21051" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.21051.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Real-world agent learning is often constrained by costly environment interactions, such as running time-consuming experiments or obtaining human feedback. In-context learning offers a highly sample-efficient way for agents to learn from their own interaction histories, but its gains disappear once that experience is removed from the context. Separately, context distillation provides a mechanism for internalizing contextual information into model weights. However, applying it to agents' interaction histories without sacrificing environment sample efficiency remains underexplored. We term this problem Experience Distillation and develop an implementation that requires no further environment interaction beyond the collected experience. Experiments on 749 curated software-engineering tasks and six text-adventure games show that it retains at least 64.8\% of the gains from in-context learning across both domains, whereas direct supervised fine-tuning on the collected experience recovers only 3.8\%. Compared with classical reinforcement-learning baselines, in-context learning from trial-and-error experience followed by Experience Distillation matches their performance with at least \(9.6\times\) fewer environment samples.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 现实世界的代理学习通常受到代价高昂的环境交互的限制，例如运行耗时的实验或获取人类反馈。上下文学习为代理从自己的交互历史中学习提供了一种高度样本有效的方法，但一旦将经验从上下文中移除，其收益就会消失。另外，上下文蒸馏提供了一种将上下文信息内化为模型权重的机制。然而，在不牺牲环境样本效率的情况下将其应用于代理的交互历史仍有待探索。我们将此问题称为“经验蒸馏”，并开发了一种实现方式，除了收集的经验之外，不需要进一步的环境交互。对 749 个策划的软件工程任务和 6 个文本冒险游戏的实验表明，它保留了跨两个领域的上下文学习的至少 64.8% 的收益，而对收集的经验进行直接监督微调仅恢复了 3.8%。与经典的强化学习基线相比，从试错经验中进行的上下文学习，然后进行经验蒸馏，其性能与至少少\(9.6\倍\)的环境样本相匹配。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community         gouc  Paper author  Paper submitter     about 17 hours ago         Real-world agent learning is often constrained by costly environment interactions, such as running time-consuming experiments or obtaining human feedback. In-context learning offers a highly sample-efficient way for agents to learn from their own interaction histories, but its gains disappear once that experience is removed from the context. Separately, context distillation provides a mechanism for internalizing contextual information into model weights. However, applying it to agents' interaction histories without sacrificing environment sample efficiency remains underexplored. We term this problem Experience Distillation and develop an implementation that requires no further environment interaction beyond the collected experience. Experiments on 749 curated software-engineering tasks and six text-adventure games show that it retains at least 64.8% of the gains from in-context learning across both domains, whereas direct supervised fine-tuning on the collected experience recovers only 3.8%. Compared with classical reinforcement-learning baselines, in-context learning from trial-and-error experience followed by Experience Distillation matches their performance with at least (9.6\times) fewer environment samples.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 gouc 论文作者 论文提交者 大约 17 小时前 现实世界的代理学习通常受到成本高昂的环境交互的限制，例如运行耗时的实验或获取人类反馈。上下文学习为代理从自己的交互历史中学习提供了一种高度样本有效的方法，但一旦将经验从上下文中移除，其收益就会消失。另外，上下文蒸馏提供了一种将上下文信息内化为模型权重的机制。然而，在不牺牲环境样本效率的情况下将其应用于代理的交互历史仍有待探索。我们将此问题称为“经验蒸馏”，并开发了一种实现方式，除了收集的经验之外，不需要进一步的环境交互。对 749 个策划的软件工程任务和 6 个文本冒险游戏的实验表明，它保留了跨两个领域的上下文学习的至少 64.8% 的收益，而对收集的经验进行直接监督微调仅恢复了 3.8%。与经典的强化学习基线相比，通过试错经验进行上下文学习，然后进行经验蒸馏，其性能与至少（9.6倍）更少的环境样本相匹配。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.20785" target="_blank">Robostral Navigate</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Mistral AI_</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Arjun Majumdar, Avinash Sooriyarachchi, Benjamin Tibi, Chris Bamford, Elliot Chane-Sane</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.20785" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.20785" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.20785.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Deploying navigation systems at scale requires a recipe that minimizes sensor assumptions, generalizes across robot embodiments, and trains efficiently. Yet, today's best systems depend on depth sensors, multi-camera rigs, or pre-built maps, limiting the hardware they support and increasing deployment cost. We introduce Robostral Navigate, an 8B vision-language model built around this scalability objective. The model consumes only a stream of monocular RGB images - the most ubiquitous sensor across robotic platforms and predicts waypoints by pointing to the next target location in the current camera view. Operating purely in image space, rather than robot-specific coordinates, makes the policy naturally robust to changes in camera intrinsics and scene scale, enabling deployment across wheeled, legged, and aerial robots without recalibration. We generate 2.4 million trajectories across 350k simulated scenes to reduce the reliance on real-world data collection and scale easily. We further introduce a prefix-caching training recipe that packs entire episodes into single training sequences, reducing training tokens by 22x and cutting training time from months to days. A tree-based attention mask prevents conditioning on previous ground-truth actions, encouraging visually grounded action prediction, and reinforcement learning is used to further improve exploration and recovery capabilities. On the Room-to-Room and Room-Across-Room in Continuous Environments (R2R-CE and RxR-CE) benchmarks, Robostral Navigate sets a new state of the art. On R2R-CE, it achieves a 77.4% success rate, surpassing the best monocular method by 10.5 points and the strongest depth- or multi-camera system by 5.3 points despite using only a single RGB camera. On RxR-CE, it reaches 75.1% success rate, outperforming all monocular baselines.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 大规模部署导航系统需要一种方法，可以最大限度地减少传感器假设、概括机器人实施例并进行有效训练。然而，当今最好的系统依赖于深度传感器、多摄像头设备或预构建地图，限制了它们支持的硬件并增加了部署成本。我们推出了 Robostral Navigate，这是一个围绕此可扩展性目标构建的 8B 视觉语言模型。该模型仅消耗单眼 RGB 图像流（机器人平台上最普遍的传感器），并通过指向当前摄像机视图中的下一个目标位置来预测路径点。纯粹在图像空间而不是特定于机器人的坐标中操作，使得该策略自然地对相机内在特性和场景规模的变化具有鲁棒性，从而无需重新校准即可在轮式、腿式和空中机器人上进行部署。我们在 35 万个模拟场景中生成 240 万条轨迹，以减少对现实世界数据收集和轻松扩展的依赖。我们进一步引入了前缀缓存训练配方，将整个剧集打包到单个训练序列中，将训练令牌减少 22 倍，并将训练时间从几个月缩短到几天。基于树的注意力掩模可以防止对先前的地面真实动作进行调节，鼓励基于视觉的动作预测，并使用强化学习来进一步提高探索和恢复能力。在连续环境中的房间到房间和房间跨房间（R2R-CE 和 RxR-CE）基准上，Robostral Navigate 树立了新的技术水平。在 R2R-CE 上，它实现了 77.4% 的成功率，尽管只使用单个 RGB 摄像头，但比最好的单目方法高出 10.5 分，比最强的深度或多摄像头系统高出 5.3 分。在 RxR-CE 上，它的成功率达到 75.1%，优于所有单眼基线。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page   Add to collection     Community   EditPreview      Upload images, audio, and videos by dragging in the text input, pasting, or clicking here. Tap or paste here to upload images        Comment · Sign up or log in to comment</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 添加到集合 社区 EditPreview 通过拖入文本输入、粘贴或单击此处上传图像、音频和视频。点击或粘贴此处上传图片 评论 · 注册或登录以发表评论</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.04763" target="_blank">Multi-Turn On-Policy Distillation with Prefix Replay</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Microsoft Research</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Baohao Liao, Hanze Dong, Christof Monz, Xinxing Xu, Li Dong</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.04763" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.04763" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.04763.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  We study on-policy distillation (OPD) for agentic tasks, where an LLM agent interacts with an environment over multiple turns and a student imitates a teacher over these multi-turn interaction histories. Fully online OPD is costly because each update requires fresh student rollouts through the environment and teacher queries at visited histories. We propose Replayed-Prefix On-Policy Distillation (ReOPD), an off-environment alternative that reuses pre-collected teacher trajectories as replayed prefixes: the student acts at selected steps, while the teacher provides dense per-step supervision without executing new environment interactions. We show that multi-turn OPD introduces a prefix trap: making histories more student-on-policy improves relevance to the student, but can query the teacher on histories where its target is unreliable. This creates a two-sided distribution shift between student occupancy and teacher reliability. ReOPD addresses this by treating multi-turn OPD as a reliability-aware prefix distribution design and implements it with a simple step-decaying sampling schedule that emphasizes early, lower-shift prefixes. Across mathematical reasoning with Python and search environments over multiple teacher and student model scales, ReOPD preserves or improves OPD-level accuracy, uses zero tool calls during student training, and is at least 4times faster per rollout than OPD. ReOPD therefore turns expensive agent-environment interaction into a reusable offline resource, enabling scalable distillation across tools, tasks, and environments.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：我们研究代理任务的在策略蒸馏（OPD），其中法学硕士代理与环境进行多轮交互，学生在这些多轮交互历史中模仿老师。完全在线的 OPD 成本高昂，因为每次更新都需要新的学生在环境中进行展示，并要求教师查询访问过的历史记录。我们提出了重播前缀按策略蒸馏（ReOPD），这是一种脱离环境的替代方案，它将预先收集的教师轨迹重新用作重播前缀：学生按照选定的步骤进行操作，而教师则提供密集的每步监督，而无需执行新的环境交互。我们表明，多轮 OPD 引入了一个前缀陷阱：使历史更加符合学生政策，提高了与学生的相关性，但可以向教师询问其目标不可靠的历史。这造成了学生占用率和教师可靠性之间的双向分布变化。 ReOPD 通过将多轮 OPD 视为可靠性感知的前缀分布设计来解决此问题，并通过强调早期、较低移位前缀的简单步进衰减采样计划来实现它。在使用 Python 进行数学推理以及多个教师和学生模型规模的搜索环境中，ReOPD 保留或提高了 OPD 级别的准确性，在学生训练期间使用零工具调用，并且每次部署的速度至少比 OPD 快 4 倍。因此，ReOPD 将昂贵的代理与环境交互转变为可重用的离线资源，从而实现跨工具、任务和环境的可扩展蒸馏。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  4    Add to collection      Community         baohao   Paper submitter     about 11 hours ago         On-policy distillation for agents without the environment: replay teacher prefixes instead of live rollouts.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 4 添加到集合 社区 baohao 论文提交者 大约 11 小时前 没有环境的代理的按策略蒸馏：重播教师前缀而不是实时推出。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.10848" target="_blank">Predictive Divergence Masks for LLM RL</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Xiangxin Zhou, Jiarui Yao, Penghui Qi, Bowen Ping, Jiaqi Tang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.10848" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.10848" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.10848.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Reinforcement learning for large language models (LLMs) typically relies on trust-region masks to stabilize off-policy updates. The dominant PPO-style approach uses the sampled-token importance ratio for two criteria: a proximity criterion, which asks whether the policy has moved too far from the behavior policy, and a direction criterion, which asks whether the update pushes it farther away. Recent work DPPO improves the proximity criterion by replacing PPO's ratio-based test with a probability divergence between the behavior and training policies. However, its direction criterion is still inherited from PPO. A token can be masked only when the sampled-token importance ratio moves away from one. We observe that this ratio-based direction criterion is a single-sample proxy that can disagree in sign with the change of the divergence that defines the proximity criterion. We therefore propose the predictive divergence mask, which asks whether the next policy-gradient step will increase or decrease the same divergence used by the trust region. For the discrete softmax policies used in LLM RL, we derive this prediction in closed form. Because production rollout engines expose only a truncated (top-K) view of the vocabulary, we develop two lightweight top-K estimators for this prediction. Detailed analysis shows the divergence-based direction is better aligned with the realized change of the divergence than the sampled ratio, and the resulting masks improve RL training across model scales and precision settings.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 大型语言模型 (LLM) 的强化学习通常依赖信任域掩码来稳定离策略更新。占主导地位的 PPO 风格方法将采样令牌重要性比用于两个标准：邻近标准，询问策略是否偏离行为策略太远，以及方向标准，询问更新是否将其推得更远。最近的工作 DPPO 通过用行为和训练策略之间的概率差异取代 PPO 基于比率的测试来改进邻近标准。但其方向准则仍然继承自PPO。仅当采样令牌重要性比率远离 1 时，才能屏蔽令牌。我们观察到，这种基于比率的方向标准是单样本代理，其符号可能与定义接近标准的散度变化不同。因此，我们提出了预测散度掩模，它询问下一个策略梯度步骤是否会增加或减少信任区域使用的相同散度。对于 LLM RL 中使用的离散 softmax 策略，我们以封闭形式导出此预测。由于生产推出引擎仅公开词汇表的截断（top-K）视图，因此我们为此预测开发了两个轻量级的 top-K 估计器。详细分析表明，与采样比率相比，基于散度的方向更能与已实现的散度变化保持一致，并且生成的掩模可以改善跨模型尺度和精度设置的 RL 训练。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community         FlippyDora   Paper submitter     about 21 hours ago         Reinforcement learning for large language models (LLMs) typically relies on trust-region masks to stabilize off-policy updates. The dominant PPO-style approach uses the sampled-token importance ratio for two criteria: a proximity criterion, which asks whether the policy has moved too far from the behavior policy, and a direction criterion, which asks whether the update pushes it farther away. Recent work, DPPO, improves the proximity criterion by replacing PPO’s ratio-based test with a probability divergence between the behavior and training policies. However, its direction criterion is still inherited from PPO. A token can be masked only when the sampled-token importance ratio moves away from one. We observe that this ratio-based direction criterion is a single-sample proxy that can disagree in sign with the change of the divergence that defines the proximity criterion. We therefore propose the predictive divergence mask, which asks whether the next policy-gradient step will increase or decrease the same divergence used by the trust region. For the discrete softmax policies used in LLM RL, we derive this prediction in closed form. Because production rollout engines expose only a truncated (top-K) view of the vocabulary, we develop two lightweight top-K estimators for this prediction. Detailed analysis shows the divergence-based direction is better aligned with the realized change of the divergence than the sampled ratio, and the resulting masks improve RL training across model scales and precision settings.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 FlippyDora 论文提交者 大约 21 小时前 大语言模型 (LLM) 的强化学习通常依赖信任区域掩码来稳定离策略更新。占主导地位的 PPO 风格方法将采样令牌重要性比用于两个标准：邻近标准，询问策略是否偏离行为策略太远，以及方向标准，询问更新是否将其推得更远。最近的工作，DPPO，通过用行为和训练策略之间的概率差异代替 PPO 基于比率的测试来改进邻近标准。但其方向准则仍然继承自PPO。仅当采样令牌重要性比率远离 1 时，才能屏蔽令牌。我们观察到，这种基于比率的方向标准是单样本代理，其符号可能与定义接近标准的散度变化不同。因此，我们提出了预测散度掩模，它询问下一个策略梯度步骤是否会增加或减少信任区域使用的相同散度。对于 LLM RL 中使用的离散 softmax 策略，我们以封闭形式导出此预测。由于生产推出引擎仅公开词汇表的截断（top-K）视图，因此我们为此预测开发了两个轻量级的 top-K 估计器。详细分析表明，与采样比率相比，基于散度的方向更能与已实现的散度变化保持一致，并且生成的掩模可以改善跨模型尺度和精度设置的 RL 训练。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.21485" target="_blank">Recurrent Sinusoidal INRs for Efficient High-Fidelity Representation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>hyeoncho01, Hyunmin Cho, Jaejun Yoo, Kyong Hwan Jin</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.21485" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.21485" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.21485.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  We study sinusoidal recurrence as an iterative mechanism for harmonic spectral enrichment in implicit neural representations (INRs). Our analysis reveals that sinusoidal activations induce a harmonic line spectrum, providing a spectral account of how recurrent unrolling enriches the effective spectral support. We realize this principle with a shared sinusoidal block that iteratively refines the latent representation. We empirically validate the resulting spectral behavior against feed-forward INRs, non-sinusoidal recurrent variants, and equilibrium-style sinusoidal models. Complementing this analysis, we evaluate the proposed architecture across image and 3D representation tasks. On RGB image benchmarks, our method achieves higher fidelity than feed-forward baselines with fewer parameters and fewer optimization steps, and it further transfers favorably to super-resolution, NeRF, and SDF tasks.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 我们研究正弦递归作为隐式神经表示（INR）中谐波谱富集的迭代机制。我们的分析表明，正弦激活会产生谐波线谱，从而提供了循环展开如何丰富有效谱支持的谱解释。我们通过共享正弦曲线块来实现这一原理，该正弦曲线块迭代地细化潜在表示。我们根据前馈 INR、非正弦循环变量和平衡式正弦模型实证验证了所得的光谱行为。作为对这一分析的补充，我们跨图像和 3D 表示任务评估了所提出的架构。在 RGB 图像基准上，我们的方法以更少的参数和更少的优化步骤实现了比前馈基线更高的保真度，并且它进一步有利地转移到超分辨率、NeRF 和 SDF 任务。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  0    Add to collection     Community         hyeoncho01  Paper author  Paper submitter     about 18 hours ago         Accepted to ECCV 2026 (Poster)</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 0 添加到集合 社区 hyeoncho01 论文作者 论文提交者 大约 18 小时前 接受 ECCV 2026（海报）</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.21017" target="_blank">TableVerse: A Large-scale Tabletop Dataset with Real-world Grounded Layouts for Generalizable Manipulation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>ByteDance</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Boyuan Wang, Yue Zhang, Xutao Xue, Xueyu Song, Yu Sun</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.21017" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.21017" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.21017.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  The development of generalizable robotic manipulation policies is inherently bounded by the availability of large-scale, high-fidelity scene data. While recent automated synthesis methods attempt to bridge this gap via text-to-layout hallucination or simplified procedural generation, they frequently suffer from physical implausibility and fail to capture the complex, dense clutter of actual human environments. In this paper, we introduce TableVerse, a fully automated Real2Sim pipeline that shifts the paradigm from imaginative layout generation to deterministic reconstruction from unstructured, in-the-wild image data. Our framework seamlessly processes unscripted internet media into high-fidelity, simulation-ready tabletop environments with accurate metric scales, authentic topologies, and verified mechanical stability. Furthermore, an automated task-conditioned trajectory generation framework is integrated to synthesize high-quality, collision-free pick-and-place demonstrations. Leveraging this complete pipeline, we construct the TableVerse-100K Dataset, a large-scale corpus comprising 100,000 unique, physically consistent environments paired with interactive manipulation trajectories. By capturing diverse asset compositions, realistic spatial distributions, and high-quality demonstrations, TableVerse-100K establishes a highly scalable and high-fidelity data foundation, providing significant value to facilitate future research in generalizable robotic manipulation tasks.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 可推广的机器人操作策略的发展本质上受到大规模、高保真场景数据的可用性的限制。虽然最近的自动合成方法试图通过文本到布局的幻觉或简化的程序生成来弥补这一差距，但它们经常遭受物理上的难以置信的困扰，并且无法捕捉实际人类环境中复杂、密集的杂乱。在本文中，我们介绍了 TableVerse，这是一种完全自动化的 Real2Sim 流程，它将范式从富有想象力的布局生成转变为从非结构化、野外图像数据进行确定性重建。我们的框架将无脚本的互联网媒体无缝地处理成高保真、可模拟的桌面环境，具有精确的公制尺度、真实的拓扑结构和经过验证的机械稳定性。此外，还集成了自动化任务条件轨迹生成框架，以合成高质量、无碰撞的拾放演示。利用这个完整的管道，我们构建了 TableVerse-100K 数据集，这是一个大型语料库，包含 100,000 个独特的、物理一致的环境以及交互式操作轨迹。通过捕获不同的资产组成、真实的空间分布和高质量的演示，TableVerse-100K 建立了高度可扩展和高保真度的数据基础，为促进通用机器人操作任务的未来研究提供了重要价值。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page   Add to collection     Community   EditPreview      Upload images, audio, and videos by dragging in the text input, pasting, or clicking here. Tap or paste here to upload images        Comment · Sign up or log in to comment</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 添加到集合 社区 EditPreview 通过拖入文本输入、粘贴或单击此处上传图像、音频和视频。点击或粘贴此处上传图片 评论 · 注册或登录以发表评论</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.21557" target="_blank">OpenForgeRL: Train Harness-native Agents in Any Environment</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Microsoft</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Xiao Yu, Baolin Peng, Ruize Xu, Hao Zou, Qianhui Wu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.21557" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.21557" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.21557.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Modern AI agents rely on elaborate inference harnesses such as Claude Code, Codex, and OpenClaw to drive multi-turn reasoning, tool use, and access to external systems. While powerful, these complex harnesses also make agents hard to train end-to-end with open infrastructure, whose SFT/RL stacks cannot natively express stateful, multi-process harness inference. To address this, we present OpenForgeRL, an open-source framework for training harness-based agents end-to-end in diverse environments. OpenForgeRL achieves this with a lightweight proxy that serves the harness's model calls while recording them as training data for a standard RL codebase (e.g., veRL), and a Kubernetes orchestrator that runs each rollout in its own remote container, together enabling training on any harness in any environment at scale. By decoupling training and inference, OpenForgeRL allows researchers to easily train, study, and improve agents directly in the real harnesses and environments they are deployed with. We validate our framework across diverse, complex harnesses and environments, spanning tool/claw-based agents and multimodal GUI browser- and computer-use agents. Using only hundreds to a few thousand tasks, OpenForgeClaw reaches 31.7 pass^3 and 55.9 pass@3 on ClawEval and 33.7 on QwenClawBench. OpenForgeGUI reaches 37.7 on OSWorld-Verified, 63.0 on Online-Mind2Web, and 72.3 on WebVoyager. Both outperform open baselines of similar size on nearly all benchmarks, and in the GUI setting match or surpass models several times larger. Beyond benchmarks, we analyze how harness choice (e.g., ZeroClaw, OpenClaw, Codex) and RL shape agent behavior. We find that some harnesses are substantially harder to learn than others, and that RL improves agentic reliability, such as self-verification, tool coverage, and completing multi-step plans, though critical abilities such as error recovery remain weak.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 现代人工智能代理依靠复杂的推理工具（例如 Claude Code、Codex 和 OpenClaw）来驱动多轮推理、工具使用和对外部系统的访问。这些复杂的工具虽然功能强大，但也使得代理很难通过开放基础设施进行端到端训练，其 SFT/RL 堆栈无法本机表达有状态的多进程工具推理。为了解决这个问题，我们提出了 OpenForgeRL，这是一个开源框架，用于在不同环境中端到端地训练基于工具的代理。 OpenForgeRL 通过一个轻量级代理来实现这一点，该代理为线束的模型调用提供服务，同时将它们记录为标准 RL 代码库（例如 veRL）的训练数据，以及一个在自己的远程容器中运行每个部署的 Kubernetes 编排器，共同实现在任何环境中对任何线束进行大规模训练。通过将训练和推理解耦，OpenForgeRL 使研究人员能够直接在部署的真实工具和环境中轻松地训练、研究和改进代理。我们在各种复杂的工具和环境中验证我们的框架，涵盖基于工具/爪的代理以及多模式 GUI 浏览器和计算机使用代理。仅使用数百到数千个任务，OpenForgeClaw 在 ClawEval 上达到 31.7 pass^3 和 55.9 pass@3，在 QwenClawBench 上达到 33.7。 OpenForgeGUI 在 OSWorld-Verified 上达到 37.7，在 Online-Mind2Web 上达到 63.0，在 WebVoyager 上达到 72.3。两者在几乎所有基准测试中都优于类似大小的开放基线，并且在 GUI 设置中匹配或超过了数倍大的模型。除了基准之外，我们还分析如何利用选择（例如 ZeroClaw、OpenClaw、Codex）和 RL 塑造代理行为。我们发现，某些工具比其他工具更难学习，并且强化学习提高了代理可靠性，例如自我验证、工具覆盖率和完成多步骤计划，尽管错误恢复等关键能力仍然很弱。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community         Baolin   Paper submitter     about 2 hours ago         Modern AI agents rely on elaborate inference harnesses such as Claude Code, Codex, and OpenClaw to drive multi-turn reasoning, tool use, and access to external systems. While powerful, these complex harnesses also make agents hard to train end-to-end with open infrastructure, whose SFT/RL stacks cannot natively express stateful, multi-process harness inference. To address this, we present OpenForgeRL, an open-source framework for training harness-based agents end-to-end in diverse environments. OpenForgeRL achieves this with a lightweight proxy that serves the harness's model calls while recording them as training data for a standard RL codebase (e.g., veRL), and a Kubernetes orchestrator that runs each rollout in its own remote container, together enabling training on any harness in any environment at scale. By decoupling training and inference, OpenForgeRL allows researchers to easily train, study, and improve agents directly in the real harnesses and environments they are deployed with. We validate our framework across diverse, complex harnesses and environments, spanning tool/claw-based agents and multimodal GUI browser- and computer-use agents. Using only hundreds to a few thousand tasks, OpenForgeClaw reaches 31.7 pass^3 and 55.9 pass@3 on ClawEval and 33.7 on QwenClawBench. OpenForgeGUI reaches 37.7 on OSWorld-Verified, 63.0 on Online-Mind2Web, and 72.3 on WebVoyager. Both outperform open baselines of similar size on nearly all benchmarks, and in the GUI setting match or surpass models several times larger. Beyond benchmarks, we analyze how harness choice (e.g., ZeroClaw, OpenClaw, Codex) and RL shape agent behavior. We find that some harnesses are substantially harder to learn than others, and that RL improves agentic reliability, such as self-verification, tool coverage, and completing multi-step plans, though critical abilities such as error recovery remain weak.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 Baolin 论文提交者 大约 2 小时前 现代 AI 代理依靠复杂的推理工具（例如 Claude Code、Codex 和 OpenClaw）来驱动多轮推理、工具使用和对外部系统的访问。这些复杂的工具虽然功能强大，但也使得代理很难通过开放基础设施进行端到端训练，其 SFT/RL 堆栈无法本机表达有状态的多进程工具推理。为了解决这个问题，我们提出了 OpenForgeRL，这是一个开源框架，用于在不同环境中端到端地训练基于工具的代理。 OpenForgeRL 通过一个轻量级代理来实现这一点，该代理为线束的模型调用提供服务，同时将它们记录为标准 RL 代码库（例如 veRL）的训练数据，以及一个在自己的远程容器中运行每个部署的 Kubernetes 编排器，共同实现在任何环境中对任何线束进行大规模训练。通过将训练和推理解耦，OpenForgeRL 使研究人员能够直接在部署的真实工具和环境中轻松地训练、研究和改进代理。我们在各种复杂的工具和环境中验证我们的框架，涵盖基于工具/爪的代理以及多模式 GUI 浏览器和计算机使用代理。仅使用数百到数千个任务，OpenForgeClaw 在 ClawEval 上达到 31.7 pass^3 和 55.9 pass@3，在 QwenClawBench 上达到 33.7。 OpenForgeGUI 在 OSWorld-Verified 上达到 37.7，在 Online-Mind2Web 上达到 63.0，在 WebVoyager 上达到 72.3。两者在几乎所有基准测试中都优于类似大小的开放基线，并且在 GUI 设置中匹配或超过了数倍大的模型。除了基准之外，我们还分析如何利用选择（例如 ZeroClaw、OpenClaw、Codex）和 RL 塑造代理行为。我们发现，某些工具比其他工具更难学习，并且强化学习提高了代理可靠性，例如自我验证、工具覆盖率和完成多步骤计划，尽管错误恢复等关键能力仍然很弱。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.19238" target="_blank">FinanceComplexQA: Benchmarking Agentic Reasoning on Industrial-grade Financial Documents</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Beihang University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Xianfu Cheng, Shiwei Zhang, Jiyu Zhao, Jian Yang, Xinyuan Wang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.19238" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.19238" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.19238.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Agentic Reasoning has become a transformative force in financial analysis due to its ability to integrate large-scale information and generate reliable and accurate content. However, when handling complex real-world problems, different agents still show significant performance variation. In this work, we design Finance-LaTeX SKILL, a skill for synthesizing financial documents with complex layouts based on expert knowledge. Using an agent workflow built on this skill, we generate 2,000 professional financial documents along with 6,000 high-quality question-answer pairs. To evaluate the overall capability of agents, we introduce FinanceComplexQA, a comprehensive open-ended generation benchmark for financial documents that closely resembles real-world scenarios. It contains 2,026 deep research tasks targeting 1009 financial documents. FinanceComplexQA has 8 key features: bilingual support; coverage of six mainstream scenarios and seven tasks; expert-level document reasoning questions; deep research of complex layouts; relatively stable and permanent reference answers; and precise evaluation through an Agent-as-a-Judge with multiple evaluation metrics. Using FinanceComplexQA, we conduct a comprehensive evaluation of leading RAG systems and agentic reasoning tools for financial document QA. Through identifying and analyzing failure cases, we provide an in-depth study of their capabilities in numerical computation, multi-hop reasoning, content summarization, and industry analysis.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 代理推理因其能够整合大规模信息并生成可靠且准确的内容而成为财务分析领域的变革力量。然而，在处理复杂的现实问题时，不同的智能体仍然表现出显着的性能差异。在这项工作中，我们设计了 Finance-LaTeX SKILL，这是一种基于专业知识合成具有复杂布局的财务文档的技能。使用基于此技能构建的代理工作流程，我们生成 2,000 份专业财务文档以及 6,000 个高质量问答对。为了评估代理的整体能力，我们引入了 FinanceComplexQA，这是一个全面的开放式财务文档生成基准，与现实世界的场景非常相似。它包含针对 1009 份金融文件的 2026 个深度研究任务。 FinanceComplexQA 有 8 个关键特性： 双语支持；覆盖六大主流场景、七大任务；专家级文档推理问题；复杂布局的深入研究；相对稳定、永久的参考答案；并通过具有多种评估指标的代理人作为法官进行精确评估。使用 FinanceComplexQA，我们对领先的 RAG 系统和财务文档 QA 的代理推理工具进行了全面评估。通过识别和分析失败案例，深入研究其在数值计算、多跳推理、内容概括和行业分析方面的能力。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  1    Add to collection     Community         BuaaCXF   Paper submitter     about 11 hours ago         Agentic Reasoning has become a transformative force in financial analysis due to its ability to integrate large-scale information and generate reliable and accurate content. However, when handling complex real-world problems, different agents still show significant performance variation. In this work, we design Finance-LaTeX SKILL, a skill for synthesizing financial documents with complex layouts based on expert knowledge. Using an agent workflow built on this skill, we generate 2,000 professional financial documents along with 6,000 high-quality question-answer pairs. To evaluate the overall capability of agents, we introduce FinanceComplexQA, a comprehensive open-ended generation benchmark for financial documents that closely resembles real-world scenarios. It contains 2,026 deep research tasks targeting 1009 financial documents. FinanceComplexQA has 8 key features: bilingual support; coverage of six mainstream scenarios and seven tasks; expert-level document reasoning questions; deep research of complex layouts; relatively stable and permanent reference answers; and precise evaluation through an Agent-as-a-Judge with multiple evaluation metrics. Using FinanceComplexQA, we conduct a comprehensive evaluation of leading RAG systems and agentic reasoning tools for financial document QA. Through identifying and analyzing failure cases, we provide an in-depth study of their capabilities in numerical computation, multi-hop reasoning, content summarization, and industry analysis.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 1 添加到集合 社区 BuaaCXF 论文提交者 大约 11 小时前 代理推理由于能够整合大规模信息并生成可靠且准确的内容，已成为财务分析领域的变革力量。然而，在处理复杂的现实问题时，不同的智能体仍然表现出显着的性能差异。在这项工作中，我们设计了 Finance-LaTeX SKILL，这是一种基于专业知识合成具有复杂布局的财务文档的技能。使用基于此技能构建的代理工作流程，我们生成 2,000 份专业财务文档以及 6,000 个高质量问答对。为了评估代理的整体能力，我们引入了 FinanceComplexQA，这是一个全面的开放式财务文档生成基准，与现实世界的场景非常相似。它包含针对 1009 份金融文件的 2026 个深度研究任务。 FinanceComplexQA 有 8 个关键特性： 双语支持；覆盖六大主流场景、七大任务；专家级文档推理问题；复杂布局的深入研究；相对稳定、永久的参考答案；并通过具有多种评估指标的代理人作为法官进行精确评估。使用 FinanceComplexQA，我们对领先的 RAG 系统和财务文档 QA 的代理推理工具进行了全面评估。通过识别和分析失败案例，深入研究其在数值计算、多跳推理、内容概括和行业分析方面的能力。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.21580" target="_blank">GraphVid: Interactive Graph-Controllable Video Generation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>PLAN Lab @University of Illinois Urbana-Champaign</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Vedant Shah, Onkar Susladkar, Tushar Prakash, Kiet Nguyen, Tianjio Yu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.21580" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.21580" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.21580.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Controllable video generation remains challenging due to the difficulty of specifying precise multi-object interactions using text prompts or motion-control inputs that primarily constrain pixel movement. In practice, trajectory-based control often requires users to draw accurate tracks for multiple objects, which scales poorly with scene complexity and becomes ambiguous under occlusion or overlap. To enable flexible yet precise multi-subject control, we introduce GraphVid, a graph-conditioned image-to-video generation model that enables interactive control through structured interaction graphs. We further curate GraphVid-Bench, a large-scale interaction-centric video dataset with structured relational annotations to enable training of interaction-aware video generation models. Despite using substantially less training data and fewer trainable parameters than prior motion-control methods, GraphVid delivers strong controllability and video quality. Compared with Motion-I2V, GraphVid reduces FID by up to 39.9% and FVD by 37.6%, while improving PSNR (9.87=>15.98) and SSIM (0.38=>0.61). Our results highlight the potential of structured semantic interfaces as a powerful paradigm for controllable video generation.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 由于使用主要限制像素移动的文本提示或运动控制输入来指定精确的多对象交互非常困难，因此可控视频生成仍然具有挑战性。在实践中，基于轨迹的控制通常要求用户为多个对象绘制准确的轨迹，这随着场景复杂性的缩放而变化，并且在遮挡或重叠的情况下变得模糊。为了实现灵活而精确的多主体控制，我们引入了 GraphVid，这是一种图条件图像到视频生成模型，可通过结构化交互图实现交互控制。我们进一步策划了 GraphVid-Bench，这是一个以交互为中心的大规模视频数据集，具有结构化关系注释，可以训练交互感知视频生成模型。尽管与之前的运动控制方法相比，使用的训练数据和可训练参数要少得多，但 GraphVid 仍提供了强大的可控性和视频质量。与Motion-I2V相比，GraphVid将FID降低高达39.9%，将FVD降低37.6%，同时提高PSNR（9.87=>15.98）和SSIM（0.38=>0.61）。我们的结果凸显了结构化语义接口作为可控视频生成的强大范例的潜力。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page   Add to collection     Community         isminoula   Paper submitter     about 20 hours ago         GraphVid: Interactive Graph-Controllable Video Generation (ECCV'26)</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 添加到集合 社区 isminoula 论文提交者 大约 20 小时前 GraphVid：交互式图形可控视频生成 (ECCV'26)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.16859" target="_blank">Dataset Distillation by Influence Matching</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Hong Kong University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Haoru Tan, Wang Wang, Sitong Wu, Xiuzhe Wu, Yangtian Sun</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.16859" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.16859" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.16859.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  We revisit dataset distillation from an outcome-centric perspective. Rather than aligning process surrogates (per-step gradients or training trajectories), Influence Matching (Inf-Match) aligns the final outcome of training: it learns a compact synthetic set whose effect on the converged parameters matches that of the full dataset. Concretely, we introduce a fully differentiable, sample-level influence estimator that quantifies parameter shifts from adding or removing data, without time-consuming inverse-Hessian products or convexity assumptions. The estimator runs in linear time by unrolling the optimization dynamics and applying a first-order Taylor approximation. We then learn the synthetic set by minimizing the mismatch between its influence and that of the real dataset, yielding outcome alignment rather than heuristic process imitation. Inf-Match delivers the best accuracy across standard classification benchmarks. For instance, on Tiny-ImageNet (IPC=10), Inf-Match attains 31.5\%, a +4.7\% improvement over NCFM. Beyond classification, Inf-Match scales to vision-language distillation on Flickr30K, outperforming strong process-matching baselines. For instance, with 200 to 1000 synthetic samples, our method achieved a leading impressive average on image/text retrieval tasks, higher than NCFM by 2.5\%. The code will be released via https://github.com/hrtan/infmatch.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：我们从以结果为中心的角度重新审视数据集蒸馏。影响匹配 (Inf-Match) 不是对齐过程代理（每步梯度或训练轨迹），而是对齐训练的最终结果：它学习一个紧凑的合成集，其对收敛参数的影响与完整数据集的影响相匹配。具体来说，我们引入了一个完全可微的样本级影响估计器，它可以量化添加或删除数据引起的参数变化，而无需耗时的逆 Hessian 乘积或凸性假设。通过展开优化动态并应用一阶泰勒近似，估计器以线性时间运行。然后，我们通过最小化合成集的影响与真实数据集的影响之间的不匹配来学习合成集，从而产生结果对齐而不是启发式过程模仿。 Inf-Match 在标准分类基准中提供最佳准确度。例如，在 Tiny-ImageNet (IPC=10) 上，Inf-Match 达到 31.5%，比 NCFM 提高了 4.7%。除了分类之外，Inf-Match 还可以扩展到 Flickr30K 上的视觉语言蒸馏，其性能优于强大的流程匹配基线。例如，通过 200 到 1000 个合成样本，我们的方法在图像/文本检索任务上取得了领先的令人印象深刻的平均值，比 NCFM 高 2.5%。代码将通过 https://github.com/hrtan/infmatch 发布。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  0    Add to collection     Community         thrshr   Paper submitter     about 8 hours ago         We revisit dataset distillation from an outcome-centric perspective. Rather than aligning process surrogates (per-step gradients or training trajectories), Influence Matching (Inf-Match) aligns the final outcome of training: it learns a compact synthetic set whose effect on the converged parameters matches that of the full dataset. Concretely, we introduce a fully differentiable, sample-level influence estimator that quantifies parameter shifts from adding or removing data, without time-consuming inverse-Hessian products or convexity assumptions. The estimator runs in linear time by unrolling the optimization dynamics and applying a first-order Taylor approximation. We then learn the synthetic set by minimizing the mismatch between its influence and that of the real dataset, yielding outcome alignment rather than heuristic process imitation. Inf-Match delivers the best accuracy across standard classification benchmarks. For instance, on Tiny-ImageNet (IPC=10), Inf-Match attains 31.5%, a +4.7% improvement over NCFM. Beyond classification, Inf-Match scales to vision-language distillation on Flickr30K, outperforming strong process-matching baselines. For instance, with 200 to 1000 synthetic samples, our method achieved a leading impressive average on image/text retrieval tasks, higher than NCFM by 2.5%.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 0 添加到集合 社区 thrshr 论文提交者 大约 8 小时前 我们从以结果为中心的角度重新审视数据集蒸馏。影响匹配 (Inf-Match) 不是对齐过程代理（每步梯度或训练轨迹），而是对齐训练的最终结果：它学习一个紧凑的合成集，其对收敛参数的影响与完整数据集的影响相匹配。具体来说，我们引入了一个完全可微的样本级影响估计器，它可以量化添加或删除数据引起的参数变化，而无需耗时的逆 Hessian 乘积或凸性假设。通过展开优化动态并应用一阶泰勒近似，估计器以线性时间运行。然后，我们通过最小化合成集的影响与真实数据集的影响之间的不匹配来学习合成集，从而产生结果对齐而不是启发式过程模仿。 Inf-Match 在标准分类基准中提供最佳准确度。例如，在 Tiny-ImageNet (IPC=10) 上，Inf-Match 达到 31.5%，比 NCFM 提高了 4.7%。除了分类之外，Inf-Match 还可以扩展到 Flickr30K 上的视觉语言蒸馏，其性能优于强大的流程匹配基线。例如，通过 200 到 1000 个合成样本，我们的方法在图像/文本检索任务上取得了领先的令人印象深刻的平均值，比 NCFM 高 2.5%。</p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+        
+        <div class="nav-buttons">
+            <a href="2026-07-23.html" class="nav-btn">← 2026-07-23</a>
+            <a href="2026-07-25.html" class="nav-btn">2026-07-25 →</a>
+        </div>
+        
+        <footer>
+            Generated by <a href="https://github.com" target="_blank">HF Papers Daily</a>
+        </footer>
+    </div>
+    
+    <script>
+        function toggleAbstract(header) {
+            const toggle = header.querySelector('.abstract-toggle');
+            const content = header.nextElementSibling;
+            toggle.classList.toggle('expanded');
+            content.classList.toggle('expanded');
+        }
+    </script>
+</html>

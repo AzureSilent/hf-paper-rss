@@ -1,0 +1,1645 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hugging Face Papers - 2026-08-13 (zh-CN)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .date {
+            font-size: 1.2em;
+            color: #a0a0a0;
+        }
+        
+        .stats {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #888;
+        }
+        
+        .paper-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .paper-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(102, 126, 234, 0.5);
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.2);
+        }
+        
+        .paper-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        
+        .paper-title a {
+            color: #e0e0e0;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .paper-title a:hover {
+            color: #667eea;
+        }
+        
+        .paper-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            color: #a0a0a0;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .meta-label {
+            color: #888;
+        }
+        
+        .links {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .link-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .link-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .link-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .abstract-section {
+            margin-top: 15px;
+        }
+        
+        .abstract-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .abstract-header:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .abstract-toggle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+            transition: transform 0.3s;
+        }
+        
+        .abstract-toggle.expanded {
+            transform: rotate(180deg);
+        }
+        
+        .abstract-label {
+            font-weight: 500;
+            color: #667eea;
+        }
+        
+        .abstract-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding: 0 15px;
+        }
+        
+        .abstract-content.expanded {
+            max-height: 10000px;
+            padding: 15px;
+        }
+        
+        .abstract-text {
+            line-height: 1.7;
+            color: #c0c0c0;
+        }
+        
+        .summary-box {
+            background: rgba(102, 126, 234, 0.1);
+            border-left: 3px solid #667eea;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .summary-label {
+            font-size: 0.8em;
+            color: #667eea;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .summary-text {
+            color: #b0b0b0;
+            line-height: 1.5;
+        }
+        
+        .translation-box {
+            background: rgba(118, 75, 162, 0.1);
+            border-left: 3px solid #764ba2;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .translation-label {
+            font-size: 0.8em;
+            color: #764ba2;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .translation-text {
+            color: #b0b0b0;
+            line-height: 1.5;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding: 0 10px;
+        }
+        
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .nav-btn.disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: #666;
+            pointer-events: none;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .paper-title {
+                font-size: 1.1em;
+            }
+            
+            .links {
+                flex-wrap: wrap;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-btn {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Hugging Face Papers</h1>
+            <div class="date">2026-08-13</div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number">27</div>
+                    <div class="stat-label">Papers</div>
+                </div>
+            </div>
+        </header>
+        
+        <main>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.00677" target="_blank">OpenART: Scaling Agent Red Teaming via Open-Ended Environment Evolution</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yunhao Chen, Xin Wang, Yixu Wang, Yi Liu, Jie Li</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.00677" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.00677" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.00677.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract OpenART introduces a scalable red-teaming arena with evolving stateful environments to evaluate long-horizon AI agent safety, using the EMHA attack policy to expose increasing failure rates as task complexity grows.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 OpenART 引入了一个可扩展的红队竞技场，具有不断发展的状态环境，以评估长期 AI 代理的安全性，使用 EMHA 攻击策略来暴露随着任务复杂性增加而增加的故障率。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small AI agents operate in persistent environments where early state changes can influence decisions far into the future. Unlike conventional language-model interactions, agent behavior is mediated through a shared state that is repeatedly modified and reused across long-horizon workflows. Current safety benchmarks often fail to capture these cumulative risks because they focus on short, static tasks. To address these limitations, we introduce OpenART, an open-ended arena for scalable agent red teaming through environment evolution. OpenART provides over 10,000 validated stateful scenarios across 50 domains, drawing from a pool of more than 500,000 tools and skills. These tasks require a median of 97 tool calls and enable unified evaluation across 75 different agent-model configurations. To systematically explore these evolving attack surfaces, we propose the Evolutionary Markov Hypergraph Attack (EMHA). EMHA is a black-box policy that performs feedback-driven environment evolution by coordinating authorized state transitions without requiring parameter updates. Throughout the evaluation, task objectives remain fixed while only the environment state changes. Across all configurations, EMHA achieves a pooled Attack Success Rate (ASR) of 85.0%. Its advantage over instruction-only evolution increases from approximately 2% on simple environments to over 17% on the most complex ones, demonstrating that environment evolution increasingly exposes safety failures as task complexity grows. Furthermore, our analysis shows that the specific runtime implementation of an agent explains a significant portion of safety variation beyond the underlying model's capabilities. These results establish OpenART as a scalable foundation for studying agent safety in complex, evolving environments.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small 生成，人工智能代理在持久环境中运行，其中早期状态变化可能影响未来的决策。与传统的语言模型交互不同，代理行为是通过共享状态来调节的，该状态在长期工作流程中反复修改和重用。当前的安全基准通常无法捕获这些累积风险，因为它们专注于短期的静态任务。为了解决这些限制，我们引入了 OpenART，这是一个开放式竞技场，可通过环境演进实现可扩展的代理红队合作。 OpenART 提供了跨 50 个领域的 10,000 多个经过验证的有状态场景，取自超过 500,000 种工具和技能。这些任务平均需要 97 次工具调用，并能够跨 75 种不同的代理模型配置进行统一评估。为了系统地探索这些不断演变的攻击面，我们提出了进化马尔可夫超图攻击（EMHA）。 EMHA 是一种黑盒策略，通过协调授权状态转换来执行反馈驱动的环境演化，而无需参数更新。在整个评估过程中，任务目标保持不变，只有环境状态发生变化。在所有配置中，EMHA 的汇总攻击成功率 (ASR) 达到 85.0%。它相对于仅指令演化的优势从简单环境中的大约 2% 增加到最复杂环境中的 17% 以上，这表明随着任务复杂性的增加，环境演化越来越暴露安全故障。此外，我们的分析表明，代理的特定运行时实现解释了超出底层模型功能的安全变化的很大一部分。这些结果使 OpenART 成为研究复杂、不断变化的环境中代理安全性的可扩展基础。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.11924" target="_blank">Spark-to-Paper: End-to-End Research Paper Generation as a Composable Skill</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Zhuoyang Qian, Biao Wu, Yiran Wang, Chris D Yan, Desan Dai</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.11924" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.11924" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.11924.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Spark-to-Paper is a lightweight, composable workflow inside coding assistants that generates research papers by separating planning from reporting, enforcing evidence-based claim revision, and using integrity checks to reduce fabrication.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 Spark-to-Paper 是编码助手内部的一个轻量级、可组合的工作流程，它通过将计划与报告分离、实施基于证据的声明修订以及使用完整性检查来减少捏造来生成研究论文。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Turning a research idea into a complete paper requires more than text generation: the system must retrieve literature, design and execute experiments, revise claims according to evidence, produce publication-ready figures, and maintain consistency across a long generation process. We present Spark-to-Paper, an end-to-end research paper generation system implemented as thirteen composable skills inside an existing coding assistant, without requiring a separate agent platform or orchestration service. Spark-to-Paper separates model-based judgment from deterministic operations that can be directly executed and checked. It further separates experiment planning from reporting, so that required evidence is specified before results are observed and manuscript claims are revised according to measured outcomes. To improve reliability over long research trajectories, the system combines deterministic integrity checks with self-critique and bounds a failure mode we call the Self-Refutation Loop, in which repeated experiments continue to reject the original research objective. Spark-to-Paper also produces editable vector figures through programmatic plotting for experimental results and code-based reconstruction for generated method diagrams. Across eight controlled research topics, Spark-to-Paper achieves 99.5% citation validity and 96.4% figure editability. A controlled ablation increases fabrication detection from 14% for a single-pass draft to 92% with the full integrity and review stack, while adversarial review achieves 74% precision. The full system uses 11.9M tokens, costs $8.1 per manuscript, and requires 3.2 hours on average. These results show that end-to-end research paper generation can be implemented as a lightweight, composable workflow inside existing coding assistants while keeping experimental evidence central to how claims are accepted, revised, or abandoned.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Thinkingmachines/Inkling-Small 生成 将研究想法转化为完整的论文需要的不仅仅是文本生成：系统必须检索文献、设计和执行实验、根据证据修改主张、生成可发表的数据，并在漫长的生成过程中保持一致性。我们推出了 Spark-to-Paper，这是一种端到端研究论文生成系统，在现有编码助手中实现为 13 种可组合技能，无需单独的代理平台或编排服务。 Spark-to-Paper将基于模型的判断与可以直接执行和检查的确定性操作分开。它进一步将实验计划与报告分开，以便在观察结果之前指定所需的证据，并根据测量结果修改手稿声明。为了提高长期研究轨迹的可靠性，该系统将确定性完整性检查与自我批评相结合，并限制了我们称为“自我反驳循环”的失败模式，在这种模式中，重复的实验继续拒绝最初的研究目标。 Spark-to-Paper 还通过实验结果的编程绘图和生成的方法图的基于代码的重建来生成可编辑的矢量图。在八个受控研究主题中，Spark-to-Paper 实现了 99.5% 的引文有效性和 96.4% 的图形可编辑性。受控烧蚀将制造检测率从单次草稿的 14% 提高到完整完整性和审核堆栈的 92%，而对抗性审核则实现了 74% 的精度。整个系统使用 1190 万个代币，每份稿件成本为 8.1 美元，平均需要 3.2 小时。这些结果表明，端到端的研究论文生成可以作为现有编码助手中的轻量级、可组合的工作流程来实现，同时使实验证据成为如何接受、修改或放弃声明的核心。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.12307" target="_blank">AI4AI at Test-Time: Strong-to-Weak Capability Transfer via Harnesses</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>University of Illinois at Urbana-Champaign</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Cheng Qian, Wenting Zhao, Liangwei Yang, Heng Wang, Jielin Qiu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.12307" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.12307" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.12307.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Stronger models can build inference-time harnesses that substantially improve weaker models' task performance without parameter updates by offloading reasoning into structured code and routing.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 更强的模型可以构建推理时间工具，通过将推理卸载到结构化代码和路由中，从而在无需更新参数的情况下显着提高较弱模型的任务性能。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Recent work on distillation transfers the capabilities of large models to smaller ones often by updating the latter's parameters, through teacher forcing, on-policy distillation, and related training-time methods. In this paper, we ask whether such transfer can instead occur at test time. We study strong-to-weak scaffolding: whether a stronger builder model can construct inference-time harnesses that help a weaker target model solve tasks more reliably without any parameter updates. Using four representative Theory-of-Mind benchmarks, each builder model uses 5% of the data as a validation set to iteratively refine its harness over multiple rounds, after which the finalized harness is evaluated on the full test set. Empirically, this form of test-time capability transfer is highly effective, nearly doubling average target-model performance from 0.49 to 0.91. Our analysis shows that the gains come primarily from offloading unstable model reasoning into deterministic code, benchmark-specific routing, and strict answer-format enforcement, rather than from encouraging the target model to reason more extensively or sample more broadly. We further find that builder-model reasoning effort improves harness quality monotonically, platform effects are modest relative to the builder model's own capability, and weaker target models receive the largest gains. These results suggest that inference-time harness design is an important complement to conventional training-time distillation, enabling strong models to transfer cognitive structure to weaker models without retraining.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Thinkingmachines/Inkling-Small 生成 最近关于蒸馏的工作通常通过更新后者的参数、通过教师强制、策略蒸馏和相关的训练时间方法，将大型模型的功能转移到较小的模型。在本文中，我们询问这种转移是否可以在测试时发生。我们研究从强到弱的脚手架：更强的构建器模型是否可以构建推理时间工具，帮助较弱的目标模型更可靠地解决任务，而无需任何参数更新。使用四个代表性的心理理论基准，每个构建器模型使用 5% 的数据作为验证集，在多轮中迭代地完善其工具，之后在完整的测试集上评估最终的工具。根据经验，这种形式的测试时能力转移非常有效，几乎使平均目标模型性能从 0.49 提高了一倍到 0.91。我们的分析表明，收益主要来自将不稳定的模型推理转移到确定性代码、特定于基准的路由和严格的答案格式执行，而不是来自鼓励目标模型进行更广泛的推理或更广泛的采样。我们进一步发现，构建器模型推理工作单调地提高了线束质量，相对于构建器模型自身的能力，平台效应是适度的，而较弱的目标模型获得了最大的收益。这些结果表明，推理时间工具设计是对传统训练时间蒸馏的重要补充，使强大的模型能够将认知结构转移到较弱的模型，而无需重新训练。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.12036" target="_blank">Mechanist: AI as a Scientific Instrument for Discovering the Mechanisms of Intelligence</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>ZJUNLP</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Mengru Wang, Junfeng Fang, Shuofei Qiao, Zhenqian Xu, Haoming Xu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.12036" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.12036" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.12036.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Mechanist is an autonomous agentic system that uses AI to discover and control the mechanisms underlying model intelligence, generating hypotheses, performing causal interventions, and improving safety and performance.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 Mechanist 是一种自主代理系统，它使用人工智能来发现和控制模型智能的机制、生成假设、执行因果干预以及提高安全性和性能。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small AI models have achieved remarkable success across diverse domains, yet the mechanisms underlying their capabilities and the risks they may pose remain poorly understood. As AI development becomes faster and increasingly automated, mechanistic exploration remains largely manual, widening the gap between what models can do and our ability to understand and control them. To bridge this gap, we introduce Mechanist, an agentic system that uses AI as a scientific instrument for the autonomous discovery of mechanisms underlying AI intelligence. To support autonomous mechanistic discovery, we construct an interpretability-focused knowledge graph of approximately 13,000 papers and integrate it with a multidisciplinary database of 43 million papers spanning 26 fields. We further curate a library of 32 foundational methods for mechanism analysis, causal intervention, and validation. Compared with Claude Code and existing AI-scientist systems, Mechanist generates more valuable mechanism hypotheses and executes experiments more reliably. Mechanist also demonstrates a progression from discovering model behaviors to explaining and controlling AI models. Specifically, Mechanist first uncovers a counterintuitive safety risk in scientific laboratories, showing that unsafe traits can transfer across modalities through apparently safe training data. Mechanist then develops a mechanism theory of belief, revealing how models represent world knowledge, form beliefs, infer the beliefs of others, and how these mechanisms emerge during pretraining. Finally, Mechanist translates these mechanistic insights into practical interventions that improve model performance across diverse scenarios and steer scientific foundation models toward generating DNA sequences with specified properties.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small 生成的人工智能模型在不同领域取得了显着的成功，但其能力背后的机制以及它们可能带来的风险仍然知之甚少。随着人工智能开发变得越来越快，自动化程度越来越高，机械探索仍然主要是手动的，这扩大了模型的功能与我们理解和控制它们的能力之间的差距。为了弥补这一差距，我们引入了 Mechanist，这是一种代理系统，它使用 AI 作为科学工具来自主发现 AI 智能背后的机制。为了支持自主机械发现，我们构建了一个包含约 13,000 篇论文的以可解释性为中心的知识图谱，并将其与包含 26 个领域的 4300 万篇论文的多学科数据库集成。我们进一步整理了一个包含 32 种基本方法的库，用于机制分析、因果干预和验证。与 Claude Code 和现有的人工智能科学家系统相比，Mechanist 生成更有价值的机制假设并更可靠地执行实验。 Mechanist 还展示了从发现模型行为到解释和控制 AI 模型的进展。具体来说，Mechanist 首先发现了科学实验室中违反直觉的安全风险，表明不安全特征可以通过明显安全的训练数据跨模式转移。然后，Mechanist 发展了一种信念机制理论，揭示了模型如何表示世界知识、形成信念、推断他人的信念，以及这些机制如何在预训练过程中出现。最后，Mechanist 将这些机制见解转化为实际干预措施，以提高不同场景下的模型性能，并引导科学基础模型生成具有特定属性的 DNA 序列。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.05604" target="_blank">SkillZip: Contract-Preserving Graph Compression for Scalable Agent Skill Libraries</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Xingyu0321, Xingyu Tan, Xiaoyang Wang, Qing Liu, Xiwei Xu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.05604" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.05604" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.05604.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract SkillZip compresses reusable procedural skills into contract-preserving, executable graph units to enable efficient retrieval and expansion under limited context budgets.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 SkillZip 将可重用的程序技能压缩为保留合同的可执行图形单元，以便在有限的上下文预算下实现高效的检索和扩展。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Large Language Models (LLMs) increasingly act as agents whose procedural knowledge is stored in reusable skill packages and loaded at inference time. As skill libraries grow, a central challenge is to expose the smallest sufficient executable context under a limited context budget. Existing systems struggle to reuse routines below the whole-skill level, preserve procedural contracts during compression, keep compressed routines executable and expandable, and update the compressed library as skills evolve. These challenges reveal a unit mismatch: skills are retrieved as packages, compressed as text, and converted into execution graphs only after retrieval, whereas reliable reuse requires a contract-bearing procedural unit. We propose SkillZip, an execution-aware procedural abstraction framework that performs contract-preserving compression over section-level graphs. SkillZip rewrites recurring contract-valid motifs into reversible ported macros while preserving boundary signatures, dependency closure, verifier reachability, and source-level expansion. At inference time, it hydrates a compact, dependency-closed context and expands macros only when required. ReZip further integrates new skills and revises risky macros using execution evidence. Comprehensive experiments1 on technical and embodied agent benchmarks show SkillZip consistently outperforms the strongest baseline by up to 12.2 points, while achieving a 3.46x compression ratio with 99.2% dependency preservation and 98.7% verifier reachability. Scaling analyses further confirm robust retrieval across skill libraries ranging from 200 to 100K skills.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling生成——小型大型语言模型（LLM）越来越多地充当代理，其程序知识存储在可重用的技能包中并在推理时加载。随着技能库的增长，一个核心挑战是在有限的上下文预算下暴露最小的足够的可执行上下文。现有系统很难重用低于整体技能水平的例程，在压缩期间保留程序契约，保持压缩例程的可执行性和可扩展性，并随着技能的发展更新压缩库。这些挑战揭示了单元不匹配：技能以包的形式检索，以文本的形式压缩，并且仅在检索后才转换为执行图，而可靠的重用则需要具有合同的程序单元。我们提出了 SkillZip，这是一种执行感知的过程抽象框架，可以在部分级图上执行契约保留压缩。 SkillZip 将重复出现的合同有效主题重写为可逆移植宏，同时保留边界签名、依赖闭包、验证者可达性和源代码级扩展。在推理时，它会生成一个紧凑的、依赖封闭的上下文，并仅在需要时扩展宏。 ReZip 进一步集成新技能，并使用执行证据修改有风险的宏。对技术和具体代理基准的综合实验1表明，SkillZip 始终比最强基线高出 12.2 个百分点，同时实现了 3.46 倍的压缩比、99.2% 的依赖性保留和 98.7% 的验证者可达性。扩展分析进一步证实了跨 200 到 100K 技能的技能库的稳健检索。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.08160" target="_blank">Can LLM Agents Stick to the Script? A Benchmark for Long-Horizon Consistency in Interactive Narratives</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yingpeng Ma, Jianhao Yan, Bei Shi, Ka Hou Kam, Runnan Wang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.08160" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.08160" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.08160.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract The study introduces a benchmark and formalizes narrative commitment preservation to evaluate long-horizon logical consistency in interactive storytelling with large language models.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 该研究引入了一个基准，并将叙事承诺保存形式化，以评估大型语言模型的交互式叙事中的长期逻辑一致性。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small The rapid advancement of Large Language Models (LLMs) is revolutionizing AI for Games by enabling open-ended and fluid interactive storytelling. However, existing research has largely overlooked the critical challenge of maintaining long-horizon logical consistency and narrative integrity against unconstrained user interventions. To address this, we formulate this challenge as Narrative Commitment Preservation (NCP), and take interactive narrative as our testbed. We introduce NCP-Bench, a benchmark of 100 narrative environments derived from movie synopses. Each environment includes a structured narrative specification (trajectory, commitments, and initial facts) that we can automatically check throughout the interaction between the player agent and the narrator agent. Experiments across state-of-the-art LLMs reveal a substantial long-horizon consistency gap: high linguistic quality does not guarantee commitment preservation; even strong models frequently generate logically conflicting content under adversarial interventions, with the best-performing model (GPT-5.2) achieving only 42% survival rate after 20 turns and fact conflict rates ranging from 40% to 68% across models, and only isolated runs satisfying all achievement commitments within the 100-turn limit.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Thinkingmachines/Inkling-Small 生成 大型语言模型 (LLM) 的快速发展通过实现开放式且流畅的交互式故事讲述，正在彻底改变游戏人工智能。然而，现有的研究在很大程度上忽视了在不受限制的用户干预下保持长期逻辑一致性和叙述完整性的关键挑战。为了解决这个问题，我们将这一挑战称为叙事承诺保存（NCP），并以互动叙事作为我们的测试平台。我们介绍 NCP-Bench，这是源自电影概要的 100 个叙事环境的基准。每个环境都包含一个结构化的叙述规范（轨迹、承诺和初始事实），我们可以在玩家代理和叙述者代理之间的整个交互过程中自动检查这些规范。最先进的法学硕士的实验揭示了巨大的长期一致性差距：高语言质量并不能保证承诺的保存；即使是强大的模型，在对抗性干预下也经常会产生逻辑上冲突的内容，表现最好的模型（GPT-5.2）在 20 轮后仅实现 42% 的生存率，模型之间的事实冲突率从 40% 到 68% 不等，并且只有孤立的运行才能满足 100 轮限制内的所有成就承诺。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.12314" target="_blank">StateFlow: Building, Evolving, and Accessing 3D World States for Previsualization</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yuyang Yin, Zixiang Li, Longxuan Deng, Hongkai Li, Shifang Zhao</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.12314" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.12314" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.12314.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract StateFlow introduces a persistent 3D world state to enable iterative, controllable previsualization for film and game design by constructing, evolving, and accessing structured scene and camera representations.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">Abstract StateFlow 引入了持久的 3D 世界状态，通过构建、演进和访问结构化场景和摄像机表示来实现电影和游戏设计的迭代、可控预可视化。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Previsualization is an intermediate layer between ideas and production in film, games, architecture, and urban design. It lets creators iteratively refine scenes, actions, cameras, and spatial-temporal dynamics. Yet existing generative methods rely on simple prompts to jointly control all of these factors through one-shot image or video synthesis, offering weak controllability and limited support for iterative editing. Fundamentally, a world comprises multiple elements with geometry, appearance, and other attributes, together with cameras. Different frames are produced through local modifications or recombinations of this shared state, which is otherwise largely reused. Therefore, we argue that the missing component is an explicit and persistent working state. To address this, we present StateFlow, a state-centric framework for generative previsualization. Rather than generating videos in one shot, StateFlow uses an editable 3D world to organize scene structure, evolution, and cameras, while off-the-shelf video models enhance visual quality when higher fidelity is desired. This world is maintained as a persistent structured 3D state of scene elements and camera configurations, serving as the core working representation for previsualization. Built on this insight, StateFlow has three stages to construct, evolve, and access the world state. State construction lifts generated 2D content into a coherent 3D world through prior-guided, conflict-aware dual-view initialization, while State evolution translates user intent into structured state transitions while preserving world memory, avoiding full-scene regeneration for each edit. State access uses render-feedback reflection to refine camera plans into visually feasible trajectories, avoiding reliance on VLM semantics alone. Experiments show that StateFlow produces high-quality 3D worlds for video creation and game-like prototyping.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small 生成 预可视化是电影、游戏、建筑和城市设计中创意和制作之间的中间层。它让创作者能够迭代地完善场景、动作、摄像机和时空动态。然而现有的生成方法依靠简单的提示，通过一次性图像或视频合成来共同控制所有这些因素，可控性较弱，对迭代编辑的支持有限。从根本上讲，世界由具有几何、外观和其他属性的多个元素以及相机组成。不同的帧是通过对该共享状态进行本地修改或重组而产生的，否则该共享状态将被大量重用。因此，我们认为缺失的组件是一种明确且持久的工作状态。为了解决这个问题，我们提出了 StateFlow，一个用于生成预可视化的以状态为中心的框架。 StateFlow 不是一次性生成视频，而是使用可编辑的 3D 世界来组织场景结构、演变和摄像机，而现成的视频模型可以在需要更高保真度时增强视觉质量。这个世界被维护为场景元素和摄像机配置的持久结构化 3D 状态，作为预可视化的核心工作表示。基于这一见解，StateFlow 分为三个阶段来构建、演化和访问世界状态。状态构建通过预先引导、冲突感知的双视图初始化将生成的 2D 内容提升到连贯的 3D 世界，而状态演化将用户意图转换为结构化状态转换，同时保留世界记忆，避免每次编辑的全场景重新生成。状态访问使用渲染反馈反射将摄像机计划细化为视觉上可行的轨迹，避免单独依赖 VLM 语义。实验表明，StateFlow 可以为视频创作和游戏原型制作生成高质量的 3D 世界。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.10708" target="_blank">Self-Geometry: GT-Free and Plug-and-Play Test-Time Adaptation for Geometrically Consistent 3D Vision Foundation Models</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Chung-Ang University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Seokhyun Youn, Dahyeon Kye, Sung-Ho Bae, Jihyong Oh</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.10708" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.10708" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.10708.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Self-Geometry improves vision foundation model predictions by enforcing explicit multi-view geometric constraints via test-time adaptation with LoRA, disentangled losses, and angular neighbor sampling.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">Abstract Self-Geometry 通过 LoRA 的测试时适应、解缠结损失和角度邻居采样来强制执行显式多视图几何约束，从而改进了视觉基础模型预测。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Recent Vision Foundation Models (VFMs) predict depth, camera pose, and pointmap in a single forward pass without per-scene optimization, achieving strong generalization. However, enforcing explicit multi-view geometric consistency, e.g., through bundle adjustment, is computationally costly and is thus not imposed during VFM pretraining, so such inconsistency can arise. To address this, implicit self-consistency derived from model outputs (e.g., pointmaps, features), though enforced at test-time in prior work, delivers inherently limited performance gain, especially on scenes where the pretrained VFM is highly inaccurate. In contrast to this implicit signal, we propose Self-Geometry, a plug-and-play test-time adaptation pipeline that directly imposes explicit multi-view geometric constraints using 2D pixel correspondences as pseudo ground-truth. Our proposed Self-Geometry consists of Geometric Disentanglement Optimization, which combines Multi-View Consistency and Epipolar Consistency losses with Gradient Disentanglement to prevent gradient conflict; Frame Angular-Neighbor, a view sampler based on SO(3) geodesic distances for lightly imposing these constraints; and Lightweight TTA, which adapts VFMs via LoRA. Our method achieves consistent improvements in both pose and geometry estimation across six VFMs (VGGT, π^3, DA3-Giant/Large/Base/Small) and four benchmarks (7Scenes, ETH3D, ScanNet++, HiRoom).</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small 最近视觉基础模型 (VFM) 生成，可在一次前向传递中预测深度、相机姿态和点图，无需针对每个场景进行优化，从而实现了强大的泛化能力。然而，强制执行显式多视图几何一致性（例如通过捆绑调整）的计算成本很高，因此在 VFM 预训练期间不会强制执行，因此可能会出现这种不一致。为了解决这个问题，从模型输出（例如，点图、特征）导出的隐式自一致性，尽管在之前的工作中在测试时强制执行，但其性能增益本质上是有限的，特别是在预训练的 VFM 高度不准确的场景中。与这种隐式信号相反，我们提出了 Self-Geometry，这是一种即插即用的测试时适应管道，它使用 2D 像素对应作为伪地面实况直接施加显式多视图几何约束。我们提出的自几何包括几何解缠优化，它将多视图一致性和极线一致性损失与梯度解缠结合起来以防止梯度冲突； Frame Angular-Neighbor，一个基于 SO(3) 测地距离的视图采样器，用于轻微施加这些约束；轻量级 TTA，通过 LoRA 调整 VFM。我们的方法在六个 VFM（VGGT、π^3、DA3-Giant/Large/Base/Small）和四个基准（7Scenes、ETH3D、ScanNet++、HiRoom）上实现了姿态和几何估计的一致改进。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.11216" target="_blank">AutoWorldModel-Bench: A State-Centric Benchmark for Automated World-Model Research</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Marjan Moodi, Xuankang Zhu, Fernando De Mesentier Silva, Harold Chaput, Mohammad Reza Taesiri</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.11216" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.11216" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.11216.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract The benchmark evaluates autonomous coding agents on open-ended world-model research by having them iteratively improve a starter model across game environments using a shared structured-state format.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 该基准测试通过让自主编码代理使用共享的结构化状态格式迭代改进跨游戏环境的起始模型来评估开放式世界模型研究的自主编码代理。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small World modeling is an unsettled field: architectures, training objectives, and state representations interact in complex ways, and no single recipe dominates across environments. This makes it an ideal testbed for AI coding agents acting as autonomous researchers--a setting in which the improvement direction is not specified in advance, unlike the engineering-to-spec tasks that dominate current agent benchmarks. We introduce AutoWorldModel-Bench, a closed-loop benchmark in which frontier coding agents autonomously improve a provided world-model starter under a fixed compute budget. The benchmark spans eight game environments under a unified structured-state representation--ground-truth entity state extracted from each game and consumed through a shared tensor format--which isolates dynamics modeling from perception and enables minutes-per-run iteration. Across 64 sessions, Codex-5.4 and Claude Opus 4.6 improve their starter on 63; in 91% of sessions the winning edit is a non-trivial research-style modification--a new objective, representation, rollout procedure, or architectural change--rather than a hyperparameter tweak. Our benchmark offers a setting in which frontier coding agents can be evaluated on open-ended research rather than engineering-to-spec problems.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small World 生成的建模是一个不稳定的领域：架构、训练目标和状态表示以复杂的方式相互作用，并且没有单一的方法可以跨环境占主导地位。这使得它成为人工智能编码代理作为自主研究人员的理想测试平台——在这种情况下，改进方向不会提前指定，这与主导当前代理基准的工程规范任务不同。我们引入了 AutoWorldModel-Bench，这是一个闭环基准测试，其中前沿编码代理在固定的计算预算下自主改进提供的世界模型启动器。该基准测试跨越八个游戏环境，采用统一的结构化状态表示（从每个游戏中提取并通过共享张量格式使用的真实实体状态），将动态建模与感知隔离，并实现每次运行几分钟的迭代。在 64 个会话中，Codex-5.4 和 Claude Opus 4.6 在 63 个会话中改进了它们的启动器；在 91% 的会议中，获胜的编辑是一项重要的研究风格修改——新的目标、表示、推出程序或架构更改——而不是超参数调整。我们的基准测试提供了一种设置，可以在开放式研究而不是工程规范问题上评估前沿编码代理。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.11350" target="_blank">Self-Evolving Embodied Agents via Skill-Harness Evolution</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>WDong, Peidong Wang, Zhiming Ma, Ying Chang, Xufang Luo</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.11350" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.11350" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.11350.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract SHAPER is a train-free framework that improves embodied agents by evolving reusable skills and a context-code harness around a frozen foundation model through environment rollouts.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 SHAPER 是一个免训练框架，通过环境部署，围绕冻结的基础模型发展可重用技能和上下文代码控制，从而改进实体代理。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Embodied agents are increasingly built as systems around foundation models, where performance depends not only on model weights but also on the skills, context, action interfaces, and execution harness surrounding the model. While supervised fine-tuning and reinforcement learning can adapt agents to new environments, they require additional data, rewards, and training runs; meanwhile, many train-free code-centric approaches rely on programmable robot APIs that may be unavailable in fixed-interface settings. We propose SHAPER, a self-evolving framework for train-free embodied adaptation that keeps model parameters frozen and improves the non-parametric agent system by evolving reusable skills and a context-code harness through target-environment rollouts. In SHAPER, the same frozen model can serve as both planner and optimizer, refining its external skills and context-code harness without parameter updates. We evaluate SHAPER on VLABench and ESI-Bench, covering embodied agents with different low-level action interfaces, and compare against pure execution, supervised fine-tuning, and test-time-scaling baselines such as verifier-free selection and voting. Our results suggest that skill-and-harness optimization is a practical route to self-evolving embodied agents when model training is expensive, unavailable, or undesirable.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small生成 体现代理越来越多地构建为围绕基础模型的系统，其中性能不仅取决于模型权重，还取决于围绕模型的技能、上下文、操作接口和执行工具。虽然监督微调和强化学习可以使智能体适应新环境，但它们需要额外的数据、奖励和训练运行；与此同时，许多免训练的以代码为中心的方法依赖于可编程机器人 API，而这些 API 在固定接口设置中可能不可用。我们提出了 SHAPER，这是一种用于免训练体现适应的自我进化框架，它可以保持模型参数冻结，并通过目标环境推出来发展可重用技能和上下文代码利用来改进非参数代理系统。在 SHAPER 中，相同的冻结模型可以充当规划器和优化器，从而改进其外部技能和上下文代码利用，而无需更新参数。我们在 VLABench 和 ESI-Bench 上评估 SHAPER，涵盖具有不同低级操作接口的具体代理，并与纯执行、监督微调和测试时间缩放基线（例如无验证者选择和投票）进行比较。我们的结果表明，当模型训练昂贵、不可用或不受欢迎时，技能和装备优化是实现自我进化的具体代理的实用途径。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.11878" target="_blank">ToolHazard: Scaling Adversarial Environments for Security Evaluation and Alignment of LLM-based Agents</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Peking University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yutao Mou, Pengfei Yang, Zhe Yin, Zhangchi Xue, Xiaotian Luan</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.11878" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.11878" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.11878.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract ToolHazard is a scalable framework that synthesizes adversarial environments to test LLM agents against indirect prompt injections, revealing vulnerabilities and improving defensive alignment.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">Abstract ToolHazard 是一个可扩展的框架，它综合对抗性环境来测试 LLM 代理针对间接提示注入的情况，揭示漏洞并提高防御一致性。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Large language model (LLM) agents integrated with external tools are vulnerable to indirect prompt injections embedded in environmental states. However, existing studies largely rely on manually implemented or reused environments, stochastic LLM-based tool simulation, and predefined injection locations, limiting scalable security research across broader domains. To bridge this gap, we propose **ToolHazard**, a scalable adversarial environment synthesis framework that reduces human engineering and supports expansion with additional seed domains and compute. Through an Environment Simulator, an Attacker Agent, and a User Simulator, ToolHazard synthesizes executable stateful environments, discovers viable injection points and generates environment-specific payloads, and constructs state-grounded long-horizon tasks. Based on ToolHazard, we build **ToolHazard-Bench** for stress-testing agents under complex workflows and diverse environmental attacks. Experiments reveal substantial agent vulnerabilities and show that injection timing and placement affect attack effectiveness. Moreover, ToolHazard-generated alignment data improves security on both ToolHazard-Bench and AgentDojo while preserving benign task utility.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small 生成，与外部工具集成的大型语言模型 (LLM) 代理很容易受到环境状态中嵌入的间接提示注入的影响。然而，现有的研究很大程度上依赖于手动实现或重用的环境、基于 LLM 的随机工具模拟和预定义的注入位置，限制了跨更广泛领域的可扩展安全研究。为了弥补这一差距，我们提出了**ToolHazard**，这是一种可扩展的对抗环境综合框架，可以减少人类工程并支持通过额外的种子域和计算进行扩展。通过环境模拟器、攻击者代理和用户模拟器，ToolHazard 综合可执行的有状态环境，发现可行的注入点并生成特定于环境的有效负载，并构建基于状态的长期任务。基于ToolHazard，我们构建了**ToolHazard-Bench**，用于在复杂的工作流程和多样化的环境攻击下对代理进行压力测试。实验揭示了大量代理漏洞，并表明注入时间和位置会影响攻击有效性。此外，ToolHazard 生成的对齐数据提高了 ToolHazard-Bench 和 AgentDojo 的安全性，同时保留良性任务实用性。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.11562" target="_blank">From Synthesis to Removal: Physics-Grounded Reflection Simulation and Diffusion-Based Video Dereflection</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Xiaomi Research</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Zepeng Wang, Jiagao Hu, Fuhao Li, Yuxuan Chen, Fei Wang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.11562" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.11562" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.11562.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract A closed-loop framework combining physics-based video synthesis, diffusion-based video dereflection, and a new benchmark achieves state-of-the-art video reflection removal with fast inference.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：闭环框架结合了基于物理的视频合成、基于扩散的视频去反射和新基准，通过快速推理实现了最先进的视频反射消除。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Videos captured through glass often contain reflections that degrade visual quality and interfere with downstream vision tasks. Although single-image reflection removal has been extensively studied, video reflection removal remains largely underexplored due to the lack of paired video data, temporally coherent removal models, and dedicated evaluation benchmarks. We present a closed-loop framework that unifies physics-grounded reflection simulation, diffusion-based video dereflection, and benchmark evaluation. Our S2R-Synthesis pipeline generates paired reflected and reflection-free videos by performing physics-grounded augmentation in the structure space and rendering realistic reflected videos with a trained video diffusion renderer; the augmentation models key glass-related effects including roughness-induced blur, thickness-induced ghosting, and reflectance variation. Based on the synthesized data, we introduce S2R-Removal, the first diffusion-based video reflection removal model, which adapts a pretrained video diffusion prior through reflection-aware latent adaptation and one-step pixel-geometric refinement, recovering the clean transmission in a single denoising step. We further build S2R-Bench, the first benchmark for video reflection removal, supporting both full-reference evaluation and real-world human perceptual assessment. Experiments on S2R-Bench and multiple public image benchmarks demonstrate state-of-the-art performance and faster inference than even non-diffusion baselines, and validate the effectiveness of S2R-Synthesis. Project page: https://codingwzp.github.io/VideoDereflection_S2R.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small 生成 通过玻璃捕获的视频通常包含会降低视觉质量并干扰下游视觉任务的反射。尽管单图像反射去除已被广泛研究，但由于缺乏配对视频数据、时间相干去除模型和专用评估基准，视频反射去除在很大程度上仍未得到充分探索。我们提出了一个闭环框架，它将基于物理的反射模拟、基于扩散的视频去反射和基准评估相结合。我们的 S2R-Synthesis 管道通过在结构空间中执行基于物理的增强并使用训练有素的视频扩散渲染器渲染逼真的反射视频来生成配对的反射和无反射视频；增强模拟了与玻璃相关的关键效应，包括粗糙度引起的模糊、厚度引起的重影和反射率变化。基于合成数据，我们引入了 S2R-Removal，这是第一个基于扩散的视频反射去除模型，该模型通过反射感知潜在适应和一步像素几何细化来适应预先训练的视频扩散，在单个去噪步骤中恢复干净的传输。我们进一步构建了S2R-Bench，这是第一个视频反射去除基准，支持全参考评估和现实世界的人类感知评估。 S2R-Bench 和多个公共图像基准测试证明了最先进的性能和比非扩散基线更快的推理，并验证了 S2R-Synthesis 的有效性。项目页面：https://codingwzp.github.io/VideoDereflection_S2R。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.09926" target="_blank">Learning How the World Evolves: Extrapolative Video World Models via Latent Dynamics Reasoning</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Adobe</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Haodong Li, Shaoteng Liu, Tianyu Wang, Chongjian Ge, Sihui Ji</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.09926" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.09926" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.09926.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Latent Dynamics Reasoning integrates kinematic dynamics in structured latent space to enable video world models that extrapolate physical laws far beyond training distributions with far fewer parameters and faster inference.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 潜在动力学推理将运动学动力学集成到结构化潜在空间中，使视频世界模型能够以更少的参数和更快的推理速度推断远远超出训练分布的物理定律。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small The world evolves following its dynamics, i.e., its laws of motion. However, leading video diffusion models largely fit the pixels without modeling how the pixels transit over time. Thus, they render visually plausible frames but may not accurately obey the laws. To capture the dynamics purely from pixels, we introduce Latent Dynamics Reasoning (LDR). LDR casts the latent transition as an explicit kinematic integration, where the lower-order dynamics are integrated numerically and the model regresses only the third- and higher-order residual that drives the rollout. For this integration to extrapolate better, LDR runs it on a structured latent rather than dense convolutional features. Following PhyWorld, we validate LDR on a controlled white-box physics benchmark spanning five tasks (uniform motion, parabola, collision, bouncing, looming), focusing on out-of-distribution scenarios that reveal whether a model has truly learned the underlying dynamics. LDR extrapolates the learned dynamics far better: the gap between its in- and out-of-distribution error is over 20times smaller than the video diffusion baseline's, under both single- and joint-task training at 256^2 resolution, while using 26times fewer parameters and running 143times faster. LDR can even generalize under severe shift: for example, trained only on red balls moving left-to-right, it correctly predicts the motion of a blue square moving right-to-left. To our knowledge, this is the first video world model that extrapolates learned dynamics beyond its training distribution. Project page: https://lat-dyn-reason.github.io/</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small 生成 世界按照其动态（即运动定律）演化。然而，领先的视频扩散模型很大程度上适合像素，而没有对像素随时间的传输方式进行建模。因此，它们呈现视觉上合理的框架，但可能不准确地遵守法律。为了纯粹从像素捕获动态，我们引入了潜在动态推理（LDR）。 LDR 将潜在转变转换为显式运动学积分，其中低阶动力学以数值方式积分，并且模型仅回归驱动推出的三阶和高阶残差。为了更好地推断这种集成，LDR 在结构化潜在特征而不是密集卷积特征上运行。继 PhyWorld 之后，我们在涵盖五种任务（均匀运动、抛物线、碰撞、弹跳、隐现）的受控白盒物理基准上验证了 LDR，重点关注揭示模型是否真正学习了底层动力学的分布外场景。 LDR 更好地推断了学习动态：在 256^2 分辨率的单任务和联合任务训练下，其分布内和分布外误差之间的差距比视频扩散基线小 20 倍以上，同时使用的参数少了 26 倍，运行速度快了 143 倍。 LDR 甚至可以在严重的转变下进行泛化：例如，仅对从左到右移动的红球进行训练，它可以正确预测从右到左移动的蓝色方块的运动。据我们所知，这是第一个视频世界模型，可以推断出其训练分布之外的学习动态。项目页面：https://lat-dyn-reason.github.io/</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.06270" target="_blank">The Illusion of Visual Tool-Use: A Causal Audit of Thinking with Images</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>zhwang, Zhiheng Wang, Bo Peng, Lai Wei, Chaochao Lu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.06270" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.06270" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.06270.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Visual tool-use in multimodal LLMs often lacks causal effectiveness, with returned observations frequently failing to influence answers or being used incoherently despite aggregate accuracy improvements.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 多模式法学硕士中视觉工具的使用通常缺乏因果有效性，尽管总体准确性有所提高，但返回的观察结果经常无法影响答案或使用不连贯。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small The "thinking-with-images" paradigm equips multimodal LLMs with active visual operations such as crop-and-zoom. However, models using these operations often achieve only marginal or negative gains over direct inference at substantially higher token cost. They may also repeatedly crop irrelevant regions and fail on questions that direct inference answers correctly. We ask whether the returned visual evidence causally affects the answer. To answer this question, we formulate visual tool-use as a causal graph that separates observation-mediated paths from action-induced shortcuts. We then audit it through interventions at the three levels: policy (comparing tool-use with direct inference), trajectory (corrupting all observations during rollout), and step (counterfactually replacing one individual observation under a fixed prefix). Our step-level estimand, Visual Evidence Gain, isolates the contribution of each returned observation. Across six representative models and five fine-grained perception benchmarks, we uncover policy miscalibration with two failure modes. In Calling Without Looking, returned observations have no causal effect on the answer. In Looking Without Planning, observations are informative but the call schedule is incoherent. A trajectory-level diagnostic decomposes the policy-level accuracy gain and shows that the gain is concentrated in a Calibrated minority. We term this discrepancy the illusion of visual tool-use: despite aggregate accuracy gains, visual tool-use is not causally effective across a broad range of rollouts. The code is available at https://github.com/OpenCausaLab/CauAudit.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small生成“用图像思考”范式为多模式法学硕士配备了主动视觉操作，例如裁剪和缩放。然而，与直接推理相比，使用这些操作的模型通常只能获得边际收益或负收益，而代币成本要高得多。他们还可能会反复裁剪不相关的区域，并且无法正确回答直接推理答案的问题。我们询问返回的视觉证据是否会因果影响答案。为了回答这个问题，我们将视觉工具的使用制定为因果图，将观察介导的路径与行动引起的捷径分开。然后，我们通过三个级别的干预措施对其进行审核：策略（将工具使用与直接推理进行比较）、轨迹（在推出期间破坏所有观察结果）和步骤（反事实地替换固定前缀下的单个观察结果）。我们的阶梯级估计值“视觉证据增益”隔离了每个返回的观察结果的贡献。通过六个代表性模型和五个细粒度感知基准，我们发现了具有两种故障模式的政策错误校准。在“不看就打电话”中，返回的观察结果对答案没有因果影响。在“没有计划的观察”中，观察结果提供了丰富的信息，但通话时间表却是不连贯的。轨迹级诊断分解了策略级准确性增益，并显示增益集中在校准的少数群体中。我们将这种差异称为视觉工具使用的错觉：尽管总体准确性有所提高，但视觉工具的使用在广泛的推广中并不具有因果关系。该代码可在 https://github.com/OpenCausaLab/CauAudit 获取。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.11616" target="_blank">MBA: Multimodal Benchmark and Agents for Real-World Business Ideation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>KAIST AI</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Hojun Choi, Jaeyo Shin, Suin Lee, Hyunjung Shim</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.11616" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.11616" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.11616.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Researchers introduce MBA-Bench, a multimodal benchmark for business ideation agents, and propose MBA-b and MBA-k models trained with creativity and feasibility rewards via LoRA fine-tuning and group relative policy optimization, significantly outperforming text-only and multimodal baselines.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 研究人员介绍了商业构思代理的多模态基准 MBA-Bench，并提出了 MBA-b 和 MBA-k 模型，通过 LoRA 微调和组相关策略优化，以创造力和可行性奖励进行训练，显着优于纯文本和多模态基线。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Agentic systems powered by large language models (LLMs) have opened new opportunities for business ideation. Yet existing approaches remain confined to a text-only paradigm, despite the inherently multimodal nature of real-world contexts. We thus introduce MBA-Bench, the first multimodal benchmark for training and evaluating business ideation agents, comprising 30K samples across six domains, each domain characterized by distinct visual cues not fully conveyed by text alone. Concretely, we automatically caption images and employ GPT-4o to generate five reference ideas for each of three business questions through retrieval query generation, market evidence retrieval, and evidence-augmented synthesis. Following prior work, we evaluate agents across six business-oriented criteria using MLLM-as-a-Judge. To consider settings where criteria are hidden or disclosed, we present MBA-b and MBA-k for blind and known, respectively. We train both with two novel reward objectives---creativity and feasibility---while MBA-k further optimizes the six disclosed criteria for eight in total. Both are trained via LoRA-based supervised fine-tuning followed by group relative policy optimization with these setting-specific rewards. For extensive experiments on MBA-Bench, we set up two baselines accommodating either captions only or multimodal inputs, with the latter nearing closed-source performance on several metrics. MBA-b and MBA-k outperform caption baselines by 63.9% and 77.1%, and multimodal baselines by 25.6% and 35.8%, respectively.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Thinkingmachines/Inkling-Small Agentic 系统生成，由大型语言模型 (LLM) 提供支持，为商业构思开辟了新的机会。然而，尽管现实世界环境本质上具有多模态性质，但现有方法仍然局限于纯文本范式。因此，我们推出了 MBA-Bench，这是第一个用于培训和评估商业构思代理的多模式基准，包含六个领域的 30K 个样本，每个领域的特点是独特的视觉线索，无法仅通过文本完全传达。具体来说，我们自动为图像添加标题，并使用 GPT-4o 通过检索查询生成、市场证据检索和证据增强合成，为三个业务问题中的每一个生成五个参考想法。继之前的工作之后，我们使用 MLLM 作为法官，根据六个面向业务的标准评估代理。为了考虑隐藏或公开标准的设置，我们分别针对盲法和已知法提出 MBA-b 和 MBA-k。我们以两个新颖的奖励目标（创造力和可行性）来培训两者，而 MBA-k 则进一步优化了六项披露的标准，总共八项。两者都通过基于 LoRA 的监督微调进行训练，然后使用这些特定于设置的奖励进行组相对策略优化。对于 MBA-Bench 上的广泛实验，我们设置了两个基线，可容纳仅字幕或多模态输入，后者在多个指标上接近闭源性能。 MBA-b 和 MBA-k 的表现分别优于字幕基线 63.9% 和 77.1%，以及多模态基线 25.6% 和 35.8%。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.10450" target="_blank">Persistent Recursive Worlds Enable Autonomous Software Evolution</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>The Hong Kong Polytechnic University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Beichen Huang, Zhenyu Liang, Bowen Zheng, Ran Cheng</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.10450" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.10450" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.10450.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Genesis organizes long-horizon software development around a persistent project rather than persistent agents, enabling multi-day compiler construction and numerical module reimplementation with low cost and high performance.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 Genesis 围绕持久性项目而不是持久性代理组织长期软件开发，从而以低成本和高性能实现多日编译器构建和数值模块重新实现。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Complex software systems develop over timescales that exceed the lifespan of any individual coding agent. Most agentic software systems preserve continuity through persistent sessions, memories, managers or shared context. We introduce EvoX Genesis (hereafter, Genesis), which instead makes the software project persistent while allowing local agents to remain finite-lived. Genesis represents software as a persistent recursive world: each local world is situated by an accepted version and a repository path, finite-lived agents propose local changes, recursive delegation moves work across paths, and only accepted consequences advance the persistent version history. We evaluate this organization across formation, continuation and redevelopment. Starting from a repository with no compiler implementation, Genesis used DeepSeek V4 Flash to build a Rust-based C compiler with about 250k tracked lines; the run lasted over 120 hours, archived over 1,000 agent episodes and incurred only US$44 in model-token charges. The compiler passed the complete c-testsuite and most LLVM and Csmith tests. In a separate compiler world generated with GLM 5.2, development continued after repeated agent replacement while retaining full test performance. Genesis also reimplemented 13 MESA modules with over 100k Fortran lines as a Rust workspace with nearly 90k Rust lines; across six numerical workloads, it achieved median speedups of 1.55--6.87x. These results show that long-horizon software development can be organized around a persistent project rather than a persistent agent.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small 生成 复杂软件系统的开发时间跨度超出了任何单个编码代理的生命周期。大多数代理软件系统通过持久会话、内存、管理器或共享上下文来保持连续性。我们引入了 EvoX Genesis（以下简称 Genesis），它使软件项目具有持久性，同时允许本地代理保持有限生命周期。 Genesis 将软件表示为一个持久的递归世界：每个本地世界都位于一个可接受的版本和存储库路径中，有限生命代理提出本地更改，递归委托跨路径移动工作，并且只有接受的结果才能推进持久版本历史。我们从组建、延续和再发展的角度评估该组织。从没有编译器实现的存储库开始，Genesis 使用 DeepSeek V4 Flash 构建了一个基于 Rust 的 C 编译器，具有大约 250k 跟踪行；该运行持续了 120 多个小时，存档了 1,000 多个特工情节，并且只产生了 44 美元的模型代币费用。编译器通过了完整的 c-testsuite 以及大多数 LLVM 和 Csmith 测试。在使用 GLM 5.2 生成的单独编译器世界中，在重复代理更换后继续开发，同时保留完整的测试性能。 Genesis 还重新实现了 13 个 MESA 模块，其中包含超过 100k Fortran 行，作为 Rust 工作区，包含近 90k Rust 行；在六个数值工作负载中，它实现了 1.55--6.87 倍的中值加速。这些结果表明，长期软件开发可以围绕持久性项目而不是持久性代理来组织。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.11367" target="_blank">Gaze Target Estimation Anywhere with Concepts</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Google</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Xu Cao, Houze Yang, Vipin Gunda, Zhongyi Zhou, Tianyu Xu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.11367" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.11367" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.11367.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract A new promptable paradigm integrates subject localization and gaze estimation into an end-to-end transformer model that uses text or visual prompts to identify subjects and predict gaze targets without multi-stage pipelines.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：一种新的提示范例将主体定位和注视估计集成到端到端转换器模型中，该模型使用文本或视觉提示来识别主体并预测注视目标，而无需多级管道。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Estimating human gaze targets from images in-the-wild is an important and formidable task. Existing approaches primarily employ brittle, multi-stage pipelines that require explicit inputs, like head bounding boxes and human pose, in order to identify the subject of gaze analysis. As a result, detection errors can cascade and lead to failure. Moreover, these prior works lack the flexibility of specifying the gaze analysis task via natural language prompting, an approach which has been shown to have significant benefits in convenience and scalability for other image analysis tasks. To overcome these limitations, we introduce the Promptable Gaze Target Estimation (PGE) task, a new end-to-end, concept-driven paradigm for gaze analysis. PGE conditions gaze prediction on flexible user text or visual prompts (e.g., "the boy in the red shirt" or "person in point [0.52, 0.48]") to identify a specific subject for gaze analysis. This approach integrates subject localization with gaze estimation, and eliminates the rigid dependency on intermediate analysis stages. We develop a scalable data engine to generate Gaze-Co (Gaze Estimation with Concepts), a dataset and benchmark of 120K high-quality, prompt-annotated image pairs. We also propose GazeAnywhere, the first model designed for PGE. GazeAnywhere uses a transformer-based detector to fuse features from frozen encoders and simultaneously solves subject localization, in/out-of-frame presence, and gaze target heatmap estimation. GazeAnywhere achieves state-of-the-art performance on multiple PGE benchmarks, setting a strong baseline for this new problem even on a difficult out-of-domain, real-world clinical dataset. GazeAnywhere is open-sourced in github.com/IrohXu/GazeAnywhere.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small 生成 根据野外图像估计人类注视目标是一项重要且艰巨的任务。现有方法主要采用脆弱的多级管道，需要明确的输入，例如头部边界框和人体姿势，以便识别凝视分析的主题。因此，检测错误可能会级联并导致失败。此外，这些先前的工作缺乏通过自然语言提示指定注视分析任务的灵活性，这种方法已被证明在其他图像分析任务的便利性和可扩展性方面具有显着的优势。为了克服这些限制，我们引入了即时注视目标估计（PGE）任务，这是一种新的端到端、概念驱动的注视分析范式。 PGE 对灵活的用户文本或视觉提示（例如，“穿红衬衫的男孩”或“焦点人物 [0.52，0.48]”）进行凝视预测，以识别凝视分析的特定主题。这种方法将主题定位与注视估计相结合，并消除了对中间分析阶段的严格依赖。我们开发了一个可扩展的数据引擎来生成 Gaze-Co（带有概念的注视估计），这是一个由 12 万个高质量、带提示注释的图像对组成的数据集和基准。我们还提出了 GazeAnywhere，这是为 PGE 设计的第一个模型。 GazeAnywhere 使用基于变压器的检测器来融合来自冻结编码器的特征，并同时解决对象定位、帧内/帧外存在以及注视目标热图估计。 GazeAnywhere 在多个 PGE 基准上实现了最先进的性能，即使在困难的域外真实临床数据集上也为这个新问题设定了强有力的基线。 GazeAnywhere 在 github.com/IrohXu/GazeAnywhere 中开源。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.10615" target="_blank">Simplex Relaxation for Discrete Diffusion</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Jinya Sakurai, Patrick Pynadath, Satoshi Hayakawa, Jaehong Yoon, Xulei Yang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.10615" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.10615" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.10615.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Simplax enriches uniform discrete diffusion via Dirichlet-categorical augmentation to improve reverse sampling and generative quality on text and Sudoku tasks.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 Simplax 通过 Dirichlet 分类增强丰富了均匀离散扩散，以提高文本和数独任务的逆向采样和生成质量。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Discrete diffusion models for categorical generation are defined by a corruption kernel, which determines the intermediate state space and the associated reverse prediction problem. We study uniform discrete diffusion and ask whether its training objective and reverse transitions can be enriched without changing the underlying categorical corruption process. We introduce Simplax, an exact Dirichlet--categorical augmentation that couples each corrupted categorical state with an auxiliary simplex-valued variable while preserving the original uniform diffusion process as its categorical marginal. This augmentation yields a tractable Rao--Blackwellized reverse-bridge objective and a corresponding stochastic reverse sampler, while retaining the corrupted categorical state as the denoiser input. Empirically, Simplax improves the generative perplexity--entropy tradeoff on unconditional OpenWebText generation. On Sudoku, a model trained exclusively on 30-clue puzzles achieves the highest accuracy among the compared methods across all evaluated clue densities, including the minimum uniquely solvable 17-clue regime, and also achieves the highest validity in unconditional generation.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small 生成 用于分类生成的离散扩散模型由腐败内核定义，该内核确定中间状态空间和相关的反向预测问题。我们研究均匀离散扩散，并询问是否可以在不改变潜在的分类腐败过程的情况下丰富其训练目标和反向转换。我们引入了 Simplax，一种精确的狄利克雷分类增强，它将每个损坏的分类状态与辅助单纯形值变量耦合起来，同时保留原始的均匀扩散过程作为其分类边际。这种增强产生了一个易于处理的 Rao-Blackwellized 反向桥目标和相应的随机反向采样器，同时保留损坏的分类状态作为降噪器输入。根据经验，Simplax 改善了生成困惑——无条件 OpenWebText 生成的熵权衡。在数独上，专门训练 30 条线索谜题的模型在所有评估的线索密度（包括最小唯一可解 17 条线索体系）的比较方法中实现了最高的准确性，并且在无条件生成中也实现了最高的有效性。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.09805" target="_blank">Parameter Exploration for RLVR via Variational Learning</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>BayesRL</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Vatsal Venkatkrishna, Nico Daheim, Iryna Gurevych</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.09805" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.09805" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.09805.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Parameter-space exploration via perturbed policy sampling improves LLM reinforcement learning by diversifying rollouts and reducing training failures compared to action-space methods.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：与动作空间方法相比，通过扰动策略采样进行的参数空间探索通过多样化推广和减少训练失败来改进 LLM 强化学习。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Exploration has been a focus of reinforcement learning research for a long time. Recently, there has been growing evidence that it is also an important ingredient in LLM reinforcement learning recipes that can significantly impact downstream performance. Many existing methods control exploration in the action-space, for example, using temperature scaling. However, these methods cannot reorder tokens but only influence the variance in the output distribution. This limits exploration and can lead to divergence or stalled training. Here, we investigate parameter-space exploration, where rollouts are generated by sampling different policies from a posterior that may each explore different rollouts. Sampling less or more diverse policies is then a complementary control lever over exploration. We introduce a family of methods called Perturbed Parameter Policy Optimization (3PO) which use different sampling strategies and different rollout grouping for reward estimation. Experiments on OLMo-3-1025-7B and Qwen2.5-Math-7B across mathematical reasoning and code generation tasks show that these approaches consistently improve average downstream performance over standard GRPO at a near-identical FLOPs cost. Moreover, using multiple parameter samples consistently produces fewer zero-advantage groups and malformed or incorrect rollouts during training than GRPO and action-space baselines. Overall, our work presents evidence that parameter-space exploration can improve reinforcement learning for LLMs.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling生成-Small Exploration长期以来一直是强化学习研究的焦点。最近，越来越多的证据表明，它也是 LLM 强化学习配方中的重要组成部分，可以显着影响下游性能。许多现有方法控制动作空间中的探索，例如使用温度缩放。然而，这些方法不能重新排序标记，而只能影响输出分布的方差。这限制了探索并可能导致分歧或训练停滞。在这里，我们研究参数空间探索，其中推出是通过从后验中采样不同的策略来生成的，每个策略可能探索不同的推出。那么，对更少或更多多样化政策进行抽样是对探索的补充控制杠杆。我们引入了一系列称为扰动参数策略优化（3PO）的方法，它们使用不同的采样策略和不同的推出分组来进行奖励估计。在 OLMo-3-1025-7B 和 Qwen2.5-Math-7B 上跨数学推理和代码生成任务的实验表明，这些方法以几乎相同的 FLOP 成本持续提高了标准 GRPO 的平均下游性能。此外，与 GRPO 和动作空间基线相比，使用多个参数样本在训练期间始终会产生更少的零优势组和畸形或不正确的推出。总的来说，我们的工作提供了证据，表明参数空间探索可以改善法学硕士的强化学习。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.11274" target="_blank">Agent Safety Should Be a Runtime Contract</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Albus W. Ng, Yi Han, Jusheng Zhang, Wenhao Wang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.11274" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.11274" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.11274.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Agent safety should be enforced at runtime through preventive controls and verifiable evidence rather than relying solely on training-time alignment methods.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 应通过预防性控制和可验证的证据在运行时强制执行代理安全，而不是仅仅依赖于训练时间对齐方法。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small The dominant paradigm treats AI safety as a property to be instilled during model training via RLHF, DPO, or Constitutional AI. We argue this is structurally insufficient for autonomous agents that execute code, mutate files, send messages, and modify databases. Agent safety should be a runtime contract enforced by the harness, and the contract has two complementary faces. The preventive face blocks dangerous actions before they happen via sandboxes, permission gates, output filters, and trajectory monitors. The evidential face requires verifiable proof that good actions actually happened, gating task submission on hard evidence such as test runs, log captures, file diffs, and citation grounding. We ground the position in four lines of public evidence, with row-level protocols and data released in the supplementary JSON files: a survey of 52 documented AI-agent and LLM safety incidents, a false-completion audit with 31 non-contested core cases plus one disputed illustrative case, a trajectory-schema audit of 12 public agent systems and harnesses, and a title-level audit of all 28,560 papers accepted at NeurIPS, ICML, and ICLR 2023-2025 showing a pooled 8-12x imbalance between training-time and deployment-time publication. Two prior communities that needed to enforce safety, computer security and the experimental sciences, converged on runtime contracts with both preventive and evidential elements; agentic AI is now under the same pressure. We formalize an Agent Trajectory Schema and Evidence Chain, state a compositional gating proposition based on standard monitor composition, and outline a research agenda. The right unit of safety in agentic AI is the trajectory-with-checkable-evidence, not the model.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Thinkingmachines/Inkling-Small 生成 主流范式将 AI 安全视为一种属性，需要在模型训练期间通过 RLHF、DPO 或宪法 AI 灌输。我们认为，这在结构上对于执行代码、改变文件、发送消息和修改数据库的自主代理来说是不够的。代理安全应该是由工具强制执行的运行时契约，并且该契约有两个互补的方面。预防性面孔通过沙箱、权限门、输出过滤器和轨迹监视器阻止危险行为发生。证据面需要可验证的证据来证明良好的行动确实发生了，根据测试运行、日志捕获、文件差异和引文基础等确凿证据来控制任务提交。我们以四行公共证据为基础，在补充 JSON 文件中发布了行级协议和数据：对 52 个记录在案的 AI 代理和 LLM 安全事件的调查、对 31 个无争议核心案例和一个有争议的说明性案例的错误完成审计、对 12 个公共代理系统和工具的轨迹模式审计，以及对 NeurIPS、ICML 和 ICLR 接受的所有 28,560 篇论文的标题级审计2023-2025 年，培训时间和部署时间发布之间的汇总不平衡为 8-12 倍。之前的两个社区需要加强安全、计算机安全和实验科学，他们在运行时合约上达成了共识，同时具有预防性和证据性要素；代理人工智能现在也面临着同样的压力。我们形式化了代理轨迹模式和证据链，提出了基于标准监视器组合的组合门控命题，并概述了研究议程。代理人工智能中正确的安全单元是带有可检查证据的轨迹，而不是模型。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.11215" target="_blank">Poor Man's Agentic Modeling: Simulating Large LLM-Agent Societies on a Laptop</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Igor Itkin</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.11215" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.11215" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.11215.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Replacing individual LLM agents with low-parameter surrogates fitted from cheap queries enables scalable society simulations, with validity predicted by an interaction-order and memory taxonomy.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 用根据廉价查询拟合的低参数代理替换单个 LLM 代理可以实现可扩展的社会模拟，并通过交互顺序和记忆分类法预测有效性。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Simulating societies of many large language model (LLM) agents is expensive, yet the questions asked of such simulations are usually macroscopic: phase behaviour, stylised facts, and scaling with the number of agents N, not the cognition of any single agent. We turn a statistical-physics observation into a method: replace each LLM agent by a low-parameter model fitted from a few hundred to a few thousand cheap queries, then run the society at any N on a laptop. Whether this works is decided before the simulation runs, chiefly by what each agent perceives. We introduce an [interaction order x memory] taxonomy that maps perception and memory to an effective theory and a predicted N-trend of the surrogate error. We validate it on a faithful reimplementation of the LLM macroeconomy EconAgent and seven further named LLM simulations, with agent decisions cloned from genuine LLM elicitations (primarily DeepSeek) for a few dollars; the predicted error trends hold cell by cell, and the two refuted predictions, both on a strongly saturating response and traced to its curvature, are themselves matched quantitatively by the theory with no free parameters.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Thinkingmachines/Inkling-Small 生成 模拟许多大型语言模型 (LLM) 智能体的社会成本高昂，但此类模拟提出的问题通常是宏观的：相行为、程式化事实以及智能体数量 N 的缩放，而不是任何单个智能体的认知。我们将统计物理观察转化为一种方法：用一个低参数模型替换每个 LLM 代理，该模型适合几百到几千个廉价查询，然后在笔记本电脑上以任意 N 运行该协会。这是否有效取决于模拟运行之前，主要取决于每个智能体的感知。我们引入了一种[交互顺序 x 记忆]分类法，将感知和记忆映射到有效的理论和替代误差的预测 N 趋势。我们通过忠实地重新实现 LLM 宏观经济 EconAgent 和七个进一步命名的 LLM 模拟来验证它，其中代理决策是从真正的 LLM 启发（主要是 DeepSeek）中克隆出来的，只需花费几美元；预测的误差趋势逐个单元地保持，并且两个被反驳的预测，无论是关于强饱和响应还是追溯到其曲率，本身都与没有自由参数的理论定量匹配。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.12123" target="_blank">Ready Cohorts: Bounding GPU Opportunity and Avoiding Host Round Trips in LLM-Agent Control</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Josef Liyanjun Chen</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.12123" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.12123" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.12123.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Two studies define measurable GPU control gates for LLM-agent services by analyzing concurrent cohort scheduling and on-device routing versus host redispatch.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 两项研究通过分析并发队列调度和设备上路由与主机重新调度，定义了 LLM 代理服务的可测量 GPU 控制门。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small LLM-agent services repeatedly execute small deterministic transitions between model and tool calls: route an outcome, update state, and emit the next effect. We ask when this control path exposes enough concurrent work for GPU execution, and what changes when a GPU-computed route decision remains on device. We formalize the ready-cohort boundary using fixed-partition share F, exact offline share P*, local upper bound U, and online achieved share A. Under zero service time, unlimited capacity, and equal relative launch deadlines, a specialized dynamic program computes P* exactly. In a stationary Poisson replay of one pinned 851-session public trace panel, the primary condition at 100,000 target active sessions, K=256, and a 50 ms launch deadline gives F=30.19%, P*=43.00%, and U=45.85%. Exact packing recovers 81.83% of the opportunity lost at fixed window boundaries. The outcome-derived route key is a conditioning proxy, not proof of executable identity. A separate mechanism study keeps a GPU-computed binary decision on device instead of returning four bytes to the host and redispatching. Across four named GPU placements, the device-resident path is faster in all 36 configurations; within-placement row-median ratios range from 1.19x to 2.39x. Across both admissible mechanisms, all 14,557,440 tested batched invocations match a separately implemented host oracle. A fixed nested device graph that removes no host decision is slower in all 60 configurations across five placements. Together, the studies establish two measurable gates for GPU agent control: deadline-feasible cohort supply and observation placement. A joined finite online runtime is required to measure A, CPU displacement, and service-level benefit.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small LLM-agent 服务生成，重复执行模型和工具调用之间的小型确定性转换：路由结果、更新状态并发出下一个效果。我们询问此控制路径何时为 GPU 执行提供足够的并发工作，以及当 GPU 计算的路由决策保留在设备上时会发生什么变化。我们使用固定分区份额 F、精确离线份额 P*、本地上限 U 和在线实现份额 A 形式化就绪队列边界。在零服务时间、无限容量和相等的相对启动期限的情况下，专门的动态程序精确计算 P*。在固定的 851 个会话公共跟踪面板的静态泊松重放中，100,000 个目标活动会话的主要条件 K=256，50 毫秒的启动截止时间给出 F=30.19%、P*=43.00% 和 U=45.85%。精确打包可以恢复固定窗口边界处损失的 81.83% 的机会。结果派生的路由密钥是调节代理，而不是可执行身份的证明。一项单独的机制研究将 GPU 计算的二进制决策保留在设备上，而不是向主机返回四个字节并重新分派。在四个指定的 GPU 布局中，设备驻留路径在所有 36 种配置中都更快；布局内行中位数比率范围为 1.19x 到 2.39x。在两种可接受的机制中，所有 14,557,440 个测试的批量调用都与单独实现的主机预言机相匹配。在五个放置的所有 60 个配置中，不删除任何主机决策的固定嵌套设备图速度较慢。这些研究共同为 GPU 代理控制建立了两个可衡量的门控：截止日期可行的队列供应和观察安置。需要连接的有限在线运行时间来测量 A、CPU 位移和服务级别收益。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.08107" target="_blank">NeuPAT: Neuron-aware Plasticity Allocation Tuning for Language-Preserving MLLMs</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>CASIA-IVA-Lab</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Jiayue Jin, Jingwei Zhang, Chen Wang, Jing Liu, Longteng Guo</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.08107" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.08107" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.08107.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract NeuPAT selectively constrains updates to language-sensitive neurons during multimodal tuning to preserve LLM language capabilities while enabling perceptual adaptation.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 NeuPAT 在多模式调整过程中选择性地限制对语言敏感神经元的更新，以保留 LLM 语言能力，同时实现感知适应。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Multimodal expansion of large language models (LLMs) enables new perceptual capabilities but often compromises the language intelligence acquired during pretraining. In this work, we investigate this phenomenon from the perspective of internal adaptation dynamics and discover that neurons in pretrained LLMs exhibit heterogeneous plasticity during multimodal learning: some neurons are critical for preserving language capabilities, while others are more adaptive to multimodal knowledge. Based on this insight, we propose NeuPAT (Neuron-aware Plasticity Allocation Tuning), a lightweight and architecture-agnostic framework that allocates neuron-wise update constraints during multimodal instruction tuning. NeuPAT uses a small-scale probing stage to estimate neuron adaptation patterns and selectively protects language-sensitive neurons while promoting multimodal adaptation through more plastic neurons. Experiments across diverse LLM families demonstrate that NeuPAT recovers 94.5\% of the language capability degradation caused by vanilla tuning on 11 language benchmarks while maintaining comparable multimodal performance, providing an effective approach for capability-preserving multimodal expansion.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Thinkingmachines/Inkling-Small 生成 大语言模型 (LLM) 的多模态扩展可实现新的感知能力，但通常会损害预训练期间获得的语言智能。在这项工作中，我们从内部适应动力学的角度研究了这一现象，发现预训练的法学硕士中的神经元在多模态学习过程中表现出异质可塑性：一些神经元对于保留语言能力至关重要，而另一些神经元则更适应多模态知识。基于这一见解，我们提出了 NeuPAT（神经元感知可塑性分配调整），这是一种轻量级且与架构无关的框架，可在多模式指令调整期间分配神经元更新约束。 NeuPAT 使用小规模探测阶段来估计神经元适应模式，并选择性地保护语言敏感神经元，同时通过更多可塑神经元促进多模式适应。跨不同 LLM 系列的实验表明，NeuPAT 恢复了 11 个语言基准上的普通调优导致的 94.5% 的语言能力下降，同时保持了相当的多模态性能，为保留能力的多模态扩展提供了一种有效的方法。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.06729" target="_blank">AtlasVLA: Persistent World-Ego State Modeling for Vision-Language-Action Models</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>CASIA-IVA-Lab</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Guiyu Zhao, Longteng Guo, Yanghong Mei, Zilin Zhu, Yu Zhang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.06729" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.06729" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.06729.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract AtlasVLA improves embodied AI by replacing reactive control with proactive reasoning via persistent world-ego memory, enabling robust long-horizon manipulation from a single wrist camera.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：AtlasVLA 通过持久的世界自我记忆，用主动推理取代反应控制，从而改进了具体的人工智能，从而可以通过单个手腕摄像头进行强大的长视距操作。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small While Vision-Language-Action (VLA) models have advanced embodied AI, their fundamentally reactive paradigm severely limits performance in partially observable and long-horizon tasks. When restricted to a single wrist-mounted camera, they inevitably suffer from perception forgetting as objects exit the field of view, and temporal task-progress forgetting} during multi-step execution. To overcome these bottlenecks, we propose AtlasVLA, a novel framework that transitions from direct reactive manipulation to proactive reasoning through a persistent world-ego state. AtlasVLA features a dual-memory architecture: a 4D Persistent World State Memory that lifts transient 2D observations into a globally updated, voxel-hashed spatial state to resolve visual blind spots, and an Ego-Working State Memory that tracks historical ego state and task progress. By conditioning a diffusion transformer (DiT) on this joint World-Ego state, AtlasVLA enables robust spatial reasoning. Extensive evaluations across LIBERO, RLBench, and real-world benchmarks demonstrate that AtlasVLA achieves state-of-the-art performance using solely a wrist camera. Remarkably, it decisively outperforms multi-view baselines, yielding absolute success rate improvements of 9.4% on LIBERO-Long and 17.5% in real-world long-horizon tasks.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small 生成虽然视觉-语言-动作 (VLA) 模型具有先进的具体化人工智能，但其从根本上来说的反应范式严重限制了部分可观察和长期任务的性能。当仅限于单个腕式摄像头时，当物体退出视野时，它们不可避免地会遭受感知遗忘，以及多步骤执行期间的时间任务进度遗忘。为了克服这些瓶颈，我们提出了 AtlasVLA，这是一种新颖的框架，通过持久的世界自我状态从直接反应性操纵过渡到主动推理。 AtlasVLA 采用双内存架构：4D 持久世界状态内存，将瞬态 2D 观察提升为全局更新的体素哈希空间状态，以解决视觉盲点；以及自我工作状态内存，跟踪历史自我状态和任务进度。通过在这种联合的世界-自我状态上调节扩散变压器（DiT），AtlasVLA 能够实现强大的空间推理。对 LIBERO、RLBench 和现实世界基准的广泛评估表明，AtlasVLA 仅使用腕式摄像头即可实现最先进的性能。值得注意的是，它的性能明显优于多视图基线，在 LIBERO-Long 上的绝对成功率提高了 9.4%，在现实世界的长视野任务中提高了 17.5%。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.12836" target="_blank">From Atomic Evidence to Logical Composition: Structured Compositional Reasoning over Compound Answer Options</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Obed Junias, Maria Leonor Pacheco</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.12836" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.12836" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.12836.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract A framework decomposes compound logical options into atomic judgments and uses constrained optimization to improve reasoning over AND, OR, and NEITHER/NOR operators.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 框架将复合逻辑选项分解为原子判断，并使用约束优化来改进 AND、OR 和 NEITHER/NOR 运算符的推理。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Large language models often fail when answer options require combining atomic judgments under explicit logical operators, even when they judge the individual atoms correctly. We study compound options connected by AND, OR, and NEITHER/NOR, introducing a framework that decomposes each option into atomic answers and scores contrastive hypotheses about each one, so the model never sees a compound option. An operator-constrained integer linear program then composes the calibrated scores into a single prediction. We evaluate on LOGICAL-COMMONSENSEQA and introduce LOGICAL-SATA, a reading-comprehension benchmark derived from SATA-Bench. Our framework improves Macro-F1 from 48.3 to 77.0 on the human-validated LOGICAL-COMMONSENSEQA split and from 47.0 to 75.6 on LOGICAL-SATA, with the largest gains on NEITHER/NOR.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small 生成 当答案选项需要在显式逻辑运算符下组合原子判断时，即使它们正确地判断单个原子，大型语言模型也常常会失败。我们研究由 AND、OR 和 NEITHER/NOR 连接的复合选项，引入一个框架，将每个选项分解为原子答案，并对每个选项进行对比假设评分，因此模型永远不会看到复合选项。然后，操作员约束的整数线性程序将校准分数组成单个预测。我们对 LOGICAL-COMMONSENSEQA 进行评估，并引入 LOGICAL-SATA，这是一个源自 SATA-Bench 的阅读理解基准测试。我们的框架将经过人工验证的 LOGICAL-COMMONSENSEQA 拆分上的 Macro-F1 从 48.3 提高到 77.0，将 LOGICAL-SATA 上的 Macro-F1 从 47.0 提高到 75.6，其中 NEITHER/NOR 的增益最大。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.11574" target="_blank">Hand Visibility Detector: Per-Keypoint Visibility Estimation for Hands</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Ryosei Hara, Masashi Hatano, Rintaro Yanagi, Atsushi Hashimoto, Takuma Yagi</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.11574" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.11574" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.11574.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract This work introduces a dedicated model for per-joint hand visibility estimation and demonstrates its benefit for multi-view 3D hand pose annotation.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 这项工作介绍了一种用于每关节手部可见性估计的专用模型，并展示了其在多视图 3D 手部姿势注释方面的优势。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Hand Pose Estimation (HPE) is a fundamental technology for various applications such as AR/VR and robotics. In these applications, the visibility of each hand joint in the image is crucial for assessing the reliability of estimation results under occlusion. However, most existing HPE methods output joint positions without explicitly indicating their visibility. Although some methods account for occlusion or visibility, visibility estimation has mainly been used as an auxiliary signal for improving pose estimation. To our knowledge, per-joint hand visibility estimation has not been systematically studied as a standalone task. In this work, we propose Hand Visibility Detector, a model for estimating the visibility of individual hand joints, and present the first systematic investigation of visibility estimation as an independent task. We show that leveraging the prior knowledge of HPE models pretrained on large-scale data as a backbone yields high performance in this task. We further demonstrate the utility of Hand Visibility Detector on a downstream task of 3D hand pose annotation via multi-view triangulation of 2D keypoints, showing that visibility-weighted triangulation reduces reprojection error. Our method is released as a ready-to-use package, and the code and demo are available at https://github.com/ryhara/hand_visibility_detector .</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Thinkingmachines/Inkling 生成 - 小手姿势估计 (HPE) 是 AR/VR 和机器人等各种应用的基础技术。在这些应用中，图像中每个手关节的可见度对于评估遮挡情况下估计结果的可靠性至关重要。然而，大多数现有的 HPE 方法输出关节位置，但没有明确指示其可见性。尽管一些方法考虑了遮挡或可见性，但可见性估计主要用作改进姿态估计的辅助信号。据我们所知，每关节手部可见性估计尚未作为独立任务进行系统研究。在这项工作中，我们提出了手可见性检测器，一种用于估计各个手关节可见性的模型，并首次将可见性估计作为一项独立任务进行系统研究。我们证明，利用在大规模数据上预训练的 HPE 模型的先验知识作为骨干，可以在这项任务中产生高性能。我们通过 2D 关键点的多视图三角测量进一步演示了手部可见性检测器在 3D 手部姿势注释下游任务中的实用性，表明可见性加权三角测量减少了重投影误差。我们的方法作为即用包发布，代码和演示可在 https://github.com/ryhara/hand_visibility_detector 获取。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.11045" target="_blank">ReRound: Reconstructive Rounding to Resolve Midpoint Ambiguity in Calibration-Free LLM Quantization</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Harvard University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>He-Yen Hsieh, H. T. Kung</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.11045" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.11045" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.11045.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract ReRound uses a conditional diffusion model to guide rounding of near-midpoint weights during low-bit post-training quantization, selecting candidates by matching leading singular values to improve small LLM accuracy without inference overhead.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 ReRound 使用条件扩散模型在低位训练后量化期间指导近中点权重的舍入，通过匹配领先奇异值来选择候选者，以提高小 LLM 精度，而无需推理开销。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small ReRound (Reconstructive Rounding) is a post-training quantization method that addresses the midpoint ambiguity inherent in standard round-to-nearest (RTN) schemes when quantizing weights near the centers of quantization intervals.
+  Starting from a pretrained LLM, ReRound trains a conditional diffusion model to produce continuous reconstructions of low-bit weights for the LLM. These reconstructed weights act as a guidance signal to disambiguate the rounding direction of weights located close to interval midpoints.
+  To integrate this reconstruction-guided rounding with conventional RTN, ReRound introduces a tolerance metric measuring how far the quantized weight (not the final quantized integer) is away from the midpoint: quantized weights within a tolerance region around midpoints are quantized using diffusion-based reconstructions, whereas weights closer to quantization boundaries are quantized with RTN. By sweeping the tolerance parameter, ReRound generates multiple candidate quantized integer weight matrices and selects the de-quantized weight matrix candidate whose leading singular values most closely match those of the original full-precision weights. This selected candidate determines the tolerance parameter ReRound uses.
+  ReRound is particularly effective for smaller LLMs. Across a range of such models, it consistently outperforms standard RTN for 3-bit and 4-bit weight quantization. ReRound achieves superior accuracy compared to an extensive set of calibration-free methods, remains competitive with calibration-dependent approaches, and operates entirely offline, introducing no additional overhead during low-bit inference.
+  The ReRound strategy represents a new approach for low-bit quantization. The method applies to AI models beyond LLMs. This paper focuses on its applications to small LLMs.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small 生成 ReRound（重构舍入）是一种训练后量化方法，可解决在量化量化间隔中心附近的权重时标准舍入到最近 (RTN) 方案中固有的中点模糊性。
+  从预训练的 LLM 开始，ReRound 训练条件扩散模型，为 LLM 生成低位权重的连续重建。这些重建的权重充当指导信号，以消除位于间隔中点附近的权重的舍入方向的歧义。
+  为了将这种重建引导舍入与传统 RTN 集成，ReRound 引入了容差度量，用于测量量化权重（不是最终量化整数）距中点的距离：使用基于扩散的重建来量化中点周围容差区域内的量化权重，而使用 RTN 来量化更接近量化边界的权重。通过扫描容差参数，ReRound 生成多个候选量化整数权重矩阵，并选择其前导奇异值与原始全精度权重最接近的反量化权重矩阵候选。该选定的候选者决定了 ReRound 使用的公差参数。
+  ReRound 对于规模较小的法学硕士特别有效。在一系列此类模型中，它在 3 位和 4 位权重量化方面始终优于标准 RTN。与大量免校准方法相比，ReRound 实现了卓越的精度，与依赖校准的方法相比仍然具有竞争力，并且完全离线运行，在低位推理期间不会引入额外的开销。
+  ReRound 策略代表了一种低位量化的新方法。该方法适用于法学硕士以外的人工智能模型。本文重点讨论其在小型法学硕士中的应用。</p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+        
+        <div class="nav-buttons">
+            <a href="2026-08-12.html" class="nav-btn">← 2026-08-12</a>
+            <a href="2026-08-14.html" class="nav-btn">2026-08-14 →</a>
+        </div>
+        
+        <footer>
+            Generated by <a href="https://github.com" target="_blank">HF Papers Daily</a>
+        </footer>
+    </div>
+    
+    <script>
+        function toggleAbstract(header) {
+            const toggle = header.querySelector('.abstract-toggle');
+            const content = header.nextElementSibling;
+            toggle.classList.toggle('expanded');
+            content.classList.toggle('expanded');
+        }
+    </script>
+</html>
