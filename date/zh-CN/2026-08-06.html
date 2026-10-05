@@ -1,0 +1,1966 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hugging Face Papers - 2026-08-06 (zh-CN)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .date {
+            font-size: 1.2em;
+            color: #a0a0a0;
+        }
+        
+        .stats {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #888;
+        }
+        
+        .paper-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .paper-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(102, 126, 234, 0.5);
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.2);
+        }
+        
+        .paper-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        
+        .paper-title a {
+            color: #e0e0e0;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .paper-title a:hover {
+            color: #667eea;
+        }
+        
+        .paper-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            color: #a0a0a0;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .meta-label {
+            color: #888;
+        }
+        
+        .links {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .link-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .link-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .link-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .abstract-section {
+            margin-top: 15px;
+        }
+        
+        .abstract-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .abstract-header:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .abstract-toggle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+            transition: transform 0.3s;
+        }
+        
+        .abstract-toggle.expanded {
+            transform: rotate(180deg);
+        }
+        
+        .abstract-label {
+            font-weight: 500;
+            color: #667eea;
+        }
+        
+        .abstract-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding: 0 15px;
+        }
+        
+        .abstract-content.expanded {
+            max-height: 10000px;
+            padding: 15px;
+        }
+        
+        .abstract-text {
+            line-height: 1.7;
+            color: #c0c0c0;
+        }
+        
+        .summary-box {
+            background: rgba(102, 126, 234, 0.1);
+            border-left: 3px solid #667eea;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .summary-label {
+            font-size: 0.8em;
+            color: #667eea;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .summary-text {
+            color: #b0b0b0;
+            line-height: 1.5;
+        }
+        
+        .translation-box {
+            background: rgba(118, 75, 162, 0.1);
+            border-left: 3px solid #764ba2;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .translation-label {
+            font-size: 0.8em;
+            color: #764ba2;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .translation-text {
+            color: #b0b0b0;
+            line-height: 1.5;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding: 0 10px;
+        }
+        
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .nav-btn.disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: #666;
+            pointer-events: none;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .paper-title {
+                font-size: 1.1em;
+            }
+            
+            .links {
+                flex-wrap: wrap;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-btn {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Hugging Face Papers</h1>
+            <div class="date">2026-08-06</div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number">34</div>
+                    <div class="stat-label">Papers</div>
+                </div>
+            </div>
+        </header>
+        
+        <main>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.05102" target="_blank">ABSeeker: Training Long-Horizon Search Agents via Answer-Backtracked Credit Assignment</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Shanghai Jiao Tong University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yijun Lu, Rui Ye, Jiajun Wang, Yuwen Du, Tian Jin</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.05102" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.05102" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.05102.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Long-horizon search agents must make multiple sequential actions (steps) to search, retrieve, verify, and integrate evidence to reach a final answer. However, existing methods for training these agents typically treat all steps within a trajectory uniformly during both supervised fine-tuning (SFT) and reinforcement learning (RL), failing to distinguish useful actions from erroneous or redundant ones. In this paper, we propose Answer-Backtracked Credit Assignment (ABC), a fine-grained credit assignment framework for training long-horizon search agents by converting sparse trajectory-level outcomes into dense step-level supervision that rewards useful actions (even in failed trajectories) while suppressing erroneous or redundant actions. Specifically, given a potentially obscure query and its corresponding ground-truth answer, ABC first performs Answer-Backtracked Clue Recovery, which traces back from the answer to recover intermediate clues required to solve the question. It then applies Clue-Anchored Step Scoring to evaluate each search step against these clues, converting sparse binary outcome supervision into dense step-level rewards. Based on these rewards, we develop ABC-SFT, which reweights the loss of each turn, and ABC-GRPO, which uses the step-level scores as rewards in GRPO. Building on this framework, we train ABSeeker based on Qwen3.5-4B with only 8.5k examples. ABSeeker achieves 37.3% on BrowseComp and 39.1% on BrowseComp-ZH. With context management, the scores further improve to 55.3% and 52.9%, respectively, significantly outperforming same-scale (4B) agents and even matching the performance of larger ones (approximately 30B). These results demonstrate the effectiveness of answer-backtracked step-level credit assignment for training long-horizon search agents.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 长视野搜索代理必须执行多个连续动作（步骤）来搜索、检索、验证和整合证据才能得出最终答案。然而，训练这些智能体的现有方法通常在监督微调（SFT）和强化学习（RL）期间统一处理轨迹内的所有步骤，无法区分有用的动作与错误或冗余的动作。在本文中，我们提出了答案回溯信用分配（ABC），这是一种细粒度的信用分配框架，用于通过将稀疏轨迹级结果转换为密集的步骤级监督来训练长范围搜索代理，奖励有用的行动（即使在失败的轨迹中），同时抑制错误或冗余的行动。具体来说，给定一个可能晦涩难懂的查询及其相应的真实答案，ABC 首先执行答案回溯线索恢复，从答案中回溯以恢复解决问题所需的中间线索。然后，它应用线索锚定步骤评分来根据这些线索评估每个搜索步骤，将稀疏的二元结果监督转换为密集的步骤级奖励。基于这些奖励，我们开发了 ABC-SFT，它重新加权每轮的损失，以及 ABC-GRPO，它使用步骤级别的分数作为 GRPO 中的奖励。在此框架的基础上，我们仅用 8.5k 个示例来基于 Qwen3.5-4B 训练 ABSeeker。 ABSeeker 在 BrowseComp 上获得 37.3%，在 BrowseComp-ZH 上获得 39.1%。通过上下文管理，分数进一步分别提高到 55.3% 和 52.9%，显着优于同规模（4B）代理，甚至与较大代理（大约 30B）的性能相当。这些结果证明了答案回溯步骤级信用分配对于训练长视野搜索代理的有效性。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community         ruiye-sjtu   Paper submitter     about 3 hours ago         paper: https://arxiv.org/pdf/2608.05102code: https://github.com/PolarSeeker/ABSeeker</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">Error 500 (Server Error)!!1500.That’s an error.There was an error. Please try again later.That’s all we know.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.04436" target="_blank">ToolArtist: Tool-Using Unified Multimodal Models for Agentic Image Generation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Jiahao Zhao, Xiaomin Yu, Zhongxiang Sun, Fengwei Teng, Chengwei Qin</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.04436" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.04436" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.04436.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Text-to-image (T2I) models can produce visually compelling images, yet they remain limited on open-world tasks that require complex semantic understanding, multi-step reasoning, and the integration of external world knowledge. Existing efforts introduce agent capabilities into image generation, but they either prescribe a fixed workflow or place only a subset of the open-world image generation process under agent control. Consequently, reasoning, tool invocation, and image generation are not coordinated by a single policy. We propose ToolArtist, a fully agentic image generation model obtained by post-training a Unified Multimodal Model (UMM). ToolArtist dynamically orchestrates reasoning, external tool use, and native image generation within one unified policy. During Supervised Fine-Tuning (SFT), we equip a teacher agent with search tools alongside an image-generation tool. We then convert the collected trajectories into a UMM compatible format, where the image-generation tool is concealed while the resulting generated images are retained. During Reinforcement Learning (RL), we develop an agentic RL infrastructure for UMMs and introduce Reason-Act-Draw GRPO (RAD-GRPO), which uses complementary intent and quality rewards to jointly optimize the model. Experiments show that placing the entire open-world image-generation process under an agent policy consistently outperforms approaches with fixed pipelines or only partially agent-controlled components. We release the training data and the complete post-training infrastructure.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要文本到图像（T2I）模型可以生成视觉上引人注目的图像，但它们在需要复杂语义理解、多步骤推理和外部世界知识整合的开放世界任务上仍然受到限制。现有的工作将代理功能引入图像生成中，但它们要么规定固定的工作流程，要么仅将开放世界图像生成过程的子集置于代理控制之下。因此，推理、工具调用和图像生成不是由单一策略协调的。我们提出了 ToolArtist，这是一种通过对统一多模态模型（UMM）进行后训练而获得的完全代理图像生成模型。 ToolArtist 在一项统一策略内动态协调推理、外部工具使用和本机图像生成。在监督微调（SFT）过程中，我们为教师代理配备了搜索工具和图像生成工具。然后，我们将收集到的轨迹转换为 UMM 兼容格式，其中图像生成工具被隐藏，而生成的图像被保留。在强化学习 (RL) 过程中，我们为 UMM 开发了代理 RL 基础设施，并引入了 Reason-Act-Draw GRPO (RAD-GRPO)，它使用互补的意图和质量奖励来共同优化模型。实验表明，将整个开放世界图像生成过程置于代理策略之下始终优于使用固定管道或仅部分代理控制组件的方法。我们发布培训数据和完整的培训后基础设施。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community   EditPreview      Upload images, audio, and videos by dragging in the text input, pasting, or clicking here. Tap or paste here to upload images        Comment · Sign up or log in to comment</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 EditPreview 通过拖入文本输入、粘贴或单击此处上传图像、音频和视频。点击或粘贴此处上传图片 评论 · 注册或登录以发表评论</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.05000" target="_blank">Towards Physics of Multimodal Pretraining: Knowledge Flow, Modality Synergy, Early Unification, and Recipes</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>AI at Meta</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Junlin Han, Shengbang Tong, David Fan, Minghao Chen, Philip Torr</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.05000" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.05000" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.05000.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Vision offers a critical axis for advancing foundation models, driving a shift towards natively unified multimodal pretraining. Despite this momentum, the design space and the fundamental mechanisms of how modalities interact during unified training remain underexplored. We provide empirical clarity through a systematic exploration of multimodal pretraining. Our controlled experiments on both synthetic and large-scale real-world datasets yield four key insights into the physics of multimodal pretraining: (i) Knowledge Flow: We disentangle how language, visual understanding, and visual generation transfer knowledge across modalities, revealing distinct patterns of influence and asymmetry; (ii) Synergy vs. Competition: We show that data "complexity" largely determines whether modalities are synergistic, identify architectural choices that promote synergy: such as shared attention and normalization with modality-specific feed-forward layers, and find that these behaviors generalize across different visual tokenizer designs; (iii) Early Unification: Unifying modalities from the very early stages and training them jointly is shown to be more effective than late alignment or sequential training. This process uncovers a vision laziness phenomenon, where delayed integration leads models to rely on language priors; (iv) Recipes: We derive efficient pretraining recipes that achieve strong generative performance using only 5% of the compute budget. These core findings are subsequently validated at scale by training multiple 13.5B MoE models on 2T tokens. We hope this study provides a principled foundation for understanding and scaling multimodal pretraining.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">Abstract Vision 为推进基础模型提供了关键轴，推动了向原生统一多模态预训练的转变。尽管有这种势头，但统一训练期间模式相互作用的设计空间和基本机制仍未得到充分探索。我们通过对多模式预训练的系统探索来提供实证清晰度。我们对合成数据集和大规模现实世界数据集进行的对照实验得出了关于多模态预训练物理学的四个关键见解：（i）知识流：我们解开了语言、视觉理解和视觉生成如何跨模态传递知识，揭示了不同的影响和不对称模式； (ii) 协同与竞争：我们表明数据“复杂性”在很大程度上决定了模态是否具有协同作用，确定了促进协同作用的架构选择：例如共享注意力和特定模态前馈层的标准化，并发现这些行为可以在不同的视觉分词器设计中泛化； (iii) 早期统一：从早期阶段开始统一模式并联合训练它们比后期调整或顺序训练更有效。这个过程揭示了视觉惰性现象，延迟集成导致模型依赖于语言先验； (iv) 配方：我们推导出高效的预训练配方，仅使用 5% 的计算预算即可实现强大的生成性能。随后，通过在 2T 代币上训练多个 13.5B MoE 模型，这些核心发现得到了大规模验证。我们希望这项研究为理解和扩展多模式预训练提供原则基础。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page   Add to collection     Community         Junlinh   Paper submitter     about 1 hour ago         Explorations into multimodal pretraining.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 添加到集合 社区 Junlinh 论文提交者 大约 1 小时前 探索多模式预训练。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.04570" target="_blank">The Personalization Mirage: How LLMs Fabricate User Profiles, and Why Self-Monitoring Misleads</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>HKUST</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yushi Sun, Yanjie Zhang, Rui Sheng</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.04570" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.04570" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.04570.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Personalized LLMs with persistent memory are increasingly deployed, yet the faithfulness of their user models remains unexamined. We study over-inference (OI): the phenomenon where LLMs fabricate user attributes beyond what evidence supports. We introduce MirageBench, comprising 150 personas balanced across stereotypical, counter-stereotypical, and neutral profiles, 6 personalization tasks spanning an ``imagination gradient'', a four-way faithfulness taxonomy operationalized by an independent judge (validated against a blind human annotator on 400 claims: Cohen's kappa = 0.863 four-class, kappa = 0.900 binary), and a leaderboard of 12 models across 7 families on 143616 judged claims. We find that over-inference is pervasive: every one of the 12 models over-infers 35%--49% of its claims (cross-model mean 41.6%; claim-weighted 41.8%), with no model in this evaluation escaping it. Most strikingly, we surface a Self-Monitoring Inversion: at the model-selection level, models' self-assessed OI is negatively rank-correlated with their judge-measured OI (rho = -0.60, p = 0.044; exploratory, wide bootstrap CI [-0.90, +0.06], n = 12). The models that report the least over-inference tend to be flagged as fabricating the most, so self-reported confidence is a misleading signal for comparing models, even though within a single model self-audit still ranks that model's own claims moderately well (AUROC 0.58--0.83). We further show that OI is task-dependent (27%--59%) and that, in a multi-turn pilot, inferred attributes accumulate approximately linearly with little revision. MirageBench positions external verification, rather than model self-report, as a more reliable foundation for trustworthy personalization.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 具有持久性记忆的个性化法学硕士越来越多地被部署，但其用户模型的忠实度仍未得到检验。我们研究过度推理（OI）：法学硕士伪造超出证据支持的用户属性的现象。我们引入了 MirageBench，其中包括 150 个在刻板印象、反刻板印象和中性特征之间平衡的人物角色、跨越“想象力梯度”的 6 个个性化任务、由独立法官实施的四向忠诚度分类法（针对 400 项声明针对盲人注释者进行了验证：科恩的 kappa = 0.863 四级，kappa = 0.900 二进制），以及 12 个排行榜针对 7 个家庭的 143616 项已判决索赔建立模型。我们发现过度推断很普遍：12 个模型中的每一个都过度推断了 35%--49% 的主张（跨模型平均值 41.6%；主张加权 41.8%），本次评估中没有一个模型能够逃脱这一问题。最引人注目的是，我们发现了自我监控倒置：在模型选择层面，模型的自我评估 OI 与其判断测量的 OI 呈负等级相关（rho = -0.60，p = 0.044；探索性宽自举 CI [-0.90，+0.06]，n = 12）。报告过度推理最少的模型往往被标记为捏造最多，因此自我报告的置信度对于比较模型来说是一个误导性信号，即使在单个模型中，自我审核仍然将该模型自己的声明排名中等（AUROC 0.58--0.83）。我们进一步表明，OI 是任务相关的（27%--59%），并且在多轮试验中，推断的属性近似线性累积，几乎不需要修正。 MirageBench 将外部验证（而不是模型自我报告）定位为值得信赖的个性化的更可靠基础。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community         Yushi98   Paper submitter     about 1 hour ago         Personalized LLMs with persistent memory are increasingly deployed, yet the faithfulness of their user models remains unexamined. We study over-inference (OI): the phenomenon where LLMs fabricate user attributes beyond what evidence supports. We introduce MirageBench, comprising 150 personas balanced across stereotypical, counter-stereotypical, and neutral profiles, 6 personalization tasks spanning an ``imagination gradient'', a four-way faithfulness taxonomy operationalized by an independent judge (validated against a blind human annotator on 400 claims: Cohen's kappa = 0.863 four-class, kappa = 0.900 binary), and a leaderboard of 12 models across 7 families on 143616 judged claims. We find that over-inference is pervasive: every one of the 12 models over-infers 35%--49% of its claims (cross-model mean 41.6%; claim-weighted 41.8%), with no model in this evaluation escaping it. Most strikingly, we surface a Self-Monitoring Inversion: at the model-selection level, models' self-assessed OI is negatively rank-correlated with their judge-measured OI (rho = -0.60, p = 0.044; exploratory, wide bootstrap CI [-0.90, +0.06], n = 12). The models that report the least over-inference tend to be flagged as fabricating the most, so self-reported confidence is a misleading signal for comparing models, even though within a single model self-audit still ranks that model's own claims moderately well (AUROC 0.58--0.83). We further show that OI is task-dependent (27%--59%) and that, in a multi-turn pilot, inferred attributes accumulate approximately linearly with little revision. MirageBench positions external verification, rather than model self-report, as a more reliable foundation for trustworthy personalization.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 Yushi98 论文提交者 大约 1 小时前 具有持久内存的个性化法学硕士越来越多地被部署，但其用户模型的忠实度仍未得到检验。我们研究过度推理（OI）：法学硕士伪造超出证据支持的用户属性的现象。我们引入了 MirageBench，其中包括 150 个在刻板印象、反刻板印象和中性特征之间平衡的人物角色、跨越“想象力梯度”的 6 个个性化任务、由独立法官实施的四向忠诚度分类法（针对 400 项声明针对盲人注释者进行了验证：科恩的 kappa = 0.863 四级，kappa = 0.900 二进制），以及 12 个排行榜针对 7 个家庭的 143616 项已判决索赔建立模型。我们发现过度推断很普遍：12 个模型中的每一个都过度推断了 35%--49% 的主张（跨模型平均值 41.6%；主张加权 41.8%），本次评估中没有一个模型能够逃脱这一问题。最引人注目的是，我们发现了自我监控倒置：在模型选择层面，模型的自我评估 OI 与其判断测量的 OI 呈负等级相关（rho = -0.60，p = 0.044；探索性宽自举 CI [-0.90，+0.06]，n = 12）。报告过度推理最少的模型往往被标记为捏造最多，因此自我报告的置信度对于比较模型来说是一个误导性信号，即使在单个模型中，自我审核仍然将该模型自己的声明排名中等（AUROC 0.58--0.83）。我们进一步表明，OI 是任务相关的（27%--59%），并且在多轮试验中，推断的属性近似线性累积，几乎不需要修正。 MirageBench 将外部验证（而不是模型自我报告）定位为值得信赖的个性化的更可靠基础。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.05013" target="_blank">OneDayAgent: Towards a Long-Horizon Harness for Autonomous Agents</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>ZJUNLP</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Jingsheng Zheng, Xinyuan Fang, Jintian Zhang, Zhengke Gui, Huajun Chen</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.05013" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.05013" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.05013.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  LLM agents are increasingly applied to open-ended everyday requests that span work, study, and life. These tasks are long-horizon, cross-environment, and multimodal, forcing the agent to preserve goals and constraints across many steps while navigating heterogeneous tools and attachments. While prior work has addressed individual failure modes such as goals drift, states loss, and context overflow, whether a single harness can manage them jointly and remain effective across backends has received less study. We present OneDayAgent, a long-horizon harness for autonomous agents. OneDayAgent turns an open-ended request into a managed execution process that decomposes tasks into bounded subtasks, maintains execution memory under context pressure, and verifies and repairs the final deliverable. We evaluate OneDayAgent on AgentIF-OneDay across 104 tasks. With the GLM-5.2 backend, OneDayAgent sets a new state of the art with an overall score of 0.821. The same harness runs across five backend LLMs from three model families, indicating the harness generalizes across backends without tuning, even as different models induce distinct execution styles under the same workflow.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 LLM 代理越来越多地应用于跨越工作、学习和生活的开放式日常请求。这些任务是长期、跨环境和多模式的，迫使代理在使用异构工具和附件时跨多个步骤保留目标和约束。虽然之前的工作已经解决了诸如目标漂移、状态丢失和上下文溢出等单独的故障模式，但单个工具是否可以共同管理它们并在后端之间保持有效的研究较少。我们推出了 OneDayAgent，这是一种用于自主代理的长视野工具。 OneDayAgent 将开放式请求转变为托管执行流程，将任务分解为有界子任务，在上下文压力下维护执行内存，并验证和修复最终可交付成果。我们在 AgentIF-OneDay 上跨 104 项任务评估 OneDayAgent。凭借 GLM-5.2 后端，OneDayAgent 以 0.821 的总分创下了新的最先进水平。相同的工具运行在来自三个模型系列的五个后端 LLM 上，这表明该工具可以在后端之间进行泛化而无需调整，即使不同的模型在同一工作流程下产生不同的执行风格也是如此。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub  2    Add to collection     Community         Ningyu   Paper submitter     about 1 hour ago         One Prompt. One Day. One Agent. Turning open-ended requests into  long-horizon execution.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF GitHub 2 添加到集合 社区 Ningyu 论文提交者 大约 1 小时前 一个提示。一天。一名代理。将开放式请求转变为长期执行。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.05139" target="_blank">Toward Skill-Native LLMs: Skill Entropy for Benchmarking and Training Long-Horizon Reasoning</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Princeton University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yinghui He, Ling Yang, Jiarui Liu, Yongjin Yang, Lechen Zhang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.05139" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.05139" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.05139.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Long-horizon reasoning in recent LLMs demands that the model switch between distinct skills inside a reasoning chain, such as first doing a math derivation, then using the result to plan a schedule. We call such problems cross-skill long-horizon tasks: multi-step tasks whose steps require different reasoning skills and depend on earlier outputs. Existing benchmarks often evaluate individual skills, lacking a principled way to measure how well a model switches between skills. We address this gap from both the evaluation and training sides. We introduce Skill Entropy, a measure of the difficulty of switching from one skill to another. We then propose Skill^2-Bench, a benchmark of cross-skill long-horizon tasks built over 558 skills across 9 verifiable and open-ended domains. Each task is assigned a task-level skill-entropy score and grouped into three difficulty levels. Evaluating 8 frontier and 4 open-source models on Skill^2-Bench reveals a skill-switching gap: accuracy decreases on higher-entropy tasks. We then turn skill entropy from a benchmark scale into a training signal. We propose Skill-Entropy RL, an RL framework where the model predicts not only the answer at each step but also the skill used to produce it. The reward combines step-level correctness with a skill-entropy reward that measures the alignment between the model-predicted skill sequence and the gold skill sequence. On Qwen3-4B-Instruct and Qwen3-1.7B, Skill-Entropy RL improves the Skill^2-Bench score from 34.4% to 68.4% and from 14.6% to 40.1%, respectively, outperforming competitive baselines. The same pipeline can be applied to off-the-shelf training data such as OpenR1-Math, indicating that skill entropy is a reusable training signal. Code available at: https://github.com/Gen-Verse/Skill-Entropy-RL</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 最近法学硕士中的长视野推理要求模型在推理链内的不同技能之间切换，例如首先进行数学推导，然后使用结果来规划时间表。我们将此类问题称为跨技能长期任务：多步骤任务，其步骤需要不同的推理技能并依赖于早期的输出。现有的基准通常评估个人技能，缺乏原则性的方法来衡量模型在技能之间切换的效果。我们从评估和培训方面解决这一差距。我们引入技能熵，衡量从一种技能切换到另一种技能的难度。然后，我们提出了 Skill^2-Bench，这是跨技能长期任务的基准，构建了跨 9 个可验证和开放式领域的 558 项技能。每个任务都分配有一个任务级别的技能熵分数，并分为三个难度级别。在 Skill^2-Bench 上评估 8 个前沿模型和 4 个开源模型揭示了技能切换差距：高熵任务的准确性会降低。然后，我们将技能熵从基准尺度转化为训练信号。我们提出了 Skill-Entropy RL，这是一种 RL 框架，其中模型不仅可以预测每个步骤的答案，还可以预测用于生成答案的技能。该奖励将步骤级正确性与技能熵奖励相结合，技能熵奖励衡量模型预测的技能序列和黄金技能序列之间的一致性。在 Qwen3-4B-Instruct 和 Qwen3-1.7B 上，Skill-Entropy RL 将 Skill^2-Bench 分数分别从 34.4% 提高到 68.4% 和从 14.6% 提高到 40.1%，优于竞争基线。相同的流程可以应用于现成的训练数据，例如 OpenR1-Math，这表明技能熵是可重用的训练信号。代码位于：https://github.com/Gen-Verse/Skill-Entropy-RL</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community         Lingaaaaaaa   Paper submitter     about 1 hour ago         code and data: https://github.com/Gen-Verse/Skill-Entropy-RL</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 Lingaaaaaaa 论文提交者 大约 1 小时前 代码和数据：https://github.com/Gen-Verse/Skill-Entropy-RL</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.03764" target="_blank">GDPevo: Evaluating Agent Self-Evolution on Real Business Tasks</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Prism Shadow</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Leijun Zhou, Zhihao Liu, Xiang Qu, Chenxu Liu, Yifei Liu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.03764" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.03764" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.03764.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Agent self-evolution updates an agent's persistent state from prior experience and reuses it to solve related tasks more effectively. Evaluating self-evolution is difficult: existing benchmarks provide limited coverage of economically valuable task domains, do not always design training and test tasks such that test-time gains can be attributed to training experience, and remain vulnerable to data contamination. We present GDPevo, an evolution-native benchmark grounded in GDP-related enterprise workflows, together with the fully automated data pipeline that generates it. Its core mechanism, rule hybridization, decomposes each enterprise workflow into atomic business rules, distributes subsets of these rules across training tasks, and recombines them in held-out test tasks so that test-time gains are attributable. GDPevo spans CRM, ERP, finance, healthcare, legal, and data-centric workflows. Its V1 release contains 120 tasks in 12 groups, with five training and five held-out test tasks per group. Full automation enables the pipeline to expand the suite to 240 tasks in 24 groups (V2) within two days, providing a practical response to contamination. Using GDPevo, we evaluate four agents, each comprising a harness and a model, under four supervision types. Self-evolution consistently improves held-out accuracy by up to 16.44 percentage points. But the best evolved agents remain far below the fully informed oracle ceiling of 91.6%, indicating that the self-evolution ability of current agents remains far from fully realized. We publicly release the pipeline, benchmark, and full evaluation results at https://github.com/Prism-Shadow/GDPevo.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 代理自进化根据先前的经验更新代理的持久状态，并重用它来更有效地解决相关任务。评估自我进化很困难：现有基准测试对具有经济价值的任务领域的覆盖范围有限，并不总是设计训练和测试任务，以便测试时间的增益可以归因于训练经验，并且仍然容易受到数据污染的影响。我们推出 GDPevo，这是一种基于 GDP 相关企业工作流程的进化原生基准，以及生成它的全自动数据管道。其核心机制是规则混合，将每个企业工作流程分解为原子业务规则，将这些规则的子集分布在训练任务中，并将它们重新组合到保留的测试任务中，以便测试时间的增益是可归因的。 GDPevo 涵盖 CRM、ERP、财务、医疗保健、法律和以数据为中心的工作流程。它的 V1 版本包含 12 组 120 项任务，每组有 5 项训练任务和 5 项保留测试任务。完全自动化使管道能够在两天内将套件扩展到 24 组 (V2) 的 240 项任务，从而提供针对污染的实用响应。使用 GDPevo，我们在四种监督类型下评估四个代理，每个代理包含一个工具和一个模型。自我进化持续将保留准确度提高了 16.44 个百分点。但进化得最好的智能体仍远低于 91.6% 的完全知情预言机上限，这表明当前智能体的自我进化能力还远未完全实现。我们在 https://github.com/Prism-Shadow/GDPevo 公开发布管道、基准测试和完整评估结果。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  44    Add to collection     Community         hiyouga   Paper submitter     about 1 hour ago         We release GDPevo, the first benchmark for evaluating agent self-evolution on GDP-related enterprise tasks.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 44 添加到集合 社区 hiyouga 论文提交者 大约 1 小时前 我们发布了 GDPevo，这是第一个用于在 GDP 相关企业任务上评估智能体自我进化的基准。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.02580" target="_blank">Ego2Robot: Scalable Robot Data Synthesis from Egocentric Human Data</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Ye Wang, Pei Lin, Xiong-Hui Chen, Haoqi Yuan, Zhixuan Liang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.02580" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.02580" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.02580.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Learning generalizable robot manipulation policies requires large-scale and diverse demonstration data. Egocentric human manipulation videos offer rich scene and task diversity, and prior work has shown that retargeting and rendering such videos into robot-format data can yield effective per-task policies at small scale. However, whether this approach can provide pretraining benefits for vision-language-action models at scale remains unexplored. We present Ego2Robot, a scalable pipeline that converts egocentric human manipulation videos into robot training data through action retargeting, robot-arm visual synthesis, and multi-level quality curation. Ego2Robot supports both curated datasets and in-the-wild videos, producing 18,561 hours of robot training data spanning 15 robot morphologies, making it the largest ego-to-robot dataset to date. To evaluate generalization, we extend RoboTwin2.0 with disentangled perturbation axes covering visual appearance, scene layout, embodiment morphology, and task semantics. Experiments show that joint pretraining on Ego2Robot-synthesized and robot data consistently improves out-of-distribution generalization across multiple perturbation types, with benefits validated on real-robot deployment. Project page: https://www-ye.github.io/ego2robot_blog/</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 学习可推广的机器人操纵策略需要大规模且多样化的演示数据。以自我为中心的人类操作视频提供了丰富的场景和任务多样性，之前的工作表明，将此类视频重新定位并渲染为机器人格式的数据可以在小规模下产生有效的每任务策略。然而，这种方法是否能为大规模的视觉-语言-动作模型提供预训练的好处仍有待探索。我们推出了 Ego2Robot，这是一个可扩展的管道，通过动作重定向、机器人手臂视觉合成和多级质量管理，将以自我为中心的人类操作视频转换为机器人训练数据。 Ego2Robot 支持精选数据集和野外视频，生成涵盖 15 个机器人形态的 18,561 小时的机器人训练数据，使其成为迄今为止最大的自我到机器人数据集。为了评估泛化性，我们使用涵盖视觉外观、场景布局、实施例形态和任务语义的解缠扰轴扩展了 RoboTwin2.0。实验表明，对 Ego2Robot 合成数据和机器人数据进行联合预训练可以持续改善多种扰动类型的分布外泛化，并在实际机器人部署中验证了其优势。项目页面：https://www-ye.github.io/ego2robot_blog/</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page   Add to collection         Community         wwwyyy   Paper submitter     9 minutes ago         A scalable Ego2Robot pipeline</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 添加到集合 社区 wwwyyy 论文提交者 9 分钟前 可扩展的 Ego2Robot 管道</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.03632" target="_blank">When Teachers Mislead: Spurious-Signal-Aware On-Policy Distillation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>ByteDance</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>jenoj, Yinuo Jiang, Yongjie Ye, Zhou Tao, Xiang Zhuang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.03632" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.03632" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.03632.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  On-Policy distillation (OPD) transfers teacher capabilities by supervising student-sampled trajectories with dense token-level teacher signals. Recent selective OPD methods improve this process by prioritizing signals that are confident, informative, or learnable. However, the assumptions overlook a fundamental failure mode of language models: their token-level judgments can be driven by input-agnostic language priors, formatting conventions, or stereotyped reasoning templates rather than task-specific evidence. We refer to such optimization-relevant but weakly input-grounded supervision as spurious signals in OPD, which may produce large gradients while contributing little task-improving direction. To mitigate this issue, we propose SA-OPD, a Spurious-Signal-Aware On-Policy Distillation framework that identifies and filters misleading token-level supervision based on input-groundedness and optimization impact. SA-OPD introduces a lightweight input-groundedness proxy estimating whether a token-level distillation signal truly depends on the input. It then filters only tokens that simultaneously exhibit low input-groundedness and extreme distillation divergence, thereby removing high-impact spurious updates and achieving fine-grained OPD optimization. Extensive experiments on both large language model (LLM) and vision-language model (VLM) settings demonstrate that SA-OPD consistently outperforms Vanilla OPD and competitive selective methods. These results establish input-groundedness as a key dimension for OPD supervision selection and offer a simple, effective strategy for mitigating spurious updates.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 在策略蒸馏（OPD）通过使用密集的令牌级教师信号监督学生采样轨迹来转移教师能力。最近的选择性 OPD 方法通过优先考虑可信、信息丰富或可学习的信号来改进这一过程。然而，这些假设忽略了语言模型的一个基本失败模式：它们的标记级判断可能是由与输入无关的语言先验、格式约定或刻板推理模板驱动的，而不是由特定于任务的证据驱动的。我们将这种与优化相关但弱输入基础的监督称为 OPD 中的虚假信号，它可能会产生大的梯度，同时对任务改进方向贡献很小。为了缓解这个问题，我们提出了 SA-OPD，这是一种杂散信号感知的策略蒸馏框架，可根据输入基础和优化影响来识别和过滤误导性的代币级监管。 SA-OPD 引入了一个轻量级的输入接地代理来估计令牌级蒸馏信号是否真正依赖于输入。然后，它仅过滤同时表现出低输入接地性和极端蒸馏分歧的令牌，从而消除高影响力的虚假更新并实现细粒度的 OPD 优化。对大语言模型 (LLM) 和视觉语言模型 (VLM) 设置的大量实验表明，SA-OPD 始终优于 Vanilla OPD 和竞争性选择方法。这些结果将输入基础确定为 OPD 监督选择的关键维度，并提供了一种简单、有效的策略来减少虚假更新。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub  1    Add to collection     Community         jenoj  Paper author  Paper submitter     about 1 hour ago         SA-OPD addresses a previously overlooked failure mode in on-policy distillation: teacher signals can appear confident, informative, and learnable while being driven by input-agnostic language priors, formatting conventions, or stereotyped reasoning templates, producing large gradients with little task-improving direction. By comparing token-level teacher–student divergence under the original input and a residual no-prompt context, SA-OPD provides a lightweight proxy for input-groundedness—without requiring external verification labels or auxiliary judges. It then filters only tokens that combine low input-groundedness with high absolute distillation divergence, targeting the high-impact portion of dense OPD supervision most likely to induce harmful updates. Across LLM and VLM distillation settings, SA-OPD consistently improves over Vanilla OPD and strong selective OPD baselines on mathematical reasoning, visual understanding, and visual reasoning benchmarks, offering a practical direction for more reliable, input-grounded distillation signal selection in on-policy distillation.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF GitHub 1 添加到集合 社区 jenoj 论文作者 论文提交者 大约 1 小时前 SA-OPD 解决了之前在策略蒸馏中被忽视的失败模式：在与输入无关的语言先验、格式化约定或刻板推理模板的驱动下，教师信号可以显得自信、信息丰富且可学习，从而产生大梯度，而几乎没有任务改进方向。通过比较原始输入和剩余无提示上下文下的标记级师生分歧，SA-OPD 为输入接地性提供了一个轻量级代理，无需外部验证标签或辅助判断。然后，它仅过滤那些结合了低输入基础性和高绝对蒸馏散度的令牌，针对密集 OPD 监督中最有可能引发有害更新的高影响部分。在 LLM 和 VLM 蒸馏设置中，SA-OPD 在数学推理、视觉理解和视觉推理基准方面始终优于 Vanilla OPD 和强选择性 OPD 基线，为在策略蒸馏中更可靠、基于输入的蒸馏信号选择提供了实用方向。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.04397" target="_blank">NOLLI: A Difficulty-Calibrated Puzzle Benchmark for Diagnosing the English-Korean Performance Gap</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>HAE-RAE</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Dasol Choi, Joonyong Park, Daegon Yu, Soo Yong Kim, Youngsook Song</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.04397" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.04397" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.04397.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  We introduce NOLLI, a procedurally generated English-Korean puzzle benchmark designed to diagnose where Korean performance gaps arise. It comprises 15 puzzle types (25 tasks; 7,500 items), with every instance seed-regenerable, verified to have a unique solution, and scored deterministically. Rather than equating harder with bigger, we calibrate difficulty behaviorally, tuning each generator until a fixed reference model lands in target accuracy bands. Its three-level design combines matched direct translations, script adaptations over Hangul jamo (sub-syllabic letters), and Korean-only tasks grounded in Korean culture or orthography. We evaluate 15 frontier, open-weight, and Korean-developed models; among the 12 above a 3% overall-accuracy floor, matched English-Korean accuracy is statistically equivalent within a +/- 10 pp margin (TOST), suggesting little cost from presentation language alone. Writing-system-intensive tasks show sharper gaps: Korean Cipher falls behind English by up to 68.7 pp, whereas Cryptarithmetic over the same jamo shows no systematic penalty, and Jamo Composition accuracy predicts Korean Cipher accuracy. These contrasts are diagnostic rather than causal, consistent with difficulty in multi-step sub-syllabic execution. Korean-only tasks separate rule-application deficits, which vary in sign, from a Kinship deficit positive in all 12. Finally, a salient size measure fails to grow from Easy to Hard in 7 of 15 types, making structural size an unreliable proxy for empirical difficulty.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：我们介绍 NOLLI，一个程序生成的英语-韩语拼图基准，旨在诊断韩语表现差距出现的位置。它包含 15 种谜题类型（25 个任务；7,500 个项目），每个实例都可以重新生成种子，经过验证具有唯一的解决方案，并进行确定性评分。我们不是将难度等同于更大，而是以行为方式校准难度，调整每个生成器，直到固定的参考模型落在目标精度范围内。其三级设计结合了匹配的直接翻译、韩文jamo（亚音节字母）的脚本改编以及基于韩国文化或正字法的仅限韩语的任务。我们评估了 15 个前沿、开放重量、韩国开发的模型；在整体准确率下限高于 3% 的 12 个中，匹配的英语-韩语准确度在统计上相当，在 +/- 10 pp 裕度 (TOST) 之内，这表明仅从演示语言中花费很少。书写系统密集型任务显示出更大的差距：韩语密码落后于英语高达 68.7 pp，而同一 Jamo 上的密码学则没有显示出系统性的损失，而 Jamo 组合准确度可以预测韩语密码的准确度。这些对比是诊断性的，而不是因果性的，与多步骤子音节执行的困难一致。仅限韩语的任务将规则应用赤字（符号不同）与所有 12 种类型中的亲属关系赤字为正值区分开来。最后，在 15 种类型中的 7 种中，显着的规模度量未能从简单到困难增长，使得结构规模成为经验难度的不可靠代表。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub  2    Add to collection     Community         Dasool   Paper submitter     about 1 hour ago         NOLLI is a procedurally generated, behaviorally calibrated English–Korean puzzle benchmark that finds small matched presentation-language gaps and localizes candidate bottlenecks in multi-step Hangul-jamo execution and Korean kinship terminology.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF GitHub 2 添加到集合 社区 Dasool 论文提交者 大约 1 小时前 NOLLI 是一个按程序生成、行为校准的英语-韩语拼图基准测试，可发现小的匹配的演示语言差距，并定位多步骤 Hangul-jamo 执行和韩语亲属术语中的候选瓶颈。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.24821" target="_blank">AVE-Compass: Towards Holistic Evaluation for Audio-Video Editing Abilities</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>NJU-LINK Lab</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yuqing Wen, Yukai Huang, Qianqian Xie, Jiangtao Wu, Yibin Lin</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.24821" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.24821" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.24821.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  While instruction-based video editing has advanced rapidly, real-world videos contain tightly coupled audio and visual signals, and editing one modality often requires coordinated changes in the other. Existing benchmarks primarily evaluate visual transformations on silent clips or isolated audio editing, leaving complex audio-visual editing and cross-modal consistency underexplored. We introduce AVE-Compass, a comprehensive benchmark with 145 curated source videos, 196 audio-visually coupled editing instructions, and 2,688 fine-grained checklist items. It evaluates Instruction Following, Fidelity Preserving, Realism, and Editing Intent through checklist-based MLLM judging and a dedicated realism rubric, complemented by automated cross-modal, video, and audio metrics. Extensive evaluation shows that state-of-the-art models still struggle to execute cross-modal instructions while preserving non-target content. We further propose AVE-Agent, a modular agent framework that decomposes complex instructions into dependent subtasks and iteratively improves editing results through self-reflection and evaluator feedback. AVE-Agent improves instruction execution, Fidelity Preserving, and audio-visual alignment in joint editing while maintaining competitive perceptual quality.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 虽然基于指令的视频编辑发展迅速，但现实世界的视频包含紧密耦合的音频和视觉信号，并且编辑一种模式通常需要协调改变另一种模式。现有的基准主要评估无声剪辑或独立音频编辑的视觉转换，而对复杂的视听编辑和跨模式一致性的探索还不够。我们推出了 AVE-Compass，这是一个综合基准测试，包含 145 个精选源视频、196 个视听耦合编辑指令和 2,688 个细粒度检查表项目。它通过基于清单的 MLLM 判断和专用的现实主义标准，并辅以自动跨模式、视频和音频指标来评估指令遵循、保真度、现实主义和编辑意图。广泛的评估表明，最先进的模型仍然难以在保留非目标内容的同时执行跨模式指令。我们进一步提出了 AVE-Agent，这是一个模块化代理框架，它将复杂的指令分解为相互依赖的子任务，并通过自我反思和评估者反馈迭代地改进编辑结果。 AVE-Agent 改进了联合编辑中的指令执行、保真度保持和视听对齐，同时保持有竞争力的感知质量。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  3    Add to collection     Community         mistletoe111   Paper submitter     about 3 hours ago         AVE-Compass provides a comprehensive and realistic benchmark for evaluating whether audio-visual editing systems can follow instructions while preserving unedited content, cross-modal consistency, and perceptual quality.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 3 添加到集合 社区槲寄生111 论文提交者 大约 3 小时前 AVE-Compass 提供了一个全面且现实的基准，用于评估视听编辑系统是否可以遵循指令，同时保留未经编辑的内容、跨模式一致性和感知质量。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.04505" target="_blank">K-EXAONE 2.0 Technical Report</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>LG AI Research</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Eunbi Choi, Kibong Choi, Sehyun Chun, Seokhee Hong, Junwon Hwang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.04505" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.04505" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.04505.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  This technical report presents K-EXAONE 2.0, an open-weight multilingual foundation model developed by LG AI Research as a step in our effort toward global frontier-scale foundation models. Rather than training from scratch, we upcycle K-EXAONE and expand its architecture, yielding a Mixture-of-Experts (MoE) model with 750B total parameters and approximately 37B activated per token---more than three times the capacity of its predecessor. K-EXAONE 2.0 supports context lengths of up to 256K tokens and expands multilingual coverage from six to ten languages. Its training pipeline combines continual pre-training, difficulty-focused mid-training, and post-training to strengthen reasoning, agentic coding, multilingual capability, and safety grounded in Korean sociocultural contexts. Across nine evaluation categories selected to reflect the conditions of practical use, K-EXAONE 2.0 improves over K-EXAONE and remains competitive with open-weight models, showing its largest gains in agentic coding and long-context understanding and its clearest strengths in long-context retrieval and safety. Released under the Apache 2.0 license, K-EXAONE 2.0 enables the wider AI ecosystem to evaluate, deploy, adapt, and build upon it, while marking the beginning---rather than the endpoint---of our challenge toward the global frontier.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 本技术报告介绍了 K-EXAONE 2.0，这是 LG AI Research 开发的一种开放权重多语言基础模型，是我们迈向全球前沿规模基础模型的一步。我们没有从头开始训练，而是升级了 K-EXAONE 并扩展了其架构，产生了一个混合专家 (MoE) 模型，总参数为 750B，每个代币激活约 37B，是其前身容量的三倍多。 K-EXAONE 2.0 支持高达 256K 令牌的上下文长度，并将多语言覆盖范围从六种语言扩展到十种语言。其培训流程结合了持续的预训练、以难度为中心的训练中和训练后，以加强基于韩国社会文化背景的推理、代理编码、多语言能力和安全性。在反映实际使用条件的九个评估类别中，K-EXAONE 2.0 比 K-EXAONE 有所改进，并与开放权重模型保持竞争力，显示出其在代理编码和长上下文理解方面的最大收益以及在长上下文检索和安全性方面最明显的优势。 K-EXAONE 2.0 在 Apache 2.0 许可证下发布，使更广泛的人工智能生态系统能够评估、部署、适应和构建，同时标志着我们向全球前沿挑战的开始（而不是终点）。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community   EditPreview      Upload images, audio, and videos by dragging in the text input, pasting, or clicking here. Tap or paste here to upload images        Comment · Sign up or log in to comment</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 EditPreview 通过拖入文本输入、粘贴或单击此处上传图像、音频和视频。点击或粘贴此处上传图片 评论 · 注册或登录以发表评论</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.05070" target="_blank">HelloWorld: Enabling Socially Interactive Characters in Video World Models</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Liangyang Ouyang, Ruicong Liu, Xuangeng Chu, Kaipeng Zhang, Yoichi Sato</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.05070" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.05070" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.05070.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Despite the remarkable recent progress of video world models, social interaction between users and the characters within these worlds remains unsupported. To fill this gap, we present HelloWorld, a video world model that enables social interaction with in-world characters. With a single button press, users can prompt the on-screen character to respond toward the camera, e.g., turning to the viewer, waving, nodding, or speaking a short greeting. To make these interactions natural, we propose a self-distillation pipeline that finetunes the video generation model on data synthesized by itself. Each synthesized clip contains both social interactions and camera motion, allowing the model to learn camera-pose conditioning without degrading interaction quality. At inference, we further introduce a training-free module that determines when the interaction occurs. Upon a button press, it modulates the cross-attention masks of the DiT so that the interaction-related text prompt attends only to the frames within the press window, temporally localizing the character's response. We further build HelloWorldBench, a 400-sample benchmark with three social interaction metrics alongside three conventional metrics, for evaluation. Experiments demonstrate that HelloWorld surpasses a variety of baselines in interaction quality, while maintaining state-of-the-art picture aesthetics and camera-pose following. Project page: https://github.com/AlayaLab/HelloWorld</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 尽管视频世界模型最近取得了显着的进展，但用户和这些世界中的角色之间的社交互动仍然不受支持。为了填补这一空白，我们推出了 HelloWorld，这是一种视频世界模型，可以与世界中的角色进行社交互动。只需按一下按钮，用户就可以提示屏幕上的角色对摄像机做出反应，例如转向观看者、挥手、点头或说简短的问候。为了使这些交互自然，我们提出了一种自蒸馏管道，可以根据自身合成的数据微调视频生成模型。每个合成剪辑都包含社交互动和相机运动，使模型能够学习相机姿势调节，而不会降低交互质量。在推理时，我们进一步引入一个免训练模块来确定交互何时发生。按下按钮后，它会调整 DiT 的交叉注意掩码，以便与交互相关的文本提示仅关注按下窗口内的帧，从而暂时定位角色的响应。我们进一步构建了 HelloWorldBench，这是一个包含 400 个样本的基准测试，其中包含三个社交互动指标以及三个传统指标，以进行评估。实验表明，HelloWorld 在交互质量方面超越了各种基线，同时保持了最先进的画面美学和相机姿势跟踪。项目页面：https://github.com/AlayaLab/HelloWorld</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub  1    Add to collection         Community   EditPreview      Upload images, audio, and videos by dragging in the text input, pasting, or clicking here. Tap or paste here to upload images        Comment · Sign up or log in to comment</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF GitHub 1 添加到集合 社区 EditPreview 通过拖入文本输入、粘贴或单击此处上传图像、音频和视频。点击或粘贴此处上传图片 评论 · 注册或登录以发表评论</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.05466" target="_blank">Recursive Synthesis for Long-Horizon Terminal Tasks</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Tencent Hunyuan</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Zhongzhi Li, Yucheng Shi, Zongxia Li, Ruhan Wang, Anhao Li</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.05466" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.05466" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.05466.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  High-quality long-horizon training data for terminal agents is expensive to produce, often costing hundreds to thousands of dollars per task, because each task must keep the instruction, environment, reference solution, and verifier mutually consistent. Human authoring does not scale, and direct generation with large language models (LLMs) often breaks these dependencies. We present Recursive Synthetic Terminal Tasks (RST), a recursive verified synthesis framework for constructing long-horizon terminal-agent tasks at scale. Starting from verified seed tasks, RST extends the reference solution, realigns the verifier and instruction to the new workflow, validates the result in a fresh sandbox, and reuses accepted tasks as seeds for subsequent rounds. Across fifteen recursive rounds, RST produces 37,484 synthesized terminal-agent tasks at roughly \0.05 per task. Task difficulty increases substantially over rounds: the median reference solution grows from 67 to 374 lines, the median number of executed commands grows from 40 to 244, and DeepSeek-V4-Pro pass@4 drops from 90% at R_1 to 2.5% at R_{15}$. To demonstrate training utility, we collect rejection-sampled Qwen3.5 trajectories on the synthesized tasks and use them for supervised fine-tuning. Fine-tuning on these trajectories improves Qwen3.5-27B and Qwen3.5-122B-A10B by up to 10 points on Terminal-Bench~2, Terminal-Bench Hard, and Long-Horizon Terminal Bench, while agentic PPO lifts Qwen3.5-27B to 49.44\%, 32.00\%, and 22.07\% on the three benchmarks, corresponding to relative gains of 20.0\%, 41.2\%, and 21.9\% over the base model. Moreover, after 15 rounds, the recursion shows no ceiling: synthesis yield and validation rates remain stable as difficulty keeps climbing, indicating that the process can continue well beyond the scale reported here.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 终端代理的高质量长期训练数据的生产成本很高，每个任务通常花费数百至数千美元，因为每个任务必须保持指令、环境、参考解决方案和验证器相互一致。人工创作无法扩展，使用大型语言模型 (LLM) 的直接生成通常会破坏这些依赖性。我们提出了递归合成终端任务（RST），这是一种经过递归验证的合成框架，用于大规模构建长期终端代理任务。从经过验证的种子任务开始，RST 扩展了参考解决方案，将验证器和指令重新调整到新的工作流程，在新的沙箱中验证结果，并重新使用已接受的任务作为后续轮次的种子。在 15 轮递归中，RST 生成了 37,484 个合成的终端代理任务，每个任务的价格约为 0.05 美元。任务难度在轮次中大幅增加：参考解中值从 67 行增长到 374 行，执行命令的中值数量从 40 增长到 244，DeepSeek-V4-Pro pass@4 从 R_1 时的 90% 下降到 R_{15}$ 时的 2.5%。为了证明训练实用性，我们收集了合成任务的拒绝采样 Qwen3.5 轨迹，并将它们用于监督微调。对这些轨迹的微调将 Qwen3.5-27B 和 Qwen3.5-122B-A10B 在 Terminal-Bench~2、Terminal-Bench Hard 和 Long-Horizon Terminal Bench 上提高了多达 10 个点，而agentic PPO 在三个基准上将 Qwen3.5-27B 提升至 49.44\%、32.00\% 和 22.07\%，相对于基础模型而言，相对增益为 20.0%、41.2% 和 21.9%。此外，在 15 轮之后，递归显示出没有上限：随着难度不断攀升，合成产量和验证率保持稳定，这表明该过程可以继续远远超出此处报告的规模。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page   Add to collection     Community         zli12321   Paper submitter     24 minutes ago         High-quality long-horizon training data for terminal agents is expensive to produce, often costing hundreds to thousands of dollars per task, because each task must keep the instruction, environment, reference solution, and verifier mutually consistent. Human authoring does not scale, and direct generation with large language models (LLMs) often breaks these dependencies. We present Recursive Synthetic Terminal Tasks (RST), a recursive verified synthesis framework for constructing long-horizon terminal-agent tasks at scale. Starting from verified seed tasks, RST extends the reference solution, realigns the verifier and instruction to the new workflow, validates the result in a fresh sandbox, and reuses accepted tasks as seeds for subsequent rounds. Across fifteen recursive rounds, RST produces 37,484 synthesized terminal-agent tasks at roughly $0.05 per task. Task difficulty increases substantially over rounds: the median reference solution grows from 67 to 374 lines, the median number of executed commands grows from 40 to 244, and DeepSeek-V4-Pro pass@4 drops from 90% at R1 to 2.5% at R15. To demonstrate training utility, we collect rejection-sampled Qwen3.5 trajectories on the synthesized tasks and use them for supervised fine-tuning. Fine-tuning on these trajectories improves Qwen3.5-27B and Qwen3.5-122B-A10B by up to 10 points on Terminal-Bench~2, Terminal-Bench Hard, and Long-Horizon Terminal Bench, while agentic PPO lifts Qwen3.5-27B to 49.44%, 32.00%, and 22.07% on the three benchmarks, corresponding to relative gains of 20.0%, 41.2%, and 21.9% over the base model. Moreover, after 15 rounds, the recursion shows no ceiling: synthesis yield and validation rates remain stable as difficulty keeps climbing, indicating that the process can continue well beyond the scale reported here.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 添加到集合 社区 zli12321 论文提交者 24 分钟前 终端智能体的高质量长期训练数据的生产成本高昂，每个任务通常花费数百至数千美元，因为每个任务必须保持指令、环境、参考解决方案和验证器相互一致。人工创作无法扩展，使用大型语言模型 (LLM) 的直接生成通常会破坏这些依赖性。我们提出了递归合成终端任务（RST），这是一种经过递归验证的合成框架，用于大规模构建长期终端代理任务。从经过验证的种子任务开始，RST 扩展了参考解决方案，将验证器和指令重新调整到新的工作流程，在新的沙箱中验证结果，并重新使用已接受的任务作为后续轮次的种子。在 15 轮递归中，RST 生成了 37,484 个合成的终端代理任务，每个任务的价格约为 0.05 美元。任务难度在轮次中大幅增加：参考解中值从 67 行增长到 374 行，执行命令的中值数量从 40 增长到 244，DeepSeek-V4-Pro pass@4 从 R1 时的 90% 下降到 R15 时的 2.5%。为了证明训练实用性，我们收集了合成任务的拒绝采样 Qwen3.5 轨迹，并将它们用于监督微调。对这些轨迹的微调将 Qwen3.5-27B 和 Qwen3.5-122B-A10B 在 Terminal-Bench~2、Terminal-Bench Hard 和 Long-Horizon Terminal Bench 上提高了多达 10 个点，而agentic PPO 在三个基准上将 Qwen3.5-27B 提升至 49.44%、32.00% 和 22.07%，对应于相对值与基础模型相比，分别提高了 20.0%、41.2% 和 21.9%。此外，在 15 轮之后，递归显示出没有上限：随着难度不断攀升，合成产量和验证率保持稳定，这表明该过程可以继续远远超出此处报告的规模。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.00782" target="_blank">Distill Where You Fail: Recovering Learning Signals of Negative RL-Groups from Adaptive Teacher Guidance</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Zhuowen Han, Jinwei Xiao, Zhengxi Lu, Renren Jin, Zhiyuan Yao</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.00782" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.00782" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.00782.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Reinforcement learning with verifiable rewards (RLVR) has become a standard paradigm for post-training large language models (LLMs). While Group Relative Policy Optimization (GRPO) is widely adopted, it suffers from sparse reward signals and loses gradients entirely when all responses within a group receive identical rewards. On-policy distillation (OPD) offers a natural remedy by providing dense, token-level supervision from a teacher model. However, naively combining GRPO with OPD leads to degraded performance, due to three underlying causes: not all samples benefit from distillation; fitting too quickly to the teacher undermines the exploratory capacity of RL; and OPD's advantages are asymmetric, suppressing most tokens. To address these challenges, we propose RSTG (Recovering Learning Signals via Adaptive Teacher Guidance), which applies distillation selectively and precisely where it matters most. At the sample level, OPD is restricted to negative zero-variance prompts with each sample weighted by the teacher's confidence score. At the token level, distillation targets only tokens with high student entropy or large teacher-student divergence. We further augment training with SFT on correct trajectories generated by the teacher model, injecting positive gradient signals where RL yields none. Experiments demonstrate that RSTG substantially outperforms naive GRPO+OPD by +4.02% on math and +3.05% on code.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 具有可验证奖励的强化学习（RLVR）已成为训练后大型语言模型（LLM）的标准范例。虽然组相对策略优化（GRPO）被广泛采用，但它会受到奖励信号稀疏的影响，并且当组内的所有响应都获得相同的奖励时，它会完全失去梯度。在策略蒸馏（OPD）通过从教师模型提供密集的、代币级的监督来提供一种自然的补救措施。然而，由于三个根本原因，天真地将 GRPO 与 OPD 结合会导致性能下降：并非所有样品都受益于蒸馏；太快地适应老师会削弱强化学习的探索能力；而OPD的优势是不对称的，压制了大部分代币。为了应对这些挑战，我们提出了 RSTG（通过自适应教师指导恢复学习信号），它有选择地、精确地在最重要的地方应用蒸馏。在样本级别，OPD 仅限于负零方差提示，每个样本均按教师的置信度得分进行加权。在代币层面，蒸馏仅针对具有高学生熵或大师生分歧的代币。我们进一步使用 SFT 对教师模型生成的正确轨迹进行增强训练，在 RL 不产生任何信号的情况下注入正梯度信号。实验表明，RSTG 在数学上比原始 GRPO+OPD 显着优于 4.02%，在代码上比原始 GRPO+OPD 高出 3.05%。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community         LZXzju   Paper submitter     24 minutes ago         We propose RSTG (Recovering Learning Signals via Adaptive Teacher Guidance), which applies distillation selectively and precisely where it matters most.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 LZXzju 论文提交者 24 分钟前 我们提出 RSTG（通过自适应教师指导恢复学习信号），它有选择地、精确地在最重要的地方应用蒸馏。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.04574" target="_blank">When Memory Lies: An Empirical Study of Spatial Memory Staleness in VLM Agents</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Tencent</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yushi Sun, Yanjie Zhang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.04574" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.04574" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.04574.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Memory-augmented VLM agents act on persistent spatial knowledge, yet that knowledge silently goes stale as the environment changes. We ask what happens when an agent must reconcile a confident memory claim with a contradicting observation, and whether current models can catch the conflict before it becomes a safety-relevant mistake. Using a dynamic FrozenLake testbed, we pair a staleness-detection task with a downstream navigation task across three closed-source models and three open-weight VLMs under both text and image inputs (1,800 detection runs, and 12,000 text-mode navigation episodes over four LLM navigators at a shared 50-seed scale). Three findings emerge. First, text solvability does not imply visual grounding: models that flag stale entries reliably from text nonetheless span vision F1 from 0.887 down to 0.067 on the identical grids, and the weakest keeps making fluent, confident decisions that ignore the image. Second, consuming stale memory without an audit is a safety liability: in our primary GPT-4o setting, an agent that trusts raw memory dies more than twice as often as the same agent given no memory at all. Third, auditing helps but does not close the gap: a transparent read-time filter removes much of the safety cost in text mode, yet even oracle stale labels bring no further significant gain on the current grid size, and when visual auditing is unreliable, filtering yields no consistent benefit. Together these results frame spatial-memory staleness as a safety failure mode and isolate reliable visual grounding and action selection under memory--observation conflict as the central open challenges for memory-augmented agents.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 记忆增强型 VLM 代理作用于持久的空间知识，但随着环境的变化，这些知识会悄悄地变得陈旧。我们询问，当智能体必须协调自信的记忆主张与相互矛盾的观察结果时会发生什么，以及当前的模型是否能够在冲突变成安全相关错误之前捕获冲突。使用动态 FrozenLake 测试床，我们将过时检测任务与下游导航任务配对，跨三个闭源模型和三个开放权重 VLM，在文本和图像输入下运行（1,800 次检测运行，以及在共享 50 种子规模的四个 LLM 导航器上运行 12,000 个文本模式导航片段）。出现了三个发现。首先，文本可解性并不意味着视觉基础：从文本可靠地标记过时条目的模型仍然在相同的网格上将视觉 F1 从 0.887 降低到 0.067，并且最弱的模型不断做出流畅、自信的决策，忽略图像。其次，在没有审核的情况下使用过时的内存是一种安全责任：在我们的主要 GPT-4o 设置中，信任原始内存的代理的死亡次数是完全没有内存的同一代理的两倍多。第三，审计有所帮助，但并不能缩小差距：透明的读取时间过滤器消除了文本模式下的大部分安全成本，但即使是 Oracle 过时的标签也不会为当前网格大小带来进一步的显着收益，并且当可视化审计不可靠时，过滤不会产生一致的好处。这些结果将空间记忆陈旧性视为一种安全故障模式，并将记忆观察冲突下的可靠视觉基础和动作选择隔离为记忆增强智能体面临的核心挑战。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community         Yushi98   Paper submitter     about 1 hour ago         Memory-augmented VLM agents act on persistent spatial knowledge, yet that knowledge silently goes stale as the environment changes. We ask what happens when an agent must reconcile a confident memory claim with a contradicting observation, and whether current models can catch the conflict before it becomes a safety-relevant mistake. Using a dynamic FrozenLake testbed, we pair a staleness-detection task with a downstream navigation task across three closed-source models and three open-weight VLMs under both text and image inputs (1,800 detection runs, and 12,000 text-mode navigation episodes over four LLM navigators at a shared 50-seed scale). Three findings emerge. First, text solvability does not imply visual grounding: models that flag stale entries reliably from text nonetheless span vision F1 from 0.887 down to 0.067 on the identical grids, and the weakest keeps making fluent, confident decisions that ignore the image. Second, consuming stale memory without an audit is a safety liability: in our primary GPT-4o setting, an agent that trusts raw memory dies more than twice as often as the same agent given no memory at all. Third, auditing helps but does not close the gap: a transparent read-time filter removes much of the safety cost in text mode, yet even oracle stale labels bring no further significant gain on the current grid size, and when visual auditing is unreliable, filtering yields no consistent benefit. Together these results frame spatial-memory staleness as a safety failure mode and isolate reliable visual grounding and action selection under memory--observation conflict as the central open challenges for memory-augmented agents.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 Yushi98 论文提交者 大约 1 小时前 内存增强型 VLM 代理作用于持久的空间知识，但随着环境的变化，这些知识会默默地变得陈旧。我们询问，当智能体必须协调自信的记忆主张与相互矛盾的观察结果时会发生什么，以及当前的模型是否能够在冲突变成安全相关错误之前捕获冲突。使用动态 FrozenLake 测试床，我们将过时检测任务与下游导航任务配对，跨三个闭源模型和三个开放权重 VLM，在文本和图像输入下运行（1,800 次检测运行，以及在共享 50 种子规模的四个 LLM 导航器上运行 12,000 个文本模式导航片段）。出现了三个发现。首先，文本可解性并不意味着视觉基础：从文本可靠地标记过时条目的模型仍然在相同的网格上将视觉 F1 从 0.887 降低到 0.067，并且最弱的模型不断做出流畅、自信的决策，忽略图像。其次，在没有审核的情况下使用过时的内存是一种安全责任：在我们的主要 GPT-4o 设置中，信任原始内存的代理的死亡次数是完全没有内存的同一代理的两倍多。第三，审计有所帮助，但并不能缩小差距：透明的读取时间过滤器消除了文本模式下的大部分安全成本，但即使是 Oracle 过时的标签也不会为当前网格大小带来进一步的显着收益，并且当可视化审计不可靠时，过滤不会产生一致的好处。这些结果将空间记忆陈旧性视为一种安全故障模式，并将记忆观察冲突下的可靠视觉基础和动作选择隔离为记忆增强智能体面临的核心挑战。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.04530" target="_blank">FocusMem: Factorizing Content, Readout, and Trust in Latent GUI Memory</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Zhuoran Zhang, Bowen Li, Jingcheng Ju, DogNeverSleep, Yang Shi</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.04530" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.04530" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.04530.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  GUI agents must remember both useful experience from earlier tasks and unfinished progress in the current interaction. Latent memory offers a compact solution by compressing multimodal trajectories into a few continuous tokens. Existing methods, however, usually map each trajectory to one fixed memory block and train it mainly through next-action supervision. This creates three practical problems: important details may be lost during compression, the same memory block must serve different decision stages, and irrelevant retrieved trajectories may still mislead the agent. We introduce FocusMem, which separates these responsibilities within a compact latent-memory interface. A role-aware content basis encourages episodic memory to retain reusable experience and working memory to retain task progress. A state-conditioned readout generates a decision-specific view of the same stored evidence, while a lightweight trust gate can suppress memory blocks that appear irrelevant to the current step. All components are trained while the GUI policy remains frozen. Across five GUI-agent benchmarks, FocusMem consistently outperforms a fully matched action-only fixed-memory baseline and prior latent memory adaptations. Further analysis shows that semantic and functional supervision preserve complementary information, state-conditioned readout is more robust as surrounding trajectory context grows, and the trust gate reduces the harm caused by injected irrelevant episodic evidence. These results show that effective latent memory depends not only on compressing past interaction, but also on what is retained, what is exposed, and what is allowed.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">抽象 GUI 代理必须记住早期任务中的有用经验和当前交互中未完成的进度。潜在记忆通过将多模态轨迹压缩为几个连续的标记来提供紧凑的解决方案。然而，现有的方法通常将每个轨迹映射到一个固定的内存块，并主要通过下一动作监督来训练它。这产生了三个实际问题：在压缩过程中可能会丢失重要的细节，相同的内存块必须服务于不同的决策阶段，并且不相关的检索轨迹仍然可能会误导代理。我们引入了 FocusMem，它将这些职责分离到一个紧凑的潜在内存接口中。角色感知的内容基础鼓励情景记忆来保留可重用的经验和工作记忆来保留任务进度。状态条件读出生成相同存储证据的特定于决策的视图，而轻量级信任门可以抑制与当前步骤无关的内存块。所有组件都经过训练，而 GUI 策略保持冻结状态。在五个 GUI 代理基准测试中，FocusMem 始终优于完全匹配的仅动作固定内存基准和先前的潜在内存适应。进一步的分析表明，语义和功能监督保留了补充信息，随着周围轨迹上下文的增长，状态条件读出更加稳健，并且信任门减少了注入不相关的情景证据造成的危害。这些结果表明，有效的潜在记忆不仅取决于压缩过去的互动，还取决于保留什么、暴露什么以及允许什么。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub  0    Add to collection     Community         DogNeverSleep  Paper author  Paper submitter     about 3 hours ago         GUI agents must remember both useful experience from earlier tasks and unfinished progress in the current interaction. Latent memory offers a compact solution by compressing multimodal trajectories into a few continuous tokens. Existing methods, however, usually map each trajectory to one fixed memory block and train it mainly through next-action supervision. This creates three practical problems: important details may be lost during compression, the same memory block must serve different decision stages, and irrelevant retrieved trajectories may still mislead the agent. We introduce FocusMem, which separates these responsibilities within a compact latent-memory interface. A role-aware content basis encourages episodic memory to retain reusable experience and working memory to retain task progress. A state-conditioned readout generates a decision-specific view of the same stored evidence, while a lightweight trust gate can suppress memory blocks that appear irrelevant to the current step. All components are trained while the GUI policy remains frozen. Across five GUI-agent benchmarks, FocusMem consistently outperforms a fully matched action-only fixed-memory baseline and prior latent memory adaptations. Further analysis shows that semantic and functional supervision preserve complementary information, state-conditioned readout is more robust as surrounding trajectory context grows, and the trust gate reduces the harm caused by injected irrelevant episodic evidence. These results show that effective latent memory depends not only on compressing past interaction, but also on what is retained, what is exposed, and what is allowed.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF GitHub 0 添加到集合 社区 DogNeverSleep 论文作者 论文提交者 大约 3 小时前 GUI 代理必须记住早期任务中的有用经验和当前交互中未完成的进度。潜在记忆通过将多模态轨迹压缩为几个连续的标记来提供紧凑的解决方案。然而，现有的方法通常将每个轨迹映射到一个固定的内存块，并主要通过下一动作监督来训练它。这产生了三个实际问题：在压缩过程中可能会丢失重要的细节，相同的内存块必须服务于不同的决策阶段，并且不相关的检索轨迹仍然可能会误导代理。我们引入了 FocusMem，它将这些职责分离到一个紧凑的潜在内存接口中。角色感知的内容基础鼓励情景记忆来保留可重用的经验和工作记忆来保留任务进度。状态条件读出生成相同存储证据的特定于决策的视图，而轻量级信任门可以抑制与当前步骤无关的内存块。所有组件都经过训练，而 GUI 策略保持冻结状态。在五个 GUI 代理基准测试中，FocusMem 始终优于完全匹配的仅动作固定内存基准和先前的潜在内存适应。进一步的分析表明，语义和功能监督保留了补充信息，随着周围轨迹上下文的增长，状态条件读出更加稳健，并且信任门减少了注入不相关的情景证据造成的危害。这些结果表明，有效的潜在记忆不仅取决于压缩过去的互动，还取决于保留什么、暴露什么以及允许什么。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.28048" target="_blank">SKILL-KD: Contrastive Skill Distillation for LLM Agents</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Zhejiang University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Qiming Shi, Yibo Dou, Jiawen Zhu, Yulong Tao, Linbo Jin</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.28048" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.28048" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.28048.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Skill-based prompting has become a practical mechanism for improving large language model (LLM) agents, yet existing skill acquisition methods often treat skills as experience summaries, memory entries, or direct summaries of successful demonstrations. This creates a mismatch for weaker student agents: when a student fails because it lacks task knowledge or operational strategy, its failed trajectory may not contain enough evidence to infer the missing behavior, while the teacher trajectory may be too implicit to be internalized as reusable guidance. We propose SKILL-KD, a contrastive skill distillation framework that treats skills as an explicit distillation medium between agents of different capabilities. Given a student failure and the teacher trajectory on the same task, SKILL-KD distills their actionable discrepancy into a textual skill patch, evaluates the patch by re-running the student, and iteratively refines the patch when the student still fails. To prevent repeated local updates from causing skill drift, SKILL-KD further maintains trace-linked edit histories and performs Drift-Aware Skill Consolidation, deciding whether each patch should add a new rule, delete or modify an existing rule, or be skipped. Across five agent benchmarks and two student settings, SKILL-KD consistently improves frozen student agents over fixed-model adaptation baselines.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 基于技能的提示已成为提高大语言模型（LLM）智能体的实用机制，但现有的技能获取方法往往将技能视为经验总结、记忆条目或成功演示的直接总结。这给较弱的学生智能体造成了不匹配：当学生因为缺乏任务知识或操作策略而失败时，其失败的轨迹可能没有足够的证据来推断缺失的行为，而教师的轨迹可能过于隐含，无法内化为可重用的指导。我们提出了 SKILL-KD，这是一种对比技能蒸馏框架，它将技能视为不同能力的代理之间的显式蒸馏媒介。考虑到学生在同一任务上的失败和教师的轨迹，SKILL-KD 将其可操作的差异提炼为文本技能补丁，通过重新运行学生来评估补丁，并在学生仍然失败时迭代地完善补丁。为了防止重复的本地更新导致技能漂移，SKILL-KD 进一步维护跟踪链接的编辑历史并执行漂移感知技能整合，决定每个补丁是否应添加新规则、删除或修改现有规则或跳过。在五个代理基准和两个学生设置中，SKILL-KD 在固定模型适应基线上持续改进了冻结的学生代理。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community         KhanCold   Paper submitter     about 1 hour ago         Excited to share our new work, SKILL-KD: Contrastive Skill Distillation for LLM Agents!</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 KhanCold 论文提交者 大约 1 小时前 很高兴分享我们的新作品 SKILL-KD：LLM 代理的对比技能蒸馏！</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.04964" target="_blank">WorldCycle: Self-Verifiable Reinforcement Learning for Long-Horizon Video World Models</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Tencent</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Bohai Gu, Yueyang Yuan, Taiyi Wu, Dazhao Du, Jian Liu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.04964" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.04964" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.04964.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Interactive video world models are essential for long-horizon planning and exploration, yet they suffer from compounding errors. Post-training methods such as reinforcement learning (RL) can improve these models, but they hit a verification bottleneck: for arbitrary action sequences, no ground-truth future state exists to measure long-term drift. Our key insight is that reversible action cycles make this verification possible: a sequence composed with its inverse must analytically return to the initial state, yielding annotation-free supervision on long-horizon correctness. Building on this, we introduce WorldCycle, a self-verifiable RL framework that constructs closed action cycles and their repeated executions from ordinary action sequences, and optimizes two complementary rewards: a spatial closure reward enforcing symmetry between mirrored forward and reverse segments, and a temporal consistency reward aligning states across repeated cycle executions. These rewards force the model to learn actions as consistent state operators rather than memorized temporal patterns, and extend naturally to out-of-distribution composite action cycles that the base model handles poorly. We further release CycleBench, a diagnostic benchmark for state-returning ability under complex action structures. WorldCycle reduces state returning drift by up to 44% and lifts composite-action accuracy nearly 4x over the base model, providing a vital foundation for physically grounded world models.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 交互式视频世界模型对于长期规划和探索至关重要，但它们会出现复合错误。强化学习 (RL) 等训练后方法可以改进这些模型，但它们遇到了验证瓶颈：对于任意动作序列，不存在用于测量长期漂移的真实未来状态。我们的主要见解是可逆的动作循环使这种验证成为可能：由其逆组成的序列必须通过分析返回到初始状态，从而对长范围正确性产生无注释的监督。在此基础上，我们引入了 WorldCycle，一个可自我验证的 RL 框架，它构建了封闭的动作循环及其从普通动作序列的重复执行，并优化了两个互补的奖励：在镜像的正向和反向段之间强制对称的空间闭合奖励，以及在重复循环执行中对齐状态的时间一致性奖励。这些奖励迫使模型将动作学习为一致的状态运算符，而不是记忆的时间模式，并自然地扩展到基础模型处理不佳的分布外复合动作周期。我们进一步发布了CycleBench，复杂动作结构下状态返回能力的诊断基准。 WorldCycle 将状态返回漂移减少高达 44%，并将复合动作精度比基本模型提高近 4 倍，为物理接地世界模型提供了重要基础。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page   Add to collection     Community         MarcusGu   Paper submitter     about 1 hour ago         👋 Authors here — happy to answer questions about WorldCycle!</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 添加到集合 社区 MarcusGu 论文提交者 大约 1 小时前 👋 作者在这里 — 很高兴回答有关 WorldCycle 的问题！</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.04349" target="_blank">Poly-OPD: Heterogeneous Multi-Teacher On-Policy Distillation for Capability-Selectable Flow Models</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>jingdong</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Siming Fu, Haojun Xu, Ruizhe He, Zheming Fu, Hualiang Wang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.04349" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.04349" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.04349.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Leading open text-to-image models often carry complementary strengths: one may lead on preference-aligned aesthetics while another follows compositional instructions more faithfully. However, differences in their autoencoders and noise schedules make it difficult to transfer these strengths across models. In this paper, we present Poly-OPD, a framework that can consolidate complementary strengths of heterogeneous teachers into a single compact flow-matching student. To bridge the incompatible latent spaces of different teachers, Poly-OPD performs on-policy distillation through a pixel bridge. Each student-generated image is re-encoded by a selected teacher's encoder and refined from a noise level matched by magnitude under the teacher's noise schedule. The resulting target is further matched to the student in frozen DINOv2 space, enabling supervision across incompatible latent spaces. To retain complementary capabilities without cross-teacher interference, Poly-OPD uses a gradient compatibility diagnostic to organize its adapters: attention LoRA modules are shared across teachers, whereas feed-forward adapters remain teacher-specific. During distillation, a gap-aware curriculum devotes more training to compositional categories where the student still falls short of the teacher. As each gap narrows, training shifts toward categories with larger remaining gaps. By distilling FLUX.1-dev and Z-Image into a 2.5B SD3.5-Medium student, Poly-OPD improves GenEval from 67.3 to 73.3, surpassing both larger teachers, and raises DrawBench HPSv3 from 9.34 to 11.35, consolidating both strengths within a switchable model.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 领先的开放式文本到图像模型通常具有互补的优势：一个可能会引领符合偏好的美学，而另一个则更忠实地遵循构图指令。然而，它们的自动编码器和噪声调度的差异使得很难在模型之间转移这些优势。在本文中，我们提出了 Poly-OPD，这是一个框架，可以将异质教师的互补优势整合为一个紧凑的流程匹配学生。为了弥合不同教师不兼容的潜在空间，Poly-OPD 通过像素桥进行策略蒸馏。每个学生生成的图像都由选定的教师编码器重新编码，并根据教师噪声计划下的幅度匹配的噪声水平进行细化。由此产生的目标进一步与冻结 DINOv2 空间中的学生相匹配，从而能够对不兼容的潜在空间进行监督。为了保留互补功能而不会出现教师之间的干扰，Poly-OPD 使用梯度兼容性诊断来组织其适配器：注意力 LoRA 模块在教师之间共享，而前馈适配器仍然是教师特定的。在蒸馏过程中，差距意识课程将更多的训练投入到作曲类别上，而学生仍然落后于老师。随着每个差距的缩小，训练会转向剩余差距较大的类别。通过将 FLUX.1-dev 和 Z-Image 提炼为 2.5B SD3.5-Medium 学生，Poly-OPD 将 GenEval 从 67.3 提高到 73.3，超越了两个较大的教师，并将 DrawBench HPSv3 从 9.34 提高到 11.35，将这两种优势整合到一个可切换模型中。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection      Community         simingfu   Paper submitter     about 1 hour ago         Leading open text-to-image models often carry complementary strengths: one may lead on preference-aligned aesthetics while another follows compositional instructions more faithfully. However, differences in their autoencoders and noise schedules make it difficult to transfer these strengths across models. In this paper, we present Poly-OPD, a framework that can consolidate complementary strengths of heterogeneous teachers into a single compact flow-matching student. To bridge the incompatible latent spaces of different teachers, Poly-OPD performs on-policy distillation through a pixel bridge. Each student-generated image is re-encoded by a selected teacher's encoder and refined from a noise level matched by magnitude under the teacher's noise schedule. The resulting target is further matched to the student in frozen DINOv2 space, enabling supervision across incompatible latent spaces. To retain complementary capabilities without cross-teacher interference, Poly-OPD uses a gradient compatibility diagnostic to organize its adapters: attention LoRA modules are shared across teachers, whereas feed-forward adapters remain teacher-specific. During distillation, a gap-aware curriculum devotes more training to compositional categories where the student still falls short of the teacher. As each gap narrows, training shifts toward categories with larger remaining gaps. By distilling FLUX.1-dev and Z-Image into a 2.5B SD3.5-Medium student, Poly-OPD improves GenEval from 67.3 to 73.3, surpassing both larger teachers, and raises DrawBench HPSv3 from 9.34 to 11.35, consolidating both strengths within a switchable model.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 simingfu 论文提交者 大约 1 小时前 领先的开放式文本到图像模型通常具有互补的优势：一个可能会引领偏好一致的美学，而另一个则更忠实地遵循构图指令。然而，它们的自动编码器和噪声调度的差异使得很难在模型之间转移这些优势。在本文中，我们提出了 Poly-OPD，这是一个框架，可以将异质教师的互补优势整合为一个紧凑的流程匹配学生。为了弥合不同教师不兼容的潜在空间，Poly-OPD 通过像素桥进行策略蒸馏。每个学生生成的图像都由选定的教师编码器重新编码，并根据教师噪声计划下的幅度匹配的噪声水平进行细化。由此产生的目标进一步与冻结 DINOv2 空间中的学生相匹配，从而能够对不兼容的潜在空间进行监督。为了保留互补功能而不会出现教师之间的干扰，Poly-OPD 使用梯度兼容性诊断来组织其适配器：注意力 LoRA 模块在教师之间共享，而前馈适配器仍然是教师特定的。在蒸馏过程中，差距意识课程将更多的训练投入到作曲类别上，而学生仍然落后于老师。随着每个差距的缩小，训练会转向剩余差距较大的类别。通过将 FLUX.1-dev 和 Z-Image 提炼为 2.5B SD3.5-Medium 学生，Poly-OPD 将 GenEval 从 67.3 提高到 73.3，超越了两个较大的教师，并将 DrawBench HPSv3 从 9.34 提高到 11.35，将这两种优势整合到一个可切换模型中。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.05131" target="_blank">OPD-V: Visual On-Policy Self-Distillation with Modality Balance</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Aniri, Jinhe Bi, Peng Liao, Zengjie Jin, Volker Tresp</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.05131" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.05131" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.05131.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  On-Policy Self-Distillation (OPSD) has become a standard post-training approach for improving visual reasoning in multimodal large language models (MLLMs). Existing methods draw privileged information from diverse input sources to guide self-distillation. Yet these designs overlook Modality Imbalance, a challenge inherent to MLLM reasoning. When textual information dominates generation, the model cannot fully integrate its multimodal input. Consequently, carefully designed privileged information remains underused, limiting the effectiveness of OPSD. To examine this limitation, we construct a Positive Teacher with the Zoom-In Image and a Negative Teacher with the Mask Image, which exhibit different degrees of Modality Imbalance. Changes in their reasoning correctness and token logits reveal that Modality Balance can itself serve as privileged information. Motivated by this finding, we introduce OPD-V, a visual OPSD paradigm that instantiates such information through the Positive Teacher and Negative Teacher. Positive Modality-Balance Logits Margins define a Modality-Balance Trust Region that selects the on-policy tokens used for self-distillation. Experiments across 6 benchmarks, 4 MLLM backbones, and 5 post-training methods show that OPD-V consistently improves reasoning performance while reducing training cost.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 On-Policy Self-Distillation (OPSD) 已成为改善多模态大语言模型 (MLLM) 视觉推理的标准训练后方法。现有方法从不同的输入源中提取特权信息来指导自蒸馏。然而，这些设计忽视了模态不平衡，这是 MLLM 推理固有的挑战。当文本信息主导生成时，模型无法完全集成其多模态输入。因此，精心设计的特权信息仍未得到充分利用，限制了 OPSD 的有效性。为了检查这一局限性，我们构建了一个带有放大图像的正教师和一个带有掩模图像的负教师，它们表现出不同程度的模态不平衡。推理正确性和令牌逻辑的变化表明模态平衡本身可以充当特权信息。受这一发现的启发，我们引入了 OPD-V，这是一种视觉 OPSD 范式，它通过积极教师和消极教师实例化此类信息。正模态平衡逻辑裕度定义模态平衡信任区域，该区域选择用于自蒸馏的在策略令牌。 6 个基准、4 个 MLLM 主干和 5 种训练后方法的实验表明，OPD-V 持续提高推理性能，同时降低训练成本。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community   EditPreview      Upload images, audio, and videos by dragging in the text input, pasting, or clicking here. Tap or paste here to upload images        Comment · Sign up or log in to comment</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 EditPreview 通过拖入文本输入、粘贴或单击此处上传图像、音频和视频。点击或粘贴此处上传图片 评论 · 注册或登录以发表评论</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.02162" target="_blank">Lossless Tensor Compression as Program Synthesis</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Singapore Management University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>jiekeshi, Jieke Shi, Junda He, Wenjia Jiang, Weifeng Sun</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.02162" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.02162" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.02162.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Model checkpoints are growing in both number and size, which makes archival, transfer, and deployment increasingly costly. General-purpose compressors can reduce storage requirements but ignore tensor structure, whereas existing tensor-specific compressors rely on fixed and format-specific pipelines. We present Brevis, which formulates lossless tensor compression as program synthesis. We design a typed domain-specific language (DSL) that captures recurring tensor structures, such as repeated regions and floating-point fields, through a set of reversible operators. Given a tensor, Brevis synthesizes a self-contained DSL program that reconstructs it bit-exactly. A checkpoint-specific production prior, learned from a small representative sample of tensors, guides a bounded A* search to synthesize compact programs, which can later be executed directly for bit-exact decompression. On 10 public checkpoints spanning language, audio, and image generation models, Brevis reduces 2.13 TB of checkpoint data to 1.41 TB, a 33.93% storage reduction. It produces archives up to 30.87% smaller than those of four general-purpose compressors, including zstd and gzip, and smaller archives than the tensor-specific compressors ZipNN and DFloat11. Under a practical concurrency configuration, Brevis achieves 3.60 GB/s compression and 6.61 GB/s decompression while preserving every source byte.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 模型检查点的数量和规模都在增长，这使得归档、传输和部署的成本越来越高。通用压缩器可以减少存储需求，但忽略张量结构，而现有的张量专用压缩器依赖于固定且特定于格式的管道。我们提出了 Brevis，它将无损张量压缩制定为程序综合。我们设计了一种类型化的领域特定语言（DSL），它通过一组可逆运算符捕获重复出现的张量结构，例如重复区域和浮点字段。给定一个张量，Brevis 合成一个独立的 DSL 程序，可以精确地重建它。从张量的小代表性样本中学习的特定于检查点的生产先验，指导有界 A* 搜索来合成紧凑的程序，稍后可以直接执行该程序以进行位精确解压缩。在涵盖语言、音频和图像生成模型的 10 个公共检查点上，Brevis 将检查点数据从 2.13 TB 减少到 1.41 TB，存储减少了 33.93%。它生成的档案比 zstd 和 gzip 等四种通用压缩器小 30.87%，并且比张量专用压缩器 ZipNN 和 DFloat11 更小。在实际的并发配置下，Brevis 实现了 3.60 GB/s 的压缩和 6.61 GB/s 的解压，同时保留了每个源字节。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub  1    Add to collection     Community         jiekeshi  Paper author  Paper submitter     about 8 hours ago • edited about 8 hours ago        Brevis formulates lossless tensor compression as program synthesis, generating compact, executable DSL programs that achieve superior storage reduction and high-speed, bit-exact reconstruction for large model checkpoints.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF GitHub 1 添加到集合 社区 jiekeshi 论文作者 论文提交者 大约 8 小时前 • 编辑 大约 8 小时前 Brevis 将无损张量压缩制定为程序合成，生成紧凑、可执行的 DSL 程序，从而实现卓越的存储减少和大型模型检查点的高速、位精确重建。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.05042" target="_blank">BridgeVLA++: A Data-Efficient, Generalizable, and Memory-Augmented Vision-Language-Action Framework for 3D Manipulation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Peiyan Li, Yuze Zhu, Yixiang Chen, Qisen Ma, Yuan Xu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.05042" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.05042" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.05042.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Leveraging pre-trained vision-language models (VLMs) to construct vision-language-action (VLA) models has emerged as a promising paradigm for 3D robot manipulation. However, existing 3D VLA methods remain data-hungry, exhibit limited generalization under distribution shifts, and lack explicit memory of past observations. These limitations hinder their application to data-scarce, open-world, and memory-dependent manipulation scenarios. Our previous work, BridgeVLA, improves data efficiency and generalization by preserving the input--output alignment of a pre-trained VLM during 3D action learning: raw point clouds are projected into multi-view images, and intermediate heatmaps are predicted before generating robot actions. In this work, we develop BridgeVLA++ by equipping BridgeVLA with a unified spatio-temporal memory architecture that models persistent spatial context and temporal interaction history. The resulting memory-augmented framework can reason over observation histories while preserving BridgeVLA's data efficiency and generalization capabilities. Extensive experiments show that our framework achieves strong performance on spatial manipulation tasks while exhibiting robust generalization. BridgeVLA++ further achieves state-of-the-art performance on two challenging memory-dependent manipulation benchmarks without sacrificing the data efficiency and generalization of the original BridgeVLA. In addition, BridgeVLA++ performs effectively in bimanual manipulation settings and is validated on an additional real-world robotic platform, demonstrating its scalability across tasks, environments, and robotic platforms. These results establish BridgeVLA++ as a unified 3D vision-language-action framework that simultaneously supports data-efficient learning, robust generalization, and effective memory-aware robot manipulation. Project website: https://bridgevla-plus.github.io/.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：利用预先训练的视觉语言模型 (VLM) 构建视觉语言动作 (VLA) 模型已成为 3D 机器人操作的一种有前途的范例。然而，现有的 3D VLA 方法仍然需要大量数据，在分布变化下表现出有限的泛化能力，并且缺乏对过去观察结果的明确记忆。这些限制阻碍了它们在数据稀缺、开放世界和依赖内存的操作场景中的应用。我们之前的工作 BridgeVLA 通过在 3D 动作学习期间保留预训练 VLM 的输入输出对齐来提高数据效率和泛化能力：原始点云被投影到多视图图像中，并在生成机器人动作之前预测中间热图。在这项工作中，我们通过为 BridgeVLA 配备统一的时空内存架构来开发 BridgeVLA++，该架构可以模拟持久的空间上下文和时间交互历史。由此产生的内存增强框架可以对观察历史进行推理，同时保留 BridgeVLA 的数据效率和泛化能力。大量的实验表明，我们的框架在空间操作任务上实现了强大的性能，同时表现出强大的泛化能力。 BridgeVLA++ 在两个具有挑战性的内存相关操作基准上进一步实现了最先进的性能，而无需牺牲原始 BridgeVLA 的数据效率和泛化能力。此外，BridgeVLA++ 在双手操作设置中表现出色，并在其他真实机器人平台上进行了验证，展示了其跨任务、环境和机器人平台的可扩展性。这些结果将 BridgeVLA++ 确立为统一的 3D 视觉-语言-动作框架，同时支持数据高效学习、鲁棒泛化和有效的记忆感知机器人操作。项目网站：https://bridgevla-plus.github.io/。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page   Add to collection         Community         LPY   Paper submitter     about 1 hour ago         BridgeVLA++ achieves state of the art across five manipulation benchmarks with only 9.2% additional parameters, adding powerful spatio-temporal memory while fully preserving—and often improving—BridgeVLA’s exceptional data efficiency and OOD generalization.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 添加到集合 社区 LPY 论文提交者 大约 1 小时前 BridgeVLA++ 仅用 9.2% 的额外参数就在五个操作基准上实现了最先进的水平，添加了强大的时空内存，同时完全保留（并且经常改进）BridgeVLA 卓越的数据效率和 OOD 泛化能力。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.04701" target="_blank">UniWorld-View: Large-Baseline View Synthesis via Video Diffusion Models</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Haiyang Zhou, Wangbo Yu, Chaoran Feng, Xunyu Zhou, Yonghong Tian</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.04701" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.04701" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.04701.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  The abundance of casually captured monocular videos and images on social media provides a valuable source for immersive content creation, where generating novel views from such sparse observations can greatly enhance user experiences. However, producing photorealistic and geometrically consistent views with precise camera control remains challenging when input coverage is extremely limited. Reconstruction-based approaches such as NeRF and 3D Gaussian Splatting (3DGS) deteriorate severely under sparse inputs and fail to explicitly handle occlusions. Generative methods ease data requirements but still struggle with large-baseline view synthesis due to inaccurate or implicit geometric guidance. To overcome these limitations, we introduce UniWorld-View, a unified framework for controllable large-baseline novel view synthesis from monocular inputs. UniWorld-View integrates explicit 3D guidance with generative diffusion modeling to enable precise camera control and geometrically consistent view generation. The geometric guidance is obtained through an occlusion-aware point cloud rendering strategy that resolves visibility ambiguities and provides accurate priors for diffusion-based synthesis. By coupling this rendering strategy with powerful video diffusion backbones, UniWorld-View achieves high-fidelity novel view generation even under extreme camera motions and wide-baseline changes, and can further provide multi-view videos for downstream dynamic 3DGS reconstruction. Experiments on the WorldScore benchmark and zero-shot NVS benchmarks demonstrate the effectiveness of UniWorld-View in controllability, geometric consistency, and visual fidelity.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 社交媒体上大量随意捕捉的单眼视频和图像为沉浸式内容创作提供了宝贵的资源，从这种稀疏的观察中生成新颖的视图可以极大地增强用户体验。然而，当输入覆盖范围极其有限时，通过精确的相机控制生成逼真且几何一致的视图仍然具有挑战性。 NeRF 和 3D Gaussian Splatting (3DGS) 等基于重建的方法在稀疏输入下严重恶化，并且无法显式处理遮挡。生成方法缓解了数据需求，但由于不准确或隐式的几何指导，仍然难以实现大基线视图合成。为了克服这些限制，我们引入了 UniWorld-View，这是一个用于从单目输入进行可控大基线新颖视图合成的统一框架。 UniWorld-View 将显式 3D 引导与生成扩散建模相集成，以实现精确的摄像机控制和几何一致的视图生成。几何引导是通过遮挡感知点云渲染策略获得的，该策略解决可见性模糊性并为基于扩散的合成提供准确的先验。通过将此渲染策略与强大的视频扩散主干相结合，UniWorld-View 即使在极端的相机运动和宽基线变化下也能实现高保真新颖的视图生成，并且可以进一步为下游动态 3DGS 重建提供多视图视频。 WorldScore 基准和零样本 NVS 基准的实验证明了 UniWorld-View 在可控性、几何一致性和视觉保真度方面的有效性。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  92    Add to collection     Community         Marblueocean   Paper submitter     about 1 hour ago</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 92 添加到集合 社区 Marblueocean 论文提交者 大约 1 小时前</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.05108" target="_blank">Agent Against Agent: An Agentic System for Automatic Prompt Injection Red Teaming</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Pennsylvania State University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yanting Wang, Chenlong Yin, Runpeng Geng, Jinyuan Jia</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.05108" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.05108" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.05108.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Prompt injection poses significant security risks to LLM agents. Efficient and effective red-teaming is therefore critical, both for evaluating these risks and for collecting training data to improve defenses. Existing state-of-the-art prompt injection red-teaming methods primarily rely on reinforcement learning (RL), producing attacker models that often generalize poorly to new target LLMs. In this work, we develop PIMiner, an agentic system for prompt injection red-teaming. During training, PIMiner is trained on a sequence of (dataset, target model) pairs and builds a strategy library from scratch. At test time, the learned strategy library can be directly transferred to a previously unseen target LLM without additional training. PIMiner requires only a small number of queries to a target agent (e.g., 10) per test sample. Experimental results demonstrate that PIMiner achieves strong performance. On IPIArena, it attains a 76.2% ASR against Gemini-2.5-Pro, 61.9% ASR against GPT-5.1, and 42.9% ASR against Claude-Sonnet-4.5. On AgentDojo, it achieves an 86.7% ASR against Gemini-2.5-Pro, 53.3% ASR against GPT-5.1, and 40.0% ASR against Claude-Sonnet-4.5.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 即时注入给 LLM 代理带来了重大的安全风险。因此，高效且有效的红队对于评估这些风险和收集训练数据以改善防御至关重要。现有最先进的提示注入红队方法主要依赖于强化学习（RL），产生的攻击者模型通常很难推广到新的目标法学硕士。在这项工作中，我们开发了 PIMiner，一个用于快速注入红队的代理系统。在训练期间，PIMiner 接受一系列（数据集、目标模型）对的训练，并从头开始构建策略库。在测试时，学习到的策略库可以直接转移到以前未见过的目标LLM，无需额外的训练。每个测试样本 PIMiner 只需要对目标代理进行少量查询（例如 10 次）。实验结果表明 PIMiner 具有很强的性能。在 IPIArena 上，它对 Gemini-2.5-Pro 的 ASR 为 76.2%，对 GPT-5.1 的 ASR 为 61.9%，对 Claude-Sonnet-4.5 的 ASR 为 42.9%。在 AgentDojo 上，它对 Gemini-2.5-Pro 的 ASR 达到 86.7%，对 GPT-5.1 的 ASR 达到 53.3%，对 Claude-Sonnet-4.5 的 ASR 达到 40.0%。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub     Add to collection     Community         SecureLLMSys   Paper submitter     20 minutes ago         The code is available at: https://github.com/wang-yanting/PIMiner</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF GitHub 添加到集合 社区 SecureLLMSys 论文提交者 20 分钟前 代码位于：https://github.com/wang-yanting/PIMiner</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.04926" target="_blank">Consistency-Driven Co-Evolution for Self-Supervised Cross-Representation Learning</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Xuehang Guo, Pengyuan Li, Tom Hope, Tirthankar Ghosal, Manling Li</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.04926" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.04926" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.04926.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  As chart images, tabular data, and visualization code play increasingly important roles across diverse domains, cross-representation understanding across these modalities poses fundamental challenges for AI systems: the relationships across representations are inherently one-to-many, supervision is ambiguous and costly, and model optimization lacks a principled signal that is both direction-adaptive and representation-generalizable beyond task-specific objectives. We introduce CoCoEvolve to improve consistency across chart, table, and code representations. Instead of treating cross-representation mapping as a one-to-many problem, we define explicit one-to-one correspondences and optimize models using agreement between representations, without additional annotations. During training, CoCoEvolve@Train performs co-evolution across the chart-table-code cycle, while CoCoEvolve@Test applies the same consistency objective at inference time for test-time co-optimization. We also present CoCoEvolve@Eval, an evaluation suite covering all six cross-representation tasks. Across four benchmarks, CoCoEvolve improves performance in both training-time and test-time settings. Our project page: https://xhguo7.github.io/CoCoEvolve/.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：随着图表图像、表格数据和可视化代码在不同领域中发挥着越来越重要的作用，跨这些模式的交叉表示理解给人工智能系统带来了根本性的挑战：跨表示的关系本质上是一对多的，监督是模糊且成本高昂的，模型优化缺乏一个原则性的信号，该信号既是方向自适应的，又是超出特定任务目标的表示泛化的。我们引入 CoCoEvolve 来提高图表、表格和代码表示的一致性。我们没有将交叉表示映射视为一对多问题，而是定义显式的一对一对应关系，并使用表示之间的一致性来优化模型，而不需要额外的注释。在训练期间，CoCoEvolve@Train 在图表-表格-代码周期中执行协同进化，而 CoCoEvolve@Test 在推理时应用相同的一致性目标以进行测试时协同优化。我们还推出了 CoCoEvolve@Eval，这是一个涵盖所有六个交叉表示任务的评估套件。在四个基准测试中，CoCoEvolve 提高了训练时和测试时设置的性能。我们的项目页面：https://xhguo7.github.io/CoCoEvolve/。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community         xuehang   Paper submitter     about 1 hour ago         CoCoEvolve: Consistency-Driven Co-Evolution for Self-Supervised Cross-Representation Learning</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 xuehang 论文提交者 大约 1 小时前 CoCoEvolve: Consistency-Driven Co-Evolution for Self-Supervised Cross Representation Learning</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.22143" target="_blank">TriGlue: a Biology-Inspired Generative Model for Generating Molecular Glue-Induced Ternary Complex</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yuliang Yan, Shuo Yan, Haochun Tang, Yiqin Sun, Enyan Dai</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.22143" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.22143" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.22143.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Molecular glue degraders have emerged as a promising strategy for targeted protein degradation by inducing ternary complex formation between an E3 ubiquitin ligase and a target protein. Despite their therapeutic potential, computational design of molecular glues remains largely unexplored. Unlike conventional structure-based drug design, molecular glue design is governed by the unknown protein-protein interface and requires the simultaneous modeling of ligand generation, protein-protein docking, and ternary complex assembly. In this work, we formulate molecular glue design as a ternary complex generation problem and propose a biology-inspired generative framework, TriGlue. Motivated by the mechanism of molecular glue action, we decompose ternary complex generation into two coupled stages: interface estimation and interface-conditioned complex generation. First, we develop an SE(3)-equivariant interface estimation module that predicts a geometrically constrained protein-protein interface from unbound monomer structures. Second, we introduce an interface-conditioned ternary flow matching network that jointly generates the molecular glue and predicts the rigid-body transformation required to assemble the ternary complex. Extensive experiments demonstrate that TriGlue generates chemically valid molecules and produces plausible ternary complexes, which highlight the potential of biology-inspired generative modeling for accelerating molecular glue discovery. Our code is available at https://github.com/yuliangyan0807/molecular-glue-design.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 分子胶降解剂通过诱导 E3 泛素连接酶和靶蛋白之间形成三元复合物，成为一种有前景的靶向蛋白降解策略。尽管分子胶具有治疗潜力，但其计算设计在很大程度上仍未得到探索。与传统的基于结构的药物设计不同，分子胶设计受未知的蛋白质-蛋白质界面控制，需要同时对配体生成、蛋白质-蛋白质对接和三元复合物组装进行建模。在这项工作中，我们将分子胶设计表述为三元复杂的生成问题，并提出了一种受生物学启发的生成框架 TriGlue。在分子胶作用机制的推动下，我们将三元复合体生成分解为两个耦合阶段：界面估计和界面条件复合体生成。首先，我们开发了一个 SE(3) 等变界面估计模块，该模块可以根据未结合的单体结构预测几何约束的蛋白质-蛋白质界面。其次，我们引入了一个界面条件三元流匹配网络，该网络共同生成分子胶并预测组装三元复合物所需的刚体变换。大量实验表明，TriGlue 可以生成化学上有效的分子并产生合理的三元复合物，这凸显了受生物学启发的生成模型在加速分子胶发现方面的潜力。我们的代码可在 https://github.com/yuliangyan0807/molecular-glue-design 获取。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub  1    Add to collection     Community         Goal-aweiluo   Paper submitter     about 2 hours ago         Excited to share TriGlue, a biology-inspired generative framework for the de novo design of molecular glue-induced ternary complexes.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF GitHub 1 添加到集合 社区目标-aweiluo 论文提交者 大约 2 小时前 很高兴分享 TriGlue，这是一种受生物学启发的生成框架，用于从头设计分子胶诱导的三元复合物。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.27853" target="_blank">FinanceHarness: Autonomous Financial Deep Research Framework</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yijia Xiao, Rujun Han, Yanfei Chen, Zifeng Wang, Ke Jiang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.27853" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.27853" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.27853.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Powered by advances in LLMs and autonomous agents, deep research has become one of the most widely adopted agentic products. However, most deep research systems write general-purpose reports, which are inadequate for financial deep research. Financial research demands specialized knowledge to analyze historical patterns and forecast upcoming events. Automating financial deep research therefore requires both a layered harness to drive the research agent and a verifiable, point-in-time benchmark that prevents leakage of future information. We present FinanceHarness, a harness that runs finance-oriented tools and practitioner-guided workflows, automating financial deep research end to end: environment and data construction, the agent execution loop, and reward modeling. We further propose FinanceGym, comprising thesis-driven research questions and rubrics that combine pre-cutoff and post-cutoff criteria. Professional expert validation yields an 82% pass rate. Even leading LLMs and agents score below 40% on the rubrics, showing that FinanceGym is challenging and leaves substantial headroom. With the same open-weight backbone, FinanceHarness improves the overall rubric score from 25.3% to 32.4%. FinanceHarness is available at https://github.com/Yijia-Xiao/FinanceHarness.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 在法学硕士和自主代理的进步的推动下，深度研究已成为最广泛采用的代理产品之一。然而，大多数深度研究系统都会编写通用报告，这不足以进行金融深度研究。金融研究需要专业知识来分析历史模式并预测即将发生的事件。因此，自动化金融深度研究既需要一个分层的工具来驱动研究代理，也需要一个可验证的时间点基准来防止未来信息的泄露。我们推出了 FinanceHarness，这是一种运行面向财务的工具和从业者指导的工作流程的工具，可实现端到端的金融深度研究自动化：环境和数据构建、代理执行循环和奖励建模。我们进一步提出了 FinanceGym，包括论文驱动的研究问题和结合了截止前和截止后标准的标准。专业专家验证，通过率82%。即使是领先的法学硕士和代理人在评分标准上的得分也低于 40%，这表明 FinanceGym 具有挑战性并留有巨大的发展空间。凭借相同的开放权重骨干网，FinanceHarness 将总体评分从 25.3% 提高到 32.4%。 FinanceHarness 可在 https://github.com/Yijia-Xiao/FinanceHarness 获取。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page   Add to collection     Community         Rujun   Paper submitter     37 minutes ago         We built a point-in-time financial deep research benchmark, featuring questions and rubrics generated through a rigorous, quality-controlled data pipeline. Additionally, we contracted financial experts to validate our data, with each spending an average of 1.2 hours on this meticulous review process. Leading LLMs such Opus-5 with our Finance Harness only score 44.9% on our leaderboard, showcasing the significant challenge our benchmark presents. We invite everyone to contribute to our leaderboard!</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 添加到集合 社区 Rujun 论文提交者 37 分钟前 我们构建了一个时间点金融深度研究基准，其中包含通过严格的、质量控制的数据管道生成的问题和评价标准。此外，我们还聘请了财务专家来验证我们的数据，每个专家平均花费 1.2 小时来进行这一细致的审核过程。领先的法学硕士（例如采用我们的 Finance Harness 的 Opus-5）在我们的排行榜上仅得分 44.9%，这表明我们的基准提出了重大挑战。我们邀请大家为我们的排行榜做出贡献！</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.03207" target="_blank">DRIFT: Derailing Denoising Trajectories of Flow-Matching VLAs with Adversarial Patch Attack</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>TaeHoseong, Hoseong Tae, Jong-Seok Lee</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.03207" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.03207" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.03207.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Flow-matching vision-language-action (VLA) models such as pi0 generate robot actions by integrating a learned denoising velocity field, and have been reported to resist adversarial perturbations that readily fool autoregressive VLAs. We show that this robustness is largely illusory: it stems from prior attacks ignoring the multi-step denoising ODE. We introduce DRIFT (Denoising Redirection via Input perturbation of the Flow-matching Trajectory), a test-time universal adversarial patch placed on the robot's gripper that attacks the denoising velocity field of an off-the-shelf policy. Our central finding is counterintuitive: attacking only the first denoising step is both stronger and cheaper than attacking a wider window of steps, which we explain through a gradient conflict unique to input-space optimization and which is exactly opposite to the training-time backdoor regime. On pi0 and pi0.5 across four LIBERO suites, DRIFT breaks essentially all originally-solvable tasks with a small single patch, far exceeding action- and embedding-space attack baselines.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 pi0 等流匹配视觉语言动作 (VLA) 模型通过集成学习的去噪速度场来生成机器人动作，并且据报道可以抵抗容易欺骗自回归 VLA 的对抗性扰动。我们证明这种鲁棒性很大程度上是虚幻的：它源于先前的攻击忽略了多步去噪 ODE。我们引入了 DRIFT（通过流匹配轨迹的输入扰动进行去噪重定向），这是一个放置在机器人抓手上的测试时通用对抗补丁，用于攻击现成策略的去噪速度场。我们的中心发现是违反直觉的：仅攻击第一个去噪步骤比攻击更宽的步骤窗口更强大且更便宜，我们通过输入空间优化特有的梯度冲突来解释这一点，这与训练时后门机制完全相反。在四个 LIBERO 套件的 pi0 和 pi0.5 上，DRIFT 通过一个小补丁基本上破坏了所有最初可解决的任务，远远超过了动作和嵌入空间攻击基线。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community         TaeHoseong  Paper author  Paper submitter     about 11 hours ago         Can a single denoising step determine the fate of an entire robot policy?</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 TaeHoseong 论文作者 论文提交者 大约 11 小时前 单个去噪步骤能否决定整个机器人策略的命运？</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.03392" target="_blank">Self-Evolving Coding Agents</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Nanjing University of Science and Technology</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Hao Zhou, Haichuan Hu, Ye Shang, Quanjun Zhang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.03392" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.03392" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.03392.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Large language models are increasingly embedded in software engineering workflows as coding agents that can inspect repositories, invoke tools, execute tests, debug failures, and generate patches. Yet most existing agents remain largely static after deployment, even though software development is a dynamic, feedback-rich process in which repositories evolve, dependencies change, tests fail, and repair attempts leave reusable experience. This tension has motivated a growing body of work on self-evolving coding agents, where the agent improves its future behavior by updating its framework, memory, skills, tools, models, or collaboration structures from prior coding interactions. In this survey, we provide a systematic synthesis of this emerging area. We first define self-evolving coding agents and distinguish them from conventional coding agents and general self-evolving agents. We then develop an object-centered taxonomy that characterizes what evolves in these systems, and complement it with two orthogonal perspectives: when evolution occurs and what software-specific evidence drives it. Across the literature, we find that executable feedback, repository-level context, and coding trajectories give software engineering a distinctive role as a natural domain for agent self-evolution, but also introduce new challenges in feedback reliability, benchmark overfitting, safety, maintainability, cost, and generalization. By organizing existing work around these dimensions, this survey aims to clarify the conceptual boundaries of self-evolving coding agents and provide a foundation for designing more adaptive, reliable, and software-aware agentic systems. The papers we collect can be found at https://github.com/zhouhao1024/Awesome-Self-Evolving-Coding-Agents.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 大型语言模型越来越多地嵌入到软件工程工作流程中，作为编码代理，可以检查存储库、调用工具、执行测试、调试故障和生成补丁。然而，大多数现有代理在部署后基本上保持静态，尽管软件开发是一个动态的、反馈丰富的过程，其中存储库不断发展、依赖项发生变化、测试失败，而修复尝试会留下可重用的体验。这种张力激发了越来越多的关于自我进化编码代理的工作，其中代理通过更新其框架、记忆、技能、工具、模型或先前编码交互的协作结构来改进其未来行为。在本次调查中，我们对这一新兴领域进行了系统综合。我们首先定义自进化编码代理，并将其与传统编码代理和一般自进化代理区分开来。然后，我们开发了一种以对象为中心的分类法，该分类法描述了这些系统中演变的内容，并用两个正交视角对其进行补充：演变何时发生以及驱动它的软件特定证据。在整个文献中，我们发现可执行反馈、存储库级上下文和编码轨迹赋予软件工程作为代理自我进化的自然领域的独特作用，但也带来了反馈可靠性、基准过度拟合、安全性、可维护性、成本和泛化方面的新挑战。通过围绕这些维度组织现有的工作，本次调查旨在澄清自我进化编码代理的概念边界，并为设计更具适应性、更可靠和软件感知的代理系统提供基础。我们收集的论文可以在 https://github.com/zhouhao1024/Awesome-Self-Evolving-Coding-Agents 找到。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub  7    Add to collection     Community         tomhu   Paper submitter     about 3 hours ago         A comprehensive survey of self-evolving coding agents</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF GitHub 7 添加到集合 社区 tomhu 论文提交者 大约 3 小时前 自进化编码代理的全面调查</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.04244" target="_blank">SIGNPOST-Bench: Benchmarking Text-Vision Conflict Resolution in Multimodal Large Language Models</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Sirun Li, Minghao Liu, Ling Dai, Yong Li, Haoxin Lyu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.04244" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.04244" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.04244.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Multimodal large language models (MLLMs) make grounded predictions in real-world scenes by combining visual and textual cues, yet existing benchmarks rarely reveal how they arbitrate between these evidence sources when they conflict. We introduce SIGNPOST-Bench, a controlled counterfactual benchmark for evaluating text-vision conflict resolution. Each source image is transformed into a counterfactual quintuplet of Original, Blank, Similar, Random, and Adversarial variants. Synthetic, localized scene-text interventions are designed to preserve non-textual content, enabling paired measurements of changes in localization performance and directed shifts toward geographic targets introduced by conflicting text. SIGNPOST-Bench contains 5,111 counterfactual groups and 25,555 image variants from four datasets. We evaluate 20 MLLMs from seven providers. Compared with Original images, Adversarial variants raise median localization error from 282 km to 1,347 km, a 4.8-fold increase. Among geocodable adversarial samples, 6.5-20.1% of predictions lie less than 50 km from the injected target across models, and every evaluated model exhibits a positive mean paired reduction in target distance from Blank to Adversarial. Compatible, unrelated, and conflicting text replacements produce distinct effects on model predictions, while clean-input localization performance does not fully predict robustness to conflicting text. These results establish visual geolocation as a continuous diagnostic of scene-text arbitration and provide a controlled framework for evaluating how MLLMs resolve conflicting multimodal evidence.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 多模态大语言模型（MLLM）通过结合视觉和文本线索在现实场景中做出有根据的预测，但现有的基准很少揭示当这些证据来源发生冲突时它们如何在这些证据来源之间进行仲裁。我们引入了 SIGNPOST-Bench，这是一种用于评估文本视觉冲突解决方案的受控反事实基准。每个源图像都被转换为原始、空白、相似、随机和对抗变体的反事实五元组。合成的本地化场景文本干预旨在保留非文本内容，从而能够对本地化性能的变化进行配对测量，并定向转向由冲突文本引入的地理目标。 SIGNPOST-Bench 包含来自四个数据集的 5,111 个反事实组和 25,555 个图像变体。我们评估了来自 7 个提供商的 20 个 MLLM。与原始图像相比，对抗变体将中位定位误差从 282 公里提高到 1,347 公里，增加了 4.8 倍。在可地理编码的对抗样本中，6.5-20.1% 的预测距离跨模型的注入目标不到 50 公里，并且每个评估模型都表现出从空白到对抗的目标距离的正平均配对减少。兼容、不相关和冲突的文本替换会对模型预测产生不同的影响，而干净输入的本地化性能并不能完全预测冲突文本的鲁棒性。这些结果将视觉地理定位确立为场景文本仲裁的连续诊断，并提供了一个用于评估 MLLM 如何解决冲突的多模态证据的受控框架。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub  0    Add to collection      Community         inorganicwriter   Paper submitter     about 6 hours ago         Multimodal large language models (MLLMs) make grounded predictions in real-world scenes by combining visual and textual cues, yet existing benchmarks rarely reveal how they arbitrate between these evidence sources when they conflict. We introduce SIGNPOST-Bench, a controlled counterfactual benchmark for evaluating text-vision conflict resolution. Each source image is transformed into a counterfactual quintuplet of Original, Blank, Similar, Random, and Adversarial variants. Synthetic, localized scene-text interventions are designed to preserve non-textual content, enabling paired measurements of changes in localization performance and directed shifts toward geographic targets introduced by conflicting text. SIGNPOST-Bench contains 5,111 counterfactual groups and 25,555 image variants from four datasets. We evaluate 20 MLLMs from seven providers. Compared with Original images, Adversarial variants raise median localization error from 282 km to 1,347 km, a 4.8-fold increase. Among geocodable adversarial samples, 6.5-20.1% of predictions lie less than 50 km from the injected target across models, and every evaluated model exhibits a positive mean paired reduction in target distance from Blank to Adversarial. Compatible, unrelated, and conflicting text replacements produce distinct effects on model predictions, while clean-input localization performance does not fully predict robustness to conflicting text. These results establish visual geolocation as a continuous diagnostic of scene-text arbitration and provide a controlled framework for evaluating how MLLMs resolve conflicting multimodal evidence.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF GitHub 0 添加到集合 社区无机作者 论文提交者 大约 6 小时前 多模态大语言模型 (MLLM) 通过结合视觉和文本线索在现实世界场景中做出有根据的预测，但现有基准很少揭示它们在这些证据来源发生冲突时如何进行仲裁。我们引入了 SIGNPOST-Bench，这是一种用于评估文本视觉冲突解决方案的受控反事实基准。每个源图像都被转换为原始、空白、相似、随机和对抗变体的反事实五元组。合成的本地化场景文本干预旨在保留非文本内容，从而能够对本地化性能的变化进行配对测量，并定向转向由冲突文本引入的地理目标。 SIGNPOST-Bench 包含来自四个数据集的 5,111 个反事实组和 25,555 个图像变体。我们评估了来自 7 个提供商的 20 个 MLLM。与原始图像相比，对抗变体将中位定位误差从 282 公里提高到 1,347 公里，增加了 4.8 倍。在可地理编码的对抗样本中，6.5-20.1% 的预测距离跨模型的注入目标不到 50 公里，并且每个评估模型都表现出从空白到对抗的目标距离的正平均配对减少。兼容、不相关和冲突的文本替换会对模型预测产生不同的影响，而干净输入的本地化性能并不能完全预测冲突文本的鲁棒性。这些结果将视觉地理定位确立为场景文本仲裁的连续诊断，并提供了一个用于评估 MLLM 如何解决冲突的多模态证据的受控框架。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.04378" target="_blank">Helping Music Co-Creation Agents 'Listen' Well: Hierarchical Self-Supervised World Models for Understanding and Generation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>drscotthawley, Scott H. Hawley</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.04378" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.04378" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.04378.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Collaborative music agents need internal representations rich enough to support both understanding and generation, yet flexible enough for a workflow where the human retains agency. We present a hierarchical self-supervised ``world model'' for symbolic music: a 2.55M-parameter Swin V2 encoder trained on MIDI piano-roll images with JEPA-style objectives (pitch- and time-shift equivariance, masked embedding prediction, and a distributional regularizer), using no labels and no music-theory vocabulary. Probing the frozen embeddings shows that the level at which a musical property becomes decodable tracks its musical time scale: phrase boundaries are read off the coarsest levels, note density and harmonic detail off the finest. Temporal and phrase structure emerge from the self-supervised objectives alone, while harmonic content must be asked for; a small chord-supervision head raises joint chord recovery from .18 to .54, and key detection, which is never supervised, from .16 to .70. Following the Representation AutoEncoder paradigm, a conditional flow-matching model stands in for a trained decoder, flowing in pixel space from PCA-reduced conditioning: it reproduces a target window at pixel F1 0.996, and the same per-level conditioning dropout that controls how far variations stray also enables graphical prompting for masked inpainting with no inpainting-specific sampler. The pipeline runs on CPU producing a suggestion in 2.8 s, or 0.6 s on Apple MPS, which we demonstrate in a live interactive demo. In concert with an LLM-based brain, these capabilities supply the core of a collaborative music creation agent in service of, rather than in place of, human agency.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 协作音乐代理需要足够丰富的内部表示来支持理解和生成，同时又需要足够灵活以适应人类保留代理的工作流程。我们提出了一种用于符号音乐的分层自监督“世界模型”：一个 2.55M 参数的 Swin V2 编码器，在 MIDI 钢琴卷帘图像上进行训练，具有 JEPA 风格的目标（音高和时移等方差、屏蔽嵌入预测和分布正则化器），不使用标签和音乐理论词汇。探测冻结的嵌入表明，音乐属性可解码的级别跟踪其音乐时间尺度：从最粗糙的级别读取乐句边界，从最精细的级别读取音符密度和和声细节。时间和短语结构仅从自我监督目标中产生，而和声内容则必须要求；小型和弦监控头将关节和弦恢复从 0.18 提高到 0.54，并且从未受监督的调检测从 0.16 提高到 0.70。遵循表示自动编码器范式，条件流匹配模型代表训练有素的解码器，从 PCA 减少的调节在像素空间中流动：它在像素 F1 0.996 处重现目标窗口，并且控制变化偏离程度的相同的每级调节 dropout 还可以在没有修复特定采样器的情况下启用掩码修复的图形提示。该管道在 CPU 上运行，在 2.8 秒内生成建议，在 Apple MPS 上则为 0.6 秒，我们在现场交互式演示中对此进行了演示。与基于法学硕士的大脑相配合，这些功能提供了协作音乐创作代理的核心，为人类代理服务，而不是代替人类代理。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page   Add to collection      Community         drscotthawley  Paper author  Paper submitter     about 2 hours ago         Excited to share a new Preprint &amp; LIVE DEMO! This is &gt;2 years of my life building fast, lightweight CPU-friendly models to facilitate songwriters' iterative workflows, with Representations usable for Understanding and Generation, trained in a Self-Supervised way. First, the demo:https://drscotthawley-midi-rae-jepa-son.hf.space</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 添加到集合 社区 drscothawley 论文作者 论文提交者 大约 2 小时前 很高兴分享新的预印本和论文现场演示！这是我生命中的两年多时间，构建快速、轻量级 CPU 友好的模型，以促进歌曲作者的迭代工作流程，并以自我监督的方式训练可用于理解和生成的表示。一、演示：https://drscotthawley-midi-rae-jepa-son.hf.space</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.03836" target="_blank">Resume Means Resume: A Machine-Checked Conformance Contract for Checkpoint, Interrupt, and Resume Semantics in Workflow Persistence Layers</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>sajjadanwar0, Sajjad Khan</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.03836" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.03836" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.03836.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  A framework that persists execution state so a run can be interrupted, survive a crash, and continue must decide what a resume means for effects that already fired. Five widely deployed agent workflow frameworks answer differently, none exposes a machine-checkable contract, and behavior violates even the fragments they state. The RESUME CONTRACT states six properties over the persistence API (prefix continuation, effect exactly-once, fork determinism, checkpoint validity, consume-once, recovery determinism), plus fork-intent and liveness obligations. A TLA+ model checks a reference semantics exhaustively, unchanged at scaled bounds (7.4 million states); a 39-cell fault matrix yields the separating models independence requires, and consume-once splits, its consumption clause independent of all six others. A deterministic, LLM-free harness measures them at pinned releases. LangGraph 1.2.9 durably records a second resume value and never consults it, persists schema-invalid state silently, and re-executes durably recorded work after a real SIGKILL: exactly-once across interrupts, at-least-once across crashes, on one API. CrewAI 1.15.2 re-executes completed effect-bearing methods against its written claim; pydantic-graph 1.x cannot resume after a mid-node crash; no two probed frameworks share a conformance profile. Consume-once holds sequentially and fails under concurrent delivery: k processes resuming one parked interrupt fire the gated effect k times, saturation 1.0 in 36 of 40 cells, and the failure crosses hosts. REMIT, a reference sequencer whose Verus-verified recovery core is line-identical to the shipped executable, repairs the fork and validity cells. The cross-process cell is repaired at the read path, and that repair ships: an opt-in gate claims consumption in the shared store, serving one racer and refusing the rest before any node executes.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 一个持久执行状态以便运行可以被中断、在崩溃中幸存并继续运行的框架必须决定恢复对于已经触发的效果意味着什么。五个广泛部署的代理工作流框架的答案不同，没有一个公开机器可检查的合同，并且行为甚至违反了它们所声明的片段。 RESUME CONTRACT 规定了持久性 API 的六个属性（前缀延续、只影响一次、分叉确定性、检查点有效性、一次性消费、恢复确定性），以及分叉意图和活跃性义务。 TLA+ 模型详尽地检查参考语义，在缩放范围（740 万个状态）下保持不变； 39 单元故障矩阵产生独立模型所需的分离模型，并且消耗一次分裂，其消耗子句独立于所有其他六个。确定性的、无法学硕士的安全带可在固定发布时测量它们。 LangGraph 1.2.9 持久地记录第二个恢复值并且从不查阅它，默默地保留模式无效状态，并在真正的 SIGKILL 后重新执行持久记录的工作：在一个 API 上跨中断恰好一次，跨崩溃至少一次。 CrewAI 1.15.2 根据其书面声明重新执行已完成的效果承载方法； pydantic-graph 1.x 在中间节点崩溃后无法恢复；没有两个被探测的框架共享一致性配置文件。消耗一次按顺序保存并在并发交付下失败：恢复一个停放中断的 k 个进程会触发门控效应 k 次，40 个单元中的 36 个单元中的饱和度为 1.0，并且故障跨主机。 REMIT 是一个参考定序器，其经过 Verus 验证的恢复核心与交付的可执行文件行相同，可修复分叉和有效性单元。跨进程单元在读取路径上进行修复，并且修复会进行：一个选择加入门声明共享存储中的消耗，为一个赛车手提供服务，并在任何节点执行之前拒绝其余的赛车手。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community         sajjadanwar0  Paper author  Paper submitter     about 9 hours ago         A framework that persists execution state so a run can be interrupted, survive a crash, and continue must decide what a resume means for effects that already fired. Five widely deployed agent workflow frameworks answer differently, none exposes a machine-checkable contract, and behavior violates even the fragments they state. The RESUME CONTRACT states six properties over the persistence API (prefix continuation, effect exactly-once, fork determinism, checkpoint validity, consume-once, recovery determinism), plus fork-intent and liveness obligations. A TLA+ model checks a reference semantics exhaustively, unchanged at scaled bounds (7.4 million states); a 39-cell fault matrix yields the separating models independence requires, and consume-once splits, its consumption clause independent of all six others. A deterministic, LLM-free harness measures them at pinned releases. LangGraph 1.2.9 durably records a second resume value and never consults it, persists schema-invalid state silently, and re-executes durably recorded work after a real SIGKILL: exactly-once across interrupts, at-least-once across crashes, on one API. CrewAI 1.15.2 re-executes completed effect-bearing methods against its written claim; pydantic-graph 1.x cannot resume after a mid-node crash; no two probed frameworks share a conformance profile. Consume-once holds sequentially and fails under concurrent delivery: k processes resuming one parked interrupt fire the gated effect k times, saturation 1.0 in 36 of 40 cells, and the failure crosses hosts. REMIT, a reference sequencer whose Verus-verified recovery core is line-identical to the shipped executable, repairs the fork and validity cells. The cross-process cell is repaired at the read path, and that repair ships: an opt-in gate claims consumption in the shared store, serving one racer and refusing the rest before any node executes.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 添加到集合 社区 sajjadanwar0 论文作者 论文提交者 大约 9 小时前 一个持久执行状态的框架，以便运行可以被中断、崩溃并继续，必须决定恢复对于已经触发的效果意味着什么。五个广泛部署的代理工作流框架的答案不同，没有一个公开机器可检查的合同，并且行为甚至违反了它们所声明的片段。 RESUME CONTRACT 规定了持久性 API 的六个属性（前缀延续、只影响一次、分叉确定性、检查点有效性、一次性消费、恢复确定性），以及分叉意图和活跃性义务。 TLA+ 模型详尽地检查参考语义，在缩放范围（740 万个状态）下保持不变； 39 单元故障矩阵产生独立模型所需的分离模型，并且消耗一次分裂，其消耗子句独立于所有其他六个。确定性的、无法学硕士的安全带可在固定发布时测量它们。 LangGraph 1.2.9 持久地记录第二个恢复值并且从不查阅它，默默地保留模式无效状态，并在真正的 SIGKILL 后重新执行持久记录的工作：在一个 API 上跨中断恰好一次，跨崩溃至少一次。 CrewAI 1.15.2 根据其书面声明重新执行已完成的效果承载方法； pydantic-graph 1.x 在中间节点崩溃后无法恢复；没有两个被探测的框架共享一致性配置文件。消耗一次按顺序保存并在并发交付下失败：恢复一个停放中断的 k 个进程会触发门控效应 k 次，40 个单元中的 36 个单元中的饱和度为 1.0，并且故障跨主机。 REMIT 是一个参考定序器，其经过 Verus 验证的恢复核心与交付的可执行文件行相同，可修复分叉和有效性单元。跨进程单元在读取路径上进行修复，并且修复会进行：一个选择加入门声明共享存储中的消耗，为一个赛车手提供服务，并在任何节点执行之前拒绝其余的赛车手。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2607.21735" target="_blank">What AI Red-Team Evaluations Can and Cannot Prove</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>apisec</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>hackwither, Bandana Kaur</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2607.21735" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2607.21735" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2607.21735.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Red-team evaluations of AI models support some claims and not others, and the boundary between the two is calculable rather than merely a matter of judgment. We define the evidential ceiling of an evaluation as the largest factor by which one result can move belief under a fixed testing budget, derive it in closed form for the benchmark null result, and use it to locate that boundary exactly. We find that above a calculable harm rate, a benchmark of modest size certifies a category to a stated evidentiary standard, and a clean sheet is then the stronger of the two possible observations, outweighing a single reproduced failure. Below that rate, no passive benchmark of feasible size provides the specified evidence of safety under the fixed scoring rule and approximately independent trial structure. The crossing between the two regimes has a closed form. The bound is not specific to benchmarks: written in terms of a procedure's hypothesis conditioned elicitation rates, it covers adaptive and automated red teaming as well, and shows that discrimination between the hypotheses rather than attack success is what determines evidential worth. Auditing eight evaluation suites against the boundary, we find that current benchmarks are adequate for high-frequency harm categories and several orders of magnitude short for rare, catastrophic ones. Safety benchmarks are not uninformative. They are informative about a specific and computable set of propositions, and the discipline they need is to state which.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 红队对人工智能模型的评估支持某些观点，但不支持其他观点，两者之间的界限是可以计算的，而不仅仅是判断问题。我们将评估的证据上限定义为一个结果可以在固定测试预算下改变信念的最大因素，以封闭形式导出基准零结果，并使用它来准确定位该边界。我们发现，在可计算的危害率之上，适度规模的基准可以证明某个类别符合规定的证据标准，而干净的表是两种可能的观察结果中更强的，超过了单个再现的失败。低于该比率，在固定评分规则和近似独立的试验结构下，没有可行规模的被动基准可以提供指定的安全性证据。两种制度之间的交叉具有封闭形式。该界限并不特定于基准：根据程序的假设条件引出率编写，它还涵盖自适应和自动红队，并表明假设之间的区分而不是攻击成功才是决定证据价值的因素。根据边界审核八个评估套件，我们发现当前的基准足以应对高频危害类别，但对于罕见的灾难性危害类别来说还差几个数量级。安全基准并非没有信息。它们提供了一组特定且可计算的命题的信息，而它们需要的规则是陈述哪些命题。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub  1    Add to collection     Community         hackwither  Paper author  Paper submitter     about 1 hour ago         The input space for AI models is infinite, but labs can't just test indefinitely. There's a calculable limit to how much a red-team benchmark or safety evaluation can actually tell you, based on your testing budget and the paper works out exactly where that limit sits. Above a certain harm-rate threshold, a modest-sized benchmark can genuinely certify a model as safe in a rigorous sense (and a clean pass becomes stronger evidence than a single failed case is weak evidence). Below that threshold (like rare, catastrophic failure modes) no passive benchmark of realistic size can give you the confidence you'd want, no matter how well it's designed.We apply this to 8 real evaluation suites and find current benchmarks hold up fine for common harms but fall short by orders of magnitude for rare/catastrophic ones.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF GitHub 1 添加到集合 社区 hackwither 论文作者 论文提交者 大约 1 小时前 AI 模型的输入空间是无限的，但实验室不能无限期地进行测试。根据您的测试预算，红队基准或安全评估实际上可以告诉您多少信息，存在一个可计算的限制，并且本文准确地计算出了该限制所在的位置。在一定的危害率阈值之上，中等规模的基准可以真正证明模型在严格意义上是安全的（并且干净的通过成为更有力的证据，而不是单个失败的案例是弱证据）。低于该阈值（例如罕见的灾难性故障模式），无论其设计得多么好，任何实际大小的被动基准都无法给您带来所需的信心。我们将其应用于 8 个真实的评估套件，发现当前的基准对于常见危害来说表现良好，但对于罕见/灾难性危害则达不到几个数量级。</p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+        
+        <div class="nav-buttons">
+            <a href="2026-08-05.html" class="nav-btn">← 2026-08-05</a>
+            <a href="2026-08-07.html" class="nav-btn">2026-08-07 →</a>
+        </div>
+        
+        <footer>
+            Generated by <a href="https://github.com" target="_blank">HF Papers Daily</a>
+        </footer>
+    </div>
+    
+    <script>
+        function toggleAbstract(header) {
+            const toggle = header.querySelector('.abstract-toggle');
+            const content = header.nextElementSibling;
+            toggle.classList.toggle('expanded');
+            content.classList.toggle('expanded');
+        }
+    </script>
+</html>
