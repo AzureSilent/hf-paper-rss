@@ -1,0 +1,1831 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hugging Face Papers - 2026-08-31 (zh-CN)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .date {
+            font-size: 1.2em;
+            color: #a0a0a0;
+        }
+        
+        .stats {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #888;
+        }
+        
+        .paper-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .paper-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(102, 126, 234, 0.5);
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.2);
+        }
+        
+        .paper-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        
+        .paper-title a {
+            color: #e0e0e0;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .paper-title a:hover {
+            color: #667eea;
+        }
+        
+        .paper-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            color: #a0a0a0;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .meta-label {
+            color: #888;
+        }
+        
+        .links {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .link-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .link-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .link-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .abstract-section {
+            margin-top: 15px;
+        }
+        
+        .abstract-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .abstract-header:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .abstract-toggle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+            transition: transform 0.3s;
+        }
+        
+        .abstract-toggle.expanded {
+            transform: rotate(180deg);
+        }
+        
+        .abstract-label {
+            font-weight: 500;
+            color: #667eea;
+        }
+        
+        .abstract-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding: 0 15px;
+        }
+        
+        .abstract-content.expanded {
+            max-height: 10000px;
+            padding: 15px;
+        }
+        
+        .abstract-text {
+            line-height: 1.7;
+            color: #c0c0c0;
+        }
+        
+        .summary-box {
+            background: rgba(102, 126, 234, 0.1);
+            border-left: 3px solid #667eea;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .summary-label {
+            font-size: 0.8em;
+            color: #667eea;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .summary-text {
+            color: #b0b0b0;
+            line-height: 1.5;
+        }
+        
+        .translation-box {
+            background: rgba(118, 75, 162, 0.1);
+            border-left: 3px solid #764ba2;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .translation-label {
+            font-size: 0.8em;
+            color: #764ba2;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .translation-text {
+            color: #b0b0b0;
+            line-height: 1.5;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding: 0 10px;
+        }
+        
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .nav-btn.disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: #666;
+            pointer-events: none;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .paper-title {
+                font-size: 1.1em;
+            }
+            
+            .links {
+                flex-wrap: wrap;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-btn {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Hugging Face Papers</h1>
+            <div class="date">2026-08-31</div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number">31</div>
+                    <div class="stat-label">Papers</div>
+                </div>
+            </div>
+        </header>
+        
+        <main>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.28281" target="_blank">LoopArena: Benchmarking Models as Runtime Controllers for Loop Engineering</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>AMAP-ML</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>CokeWang, Yi Wang, Haopeng Zhang, Chengxiang Huang, Rui Dai</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.28281" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.28281" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.28281.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract LoopArena benchmarks how well a controller model guides a separate coding agent through long tasks, revealing low strict success rates and significant cost reductions.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 LoopArena 对控制器模型指导单独的编码代理完成长时间任务的效果进行了基准测试，揭示了严格的成功率较低和显着的成本降低。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Loop Engineering is emerging as a practice for organizing development work around coding agents. Instead of writing each prompt by hand, practitioners design loops that monitor progress, assign work, run checks, and decide what the agent should do next. Even with a capable coding agent, a loop may trust a stale progress note, skip needed verification, spend its budget in the wrong direction, or stop before the task is safe to submit. Yet the final outcome of one end-to-end run cannot tell whether success or failure reflects the loop's guidance or the coding agent's ability to carry out the task. We introduce LoopArena, a benchmark for evaluating how well one model can guide a separate coding agent through a long-running task. The model under evaluation is the Controller: after each coding round, it receives a structured summary of the run and instructs a separate, fixed coding agent, the Worker, on what to do or verify next, or decides whether to stop. LoopArena evaluates this ability in three complementary settings that differ in execution scope and cost. Type I scores next-step Loop Contract selection through execution-validated questions without running the Worker at evaluation time. Type II executes repeated control over a selected slice of a full task, while Type III evaluates the paired full task from its original state. On full tasks, the best observed Strict Success Rate is 24.69\%, leaving substantial room for improvement in long-horizon loop control. Across Controllers, the paired reduction in estimated inference cost averages 64.4\%, and Type II produces a similar ordering under the main Core criterion (Spearman's \(ρ=0.9747\)). We release the benchmark data and evaluation code at https://github.com/AMAP-ML/LoopArena .</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling生成——小循环工程正在成为围绕编码代理组织开发工作的一种实践。从业者不是手工编写每个提示，而是设计循环来监控进度、分配工作、运行检查并决定代理下一步应该做什么。即使使用功能强大的编码代理，循环也可能会信任过时的进度注释，跳过所需的验证，将预算花在错误的方向上，或者在任务安全提交之前停止。然而，一次端到端运行的最终结果无法判断成功或失败是否反映了循环的指导或编码代理执行任务的能力。我们引入了 LoopArena，这是一个基准，用于评估一个模型如何引导单独的编码代理完成长期运行的任务。接受评估的模型是控制器：在每一轮编码之后，它都会收到运行的结构化摘要，并指示单独的固定编码代理（即工作人员）下一步要做什么或验证，或者决定是否停止。 LoopArena 在执行范围和成本不同的三种互补设置中评估这种能力。类型 I 通过执行验证问题对下一步循环合约选择进行评分，而无需在评估时运行 Worker。类型 II 对完整任务的选定部分执行重复控制，而类型 III 从其原始状态评估配对的完整任务。在完整任务中，观察到的最佳严格成功率为 24.69%，为长视野循环控制留下了很大的改进空间。在控制器中，估计推理成本的成对减少平均为 64.4%，并且 Type II 在主要核心标准下产生类似的排序（Spearman 的 \(ρ=0.9747\)）。我们在 https://github.com/AMAP-ML/LoopArena 发布了基准数据和评估代码。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.18524" target="_blank">DART-SD: Diamond-topology Aware Retrieval and Tuning for Self-Distillation of Multi-Turn Tool-Calling Agents</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>ByteDance</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Hangrui Xu, Jiarui Wang, Yang Yang, Chuanbo Zhu, Fangda Chen</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.18524" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.18524" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.18524.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract DART-SD improves multi-turn tool-calling agents by modeling execution as a diamond-topology graph, identifying critical failure points, and applying localized self-distillation to preserve valid reasoning while correcting errors.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 DART-SD 通过将执行建模为菱形拓扑图、识别关键故障点以及应用局部自蒸馏来在纠正错误的同时保留有效推理，从而改进了多轮工具调用代理。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Equipping Large Language Models (LLMs) with multi-turn tool-calling capabilities is essential for building autonomous agents. However, progress is fundamentally limited by the reliance on full-length trajectory imitation. For tasks involving multiple order-independent sub-goals, the optimal solution space forms a vast combinatorial diamond lattice. Forcing this rich topology into monolithic trajectories causes a severe topological collapse, indiscriminately penalizing valid alternative explorations and severely degrading policy diversity. To address this, we propose DART-SD (Diamond-topology Aware Retrieval and Tuning for Self-Distillation), a novel framework that shifts the paradigm from global forcing to topology-guided localized correction. DART-SD first models the execution process as a converging Interaction-State Transition Graph (ISTG), faithfully capturing the inherent diamond topology of successful and failed exploratory paths. During autonomous rollouts, the framework identifies the Critical Topological Breakpoint (CTB) and retrieves success-supported recovery references. Finally, we introduce a progressive self-distillation paradigm through CTB-guided localized supervision, ensuring that the training loss is calculated exclusively on the generated recovery steps while strictly protecting the valid reasoning prefix from destructive gradient updates. Experiments on complex multi-turn tool-calling benchmarks demonstrate that DART-SD significantly outperforms traditional full-trajectory baselines.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small 生成 为大型语言模型（LLM）配备多轮工具调用功能对于构建自主代理至关重要。然而，对全长轨迹模拟的依赖从根本上限制了进展。对于涉及多个与阶无关的子目标的任务，最优解空间形成一个巨大的组合菱形格子。迫使这种丰富的拓扑进入整体轨迹会导致严重的拓扑崩溃，不加区别地惩罚有效的替代探索并严重降低政策多样性。为了解决这个问题，我们提出了 DART-SD（钻石拓扑感知检索和自蒸馏调整），这是一种新颖的框架，将范式从全局强迫转变为拓扑引导的局部校正。 DART-SD 首先将执行过程建模为聚合交互状态转换图 (ISTG)，忠实地捕获成功和失败探索路径的固有菱形拓扑。在自主推出期间，该框架会识别关键拓扑断点 (CTB) 并检索成功支持的恢复引用。最后，我们通过 CTB 引导的局部监督引入渐进式自蒸馏范式，确保训练损失仅在生成的恢复步骤上计算，同时严格保护有效推理前缀免受破坏性梯度更新的影响。对复杂多轮工具调用基准的实验表明，DART-SD 显着优于传统的全轨迹基准。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.27550" target="_blank">Beyond Data Scaling: Representation-Centric Continued Pre-training for Vision-Language-Action Models</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Star Vision Language Action Models</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Senqiao Yang, Chengyao Wang, Yuxin Chen, Zixuan Wang, Longxiang Tang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.27550" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.27550" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.27550.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract VLAct improves vision-language-action model performance by pre-training on diverse robot data with preserved vision-language priors and shared action semantics, achieving strong results across simulations and unseen embodiments with limited compute.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 VLAct 通过对具有保留的视觉语言先验和共享动作语义的不同机器人数据进行预训练，提高了视觉语言动作模型的性能，在有限计算的模拟和未见过的实施例中取得了良好的结果。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Scaling robot data is crucial for building generalist Vision-Language-Action (VLA) models, yet robot trajectories are harder to scale than web-scale image-text data because embodied collection is costly and sparsely covers the physical world. This makes representation quality a central bottleneck: under a fixed robot-data budget, continued pre-training must turn limited trajectories into transferable visual-action knowledge rather than merely fit actions. We propose VLAct, a VLA-oriented VLM backbone trained on broad, heterogeneous, multi-embodiment robot data before task-specific fine-tuning. VLAct preserves the broad VLM prior and encourages shared action semantics across embodiments through VLM-prior preservation, multi-head continuous action co-supervision, and a partially unified cross-embodiment action layout, while allowing task-specific action heads during fine-tuning. Across simulation, real-world, and unseen-embodiment transfer, VLAct consistently improves downstream performance under fixed fine-tuning protocols. On LIBERO-Plus and RoboTwin 2.0, VLAct surpasses industrial VLA systems including ABot-M0 and LingBot-VLA, achieving success rates of 82.6% and 92.5%. On RoboDojo, VLAct ranks sixth among all policies by success rate and outperforms all explicitly designated world-action model (WAM) entries on both metrics. Most notably, on RoboCasa-GR1, an unseen humanoid embodiment, VLAct using only 20% of downstream trajectories outperforms the full-data GR00T-N1.6 baseline. These results are obtained using fully open-source data and only a 16-GPU training setup, showing that representation-centric continued pre-training can deliver highly competitive performance under a modest compute budget and is an important independent axis of VLA progress beyond data scaling.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small Scaling生成的机器人数据对于构建通用视觉-语言-动作（VLA）模型至关重要，但机器人轨迹比网络规模的图像文本数据更难扩展，因为具体收集成本高昂且稀疏地覆盖物理世界。这使得表示质量成为一个中心瓶颈：在固定的机器人数据预算下，持续的预训练必须将有限的轨迹转化为可转移的视觉动作知识，而不仅仅是适应动作。我们提出了 VLAct，一种面向 VLA 的 VLM 主干，在针对特定任务进行微调之前，对广泛的、异构的、多实施例的机器人数据进行训练。 VLAct 保留了广泛的 VLM 先验，并通过 VLM 先验保留、多头连续动作共同监督和部分统一的跨实施例动作布局鼓励跨实施例共享动作语义，同时允许在微调期间使用特定于任务的动作头。在模拟、现实世界和未见过的实施例传输中，VLAct 在固定的微调协议下持续提高下游性能。在LIBERO-Plus和RoboTwin 2.0上，VLAct超越了ABot-M0和LingBot-VLA等工业VLA系统，取得了82.6%和92.5%的成功率。在 RoboDojo 上，VLAct 在所有策略中按成功率排名第六，并且在这两个指标上均优于所有明确指定的世界行动模型 (WAM) 条目。最值得注意的是，在 RoboCasa-GR1（一种看不见的人形实施例）上，仅使用 20% 下游轨迹的 VLAct 优于全数据 GR00T-N1.6 基线。这些结果是使用完全开源数据和仅 16-GPU 训练设置获得的，表明以表示为中心的持续预训练可以在适度的计算预算下提供极具竞争力的性能，并且是超越数据扩展的 VLA 进展的重要独立轴。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.28122" target="_blank">Agentic Artifact Creation: Systems, Evaluation, Principles, and Opportunities</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Hong Kong University of Science and Technology(GuangZhou)</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Tianfu Wang, Zhezheng Hao, Xilin Xia, Lixin Liu, Mengkang Hu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.28122" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.28122" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.28122.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract This survey defines agentic artifact creation as stateful, feedback-driven construction of deliverables by AI systems and analyzes 259 works across artifact families, settings, and evaluation practices to propose principles for accountable control.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 这项调查将代理工件创建定义为人工智能系统对可交付成果进行状态化、反馈驱动的构建，并分析了跨工件家族、设置和评估实践的 259 个作品，以提出负责任控制的原则。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Generative models can turn natural-language prompts into images, text, code, and other content, lowering the cost of producing drafts and components. Their practical impact increasingly depends on whether those pieces can become complete, dependable deliverables. This survey examines agentic artifact creation, which we define as stateful construction in which an AI system materially constructs or revises a deliverable and intermediate observations redirect later work. Functionally, the process links an operational representation of the artifact, a construction policy, and runtime verification whose feedback can redirect later actions. We reviewed 259 works available through August 20, 2026: 230 systems meeting this definition and 29 benchmarks of agentic artifact construction. We compare six artifact families, then analyze application settings and evaluation practice as separate dimensions. Across families, construction challenges reflect not only modality but also how tightly decisions are coupled and whether failures become visible while they remain repairable. Decomposition can reduce local complexity while increasing coordination and reassembly costs. Learned judges may add little independent evidence when they share the generator's preferences or blind spots. We formulate principles for keeping commitments and responsibility explicit, turning feedback into targeted repair, and revalidating affected state after change. We also identify opportunities for sustaining coherent, accountable control as artifacts, creator intent, and construction systems evolve. A curated paper list is available at https://github.com/GeminiLight/awesome-agentic-artifact-creation.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small生成的生成模型可以将自然语言提示转化为图像、文本、代码等内容，降低草稿和组件的制作成本。它们的实际影响越来越取决于这些部分是否能够成为完整、可靠的可交付成果。这项调查研究了代理工件的创建，我们将其定义为有状态的构建，其中人工智能系统实质上构建或修改可交付成果，中间观察结果重定向后续工作。从功能上讲，该流程链接了工件的操作表示、构建策略和运行时验证，其反馈可以重定向以后的操作。我们审查了截至 2026 年 8 月 20 日可用的 259 个工作：230 个系统满足此定义和 29 个代理工件构建基准。我们比较了六个工件系列，然后将应用程序设置和评估实践作为单独的维度进行分析。在各个家庭中，建设挑战不仅反映了模式，还反映了决策的耦合程度，以及故障是否在可修复的情况下变得可见。分解可以降低局部复杂性，同时增加协调和重组成本。当博学的法官分享生成者的偏好或盲点时，他们可能会添加很少的独立证据。我们制定原则，保持承诺和责任明确，将反馈转化为有针对性的修复，并在变更后重新验证受影响的状态。随着工件、创建者意图和构建系统的发展，我们还发现了维持一致、负责任的控制的机会。精选论文列表可在 https://github.com/GeminiLight/awesome-agentic-artifact-creation 获取。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.27549" target="_blank">Code as Worlds: Agentic Discovery of Executable World Representations for Physical Reasoning</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>MirroS</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Hanyang Wang, Yimo Cai, Weiliang Chen, Jiawei Chi, Haowen Sun</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.27549" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.27549" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.27549.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Code-as-World represents physical environments as executable code to enable quantitative reasoning and scalable supervision for vision-language models.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要“代码即世界”将物理环境表示为可执行代码，以实现视觉语言模型的定量推理和可扩展监督。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Physical understanding and reasoning depend on forming compact and generalizable representations of the world. While modern vision-language models can recognize and explain diverse physical events, they often lack explicit representations of the underlying mechanisms-such as object states, physical parameters, and governing dynamics-needed for reliably reasoning how the world evolves and responds to interventions. In this work, we introduce Code-as-World, a paradigm that represents physical worlds through executable world representations. By expressing physical composition, dynamic evolution, and visual appearance as executable code, Code-as-World provides a compact, quantitatively grounded, and controllable abstraction of the physical world. To construct such representations from multimodal observations, such as natural-language descriptions or real-world videos, we develop an agentic discovery loop inspired by abductive reasoning, where an agent proposes, executes, renders, verifies, and iteratively refines executable world hypotheses. As a concrete application, we use verified executable worlds to provide scalable physical supervision for training vision-language models on quantitative physical reasoning. Experiments show that Code-as-World-VL achieves state-of-the-art performance on QuantiPhy and surpasses leading proprietary models, highlighting the potential of executable world representations as a scalable foundation for physical intelligence.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small 生成物理理解和推理依赖于形成紧凑且可概括的世界表征。虽然现代视觉语言模型可以识别和解释不同的物理事件，但它们通常缺乏可靠地推理世界如何演变和对干预作出反应所需的潜在机制的明确表示，例如对象状态、物理参数和控制动力学。在这项工作中，我们引入了“代码即世界”，这是一种通过可执行的世界表示来表示物理世界的范例。通过将物理组成、动态演化和视觉外观表达为可执行代码，“代码即世界”提供了物理世界的紧凑、定量、可控的抽象。为了从多模态观察（例如自然语言描述或现实世界视频）构建这种表示，我们开发了一个受溯因推理启发的代理发现循环，其中代理提出、执行、渲染、验证和迭代地完善可执行的世界假设。作为一个具体的应用，我们使用经过验证的可执行世界来提供可扩展的物理监督，用于训练定量物理推理的视觉语言模型。实验表明，Code-as-World-VL 在 QuantiPhy 上实现了最先进的性能，并超越了领先的专有模型，凸显了可执行世界表示作为物理智能的可扩展基础的潜力。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.26582" target="_blank">J-Zero: Unified Challenger--Solver--Judge Co-Evolution from Zero Data</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>KAIST AI</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Gyouk Chu, Myeongho Jeon, Eunho Yang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.26582" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.26582" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.26582.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract J-Zero enables self-improving language models across verifiable and unverifiable domains through adversarial co-evolution of a task generator, solver, and judge using predefined preference pairs.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 J-Zero 通过任务生成器、求解器和使用预定义偏好对的判断的对抗性共同进化，实现跨可验证和不可验证领域的自我改进语言模型。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Self-evolving language models have recently emerged as a promising path toward superintelligence, with the advantage of reducing the cost of human supervision. While considerable progress has been made in verifiable domains, self-evolution in unverifiable domains remains substantially less explored. We propose Judge co-adaptation from Zero data (J-Zero), a unified Challenger--Solver--Judge co-evolution framework that supports self-improvement across both domains. The Challenger and Solver co-evolve through an adversarial interaction: the Challenger generates increasingly difficult tasks, while the Solver learns to produce higher-quality responses to them. In parallel, the Judge co-adapts using preference pairs whose ordering is known in advance from how each response was produced, i.e., the Solver's answer over the Challenger's, and its decomposed-and-recombined answer over its one-shot answer, rather than from the Judge's own scores. J-Zero outperforms the baselines by an average of 4.2 points on verifiable and 8.0 points on unverifiable domains, and continues to improve through at least ten iterations, whereas the baselines degrade after two.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small生成 自进化语言模型最近已成为通往超级智能的一条有希望的道路，其优点是降低人类监督的成本。尽管在可验证领域已经取得了相当大的进展，但在不可验证领域的自我进化仍然很少被探索。我们提出了来自零数据的法官协同适应（J-Zero），这是一个统一的挑战者-解决者-法官共同进化框架，支持跨两个领域的自我改进。挑战者和解决者通过对抗性互动共同进化：挑战者生成越来越困难的任务，而解决者则学习对这些任务产生更高质量的响应。与此同时，法官使用偏好对进行共同适应，这些偏好对的顺序是根据每个响应的产生方式预先知道的，即解决者的答案相对于挑战者的答案，以及其分解和重组的答案相对于一次性答案，而不是来自法官自己的分数。 J-Zero 在可验证领域平均优于基线 4.2 点，在不可验证领域平均优于基线 8.0 点，并且通过至少十次迭代持续改进，而基线在两次迭代后就会下降。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.27529" target="_blank">Revisiting Local Context for Long-Horizon Streaming 3D Reconstruction</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Alibaba AMAP CV Lab</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Jiarong Han, Jincheng Xiong, Yuzhou Liu, Linzhe Shi, Changjie Wu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.27529" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.27529" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.27529.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract ABot-Recon achieves stable long-horizon streaming 3D reconstruction by using only local temporal context and frame-independent predictions composed sequentially, reducing drift via a lightweight temporal refiner and composition-aware pose loss.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 ABot-Recon 通过仅使用局部时间上下文和顺序组成的独立于帧的预测来实现稳定的长视野流式 3D 重建，通过轻量级时间细化器和组合感知姿势损失减少漂移。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Streaming 3D reconstruction from extremely long videos requires estimating camera motion and scene geometry online under bounded memory and computation. Early streaming models achieve causal, bounded-cost inference using finite context buffers or compact recurrent states, yet their estimates often deteriorate as sequences grow. Recent methods improve long-horizon stability by coupling short-range context with persistent or multi-level long-range memory. We pursue a different route: we keep the learned temporal state strictly local and formulate predictions whose targets remain independent of sequence length. We present ABot-Recon, a simple streaming model that caches KV features from only the preceding 11 frames. It predicts a point map in the current camera coordinate system together with an adjacent-frame relative pose. These predictions remain equivariant under changes of reference frame, and global poses and geometry are recovered through sequential composition. To reduce accumulated drift, a lightweight temporal refiner improves relative rotations using recent visual and motion context, while a composition-aware pose loss supervises multi-step pose composition. Extensive evaluations on challenging long-sequence benchmarks demonstrate the superior long-horizon performance of our local-context approach. On Oxford Spires, ABot-Recon achieves an ATE of 4.35 m and an RPE-R of 0.12^circ, reducing both errors by approximately 40\% relative to the best prior results.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small Streaming 生成从超长视频进行3D 重建需要在有限的内存和计算下在线估计相机运动和场景几何形状。早期的流模型使用有限上下文缓冲区或紧凑的循环状态实现因果、有界成本推理，但它们的估计通常会随着序列的增长而恶化。最近的方法通过将短程上下文与持久或多级长程记忆相结合来提高长程稳定性。我们追求不同的路线：我们将学习到的时间状态严格保留在本地，并制定其目标与序列长度无关的预测。我们提出了 ABot-Recon，一个简单的流模型，它仅缓存前面 11 帧的 KV 特征。它预测当前相机坐标系中的点图以及相邻帧相对位姿。这些预测在参考系变化的情况下保持等变，并且通过顺序合成恢复全局姿态和几何形状。为了减少累积漂移，轻量级时间细化器使用最近的视觉和运动上下文改进相对旋转，而构图感知姿势损失则监督多步姿势构图。对具有挑战性的长序列基准的广泛评估证明了我们的局部上下文方法的卓越的长期性能。在 Oxford Spires 上，ABot-Recon 实现了 4.35 m 的 ATE 和 0.12^circ 的 RPE-R，相对于之前的最佳结果，这两个误差均减少了约 40%。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.27370" target="_blank">Puro-2B: Poor Lab's Qwen2-1.5B Trained on RTX 5090 within $5090</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>PACMAN Group, Tsinghua University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Kairong Luo, Jiarui Cui, Yaorui Yin, harryleafchen, Shengqi Chen</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.27370" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.27370" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.27370.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract A cost-efficient open-source pretraining recipe trains 2B-parameter models on consumer GPUs for under $7K, yielding performance near larger baselines while deriving cost scaling laws and studying data curricula.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 一种经济高效的开源预训练方法可以在消费级 GPU 上以低于 7,000 美元的价格训练 2B 参数模型，在推导成本缩放定律和研究数据课程的同时，产生接近较大基线的性能。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Language model pretraining has become almost synonymous with prohibitive cost, placing it out of reach for much of the academic and open-source communities. Although strong open-source efforts already exist, including open-weight models and open-source training recipes, a cost-efficient, hardware-accessible, and open-source pretraining recipe has long been missing. Even at a small scale, training Llama-3.2-3B costs over \1.5M, and reproducing SmolLM3-3B needs over 700K. In this report, we present an open pretraining recipe designed to lower this barrier. Using this recipe, we train a collection of Puro-2B models from scratch on up to 1.4 trillion tokens with FP8 precision on consumer-grade RTX 5090 GPUs. The models in the collection differ in token budgets and selected recipe variants. Our best model is trained at a compute cost of less than \6.9K and approaches Qwen2.5-1.5B performance under our evaluation protocol. This cost efficiency is enabled by a combination of approaches, including hardware selection, low-precision training, hyperball optimization, curriculum model averaging, and the data recipe. Beyond the recipe itself, we provide two additional results. First, across the Puro-2B collection, we derive a Puro Cost Scaling Law that relates training cost to average model performance; the fitted law suggests that about 4.4K, less than \$5,090, is sufficient to reach the performance of Qwen2-1.5B. Second, as an end-to-end case study, we examine how pretraining data curricula shape downstream performance after post-training. Such controlled studies are enabled by having access to the full pretraining pipeline rather than model weights alone. We release the full training recipe for Puro-2B, including data, code, and model weights under Apache 2.0 at https://huggingface.co/collections/thu-pacman/puro-2b.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small 生成的模型预训练几乎已经成为成本高昂的代名词，使得许多学术和开源社区无法承受。尽管已经存在强大的开源工作，包括开放权重模型和开源训练方案，但长期以来一直缺乏具有成本效益、硬件可访问且开源的预训练方案。即使是小规模，训练 Llama-3.2-3B 的成本也超过 1.5M，复制 SmolLM3-3B 需要超过 700K。在本报告中，我们提出了一种开放的预训练方法，旨在降低这一障碍。使用此配方，我们在消费级 RTX 5090 GPU 上以 FP8 精度从头开始训练一系列 Puro-2B 模型，数据量高达 1.4 万亿个。该系列中的模型在代币预算和所选配方变体方面有所不同。我们最好的模型以低于 6.9K 的计算成本进行训练，并在我们的评估协议下接近 Qwen2.5-1.5B 性能。这种成本效率是通过多种方法组合实现的，包括硬件选择、低精度训练、超球优化、课程模型平均和数据配方。除了配方本身之外，我们还提供了两个额外的结果。首先，在 Puro-2B 系列中，我们推导出 Puro 成本缩放法则，将训练成本与平均模型性能联系起来；拟合定律表明大约 4.4K，不到 5,090 美元，足以达到 Qwen2-1.5B 的性能。其次，作为端到端案例研究，我们研究了预训练数据课程如何影响训练后的下游性能。这种对照研究是通过访问完整的预训练流程而不是单独的模型权重来实现的。我们在 https://huggingface.co/collections/thu-pacman/puro-2b 上发布了 Puro-2B 的完整训练方案，包括 Apache 2.0 下的数据、代码和模型权重。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.23478" target="_blank">Act with Intent: Distilling Behavior Intent for Vision-Language-Action Models</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Pohang University of Science and Technology</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>leesangoh, Sangoh Lee, Sangwoo Mo, Wook-Shin Han</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.23478" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.23478" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.23478.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Vision-Language-Action (VLA) models can turn multimodal context into robot actions, but their action decoders are still trained largely by behavior cloning. This supervises which motor command was demonstrated while leaving implicit the local objective served by the behavior under the instruction. Future-based supervision enriches action learning with frames, latent observations, trajectories, or motion representations, but these signals capture particular realizations of what may happen rather than the shared semantic objective of the forthcoming behavior. We propose Intention Distillation (INDI), which distills behavior-level intent into the action decoder. During training, a frozen teacher VLM interprets a demonstrated segment from the current observation, instruction, coarse action summary, and corresponding execution video. From its standard inputs, the deployed VLA recovers the resulting multimodal intent representation at an intermediate decoder layer and uses it to organize action prediction together with representations of how the behavior unfolds and what it achieves. On SimplerEnv-Bridge, INDI improves GR00T-N1.7 from 64.3% to 84.7%, and on RoboCasa Kitchen it improves the controlled GR00T-N1.7 baseline from 64.1% to 70.3%, with consistent gains on π_{0.5} across both benchmarks. In real-world tasks, INDI improves average success from 62.0% to 68.7%, with gains of up to 12.0 pp on longer-horizon tasks. Further analyses show that the recovered latent is used by the decoder, captures behavior objective and execution progress, and organizes downstream predictions in an objective-dependent manner. These results show that action decoders benefit from explicitly modeling the semantic objective of the behavior they generate.</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 视觉-语言-动作（VLA）模型可以将多模态上下文转化为机器人动作，但其动作解码器仍然主要通过行为克隆进行训练。这监督了所展示的运动命令，同时隐含了指令下的行为所服务的局部目标。基于未来的监督通过框架、潜在观察、轨迹或运动表示丰富了动作学习，但这些信号捕获了可能发生的事情的特定实现，而不是即将发生的行为的共享语义目标。我们提出意图蒸馏（INDI），它将行为级意图蒸馏到动作解码器中。在训练期间，冻结的教师 VLM 会解释当前观察、指令、粗略动作摘要和相应执行视频中的演示片段。部署的 VLA 从其标准输入中恢复中间解码器层生成的多模态意图表示，并使用它来组织动作预测以及行为如何展开及其实现的表示。在 SimplerEnv-Bridge 上，INDI 将 GR00T-N1.7 从 64.3% 提高到 84.7%，在 RoboCasa Kitchen 上，它将受控 GR00T-N1.7 基线从 64.1% 提高到 70.3%，两个基准的 π_{0.5} 都有一致的增益。在实际任务中，INDI 将平均成功率从 62.0% 提高到 68.7%，在长期任务上提升高达 12.0 个百分点。进一步的分析表明，解码器使用恢复的潜在变量，捕获行为目标和执行进度，并以依赖于目标的方式组织下游预测。这些结果表明，动作解码器受益于对它们生成的行为的语义目标进行显式建模。</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  2    Add to collection                  Community         leesangoh  Paper author  Paper submitter     about 4 hours ago         What if VLA action decoders knew not only what action to execute, but also what the behavior is trying to achieve?We introduce Intention Distillation (INDI), which distills behavior-level intent from a frozen teacher VLM into the VLA action decoder, while requiring no teacher at deployment. INDI consistently improves GR00T-N1.7 and π₀.₅ across simulation and real-world manipulation, including 64.3% → 84.7% on SimplerEnv-Bridge and gains of up to +12.0 pp on longer-horizon real-world tasks.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">查看 arXiv 页面 查看 PDF 项目页面 GitHub 2 添加到集合 社区 leesangoh 论文作者 论文提交者 大约 4 小时前 如果 VLA 动作解码器不仅知道要执行什么动作，而且还知道该行为试图实现什么目标，结果会怎样？我们引入了意图蒸馏 (INDI)，它将行为级意图从冻结的教师 VLM 中蒸馏到 VLA 动作解码器中，同时在部署时不需要教师。 INDI 在模拟和现实世界操作中持续改进 GR00T-N1.7 和 π₀.₅，包括 SimplerEnv-Bridge 上的 64.3% → 84.7%，以及在长期现实世界任务上高达 +12.0 pp 的增益。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.28460" target="_blank">LayerRecall: A State-Conditioned Memory Router for Long-Horizon Consistency in Video Generation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Zhejiang University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yixuan Ding, Jiahao Kong, Wei Huang, Ruijie Quan, Yi Yang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.28460" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.28460" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.28460.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract LayerRecall selectively routes long-range historical memory into specific video diffusion layers to improve long-video consistency, supervised by cross-horizon prediction matching.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 LayerRecall 有选择地将长程历史记忆路由到特定的视频扩散层，以提高长视频的一致性，并通过跨水平预测匹配进行监督。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Autoregressive video diffusion enables scalable long-video generation by producing chunks from a bounded recent context. While recency-based caching preserves local continuity, it evicts historical cues needed when subjects, objects, scenes, or attributes reappear. Existing memory mechanisms expose models to nonlocal history, but access alone does not ensure effective use. Our analysis reveals that video DiT layers exhibit distinct preferences for current, recent, and distant context, suggesting that long-range memory requires deciding both what to retrieve and where to use it. We introduce LayerRecall, a current-conditioned, layer-selective memory router that retrieves relevant historical K/V states and injects them only into backbone-specific memory-sensitive layers while preserving local attention elsewhere. To reduce reliance on scarce high-quality long-horizon videos and explicit memory-allocation labels, we further propose Cross-Horizon Prediction Matching (CHPM), which uses a privileged long-context reference to supervise the bounded-memory router in prediction space. Across 100 multi-shot evaluation prompts, LayerRecall achieves the best overall results on MemoBench and MovieBench while matching its backbone on VBench-Long, demonstrating stronger long-range recovery without sacrificing local continuity. Qualitative analyses further reveal memory-guided self-correction, whereby initially mismatched local attributes return to their historical appearance without resetting ongoing motion or scene structure. Additional analyses show cross-backbone portability and negligible inference overhead.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small 生成 自回归视频扩散通过从有限的最近上下文生成块来实现可扩展的长视频生成。虽然基于新近度的缓存保留了本地连续性，但它消除了主题、对象、场景或属性重新出现时所需的历史线索。现有的内存机制将模型暴露给非本地历史，但单独访问并不能确保有效使用。我们的分析表明，视频 DiT 层对当前、最近和遥远的上下文表现出不同的偏好，这表明长期记忆需要决定检索什么以及在哪里使用它。我们引入了 LayerRecall，一种电流调节的层选择性内存路由器，它检索相关的历史 K/V 状态，并将它们仅注入到骨干特定的内存敏感层，同时在其他地方保留本地注意力。为了减少对稀缺的高质量长视野视频和显式内存分配标签的依赖，我们进一步提出了跨视野预测匹配（CHPM），它使用特权长上下文参考来监督预测空间中的有界内存路由器。在 100 个多镜头评估提示中，LayerRecall 在 MemoBench 和 MovieBench 上取得了最佳整体结果，同时在 VBench-Long 上匹配了其骨干网，在不牺牲局部连续性的情况下展示了更强的远程恢复能力。定性分析进一步揭示了记忆引导的自我校正，从而使最初不匹配的局部属性恢复到其历史外观，而无需重置正在进行的运动或场景结构。其他分析显示跨主干网的可移植性和可忽略的推理开销。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.24804" target="_blank">StarHarness: Evolving Harnesses with Stratified Search for Enterprise Environments</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>ServiceNow-AI</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Esakkivel Esakkiraja, Denis Akhiyarov, Vikas Yadav, Sai Rajeswar, Patrice Bechard</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.24804" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.24804" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.24804.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract StarHarness evolves fixed-weight agent harnesses via stratified task pools and hidden selection to improve enterprise tool-use performance and cross-model transfer.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 StarHarness 通过分层任务池和隐藏选择来发展固定权重代理线束，以提高企业工具使用性能和跨模型传输。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small We present StarHarness, a framework for evolving environment-specific agent harnesses while keeping model weights fixed. The evolved harness can include prompt and task framing, tool interfaces, skills, MCP-backed providers, subagent structure, and agent-loop configuration. StarHarness constructs a compact evolution pool by stratifying tasks according to baseline failure behavior, separates proposer-visible search tasks from proposer-hidden selection tasks, and reserves held-out tasks for evaluating generalization. Across ITBench SRE, EnterpriseOps-Gym ITSM, and AutomationBench Finance, harness evolution improves full-benchmark performance by 20-35 percentage points over the default harness after 4-12 accepted changes per environment. These gains persist on tasks excluded from evolution and transfer without re-evolution across GPT and Qwen model families. Trace analysis links the improvements to interface repairs, environment conventions, and operational knowledge that compresses search, with fewer false-positive diagnoses and shorter trajectories in several settings. StarHarness therefore offers a practical way to reduce persistent model-environment mismatch in tool-rich enterprise tasks.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Thinkingmachines/Inkling-Small 生成 我们推出了 StarHarness，这是一个框架，用于在保持模型权重固定的同时发展特定于环境的代理线束。改进的工具可以包括提示和任务框架、工具接口、技能、MCP 支持的提供程序、子代理结构和代理循环配置。 StarHarness 通过根据基线失败行为对任务进行分层来构建紧凑的进化池，将提议者可见的搜索任务与提议者隐藏的选择任务分开，并保留保留的任务用于评估泛化能力。在 ITBench SRE、EnterpriseOps-Gym ITSM 和 AutomationBench Finance 中，在每个环境接受 4-12 次更改后，工具演变比默认工具提高了全基准性能 20-35 个百分点。这些收益在被排除在进化和转移之外的任务上持续存在，而无需在 GPT 和 Qwen 模型系列中重新进化。跟踪分析将改进与界面修复、环境约定和压缩搜索的操作知识联系起来，在多种设置中减少误报诊断并缩短轨迹。因此，StarHarness 提供了一种实用的方法来减少工具丰富的企业任务中持续存在的模型环境不匹配。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.28476" target="_blank">ContextPilot: Teaching Agents for Proactive Context Management via Fine-grained RL</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Tencent</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Zhuoshi Pan, Qizhi Pei, Junru Lu, Honglin Lin, H. Vicky Zhao</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.28476" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.28476" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.28476.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract ContextPilot improves long-horizon agent reasoning by expanding context-editing tools and using reinforcement learning with branch sampling to identify critical context decisions.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 ContextPilot 通过扩展上下文编辑工具并使用带有分支采样的强化学习来识别关键上下文决策，从而改进了长视野代理推理。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Long-horizon agentic tasks require large language models (LLMs) to iteratively retrieve, integrate, and maintain dispersed information across multi-turn interactions, but preserving all interaction histories leads to a continuously growing working context. Recent proactive context management methods allow models to edit their own working context with specialized tools, yet they still face three key limitations: (1) a limited toolset restricted to search, deletion, and summarization, with no support for global planning, long-term memory, and adaptive compression; (2) inefficient exploration that treats context management actions uniformly despite their heterogeneous impacts on final outcomes; and (3) coarse-grained credit assignment that assigns the final trajectory-level reward to all intermediate context editing actions during RL. To bridge these gaps, we introduce ContextPilot, a proactive context management framework for long-horizon agentic reasoning. Our approach systematically augments the toolset with planning, long-term memory, and soft context offloading tools. We further propose an RL method tailored for context management, which uses context and entropy variation to identify critical editing decisions for branch sampling and estimates action-level advantages from all branched trajectories that pass through the corresponding context editing action. Experiments on long-context QA and deep search tasks show that ContextPilot achieves stronger performance with a more compact working context, consistently outperforming existing baselines across various base models and benchmarks. Code is available at https://github.com/Tencent/ContextPilot.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small 生成 长视野代理任务需要大型语言模型 (LLM) 来迭代检索、集成和维护多轮交互中的分散信息，但保留所有交互历史记录会导致工作环境不断增长。最近的主动上下文管理方法允许模型使用专门的工具编辑自己的工作上下文，但它们仍然面临三个关键限制：（1）有限的工具集仅限于搜索、删除和摘要，不支持全局规划、长期记忆和自适应压缩； (2) 低效的探索，尽管上下文管理行为对最终结果的影响不同，但统一对待它们； (3) 粗粒度信用分配，将最终的轨迹级奖励分配给 RL 期间的所有中间上下文编辑操作。为了弥补这些差距，我们引入了 ContextPilot，这是一个用于长期代理推理的主动上下文管理框架。我们的方法通过规划、长期记忆和软上下文卸载工具系统地增强了工具集。我们进一步提出了一种为上下文管理量身定制的强化学习方法，该方法使用上下文和熵变化来识别分支采样的关键编辑决策，并从通过相应上下文编辑操作的所有分支轨迹估计操作级别优势。长上下文 QA 和深度搜索任务的实验表明，ContextPilot 通过更紧凑的工作上下文实现了更强的性能，在各种基础模型和基准测试中始终优于现有基线。代码可在 https://github.com/Tencent/ContextPilot 获取。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.27763" target="_blank">Fast Weight Attention for Continual Learning</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yifan Zhang, Steve Ta, Jasper Zhang, Jichen Feng, Shuzhen Li</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.27763" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.27763" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.27763.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Recurrent fast-weight memories and selective state-space models are analyzed as online learning rules under autoregressive semantics, yielding normalized update families with stable renormalization that improve length extrapolation.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：将循环快速权重记忆和选择性状态空间模型分析为自回归语义下的在线学习规则，产生具有稳定重整化的标准化更新族，从而改进长度外推。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Recurrent fast-weight memories and selective state-space models compress an expanding context into a fixed-size recurrent state, making the state transition an online learning rule. We study this rule under read-after-write autoregressive semantics. For the prefix-prediction objective considered here, the local fast-memory example revealed at step t is the prefix-aligned pair (x_t,y_t)=(ϕ(k_{t-1}),v_t). The common same-step association (ϕ(k_t),v_t) remains causal, but optimizes a different internal objective. We derive normalized first-order updates for squared-error regression and negative inner-product objectives. The regression family comprises Falcon-1 (a scalar NLMS update), Falcon-2 (its per-column extension), and Falcon-3 (a sliding-window mini-batch update); Falcon-1A/Falcon-2A/Falcon-3A are the corresponding inner-product variants. We provide recurrent, masked-parallel, and chunk-parallel forms, together with numerically stable positive-decay renormalization. Representative variants remain competitive in language modeling and improve length extrapolation on variable-digit addition. This framework separates temporal alignment, plasticity, forgetting, and bounded rehearsal in recurrent sequence models.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small生成，循环快速权重记忆和选择性状态空间模型将扩展上下文压缩为固定大小的循环状态，使状态转换成为在线学习规则。我们在写后自回归语义下研究这个规则。对于这里考虑的前缀预测目标，在步骤 t 中显示的本地快速记忆示例是前缀对齐对 (x_t,y_t)=(phi(k_{t-1}),v_t)。常见的同步关联 (phi(k_t),v_t) 仍然是因果关系，但优化了不同的内部目标。我们导出平方误差回归和负内积目标的归一化一阶更新。回归系列包括 Falcon-1（标量 NLMS 更新）、Falcon-2（其每列扩展）和 Falcon-3（滑动窗口小批量更新）； Falcon-1A/Falcon-2A/Falcon-3A 是相应的内积变体。我们提供循环、屏蔽并行和块并行形式，以及数值稳定的正衰减重整化。代表性变体在语言建模中仍然具有竞争力，并改进了可变数字加法的长度外推。该框架将循环序列模型中的时间对齐、可塑性、遗忘和有界演练分开。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.28192" target="_blank">Locate Anything in Videos: Rethinking Efficient Generative Spatio-Temporal Video Grounding</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Mohamed Bin Zayed University of Artificial Intelligence</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Hanoona Rasheed, Haania Siddiqui, Ming-Hsuan Yang, Fahad Shahbaz Khan, Salman Khan</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.28192" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.28192" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.28192.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Parallel Tube Decoding enables simultaneous spatial and temporal video grounding by removing autoregressive dependencies, drastically cutting latency while improving accuracy.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 并行管解码通过消除自回归依赖性实现同步空间和时间视频接地，大幅减少延迟，同时提高准确性。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Spatio-temporal video grounding (STVG) requires models to identify when a referred event occurs and localize the target entity throughout that interval. Existing multimodal large language models typically serialize dense localization trajectories autoregressively, causing decoding latency to grow with tube length and allowing localization errors to propagate across time. We introduce Parallel Tube Decoding (PTD), a generative formulation that decomposes grounding into a temporal block followed by time-conditioned spatial blocks decoded simultaneously. This removes both token-level and trajectory-level dependencies, reducing the sequential decoding depth to a fixed 1 + 1 rounds, independent of tube length. To enable parallel spatial generation, we introduce Decoupled Block Attention, which preserves access to shared video-query context while eliminating cross-box dependencies, together with localization-aware policy optimization for temporal boundaries and spatial geometry. On VidSTG, PTD reduces Tube Completion Latency by 79x and increases spatial decoding throughput by 92x over standard autoregressive decoding, while also improving grounding accuracy. With a compact 4B backbone, our model performs favorably well on VidSTG and HC-STVG, and generalizes zero-shot to temporal grounding, grounded VideoQA, and referring video object tracking. Our results show parallel tube generation is an efficient and effective alternative to autoregressive localization in videos.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small 生成的时空视频接地 (STVG) 需要模型来识别参考事件何时发生，并在整个时间间隔内定位目标实体。现有的多模态大语言模型通常以自回归方式序列化密集的定位轨迹，导致解码延迟随着管长度的增加而增加，并允许定位错误随时间传播。我们引入了并行管解码（PTD），这是一种生成公式，它将基础分解为时间块，然后同时解码时间条件空间块。这消除了令牌级和轨迹级依赖性，将顺序解码深度减少到固定的 1 + 1 轮，与管长度无关。为了实现并行空间生成，我们引入了解耦块注意力，它保留了对共享视频查询上下文的访问，同时消除了跨框依赖性，以及针对时间边界和空间几何的本地化感知策略优化。在 VidSTG 上，与标准自回归解码相比，PTD 将 Tube Completion 延迟降低了 79 倍，并将空间解码吞吐量提高了 92 倍，同时还提高了接地精度。凭借紧凑的 4B 主干，我们的模型在 VidSTG 和 HC-STVG 上表现良好，并将零样本推广到时间接地、接地 VideoQA 和参考视频对象跟踪。我们的结果表明，并行管生成是视频中自回归定位的一种高效且有效的替代方案。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.28478" target="_blank">Blind Men and the Elephant: Probing the Epistemic Myopia of LLMs under Long-Tail Divergent Knowledge</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Tencent</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Zhuoshi Pan, Junru Lu, Yan Qian, H. Vicky Zhao, Di Yin</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.28478" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.28478" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.28478.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract ElephantBench evaluates whether large language models retain multiple conflicting accounts of long-tail facts through a graph-based pipeline that creates verifiable multi-account questions, revealing widespread epistemic incompleteness.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 ElephantBench 通过基于图形的管道评估大型语言模型是否保留长尾事实的多个相互冲突的描述，该管道创建可验证的多帐户问题，揭示广泛的认知不完整性。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Factual question answering (QA) typically assumes a single canonical answer, obscuring whether large language models (LLMs) retain divergent accounts of long-tail facts. To address this gap, we introduce ElephantBench, a closed-book knowledge probe comprising 1,094 questions generated through an auditable graph-based pipeline. The pipeline retrieves related documents from a low-exposure web corpus, identifies naturally occurring disagreements, and converts them into multi-account QA records. Each answer is verified against the originating documents and authoritative public web sources and is then reviewed by human annotators. Across 32 models, even the strongest model recovers both accounts on only 52.4% of questions, while on nearly all remaining questions it recalls one account but omits the other. Scaling model size and inference-time reasoning improve recall but do not eliminate this incompleteness. Corpus analysis further shows that exposure imbalance favors the dominant account, whereas greater minority-side exposure is associated with more complete recall. These findings establish ElephantBench as a reproducible knowledge probe for diagnosing epistemic myopia in parametric memory. More broadly, our graph-based benchmark construction pipeline provides an efficient and scalable way to turn long-tail corpora into source-traceable knowledge probes, supporting efforts to evaluate and advance the epistemic rigour of next-generation LLMs. Code is available at https://github.com/Tencent/ElephantBench.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small生成事实问答（QA）通常假设一个规范答案，从而掩盖了大型语言模型（LLM）是否保留了对长尾事实的不同描述。为了解决这一差距，我们引入了 ElephantBench，这是一种闭卷知识探索，包含通过可审核的基于图形的管道生成的 1,094 个问题。该管道从低曝光度的网络语料库中检索相关文档，识别自然发生的分歧，并将其转换为多帐户 QA 记录。每个答案都会根据原始文档和权威公共网络资源进行验证，然后由人工注释者进行审核。在 32 个模型中，即使是最强的模型也只能在 52.4% 的问题上恢复两个帐户，而在几乎所有剩余问题上，它都会回忆一个帐户但忽略另一个帐户。缩放模型大小和推理时间推理可以提高召回率，但不能消除这种不完整性。语料库分析进一步表明，曝光失衡有利于主导账户，而少数群体曝光度越高，回忆越完整。这些发现使 ElephantBench 成为一种可重复的知识探针，用于诊断参数记忆中的认知近视。更广泛地说，我们基于图的基准构建管道提供了一种高效且可扩展的方法，将长尾语料库转变为可追溯源的知识探针，支持评估和推进下一代法学硕士认知严谨性的努力。代码可在 https://github.com/Tencent/ElephantBench 获取。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.28444" target="_blank">Sliding-window beats linear attention</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Microsoft</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Alexia Jolicoeur-Martineau, Rhea Sanjay Sukthanker, Pashmina Cameron, Emy Gervais</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.28444" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.28444" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.28444.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Sliding window attention with sinks outperforms post-trained linear attention on long-context tasks without requiring retraining, offering a cheaper and more reliable inference solution.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：在长上下文任务上，带有接收器的滑动窗口注意力优于训练后的线性注意力，无需重新训练，提供了更便宜、更可靠的推理解决方案。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Due to the nature of quadratic attention, Large Language Models (LLMs) consume a lot of memory and energy. Every new token costs more than the previous one. For each additional token, the keys and values must be stored in memory indefinitely, which is unsustainable.
+  Several alternatives have been proposed to fix the quadratic scaling problem, one of which is retrofitting LLMs to use Linear Attention. This idea has attracted a lot of attention, given its promise to solve the quadratic scaling problem with state-of-the-art performance at low cost. However, this line of research has not been properly compared to simpler baselines.
+  In this work, we show that Sliding Window Attention (SWA) with sinks performs as well or better than post-trained Linear Attention models. We observe this across multiple LLMs on various downstream tasks. For long-context reasoning tasks (Needle-in-a-Haystack and BABILong), SWA achieves massively higher performance (2 to 10 times higher than linear attention). SWA requires no post-training, is extremely fast, and requires low memory; therefore, making it an extremely cheap and reliable solution.
+  To reduce inference memory cost, we strongly recommend switching to SWA instead of post-training linear models. Linear attention models may have shown some promise, but they likely require to be trained from scratch or extensive post-training in order to even match SWA.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small 生成 由于二次注意力的本质，大型语言模型 (LLM) 会消耗大量内存和能量。每一个新代币的成本都比前一个要高。对于每个额外的令牌，键和值必须无限期地存储在内存中，这是不可持续的。
+  人们提出了几种替代方案来解决二次缩放问题，其中之一是改造 LLM 以使用线性注意力。这个想法引起了很多关注，因为它有望以低成本、最先进的性能解决二次缩放问题。然而，这一研究方向尚未与更简单的基线进行适当的比较。
+  在这项工作中，我们展示了带有接收器的滑动窗口注意力（SWA）的表现与训练后的线性注意力模型一样好甚至更好。我们在多个法学硕士的各种下游任务中观察到了这一点。对于长上下文推理任务（大海捞针和 BABILong），SWA 实现了更高的性能（比线性注意力高 2 到 10 倍）。 SWA无需后期训练，速度极快，内存要求低；因此，使其成为极其便宜且可​​靠的解决方案。
+  为了降低推理内存成本，我们强烈建议切换到 SWA 而不是训练后线性模型。线性注意力模型可能已经显示出一些前景，但它们可能需要从头开始训练或进行广泛的后训练才能与 SWA 相匹配。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.25417" target="_blank">Paint What You See: Benchmarking Dexterous Visual Tool Use in Multimodal Agents</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>EASEL-Bench</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Shudong Liu, DongyangChen, Dongyang Chen, Enci Zhang, Jinwei Liang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.25417" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.25417" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.25417.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract EASEL benchmarks fine-grained visual tool use through reference-guided reconstruction and semantic tasks, revealing that current multimodal agents struggle with closed-loop precision and trajectory stability.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 EASEL 通过参考引导的重建和语义任务对细粒度视觉工具的使用进行了基准测试，揭示了当前的多模态代理在闭环精度和轨迹稳定性方面的挣扎。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Evaluation is shifting from static QA toward agentic settings where models act through external tools. We identify a critical yet underexplored capability within this space - dexterous visual tool use: fine-grained, closed-loop parameterized visual action in which models infer tool parameters from visual evidence, and those parameters directly govern the final result. Existing benchmarks cover web navigation, GUI operation, and software engineering, but rarely target this coupling between visual evidence and execution precision. We propose EASEL, a benchmark evaluating a controlled instance of dexterous visual tool use that adopts reference-guided visual reconstruction as its primary proxy task: the agent incrementally paints a canvas to match a reference image. EASEL additionally includes semantic tasks spanning region annotation, handwriting, and path planning. We further provide EASEL-Data, a 440k-sample two-stage curriculum dataset for trajectory supervision, and EASEL-9B to investigate its effect on this capability. Evaluation of 25 models reveals that current multimodal agents systematically struggle on EASEL. Reconstruction similarity bottlenecks at low levels (0.40-0.54), while trajectory diagnostics expose severe closed-loop instability - models typically saturate early or degrade post-peak. Semantic tasks reveal sharp capability boundaries in precision annotation and path planning. EASEL-9B, trained on EASEL-Data, surpasses the base model by a relative 6.3%, ranking third among all evaluated models.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small 生成 评估正在从静态 QA 转向模型通过外部工具发挥作用的代理设置。我们确定了这个领域中一个关键但尚未充分开发的能力——灵巧的视觉工具使用：细粒度、闭环参数化视觉动作，其中模型从视觉证据推断工具参数，而这些参数直接控制最终结果。现有的基准测试涵盖网络导航、GUI 操作和软件工程，但很少针对视觉证据和执行精度之间的耦合。我们提出了 EASEL，这是一个评估灵巧视觉工具使用的受控实例的基准，它采用参考引导的视觉重建作为其主要代理任务：代理逐步绘制画布以匹配参考图像。 EASEL还包括跨越区域注释、手写和路径规划的语义任务。我们进一步提供 EASEL-Data（用于轨迹监督的 44 万样本两阶段课程数据集）和 EASEL-9B 来研究其对此功能的影响。对 25 个模型的评估表明，当前的多模式智能体在 EASEL 上系统性地挣扎。重建相似性瓶颈处于低水平（0.40-0.54），而轨迹诊断暴露出严重的闭环不稳定性——模型通常会提前饱和或在峰值后退化。语义任务揭示了精确注释和路径规划中清晰的能力边界。 EASEL-9B 在 EASEL-Data 上进行训练，相对基础模型超过 6.3%，在所有评估模型中排名第三。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.24777" target="_blank">StepGuard: Learning Step-Level Guardrails with Scalable Supervision and Safety-Utility Balancing</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>AI45Research</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>ninty-seven, Zhijie Zheng, Yu Li, Chen Qian, Yuqian Fu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.24777" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.24777" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.24777.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract StepGuard is a step-level guard model that audits agent actions before execution, trained via automatic trajectory generation and balanced reinforcement learning to reduce attacks with minimal utility loss.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 StepGuard 是一种步级防护模型，可在执行前审核代理动作，通过自动轨迹生成和平衡强化学习进行训练，以最小化效用损失来减少攻击。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small LLM-based agents can interact with external environments through tool invocation, but this capability also introduces security risks such as file modification, information leakage, and unauthorized actions. Existing guardrails often evaluate completed trajectories, leaving pre-execution monitoring of step-level actions underexplored. We propose StepGuard, a step-level guard model that can audit completed agent trajectories and check tool actions before they are executed. To train StepGuard, we introduce StepGen, an automatic data engine that generates safe and unsafe trajectories with the same context but different actions at the risky step. To further reduce over-defense and under-defense, we propose Balance-GRPO, which dynamically balances learning between safe and unsafe actions based on their observed accuracy. Experiments show that StepGuard achieves the highest average accuracy among open-weight guard models, with performance comparable to GPT-5.4. When used to guard agents on AgentDojo and AgentDyn, StepGuard reduces mean attack success rate by 77.3% relative to the no-guard setting, while mean utility drops by only 2.8 percentage points.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small生成的基于LLM的代理可以通过工具调用与外部环境进行交互，但这种能力也带来了文件修改、信息泄漏和未经授权的操作等安全风险。现有的护栏通常会评估已完成的轨迹，而对步骤级操作的执行前监控尚未进行充分探索。我们提出了 StepGuard，这是一种步骤级防护模型，可以审核已完成的代理轨迹并在执行之前检查工具操作。为了训练 StepGuard，我们引入了 StepGen，这是一种自动数据引擎，可以生成具有相同上下文但在危险步骤中采取不同操作的安全和不安全轨迹。为了进一步减少过度防御和防御不足，我们提出了 Balance-GRPO，它根据观察到的准确性动态平衡安全和不安全动作之间的学习。实验表明，StepGuard 在开放重量防护模型中实现了最高的平均准确率，性能与 GPT-5.4 相当。当用于保护 AgentDojo 和 AgentDyn 上的代理时，StepGuard 相对于无保护设置，平均攻击​​成功率降低了 77.3%，而平均效用仅下降了 2.8 个百分点。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.28549" target="_blank">Video Generative Models as Geometry Learner</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Haosen Yang, Jifei Song, Zhensong Zhang, Xiatian Zhu, Jiankang Deng</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.28549" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.28549" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.28549.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract GeoNeXt repurposes pretrained video generative models as a unified framework for geometry estimation via next-frame prediction, enabling efficient joint modeling of depth and surface normals with minimal labeled data.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 GeoNeXt 将预训练视频生成模型重新用作通过下一帧预测进行几何估计的统一框架，从而能够使用最少的标记数据对深度和表面法线进行有效的联合建模。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Recent generative approaches to geometry estimation adapt pretrained image diffusion models and treat the task as image-conditioned generation. Leveraging off-the-shelf image diffusion models, they either (i) train task-specific geometry models (for depth and surface normal estimation) independently, losing the opportunity of exploring the intrinsic correlation of these geometric targets, or (ii) jointly fine-tune modified image diffusion backbones (e.g., altered self-attention), which typically demands substantial labeled data. To overcome these limitations in a principled fashion, we repurpose pretrained video generative models as a unified and data-efficient framework for geometry estimation, formulated innovatively as a next-frames prediction task. Our method, GeoNeXt, inherits naturally structured knowledge and richer priors from the video model, while further adapting them for joint modeling of images and geometry targets (image &lt;-> geometry), enabling more data efficient and effective learning of geometry. Extensive experiments validate our method for zero-shot monocular depth and surface normal estimation across diverse datasets, outperforming both previous task-specific and unified generative competitors while using substantially less training data. Notably, our method rivals discriminative state-of-the-art approaches trained on over 100x more data and even standouts on several benchmarks.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small生成最近的几何估计生成方法采用预训练的图像扩散模型并将任务视为图像条件生成。利用现成的图像扩散模型，他们要么（i）独立训练特定于任务的几何模型（用于深度和表面法线估计），从而失去探索这些几何目标的内在相关性的机会，要么（ii）联合微调修改后的图像扩散主干（例如改变的自注意力），这通常需要大量标记数据。为了以原则性的方式克服这些限制，我们将预训练的视频生成模型重新用作几何估计的统一且数据高效的框架，创新地制定为下一帧预测任务。我们的方法 GeoNeXt 继承了视频模型的自然结构化知识和更丰富的先验，同时进一步调整它们以用于图像和几何目标（图像 <-> 几何）的联合建模，从而实现更高效的数据学习和更有效的几何学习。大量的实验验证了我们在不同数据集上进行零样本单目深度和表面法线估计的方法，其性能优于之前的特定任务和统一生成竞争对手，同时使用的训练数据大大减少。值得注意的是，我们的方法可以与基于超过 100 倍的数据进行训练的最先进的判别方法相媲美，甚至在多个基准测试中表现出色。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.26794" target="_blank">Ring Forcing: Towards Precise Long-Term Memory for Autoregressive Video Diffusion</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Bowen Xue, Brandon Y. Feng, Chenguo Lin, Yuchen Lin, Yujia Zeng</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.26794" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.26794" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.26794.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Ring Forcing is an autoregressive video diffusion framework that improves long-term memory through ring-structured training, history compression, and sparse rotary embeddings to achieve minute-long coherence.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 Ring Forcing 是一种自回归视频扩散框架，通过环结构训练、历史压缩和稀疏旋转嵌入来改善长期记忆，以实现分钟长的一致性。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Scaling video generation to long durations reveals a critical bottleneck: current models lack robust long-term memory. This deficiency can be studied along two critical aspects: object permanence, the ability to precisely reproduce the appearance of objects upon re-entry; and memory capacity, the ability to process ultra-long context and use information from distant history. Robust long-term memory requires both: object permanence without sufficient context handling limits the temporal scope, while long context length without permanence fails to maintain identity. To address this, we present Ring Forcing, an autoregressive video diffusion framework designed to robustly construct and precisely utilize long-term memory. Our ring-structured training strategy enforces retrieval from distant history, effectively reconciling the trade-off between strict historical adherence and generative diversity. To expand memory capacity, we introduce a compression and timestep composition strategy. Under fixed sequence length constraints, this method extends the effective historical span to minutes-long durations and achieves a comprehensive receptive field over the entire history. Furthermore, we present a sparse RoPE mechanism to enable flexible, scalable memory adaptation while fully exploiting pre-trained priors. Extensive experiments demonstrate that Ring Forcing achieves superior minutes-long coherence and object permanence, significantly outperforming state-of-the-art methods.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small 生成的长时间视频生成揭示了一个关键瓶颈：当前模型缺乏强大的长期记忆。这种缺陷可以从两个关键方面进行研究：物体持久性，即重返大气层时精确再现物体外观的能力；记忆能力，即处理超长上下文和使用来自遥远历史的信息的能力。强大的长期记忆需要两者：没有足够上下文处理的对象持久性限制了时间范围，而没有持久性的长上下文长度无法保持身份。为了解决这个问题，我们提出了 Ring Forcing，这是一种自回归视频扩散框架，旨在稳健地构建和精确利用长期记忆。我们的环形结构训练策略强制从遥远的历史中检索，有效地协调了严格的历史遵循和生成多样性之间的权衡。为了扩展内存容量，我们引入了压缩和时间步组合策略。在固定序列长度约束下，该方法将有效历史跨度扩展到分钟长的持续时间，并在整个历史上实现了全面的感受野。此外，我们提出了一种稀疏 RoPE 机制，以实现灵活、可扩展的内存适应，同时充分利用预先训练的先验。大量实验表明，环力实现了卓越的长达数分钟的一致性和物体持久性，显着优于最先进的方法。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.24115" target="_blank">PonderPounce: A Pretrained MLLM as an Episode Context Engine for Robot Control</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>maum-ai</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Suhwan Choi, Jaeyoon Jung, Sungkyung Kim, Yunsung Lee, Youngjae Yu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.24115" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.24115" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.24115.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract PonderPounce leverages native causal context in multimodal language models as robot episode memory, jointly training a reasoning System2 module and a fast System1 action model to improve long-horizon policy performance without dedicated memory architectures.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：PonderPounce 利用多模态语言模型中的原生因果上下文作为机器人事件记忆，联合训练推理 System2 模块和快速 System1 动作模型，以在无需专用内存架构的情况下提高长期策略性能。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Multimodal large language models (MLLMs) can integrate long visual histories, reason under partial observability, and infer behavior from a few examples. Yet vision-language-action (VLA) models generally inherit pretrained representations without using this contextual capacity as episode memory. Memory-dependent policies address this gap through purpose-built history mechanisms. PonderPounce instead reuses an MLLM's native causal context as robot memory. Ponder, a System2 MLLM, accumulates episode observations, demonstrations, and prior cognition in its native causal context and can generate subgoal text and demonstration reasoning for internal use. Pounce, a System1 VLA, receives the current observation, instruction, and proprioception directly; through the Ponder--Pounce interface, it asynchronously receives only the newest continuous cognition token and its age. Both are jointly trained end to end without a purpose-built memory module or separate bridge pretraining. Optimized serving achieves p50 latencies of 78ms for cognition refresh and 25ms for action-model invocation, supporting 20Hz action playback. On RoboMME with base-scale training data, PonderPounce reaches 60.83% with 9B and 50.04% with 0.8B under the same Pounce architecture and interface, versus 44.51% for FrameSamp+Modul and 17.93% for the current-observation π_{0.5}. With 9x data, it reaches 75.54% versus 57.88% for FrameSamp+Modul. On RoboCasa-DC, the same interface learns from action supervision alone and reaches 12.5% versus 11.6% for the strongest published demonstration-conditioned baseline, falling to 8.6% when cognition is replaced by a learned null state.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small 生成 多模态大型语言模型 (MLLM) 可以集成长期视觉历史、部分可观察性下的推理，并从几个示例中推断行为。然而，视觉-语言-动作（VLA）模型通常继承预先训练的表示，而不使用这种上下文能力作为情节记忆。依赖于内存的策略通过专门构建的历史机制来解决这一差距。相反，PonderPounce 重用 MLLM 的本机因果上下文作为机器人记忆。 Ponder 是一个 System2 MLLM，在其本地因果上下文中积累事件观察、演示和先验认知，并可以生成子目标文本和演示推理以供内部使用。 Pounce是System1 VLA，直接接收当前的观察、指令和本体感觉；通过Ponder--Pounce接口，它异步地只接收最新的连续认知令牌及其年龄。两者都是端到端联合训练，没有专用的内存模块或单独的桥预训练。优化的服务实现了认知刷新的 p50 延迟为 78 毫秒，动作模型调用的 p50 延迟为 25 毫秒，支持 20Hz 动作播放。在具有基本规模训练数据的 RoboMME 上，在相同的 Pounce 架构和接口下，PonderPounce 9B 达到 60.83%，0.8B 达到 50.04%，而 FrameSamp+Modul 为 44.51%，当前观察 π_{0.5} 为 17.93%。使用 9 倍数据时，它达到 75.54%，而 FrameSamp+Modul 为 57.88%。在 RoboCasa-DC 上，相同的界面仅从动作监督中学习，达到了 12.5%，而最强的已发布的演示条件基线为 11.6%，当认知被学习的空状态取代时，下降到 8.6%。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.27906" target="_blank">Rubric-to-Code Credit Assignment for Reinforcement Learning</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Ant Group</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Rui Jin, Jikai Chen, Yihan Chen, Hao Zhou, Demin Zhu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.27906" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.27906" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.27906.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract RCCA improves reinforcement learning for interactive web app generation by assigning localized credit to code regions based on rubric-level feedback, yielding substantial benchmark gains.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 RCCA 通过根据标题级反馈将本地化信用分配给代码区域，改进了交互式 Web 应用程序生成的强化学习，从而产生了可观的基准收益。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Interactive web application generation requires models to produce usable HTML, CSS, and JavaScript applications from natural language requests. Unlike conventional code generation, application quality depends on multiple user-facing functional requirements, each often tied to localized code regions such as event handlers, state updates, DOM fragments, or CSS selectors. Standard GRPO collapses these structured outcomes into a single sequence-level reward and applies the resulting advantage uniformly to all tokens, weakening credit assignment. We propose Rubric-to-Code Credit Assignment (RCCA), a reinforcement learning framework that converts rubric-level functional feedback into localized optimization signals over generated code. RCCA builds training tasks around explicit functional rubrics, uses a hierarchical reward to separate format, source-code, runtime, and functional failures, and aligns evaluator-generated textual attributions with responsible code spans and generated tokens. The resulting model, Ling-RCCA-Flash, scores 41.25 on MiniAppBench, improving Ling-3.0-Flash by 32.20 points and slightly surpassing Claude Opus 4.5. It also reaches 76.19 on ArtifactsBench, improving the SFT model by 4.48 points and establishing a new top score under the official ArtifactsBench leaderboard setting by surpassing the GPT-5 score by 3.64 points, suggesting transferable implementation-level gains.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small 生成 交互式 Web 应用程序生成需要模型根据自然语言请求生成可用的 HTML、CSS 和 JavaScript 应用程序。与传统的代码生成不同，应用程序质量取决于多个面向用户的功能需求，每个需求通常与本地化代码区域相关，例如事件处理程序、状态更新、DOM 片段或 CSS 选择器。标准 GRPO 将这些结构化结果分解为单个序列级奖励，并将所得优势统一应用于所有代币，从而削弱信用分配。我们提出了 Rubric-to-Code Credit Distribution (RCCA)，这是一种强化学习框架，可将 rubric 级别的功能反馈转换为生成代码的本地化优化信号。 RCCA 围绕显式功能规则构建训练任务，使用分层奖励来分离格式、源代码、运行时和功能故障，并将评估者生成的文本属性与负责任的代码跨度和生成的标记保持一致。由此产生的模型 Ling-RCCA-Flash 在 MiniAppBench 上得分为 41.25，比 Ling-3.0-Flash 提高了 32.20 分，略高于 Claude Opus 4.5。它还在 ArtifactsBench 上达到了 76.19，将 SFT 模型改进了 4.48 分，并在官方 ArtifactsBench 排行榜设置下建立了新的最高分，超过了 GPT-5 分数 3.64 分，这表明可转移的实现级别收益。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.28363" target="_blank">EvoUndo: Recoverability-Constrained Self-Evolution for LLM Agent Harnesses</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>TanmaySah, Tanmay Sah, Dolly Sah, Harshul Jain, Tanya Sah</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.28363" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.28363" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.28363.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract EvoUndo evaluates recoverability of self-modifying LLM agents and shows that reliable recovery requires co-designing verification, state grounding, and recovery-language expressivity.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">Error 500 (Server Error)!!1500.That’s an error.There was an error. Please try again later.That’s all we know.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small LLM agents increasingly modify their own prompts, tools, middleware, resources, and execution harnesses at runtime. Such self-evolution can improve capability, but a successful mutation may leave persistent effects that cannot be safely reversed in states different from the one in which it was created. We introduce EvoUndo, a framework for representing, synthesizing, diagnosing, and independently verifying recoverability of model-generated self-modifications across counterfactual states. Across 600 unseen one-shot self-evolution tasks, we identify 197 capability-improving mutations that fail recoverability verification. Under the original recovery representation, conventional repair strategies recover 0/197 of these natural failures. Deterministic oracle analysis recovers 48/197 under the original recovery language L0, while the extended recovery calculus increases empirical oracle recovery to 191/197. A protocol-locked 2x2 grounding-by-expressivity intervention then separates two bottlenecks: exact state-address grounding increases successful recovery from 0/48 to 38/48 (79.2%) when the original language is sufficient, while extending the recovery language enables recovery on 142/143 (99.3%) failures in the oracle-defined S1 stratum. On the primary gpt-oss-120b backbone, adding exact-address diagnostics to the richer language reduces recovery to 133/143 (93.0%); a Qwen3.8-27B replication preserves the grounding and expressivity effects but not this negative interaction, indicating that the latter is model-dependent. These results indicate that reliable agent self-evolution requires co-designing verification, state grounding, witness semantics, and recovery-language expressivity rather than relying on iterative prompting alone.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small 生成 LLM 代理越来越多地在运行时修改自己的提示、工具、中间件、资源和执行工具。这种自我进化可以提高能力，但成功的突变可能会留下持久的影响，而这些影响在不同于其创建时的状态下无法安全逆转。我们引入了 EvoUndo，一个用于表示、综合、诊断和独立验证模型生成的跨反事实状态的自我修改的可恢复性的框架。在 600 个未见过的一次性自我进化任务中，我们发现了 197 个未能通过可恢复性验证的能力改进突变。在原始恢复表示下，传统修复策略可以恢复这些自然故障的 0/197。确定性预言机分析在原始恢复语言 L0 下恢复了 48/197，而扩展恢复演算将经验预言机恢复率提高到 191/197。然后，协议锁定的 2x2 表达性接地干预将两个瓶颈分开：当原始语言足够时，精确的状态地址接地将成功恢复率从 0/48 提高到 38/48 (79.2%)，而扩展恢复语言可以在 Oracle 定义的 S1 层中实现 142/143 (99.3%) 故障的恢复。在主要的 gpt-oss-120b 主干上，向更丰富的语言添加精确地址诊断可将恢复率降低至 133/143 (93.0%)； Qwen3.8-27B 复制保留了基础和表达性效应，但没有保留这种负面相互作用，表明后者是模型相关的。这些结果表明，可靠的智能体自我进化需要共同设计验证、状态基础、见证语义和恢复语言表达能力，而不是仅仅依赖迭代提示。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.23149" target="_blank">Language Chain in Alignment: Cross-lingual Ranking Preference Optimization</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>NLP & AI - Korea University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Seungyoon Lee, Minhyuk Kim, Jungseob Lee, Heuiseok Lim</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.23149" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.23149" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.23149.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Cross-lingual Ranking Preference Optimization improves multilingual alignment by transferring English preference knowledge to target languages through hierarchical ranking optimization.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 跨语言排名偏好优化通过分层排名优化将英语偏好知识转移到目标语言，从而改善多语言对齐。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small The alignment of Large Language Models heavily relies on English-centric high-quality preference data, which often leads to suboptimal performance in other languages. In this paper, we propose Cross-lingual Ranking Preference Optimization~(CRPO), a novel framework that leverages robust preference knowledge from English to facilitate preference alignment in the target language. We design a hierarchical structure within parallel preference pairs across the target language and English to jointly optimize intra- and inter-lingual preferences, thereby enhancing language adaptation and output quality. Building on the LambdaLoss framework, CRPO goes beyond the binary comparison based optimization by providing a relative ranking signal across multiple candidate responses. Our experiments across five languages with varying resource scales demonstrate that CRPO consistently outperforms standard approaches in both instruction-following and knowledge utilization capability. Notably, the robust performance gains observed across various weighting schemes further validate the empirical effectiveness of our hierarchical design in a multilingual setup. Furthermore, our findings highlight that CRPO significantly improves both reward margins and the log-probability of desirable responses, contributing to a more stable preference manifold for cross-lingual alignment. Our code is available at https://github.com/dltmddbs100/CRPO.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由 Thinkingmachines/Inkling-Small 生成 大型语言模型的对齐在很大程度上依赖于以英语为中心的高质量偏好数据，这通常会导致其他语言的性能不佳。在本文中，我们提出了跨语言排名偏好优化（CRPO），这是一种新颖的框架，它利用英语中强大的偏好知识来促进目标语言中的偏好对齐。我们在目标语言和英语的并行偏好对中设计了一个层次结构，以共同优化语言内和语言间偏好，从而提高语言适应和输出质量。 CRPO 以 LambdaLoss 框架为基础，通过提供跨多个候选响应的相对排名信号，超越了基于二元比较的优化。我们对五种具有不同资源规模的语言进行的实验表明，CRPO 在指令遵循和知识利用能力方面始终优于标准方法。值得注意的是，在各种加权方案中观察到的稳健性能增益进一步验证了我们的分层设计在多语言设置中的经验有效性。此外，我们的研究结果强调，CRPO 显着提高了奖励裕度和期望响应的对数概率，有助于为跨语言对齐提供更稳定的偏好流形。我们的代码可在 https://github.com/dltmddbs100/CRPO 获取。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.25375" target="_blank">GGSS: Geodesic-Gated Spherical Steering for Inference-Time Debiasing of Generative Vision-Language Models</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yiqun Sun, Junyu Chen, Pengfei Wei, Lawrence B. Hsieh</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.25375" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.25375" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.25375.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract GGSS reduces demographic bias in generative vision-language models by steering visual tokens along geodesic arcs with an adaptive gate, preserving visual-language accuracy.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 GGSS 通过使用自适应门沿着测地线引导视觉标记，从而减少生成视觉语言模型中的人口统计偏差，从而保持视觉语言的准确性。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Generative vision-language models (VLMs) are increasingly used in human-centered settings, yet they can produce demographically biased outputs even when images differ only in controlled attributes such as perceived race or gender. However, existing inference-time debiasers were largely designed for static embeddings or CLIP-like models rather than generative VLMs. We propose GGSS---Geodesic-Gated Spherical Steering---a norm-preserving intervention that discovers a counterfactual bias subspace on the unit hypersphere, steers visual tokens along geodesic arcs, and uses an adaptive gate to focus correction on tokens that carry stronger demographic signal. We evaluate four generative VLMs against ten adapted inference-time debiasing baselines and prompt-based mitigation under a single operating-point protocol across categorical, pairwise, and occupation-gender bias tests, while also measuring general visual-language capability. GGSS achieves the lowest average bias on all four models, significant on three of four backbones under paired permutation tests, while preserving MMStar accuracy within +/- 0.6 p.p. of the unsteered baseline. Code is available at https://github.com/dukesun99/GGSS.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small生成生成视觉语言模型（VLM）越来越多地用于以人为中心的环境中，但即使图像仅在受控属性（例如感知的种族或性别）上有所不同，它们也可能产生人口统计偏差的输出。然而，现有的推理时间去偏器主要是为静态嵌入或类似 CLIP 的模型而不是生成 VLM 设计的。我们提出 GGSS——测地线门控球形转向——一种保持规范的干预措施，它发现单位超球面上的反事实偏差子空间，沿着测地线引导视觉标记，并使用自适应门将校正集中在带有更强人口统计信号的标记上。我们根据 10 个适应的推理时间去偏差基线和基于提示的缓解措施，在单一操作点协议下跨分类、成对和职业性别偏差测试评估了 4 个生成 VLM，同时还测量了一般视觉语言能力。 GGSS 在所有四个模型上实现了最低的平均偏差，在配对排列测试下的四个骨干网中的三个上显着，同时将 MMStar 精度保持在 +/- 0.6 p.p 之内。的无导向基线。代码可在 https://github.com/dukesun99/GGSS 获取。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.25697" target="_blank">LMSM: LLM Security Framework Inspired by Linux Security Modules</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>National University of Singapore</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>XiuYu Zhang, Bonan Ruan, Junfeng Fang, An Zhang, Tat-Seng Chua</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.25697" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.25697" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.25697.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract LMSM applies a modular security framework to LLM serving by separating evidence calibration, policy evaluation, and output gating, enabling flexible interpretability-based enforcement without rebuilding request handling.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 LMSM 通过分离证据校准、策略评估和输出门控，将模块化安全框架应用于 LLM 服务，从而无需重建请求处理即可实现基于可解释性的灵活执行。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Large language models (LLMs) are increasingly deployed with layered defenses, yet malicious prompts can still bypass them. Interpretability methods can expose model-internal signals along the generation path that could inform enforcement, but these signals are not security controls by themselves. Deployments that adapt them for safety typically couple each signal to its own calibration, policy logic, and intervention code, so each new artifact creates integration work instead of strengthening a shared defense. We present Language Model Security Modules (LMSM), a security framework that adapts the separation behind Linux Security Modules (LSM) to LLM serving. In LMSM, a selected security backend exposes calibrated evidence, a versioned policy evaluates active rules over trusted per-request context, and a separate gate authorizes buffered output release. This design separates mediation correctness from policy effectiveness, and it allows backend, rule, or schedule changes without rebuilding request handling or enforcement. Our prototype shows the separation working in practice: with Hugging Face Transformers and continuously batched vLLM, the same substrate hosts artifact-backed sparse autoencoder (SAE) and transcoder deployments and task-fitted dense probes, preserves request-specific decisions under scheduler churn, and selectively enforces and composes multiple rules per request. On Qwen3-4B, LMSM-Checkpoint reduces HarmBench attack success rate from 39.20% to 3.32%, with XSTest false refusals rising from 2.40% to 4.40%, while retaining 98.14% of the throughput of a matched serving path that performs no monitoring work at 32 active sequences. LMSM gives advances in interpretability and model-internal analysis a common path to runtime enforcement.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small生成大型语言模型（LLM）越来越多地部署分层防御，但恶意提示仍然可以绕过它们。可解释性方法可以沿着生成路径公开模型内部信号，这些信号可以通知执行，但这些信号本身并不是安全控制。为了安全而进行调整的部署通常会将每个信号与其自己的校准、策略逻辑和干预代码相结合，因此每个新工件都会创建集成工作，而不是加强共享防御。我们提出了语言模型安全模块 (LMSM)，这是一种安全框架，可将 Linux 安全模块 (LSM) 背后的分离调整为 LLM 服务。在 LMSM 中，选定的安全后端公开校准证据，版本化策略评估受信任的每个请求上下文的活动规则，并且单独的门授权缓冲输出发布。这种设计将中介正确性与策略有效性分开，并且允许后端、规则或时间表更改，而无需重建请求处理或执行。我们的原型展示了实践中的分离工作：通过 Hugging Face Transformers 和连续批处理的 vLLM，同一基底托管工件支持的稀疏自动编码器 (SAE) 和转码器部署以及任务匹配的密集探针，在调度程序搅动下保留特定于请求的决策，并有选择地强制执行和为每个请求编写多个规则。在 Qwen3-4B 上，LMSM-Checkpoint 将 HarmBench 攻击成功率从 39.20% 降低到 3.32%，XSTest 错误拒绝率从 2.40% 上升到 4.40%，同时保留在 32 个活动序列上不执行监控工作的匹配服务路径的 98.14% 的吞吐量。 LMSM 为可解释性和模型内部分析方面的进步提供了运行时实施的通用途径。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.21721" target="_blank">Ask or Answer: A Decision Framework for Multi-Turn Health Misinformation Intervention</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Xiaoying Song, Anirban Saha Anik, Jinyu Liu, Qitao Tan, Geng Yuan</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.21721" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.21721" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.21721.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract RO-PnR learns when to ask clarifying questions versus deliver corrections by weighing interaction costs against expected gains, improving cost-adjusted outcomes in health misinformation dialogues.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">Error 500 (Server Error)!!1500.That’s an error.There was an error. Please try again later.That’s all we know.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Correcting health misinformation in dialogue requires more than producing a factual rebuttal: users differ in what they know, what they believe, and what they need to hear, so an effective intervention often depends on first asking the right clarifying question. Yet existing methods either respond immediately or probe indiscriminately, treating clarification as either unnecessary or always beneficial. We propose Reward-Optimized Probe-and-Respond (RO-PnR), a framework that learns when asking is worth its cost. At each turn, RO-PnR chooses between probing for more information and committing to a final correction, guided by a turn-level reward that weighs the expected gain from probing against its interaction cost. To capture how user heterogeneity affects probing value, we model each simulated user with a latent state along health literacy and belief commitment. Experiments show that RO-PnR achieves the highest cost-adjusted utility across three health-misinformation datasets and three base models, using 30% fewer turns than always-probe baselines.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">Error 500 (Server Error)!!1500.That’s an error.There was an error. Please try again later.That’s all we know.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.20965" target="_blank">Training, learning and inference: unified dynamics of neural systems</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>wind342, Mian Wang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.20965" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.20965" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.20965.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Atomic generation facts compiled into a graph enable recursive scientific processes, and training-learning dynamics in nanoGPT are characterized by state-conditioned parameter updates, persistent functional reorganization, and frozen inference projections validated across architectures.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要 编译成图的原子生成事实可实现递归科学过程，nanoGPT 中的训练学习动态特征包括状态条件参数更新、持久功能重组和跨架构验证的冻结推理投影。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small We define an atomic generation fact f=(u,tau,omega,z;rho), recording the origin, realized transformation, concrete occurrence, generated result and relation role. Compiled into a Generation-Fact Graph (GFG), these facts provide an AI-native, compilable scientific fact substrate preserving generation histories. We establish a GFG-based recursive scientific process in which analysis, intervention, replay and validation form facts for later cycles. Using nanoGPT, we establish unified training-learning dynamics. Training is the evolution of a parameter-optimizer system with state and memory: each actual training action enters the receiving state and produces a finite-amplitude nonlinear functional response conditioned by that state and target-specific update geometry. Learning is the persistent reorganization of distributed functional support by these responses; capability formation, maintenance, decline or recovery becomes observable when target-specific states are evaluated against their readout boundaries. Three primary coordinates - target-boundary state, target-specific update geometry and parameter-Adam receiving state - yield a second-order predictor operating before post-update outputs are read. On held-out runs, it achieved 91.43% accuracy and 91.49% macro-averaged recall across four transitions. We further establish inference as a frozen projection of training-learning dynamics. Component gating and rollback show causal recruitment and non-additive combination of query-conditioned support formed during training, deriving organizational conditions realized by Attention. Controlled feedback indicates possible double-edged reinforcement effects. ResNet/CIFAR-100 and diffusion/CIFAR-10 experiments confirm receiving-state-conditioned responses, persistent support reorganization and frozen inference projection beyond nanoGPT.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small生成 我们定义一个原子生成事实f=(u,tau,omega,z;rho)，记录了起源、实现的转变、具体的发生、生成的结果和关系角色。这些事实被编译成一代事实图（GFG），提供了一个人工智能原生的、可编译的科学事实基质，保存了一代历史。我们建立了一个基于 GFG 的递归科学流程，其中分析、干预、重播和验证形成了后续周期的事实。使用 nanoGPT，我们建立了统一的训练学习动态。训练是具有状态和记忆的参数优化器系统的演变：每个实际训练动作进入接收状态并产生由该状态和特定于目标的更新几何条件调节的有限幅度非线性函数响应。学习是通过这些响应对分布式功能支持进行持续重组；当根据其读出边界评估特定目标的状态时，能力的形成、维持、下降或恢复就变得可观察到。三个主要坐标 - 目标边界状态、特定于目标的更新几何形状和参数 Adam 接收状态 - 在读取更新后输出之前产生运行的二阶预测器。在保留运行中，它在四个转换中实现了 91.43% 的准确率和 91.49% 的宏观平均召回率。我们进一步将推理建立为训练学习动态的冻结投影。组件门控和回滚展示了训练过程中形成的查询条件支持的因果招募和非加性组合，导出了Attention实现的组织条件。受控反馈表明可能存在双刃强化效应。 ResNet/CIFAR-100 和扩散/CIFAR-10 实验证实了接收状态条件响应、持久支持重组和超出 nanoGPT 的冻结推理投影。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.28458" target="_blank">Acquire, Repair, Preserve: A Diagnosis-Guided Post-Training Recipe for Small-Model Dialogue Game Agents</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>NLP Group at Utrecht University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Nan Li</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.28458" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.28458" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.28458.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract A 2B open-weight model improves interactive dialogue-game performance through supervised fine-tuning and turn-local preference training, though gains remain largely within the targeted game family.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">Error 500 (Server Error)!!1500.That’s an error.There was an error. Please try again later.That’s all we know.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Interactive dialogue games test a capability that static benchmarks largely leave implicit: a model must carry state across turns, interpret feedback, and choose valid actions under changing constraints. We study this setting in the LM Playschool Challenge with a 2B open-weight model, and find that many failures are not only broad knowledge failures but also local decision failures: repeated guesses, malformed actions, and violations of feedback that the model has just seen. These diagnostics motivate a training recipe organized around three steps: acquire broad game participation through supervised fine-tuning, repair mechanically verifiable failures within one targeted dialogue-game family using turn-local preference pairs, and preserve general capabilities beyond these dialogue games. In the official final evaluation, our submission improves public clemscore from 10.67 to 38.92 and closed in-domain score from 13.41 to 41.17, while approximately preserving aggregate static performance (44.14 vs. 44.24 for the baseline). Out-of-domain clemscore remains low at 7.88, with the largest gains concentrated in unseen variants of the targeted family. Our results suggest that broad SFT brings most of the model's capability improvement; turn-local supervision can be effective when failure detection is precise, with observed transfer concentrated primarily within-family.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">Error 500 (Server Error)!!1500.That’s an error.There was an error. Please try again later.That’s all we know.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.26737" target="_blank">Generative Semantic Scene Completion</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Stone-Chern, Shi Chen, Weifeng Ge</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.26737" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.26737" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.26737.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Generative discrete diffusion recasts outdoor LiDAR semantic scene completion via paired sparse-dense synthesis, semantic-guided generation, and structured refinement to achieve state-of-the-art results.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">Error 500 (Server Error)!!1500.That’s an error.There was an error. Please try again later.That’s all we know.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Outdoor LiDAR semantic scene completion (SSC) recovers a dense semantic voxel grid from a scan observing 1% of the target volume, under class imbalance beyond 7,000x. We recast SSC as generative semantic scene completion (GSSC): a single discrete-diffusion formulation in three roles. First, paired sparse-dense scene synthesis (PS^3) generates matched sparse LiDAR observations with their dense semantic completions, addressing the long tail at its source and yielding the PS^3-SemanticKITTI corpus we train on alongside SemanticKITTI. Second, semantic-guided generative scene completion (SGSC) generates the scene from noise with multinomial discrete diffusion, conditioned on the sparse scan through a bird's-eye-view semantic map and a sparse 3D feature stream. Third, the same framework instead refines an existing completion in one flow-matching step: structured source discrete diffusion (S^2D^2). S^2D^2 improves the mIoU of SGSC's own output and every external SSC base tested, without base retraining or test-time adaptation. On the strongest base, one step without test-time augmentation reaches 38.8% mIoU on the SemanticKITTI hidden test. To our knowledge that is the best causal, single-sweep, single-sample result on that leaderboard, +2.1 pp over the previous best published score under the same restriction. Four correction steps with eight-view test-time augmentation reach 39.2%, outside that restriction.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">Error 500 (Server Error)!!1500.That’s an error.There was an error. Please try again later.That’s all we know.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2608.26175" target="_blank">Lost in Compression: A Controlled Cross-Lingual Audit of Extractive Prompt Compressors</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>MLukauskas, Mantas Lukauskas</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2608.26175" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2608.26175" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2608.26175.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Learned prompt compressors trained on English data disproportionately degrade non-English contexts, widening token-cost disparities, while multilingual training and deterministic methods reduce this gap.  Generated by thinkingmachines/Inkling-Small</div>
+                </div>
+
+                <div class="translation-box">
+                    <div class="translation-label">Translation (zh-CN)</div>
+                    <div class="translation-text">摘要：在英语数据上训练的学习提示压缩器会不成比例地降低非英语上下文的质量，扩大标记成本差异，而多语言训练和确定性方法则缩小了这种差距。  由thinkingmachines/Inkling-Small 生成</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by thinkingmachines/Inkling-Small Extractive prompt compression promises to cut LLM inference costs by removing low-information tokens, and learned compressors such as LLMLingua-2 report strong results on English benchmarks. Most other languages already pay a token premium: the same content costs 1.3-1.8x more tokens than in English. We ask whether compression closes or widens this gap. Using fully parallel data in ten languages spanning five scripts, with controls budget-matched in the target model's tokenizer, we audit four learned compressors against four deterministic baselines, on eleven target models from ten vendors (over 250,000 evaluation calls). Three of the compressors are trained with English supervision (LLMLingua-2 XLM-R/mBERT; Kompress-v2 from the production Headroom stack); the fourth, XProvence, is trained multilingually. First, the transfer gap is real, replicates across target models and compressor backbones, and is strongly rate-dependent: at a 0.33 keep-rate English retains 57-62% of normalized context utilization while Lithuanian retains 10-24% and Chinese essentially none, despite Chinese having the smallest token premium. Second, the gap tracks compression supervision data, not architecture. All three English-trained compressors show it, deterministic methods show no comparable gap, and the multilingually trained XProvence v1 shows none. Its v2 release, retrained on translated data, empties 92% of Chinese contexts at its aggressive threshold without any warning. Third, in a harder long-context setting, aggressive learned compression drives compressed contexts to or below no-context utility in three of five non-English languages. A translate-then-compress pipeline matches or beats native compression at roughly half the token cost in three of five tested languages. We release all code, compressions, and model outputs. Safe compression budgets are much smaller outside English.</p>
+
+                        <br>
+                        <p class="abstract-text"><strong>Translation (zh-CN):</strong></p>
+                        <p class="abstract-text">由thinkingmachines/Inkling-Small 生成的即时提取压缩有望通过删除低信息标记来降低 LLM 推理成本，并且 LLMLingua-2 等学习压缩器在英语基准测试中报告了强劲的结果。大多数其他语言已经支付了代币溢价：相同内容的代币价格比英语高 1.3-1.8 倍。我们询问压缩是否会缩小或扩大这一差距。使用跨越五种脚本的十种语言的完全并行数据，并在目标模型的分词器中进行预算匹配的控制，我们根据四个确定性基线对来自十个供应商的十一个目标模型（超过 250,000 次评估调用）审核四个学习压缩器。其中三台压缩机接受过英语监督培训（LLMLingua-2 XLM-R/mBERT；来自生产 Headroom 堆栈的 Kompress-v2）；第四个是 XProvence，接受多语言培训。首先，传输差距是真实的，在目标模型和压缩器主干上复制，并且强烈依赖于速率：在 0.33 的保持速率下，英语保留了 57-62% 的标准化上下文利用率，而立陶宛语保留了 10-24%，中文基本上没有，尽管中文的代币溢价最小。其次，间隙跟踪压缩监督数据，而不是体系结构。所有三个经过英语训练的压缩器都显示了这一点，确定性方法没有显示出可比较的差距，而经过多语言训练的 XProvence v1 则没有显示出任何差距。它的 v2 版本在翻译数据上进行了重新训练，在没有任何警告的情况下以其激进的阈值清空了 92% 的中文上下文。第三，在更困难的长上下文环境中，积极的学习压缩将压缩上下文驱动到或低于五种非英语语言中三种的无上下文效用。在五种测试语言中，翻译后压缩管道以大约一半的令牌成本与本机压缩相匹配或优于本机压缩。我们发布所有代码、压缩和模型输出。除英语之外，安全压缩预算要小得多。</p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+        
+        <div class="nav-buttons">
+            <a href="2026-08-30.html" class="nav-btn">← 2026-08-30</a>
+            <a href="2026-09-01.html" class="nav-btn">2026-09-01 →</a>
+        </div>
+        
+        <footer>
+            Generated by <a href="https://github.com" target="_blank">HF Papers Daily</a>
+        </footer>
+    </div>
+    
+    <script>
+        function toggleAbstract(header) {
+            const toggle = header.querySelector('.abstract-toggle');
+            const content = header.nextElementSibling;
+            toggle.classList.toggle('expanded');
+            content.classList.toggle('expanded');
+        }
+    </script>
+</html>
