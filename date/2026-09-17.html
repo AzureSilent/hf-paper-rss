@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hugging Face Papers - 2026-09-17</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .date {
+            font-size: 1.2em;
+            color: #a0a0a0;
+        }
+        
+        .stats {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #888;
+        }
+        
+        .paper-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .paper-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(102, 126, 234, 0.5);
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.2);
+        }
+        
+        .paper-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        
+        .paper-title a {
+            color: #e0e0e0;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .paper-title a:hover {
+            color: #667eea;
+        }
+        
+        .paper-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            color: #a0a0a0;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .meta-label {
+            color: #888;
+        }
+        
+        .links {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .link-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .link-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .link-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .abstract-section {
+            margin-top: 15px;
+        }
+        
+        .abstract-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .abstract-header:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .abstract-toggle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+            transition: transform 0.3s;
+        }
+        
+        .abstract-toggle.expanded {
+            transform: rotate(180deg);
+        }
+        
+        .abstract-label {
+            font-weight: 500;
+            color: #667eea;
+        }
+        
+        .abstract-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding: 0 15px;
+        }
+        
+        .abstract-content.expanded {
+            max-height: 10000px;
+            padding: 15px;
+        }
+        
+        .abstract-text {
+            line-height: 1.7;
+            color: #c0c0c0;
+        }
+        
+        .summary-box {
+            background: rgba(102, 126, 234, 0.1);
+            border-left: 3px solid #667eea;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .summary-label {
+            font-size: 0.8em;
+            color: #667eea;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .summary-text {
+            color: #b0b0b0;
+            line-height: 1.5;
+        }
+        
+        .translation-box {
+            background: rgba(118, 75, 162, 0.1);
+            border-left: 3px solid #764ba2;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .translation-label {
+            font-size: 0.8em;
+            color: #764ba2;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .translation-text {
+            color: #b0b0b0;
+            line-height: 1.5;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding: 0 10px;
+        }
+        
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .nav-btn.disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: #666;
+            pointer-events: none;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .paper-title {
+                font-size: 1.1em;
+            }
+            
+            .links {
+                flex-wrap: wrap;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-btn {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Hugging Face Papers</h1>
+            <div class="date">2026-09-17</div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number">23</div>
+                    <div class="stat-label">Papers</div>
+                </div>
+            </div>
+        </header>
+        
+        <main>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2609.17488" target="_blank">LimiX-2: A Contextual Mechanism Network Towards General Structured-Data Intelligence</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Stable AI</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>xuange, Xingxuan Zhang, Gang Ren, Hao Yuan, Hao Zou</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2609.17488" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2609.17488" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2609.17488.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  We introduce LimiX-2, a new model in the LimiX family, developed through model and data scaling guided by our previously established scaling laws. LimiX-2 adopts the Contextual Mechanism Networks (CMNs) paradigm and is pretrained with Context-Conditional Masked Modeling (CCMM). CMNs shifts the organizing principle of in-context learning from target-centric prediction to mechanism-oriented joint modeling. Rather than centering the network on the p(y mid x, D_{context}) objective of conventional tabular PFNs, it is designed around learning p(x, y mid D_{context}), a context-dependent representation of the joint structure underlying data generation. Pretraining uses synthetic datasets generated by structural causal models (SCMs) spanning diverse graph structures, functional mechanisms, and observation processes. Evaluations on TabArena, TALENT, and BCCO show that LimiX-2 outperforms current dataset-specific models and tabular foundation models. Beyond predictive performance, the CMN paradigm also promotes causal awareness in LimiX-2: its feature attention encodes direct causal relationships, enabling accurate causal skeleton recovery.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  4.18k    Add to collection      Community         xuange  Paper author  Paper submitter     about 4 hours ago         
+	
+		
+	
+	
+		🧩 LimiX-2: Towards General Structured-Data Intelligence
+	
+
+One pretrained model. Multiple structured-data tasks. #1 across three major tabular benchmarks.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2609.19134" target="_blank">ScienceIDE: Turning World's Scientific Codebase into Agent Learnable Environments</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Hejia Geng, Zesen Huang, Haoyang Li, Wenbin Li, Koutian Wu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2609.19134" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2609.19134" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2609.19134.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Scientific code repositories encode decades of human knowledge in executable models, methods, and tools. Yet fragmented toolchains, implicit domain conventions, and specialized correctness criteria make this knowledge difficult to convert into reliable learning experience-a challenge we call the scientific experience bottleneck. We introduce ScienceIDE, infrastructure for turning the world's scientific code into programmable environments for scientific agents. Guided by expert-defined scientific cases and acceptance criteria, agents transform repositories into executable environments that support task generation, execution, and scientific verification. These environments provide a shared foundation for supervised fine-tuning, reinforcement learning, and evaluation. Using verified interaction trajectories, we train PhAI-IDE-72B, PhAI-IDE-9B, and PhAI-IDE-4B. The model family shows gains in held-out scientific-code repair and across selected general-purpose benchmarks in code, reasoning, and knowledge, providing evidence of positive transfer from scientific experience to broader capabilities. ScienceIDE lays the foundation for an integrated workspace for agent learning and scientific practice, making humanity's scientific software a shared substrate for developing scientific intelligence. Code: https://github.com/aitofound/ScienceIDE</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  5    Add to collection     Community         Lingaaaaaaa   Paper submitter     about 2 hours ago         Code: https://github.com/aitofound/ScienceIDEModels: https://huggingface.co/collections/AItonomy/scienceide-model-series</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2609.18708" target="_blank">Rethinking Critic Learning in PPO: Understanding and Mitigating Value Flattening</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Shanghai AI Laboratory</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yizhuo Li, Jianhao Yan, Yun Luo, Zhi Wang, Futing Wang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2609.18708" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2609.18708" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2609.18708.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  In reinforcement learning for large language models, Proximal Policy Optimization (PPO) commonly uses a critic to estimate state values and reduce the variance of policy updates. However, we uncover a systematic failure mode in PPO critics, which we call Value Flattening: state values, estimated from multiple Monte Carlo continuations, change sharply across intermediate states while critic predictions remain comparatively flat. We further observe this phenomenon in a controlled FrozenLake environment and find that it becomes more pronounced as the state space grows. Our theoretical and empirical analyses relate Value Flattening to an implicit variance penalty in the critic loss and redundant updates from temporally correlated states with similar gradients. Motivated by these findings, we introduce SParse Proximal Policy Optimization (SP^3O), which applies the value loss to only a few well-separated states in each response to mitigate both effects. Experiments on Qwen3-Base show that SP^3O with only three states supervised per response can mitigate Value Flattening and consistently improve the learned policy across model sizes and evaluation suites. Together, our results identify Value Flattening as an important yet overlooked failure mode of critic learning in standard PPO and show that a simple sparse supervision strategy can mitigate it.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub     Add to collection     Community         ramiroluo   Paper submitter     7 minutes ago         Page: https://dodojordi.github.io/SP3O/Repo: https://github.com/Dodojordi/SP3O</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2609.17708" target="_blank">Confidence Comes from Experience: Experiential Confidence Estimation from Reasoning to Agents</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>University of Cambridge</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Caiqi Zhang, Xiaochen Zhu, Chengzu Li, Yulong Chen, Dharshan Kumaran</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2609.17708" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2609.17708" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2609.17708.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Reliable confidence estimation is increasingly central to the trustworthy deployment of language models: a calibrated estimate of the probability that an output is correct decides what to ship, what to escalate, and what to retry. Existing confidence estimators, however, share one design premise: they only read the current inference process, either by introspecting on it, scoring its token probabilities, or resampling it. We argue that the current inference is not a sufficient basis for confidence. We propose XConf (eXperiential Confidence): estimating confidence together with the model's accumulated experience. The experience is stored as a record of the model's own graded past episodes, each holding the task, the model's reflection, its stated confidence, the outcome, and a lesson written once the grade arrived. Given a new task, XConf's Recall stage retrieves past episodes on similar tasks met with a similar stated confidence, and reads off their historical success rate; its Reflect stage shows the model this record, has it name its recurring failure mode, and restate a confidence now informed by its own track records. Our estimator is format-general, requiring no logit access or weight updates, and costs only one answer generation. Across nine benchmarks spanning reasoning, coding, multimodal QA, and interactive agents, and four models from three families, XConf beats or matches ten-sample self-consistency in discrimination (AUROC) on 23 of 24 comparisons, with much lower calibration error (ECE), at a tenth of the generation cost. Used for selective prediction, abstaining on the 10% least-confident episodes raises the delivered success rate by up to 8.7 points on agent tasks. We therefore see experiential confidence estimation as a new paradigm for future general-purpose confidence estimation.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub     Add to collection     Community         caiqizh   Paper submitter     25 minutes ago         We propose XConf, a new paradigm for confidence estimation that is training-free, black-box, and needs only one answer generation, working from reasoning to agents.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2609.18805" target="_blank">ProgramDistill: From Interactive Web Apps to Verifiable Reference-Guided SWE Tasks</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Microsoft Research</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Jeonghye Kim, Minseon Kim, Young Jin Kim, Matheus Pereira, Marc-Alexandre Côté</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2609.18805" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2609.18805" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2609.18805.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Coding agents are typically evaluated with desired behavior specified through issues or instructions. In practical web development, however, agents may need to infer behavior from working software and implement it in an incomplete application. We introduce ProgramDistill, a benchmark evaluating coding agents on features discovered through interaction with fully functional reference applications. We build ProgramDistill by factorizing applications into features of different granularities, each associated with replayable behaviors executable via its gold patch. Our pipeline, mine-craft-patch, discovers 1,975 replay-verified behaviors across 26 applications and constructs 4,063 tasks without human intervention. Across nine frontier coding agents, GPT-6 Astra and Claude Opus 5 achieve 49.2% and 28.8% success on cumulative workflows in full-application reconstruction. In partial-application reconstruction, success falls from 100% to 64.0% and from 96% to 32% as restoration depth increases from 1 to 8. ProgramDistill thus provides a scalable benchmark with controlled difficulty for evaluating and diagnosing coding agents, and a natural basis for future curriculum-based training.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page   Add to collection         Community         beanie00   Paper submitter     about 3 hours ago • edited about 3 hours ago        For more information, please check out our:📝 Blog: https://microsoft.github.io/debug-gym/blog/2026/09/programdistill/🔗 Paper: https://microsoft.github.io/debug-gym/static/papers/ProgramDistill_arxiv.pdf</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2609.18094" target="_blank">Agora: Git as Shared Memory for Collective AutoResearch</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>NVIDIA</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yifan Zhang, Yunheng Zou, Shaokun Zhang, Jian Hu, Hao Zhang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2609.18094" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2609.18094" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2609.18094.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Autonomous research loops such as AutoResearch show that one coding agent can improve a training setup unattended. Run several of them and each session starts from scratch, so more agents tend to mean more duplicated search rather than more discovery. Agora is a shared memory for such agents: research is recorded as an append-only directed acyclic graph (DAG) stored in Git, so that every claim is a commit anyone can check out and rerun. Each result, insight, hypothesis, verification, and report is an immutable commit whose parent edges say what it builds on; a derived index exposes the frontier, the neglected branches, and the verification status of each claim, and a diversity-aware selection rule keeps the community from collapsing onto one leader. We describe the system and report its first sustained use: a run of nearly 12 days in which 13 language-model workers, with no assigned tasks and no central planner, worked on a weight-transfer problem. Given 141 pretrained donor models and a frozen 119.6M-parameter attention-SSM hybrid whose dimensions match no donor, the workers had to initialize the target without training data or gradient updates. They published 1,703 contributions and drove the evaluator from 3.39 to 1.899 bits per byte, closing 62% of the gap to a trained GPT-2 124M. The winning recipe compresses donor next-token statistics into the target's embedding and output head, then adds a short-range context signal through sparse edits to attention, feed-forward, and state-space blocks. Its 145-commit ancestry spans 15 accounts, and 165 independent reproductions were posted, none of which failed. We describe the single mid-run human intervention that pulled the community out of a monoculture, what the trace does and does not establish, and the controlled comparison that would settle whether shared research state improves discovery per unit of compute.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community         yifAI   Paper submitter     43 minutes ago         Agora: Git as Shared Memory for Collective AutoResearch</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2609.18487" target="_blank">ActionPiece: Rethinking Action Tokenization for Autoregressive Vision-Language-Action Models</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>DeepCybo</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Shijie Lian, Bin Yu, Zhaolong Shen, Xiaopeng Lin, Yichao Du</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2609.18487" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2609.18487" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2609.18487.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Action tokenizers play a central role in autoregressive vision-language-action (VLA) models, determining both the targets for policy training and the executable commands recovered from predicted tokens. Their fidelity is commonly evaluated using pointwise reconstruction metrics such as mean squared error (MSE), yet small individual errors do not fully characterize how faithfully action adjustments across demonstrations are preserved. After compression, similar actions may still cluster around a representative motion, while the adjustments needed for different contexts are diminished, distorted, or even reversed. We introduce physical rank consistency (PRC) to measure how well tokenization preserves local physical distance rankings after reconstruction. Evaluating decoded actions provides a common reference across token vocabularies and decoder architectures, complementing pointwise accuracy with a measure of relational fidelity. We further present ActionPiece, which preserves physical action relationships through joint supervision of representation learning and quantization. Physical rank preservation supervises near-far ordering in encoder and quantized feature distances, while quantization regularization applies the same ordering to codeword assignment distributions. Both objectives augment reconstruction, producing discrete action tokens for standard autoregressive policy learning and execution through a frozen decoder. Under the same Qwen3-VL-4B policy training setup, ActionPiece achieves 94.8% on LIBERO and 68.8% on unseen LIBERO-Plus, with additional evaluations reaching 71.9% on SimplerEnv and 51.5% across VLA-Arena L0-L2. Component ablations show that the two objectives jointly improve PRC and policy success, demonstrating the value of physical relationship supervision for action tokenization.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  13    Add to collection     Community         LiamLian0727   Paper submitter     about 1 hour ago         Action tokenizers play a central role in autoregressive vision-language-action (VLA) models, determining both the targets for policy training and the executable commands recovered from predicted tokens. Their fidelity is commonly evaluated using pointwise reconstruction metrics such as mean squared error (MSE), yet small individual errors do not fully characterize how faithfully action adjustments across demonstrations are preserved. After compression, similar actions may still cluster around a representative motion, while the adjustments needed for different contexts are diminished, distorted, or even reversed. We introduce physical rank consistency (PRC) to measure how well tokenization preserves local physical distance rankings after reconstruction. Evaluating decoded actions provides a common reference across token vocabularies and decoder architectures, complementing pointwise accuracy with a measure of relational fidelity. We further present ActionPiece, which preserves physical action relationships through joint supervision of representation learning and quantization. Physical rank preservation supervises near-far ordering in encoder and quantized feature distances, while quantization regularization applies the same ordering to codeword assignment distributions. Both objectives augment reconstruction, producing discrete action tokens for standard autoregressive policy learning and execution through a frozen decoder. Under the same Qwen3-VL-4B policy training setup, ActionPiece achieves 94.8% on LIBERO and 68.8% on unseen LIBERO-Plus, with additional evaluations reaching 71.9% on SimplerEnv and 51.5% across VLA-Arena L0-L2. Component ablations show that the two objectives jointly improve PRC and policy success, demonstrating the value of physical relationship supervision for action tokenization.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2609.15810" target="_blank">VC-Attention: Value Smoothing and Softmax Casting for Low-bit Attention</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Nunchux AI</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Xingyang Li, Dongyun Zou, Shining Zhang, Jiacheng Chen, Haocheng Xi</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2609.15810" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2609.15810" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2609.15810.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Diffusion Transformers deliver state-of-the-art video generation, but their long spatiotemporal sequences make attention the dominant deployment cost, and a deployable low-bit kernel must be accurate and fast. Accuracy is limited by outliers: a block's quantization scale is set by its largest entries, leaving typical entries confined to a narrow range of representable values. Prior work smooths queries and keys, but value outliers follow no fixed channel or spatiotemporal structure and remain the dominant source of output error. Speed is limited by softmax: low-bit Tensor Cores accelerate only the two matrix multiplications, so the high-precision exponential between them becomes the longest pipeline stage on datacenter GPUs. We propose VC-Attention, a training-free low-bit attention framework that addresses both by pairing Value smoothing with a fused probability Cast. V-Smooth reorders value tokens by lightweight online clustering, so the tokens in a hardware block quantize well together. It quantizes only the residual after subtracting the block mean, and restores that mean from the row sum the online softmax already maintains. ExpCast-FP8 maps log-domain scores directly to E4M3 probability codes with one fused multiply-add, eliminating the FP32 exponential and the format conversion. We implement VC-Attention for B200, B300, H200, RTX PRO 6000, and RTX 5090. Across Wan2.2, LongCat-Video, HunyuanVideo-1.5, and MiniMax-H3, VC-Attention improves fidelity over low-bit baselines, speeds up the attention kernel over BF16 FlashAttention-4 by 1.46-1.59x on datacenter Blackwell and Hopper and by 2.3-3.6x on workstation cards, and generates a clip 1.13-1.19x and 1.36-1.70x faster end to end.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page   Add to collection         Community         Radioheading   Paper submitter     about 1 hour ago         Low-bit attention is promising for fast video generation, but softmax remains a major bottleneck on B200 and B300.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2609.17632" target="_blank">EvolveTrade: Experience-Driven Policy Refinement for Self-Evolving LLM Trading Agents</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>KAIST AI</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Sehee Kim, Yumin Choi, Minki Kang, Sung Ju Hwang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2609.17632" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2609.17632" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2609.17632.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Large language model (LLM) trading agents can combine market data, news, and executable analysis, but their behavior is often controlled by static hand-written tool-use policies that are fixed before deployment. This limits their ability to adapt how they gather evidence, invoke tools, verify signals, and manage risk under changing market regimes. We introduce EvolveTrade, a self-evolving framework that treats the system prompt of a tool-using trading agent as a text-parameterized policy. After each update interval, a Policy Agent revises this policy using accumulated decision traces and realized portfolio feedback, while keeping the backbone LLM fixed. The updated policy is then used for the next batch of trading decisions, enabling the agent to refine its information-acquisition and portfolio-construction procedure over time. Experiments across multiple market regimes and two LLM backbones show that EvolveTrade often improves Sharpe Ratio and Cumulative Return over fixed-policy LLM baselines, achieving the improved SR and CR in most evaluated settings. Behavioral analyses further show that self-evolved policies increase code-mediated analysis and activate regime-relevant computations; case-level policy-to-return attributions trace how policy-induced allocation changes contribute to realized return differences. These results suggest that adapting the reusable procedure governing tool use is a key direction for building more robust LLM trading agents.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community         YuminChoi   Paper submitter     about 1 hour ago         We present EvolveTrade, a framework that lets LLM trading agents refine their own tool-use policies from trading experience. The agent revises how it gathers information, checks signals, and manages risk based on past decisions and outcomes. In a case study, EvolveTrade limited losses during NVIDIA’s 17% single-day drop by keeping exposure low under its refined risk-aware sizing policy, holding just 2.9% in NVDA compared with the static baseline’s 10.7%. Check out our paper for more details!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2609.17909" target="_blank">Zing-0.5: Toward Playable Worlds with Real-Time Joint Action and Text Control</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Mingyang Chen, Shengdong Chen, Xiaoxiao Fu, Bosheng Gong, Haoyuan Guo</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2609.17909" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2609.17909" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2609.17909.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  We introduce Zing-0.5, a 5B autoregressive world model designed for playability: users can explore generated worlds, influence unfolding events, and respond to the resulting feedback through joint keyboard and online text control. Our approach brings together three technical contributions: (1) Unified action and text conditioning, combining magnitude-aware keyboard inputs with temporally aligned text instructions and jointly annotated videos to learn navigation and event control within the same sequence; (2) Event-scale supervision for incremental generation, using a segment-level teacher trained on connected multi-prompt videos to supervise a block-level causal student through distribution-matching distillation; and (3) Low-cost real-time interaction, combining four-step generation with context-preserving streaming to support 832 x 480 inference at 24 FPS at an estimated server rental cost of approximately USD 0.009 per stream-minute. Zing-0.5 achieves an overall score of 81.0 and a consistency score of 88.5 across 158 WBench Navigation cases. A joint-control demonstration shows a text-directed event change during continued navigation without restarting generation. We release the model weights, inference code, and Zing-SGLang serving implementation to support further work on playable generated worlds.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page   Add to collection     Community   EditPreview      Upload images, audio, and videos by dragging in the text input, pasting, or clicking here. Tap or paste here to upload images        Comment · Sign up or log in to comment</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2609.15938" target="_blank">HypoEvolve: Genetic Algorithms Enable Multi-Agent LLMs to Discover Scientific Hypotheses</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Jieyuan Liu, Mengzhou Hu, Jefferson Chen, JungHo Kong, Pratibha Jagannatha</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2609.15938" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2609.15938" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2609.15938.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Scientific agents contribute to hypothesis discovery by synthesizing evidence, assessing proposals, and developing new explanations. Recent systems combine scientific agents with evolutionary search through critique, comparison, and revision. However, how different forms of agent collaboration affect hypothesis quality remains an open question. Answering this question requires separating the effects of agents' scientific capabilities from those of their collaboration. A framework must therefore preserve agents' scientific roles and support rules for combining, revising, and retaining hypotheses. Building on this view, we introduce HypoEvolve, which makes collaboration explicit through successive updates to a hypothesis population. Specifically, we propose a generational genetic algorithm to coordinate specialized large language model (LLM) agents that integrate mechanistic arguments, reconsider assumptions, and assess evidence and testability. Each generation specifies how scientific judgments and new proposals reshape the population, making collaboration effects on hypothesis quality directly testable. Moreover, we design our evaluation around scientifically meaningful hypotheses that explain how a proposed intervention could work. Drug repurposing links these explanations to target-level biological claims assessed against external evidence. Specifically, we adapt DepMap and Open Targets into complementary external measures grounded in experimental, genetic, and clinical evidence. Across 34 cancer types, HypoEvolve achieves the highest scores against six baselines on both measures. DepMap selectivity reaches 0.171, versus 0.115 for the strongest baseline. Gains over single-pass generation also generalize to held-out cancer types. HypoEvolve advances a vision of autonomous science in which AI research teams achieve a capacity for discovery beyond that of individual models.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community         zhenwang9102  Paper author  Paper submitter     35 minutes ago         Scientific discovery grows through ideas that compete, combine, and evolve. HypoEvolve brings this process to AI research teams, using genetic algorithms to coordinate how specialized agents propose, challenge, and develop scientific hypotheses.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2609.14320" target="_blank">SpectralShift: Effective Context Window Extension of Gated DeltaNet via Spectral Reparameterization</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>RUC-AIBOX</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Zian Liu, Yiwen Hu, Zican Dong, Tian Xie, Wayne Xin Zhao</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2609.14320" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2609.14320" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2609.14320.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Recently, linear attention layers have been increasingly adopted to replace softmax attention at scale for long-context modeling. However, existing context extension approaches typically apply continued pretraining directly without modifying these layers, overlooking the spectral properties of linear attention state dynamics. In this work, we study long-context extension of Gated DeltaNet (GDN) from a spectral perspective of transition matrix and identify two essential factors governing long-range information retrieval: (1) a sufficiently broad slow spectral band aligned with the target dependency length, and (2) the preservation of fast-decaying modes for state clearing and context switching. Based on this observation, we propose SpectralShift, a spectral reparameterization approach for long-context continual pretraining of GDNs. Specifically, SpectralShift reparameterizes the alpha projections initialization to reshape the decay spectrum by enhancing slow propagation capacity, and further introduces a learning-rate scaling for alpha projections to facilitate long-context training. Experiments show that SpectralShift consistently improves long-context capabilities over training, providing an effective and efficient solution for extending context windows of linear attention models. The code has been open-sourced at https://github.com/RUCAIBox/GDN-SpectralShift.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub  1    Add to collection      Community         IvanHU   Paper submitter     about 1 hour ago         Recently, linear attention layers have been increasingly adopted to replace softmax attention at scale for long-context modeling. However, existing context extension approaches typically apply continued pretraining directly without modifying these layers, overlooking the spectral properties of linear attention state dynamics. In this work, we study long-context extension of Gated DeltaNet (GDN) from a spectral perspective of transition matrix and identify two essential factors governing long-range information retrieval: (1) a sufficiently broad slow spectral band aligned with the target dependency length, and (2) the preservation of fast-decaying modes for state clearing and context switching. Based on this observation, we propose SpectralShift, a spectral reparameterization approach for long-context continual pretraining of GDNs. Specifically, SpectralShift reparameterizes the alpha projections initialization to reshape the decay spectrum by enhancing slow propagation capacity, and further introduces a learning-rate scaling for alpha projections to facilitate long-context training. Experiments show that SpectralShift consistently improves long-context capabilities over training, providing an effective and efficient solution for extending context windows of linear attention models.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2609.19144" target="_blank">A Zeroth-Order Paradigm for LLM Preference Alignment</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>UC Berkeley</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Peter Chen, Xi Chen, Wotao Yin, Tianyi Lin</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2609.19144" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2609.19144" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2609.19144.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Direct preference alignment methods are widely used to align large language models (LLMs) with human preferences because of their computational and memory efficiency. However, likelihood displacement motivates alternative ways to extract information from preference pairs with small likelihood margins. In this paper, we propose and analyze Comparison-based Preference Optimization (ComPO), a zeroth-order alignment method based on comparison oracles. ComPO extracts directional information from these pairs without directly optimizing a differentiable preference loss on them. We establish a convergence guarantee for its basic offline scheme under smoothness, gradient sparsity, and compatibility between the oracle and a latent objective. We further introduce online ComPO, which retains the offline comparison mechanism and uses unlabeled policy generations for reverse-KL control relative to a reference policy. Following the coverage perspective of preference fine-tuning, we establish a performance guarantee for a basic constrained scheme under local coverage and in-distribution pairwise reward accuracy. Experiments on Mistral, Llama, Gemma-2, Qwen3, and Gemma-3 models demonstrate improvements over existing direct alignment methods, including length-controlled win rates, with pair-level diagnostics providing evidence consistent with mitigating likelihood displacement.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community         PeterLauLukCh   Paper submitter     about 1 hour ago         Direct preference alignment methods are widely used to align large language models (LLMs) with human preferences because of their computational and memory efficiency. However, likelihood displacement motivates alternative ways to extract information from preference pairs with small likelihood margins. In this paper, we propose and analyze Comparison-based Preference Optimization (ComPO), a zeroth-order alignment method based on comparison oracles. ComPO extracts directional information from these pairs without directly optimizing a differentiable preference loss on them. We establish a convergence guarantee for its basic offline scheme under smoothness, gradient sparsity, and compatibility between the oracle and a latent objective. We further introduce online ComPO, which retains the offline comparison mechanism and uses unlabeled policy generations for reverse-KL control relative to a reference policy. Following the coverage perspective of preference fine-tuning, we establish a performance guarantee for a basic constrained scheme under local coverage and in-distribution pairwise reward accuracy. Experiments on Mistral, Llama, Gemma-2, Qwen3, and Gemma-3 models demonstrate improvements over existing direct alignment methods, including length-controlled win rates, with pair-level diagnostics providing evidence consistent with mitigating likelihood displacement.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2609.18011" target="_blank">Gaze as Evidence for Common Grounding: A Cross-Corpus Analysis of MapTask and MUNDEX</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>NLP Group at Utrecht University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Nan Li, Albert Gatt, Massimo Poesio</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2609.18011" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2609.18011" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2609.18011.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  In collaborative tasks with asymmetric information, participants coordinate their understanding through interaction. We ask whether gaze provides evidence about grounding across two such tasks. Working from discrete behavioral annotations, we map HCRC MapTask (Anderson et al., 1991) and MUNDEX (Türk et al., 2023) into a shared partner/task/away vocabulary and compute gaze features around task-relevant dialogue units. In both corpora, aligned reference interpretations (MapTask) and UND (understood) judgments (MUNDEX) are associated with more task-directed gaze and with less partner-directed gaze, lower gaze entropy, and fewer gaze transitions. The associations are clearest for the participant leading the task: in giver-produced references, and in explainer judgments, which also co-vary with the explainee's gaze. In same-speaker MapTask reference chains, the speaker's gaze entropy is lower at the mention where a previously non-aligned referent becomes aligned. The best gaze feature groups improve modestly over controls under grouped cross-validation: temporal features in MapTask and raw proportions in MUNDEX. Because effects are small and several weaken when recurring participants rather than dialogues are the unit of inference, we treat gaze as one contributing cue to grounding, to be interpreted alongside task and dialogue context.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub  0    Add to collection     Community         chnln   Paper submitter     about 3 hours ago         In collaborative tasks with asymmetric information — maps with different landmarks, or a board game only one side knows — mutual understanding has to be built through the interaction, and gaze is one of the few observable traces of that process. We compare two such tasks: HCRC MapTask, where perspectivist labels mark a reference as aligned only when speaker and addressee interpretations match, and MUNDEX, German game explanations with retrospective understanding judgments from both sides. Both annotate gaze as discrete behavioral categories rather than eye-tracking coordinates, but with different category sets (up/down/off; partner/table/away), so we map them into a shared partner/task/away vocabulary and compute gaze features around each grounding-labeled unit.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2609.17189" target="_blank">EventEgoHands++: Event-based Egocentric 3D Hand Mesh Reconstruction with Real Dataset</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Ryosei Hara, Wataru Ikeda, Masashi Hatano, Mariko Isogawa</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2609.17189" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2609.17189" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2609.17189.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  3D hand mesh reconstruction is a challenging yet essential task for downstream applications, including human-robot interaction and AR/VR. Although conventional cameras have been widely adopted for this task, methods that rely on them struggle in low-light environments and under severe motion blur. To address these limitations, event-based cameras have recently attracted attention for their high dynamic range and high temporal resolution. However, applying event cameras to egocentric hand reconstruction remains challenging because camera wearer's motion produces dense background events that obscure hand-specific signals. Although the first egocentric event-based approach mitigates this issue using hand segmentation, its binary hand mask does not distinguish between left and right hands. As a result, the model lacks instance-level hand information and predicts both hands even when only one or neither hand is present. This limitation leads to incorrect inter-hand relationships and degraded reconstruction accuracy. In this paper, we propose EventEgoHands++, a framework for event-based 3D hand mesh reconstruction from an egocentric viewpoint. The proposed method incorporates a Hand Detector that estimates instance-level bounding boxes and masks for both the left and right hands. Moreover, we introduce Adaptive Attention, which dynamically gates the attention based on these detection results to accurately learn the spatial relationship and mutual interactions between the hands. To train and evaluate our framework, we extend the synthetic N-HOT3D dataset and newly construct EEH-R, the largest real-world event-based egocentric hand dataset to date, comprising approximately 1M annotated frames captured in environments including low-light conditions. Extensive experiments on both synthetic and real datasets demonstrate that our method consistently outperforms the baselines.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  5    Add to collection     Community         ryhara   Paper submitter     about 2 hours ago         Accepted to IEEE Access.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2609.19138" target="_blank">In-Context Robot Learning with VLM Agents</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Dongzhou Cheng, Taoran Yi, Ye Fang, Xingwu Zhang, Fan Feng</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2609.19138" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2609.19138" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2609.19138.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Enabling robots to adapt to unfamiliar environments as readily as humans remains a moonshot goal of embodied AI. No finite collection of demonstrations can cover every task and situation a robot will encounter, making the ability to learn from context at deployment essential for generalization. Such in-context learning (ICL), however, remains largely beyond the reach of existing robotic policies. The broad agentic capabilities of commercial vision-language models (VLMs), such as GPT-6 Astra, raise a compelling question: can these models learn from demonstrations, examples, and interaction feedback, then translate that information into executable and verifiable robot behavior from a new initial state without gradient updates or persistent changes to task-specific parameters? We introduce GPT-Policy, a general-agent framework for in-context robot learning. GPT-Policy integrates a context compiler that preserves task-relevant visual transitions, a VLM that proposes robot-tool actions, and a constrained controller that verifies and executes each action and reports its outcome. We evaluate its reliability and limitations through task success and efficiency metrics, matched comparisons across models, and controlled context ablations. In real-robot trials, human video demonstrations improve task completion even without robot action labels, while aligned action references yield further gains on contact-sensitive tasks. These findings position GPT-Policy as a step toward robot adaptation through in-context learning, providing an empirical foundation for translating the general-purpose capabilities of VLMs into physical behavior and clarifying the challenges that must be overcome for reliable deployment.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  178    Add to collection         Community         thewhole   Paper submitter     about 2 hours ago         Enabling robots to adapt to unfamiliar environments as readily as humans remains a moonshot goal of embodied AI. No finite collection of demonstrations can cover every task and situation a robot will encounter, making the ability to learn from context at deployment essential for generalization. Such in-context learning (ICL), however, remains largely beyond the reach of existing robotic policies. The broad agentic capabilities of commercial vision-language models (VLMs), such as GPT-6 Astra, raise a compelling question: can these models learn from demonstrations, examples, and interaction feedback, then translate that information into executable and verifiable robot behavior from a new initial state without gradient updates or persistent changes to task-specific parameters? We introduce GPT-Policy, a general-agent framework for in-context robot learning. GPT-Policy integrates a context compiler that preserves task-relevant visual transitions, a VLM that proposes robot-tool actions, and a constrained controller that verifies and executes each action and reports its outcome. We evaluate its reliability and limitations through task success and efficiency metrics, matched comparisons across models, and controlled context ablations. In real-robot trials, human video demonstrations improve task completion even without robot action labels, while aligned action references yield further gains on contact-sensitive tasks. These findings position GPT-Policy as a step toward robot adaptation through in-context learning, providing an empirical foundation for translating the general-purpose capabilities of VLMs into physical behavior and clarifying the challenges that must be overcome for reliable deployment.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2609.14306" target="_blank">Flattening Every Memory Peak in Long-Context Mixture-of-Experts Training</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Salesforce AI Research</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Shrey Pandit, Xuan-Phi Nguyen, Yiran Zhao, Shafiq Joty</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2609.14306" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2609.14306" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2609.14306.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Training a Mixture-of-Experts (MoE) model at long context or large batch size fails as soon as any one component's peak allocation exceeds device memory, so the target is every peak at once, not the average footprint. Four are left unbounded by the parallelism plans in common use, and each grows differently: expert dispatch with the routing matrix, the vocabulary projection with tokens times vocabulary, gradient checkpoint boundaries with depth times sequence length, and optimizer state with parameter count. Which one runs out first changes with the model, the context length, and the device count, so lowering the largest only exposes the next. We bound all four with schedules whose GPU working set is fixed at launch: PipelinedLLEP extends least-loaded expert parallelism with a cap on the tokens each source contributes to a dispatch chunk, Ring-DTP circulates activations or weight shards around a ring at the vocabulary projection and folds each block of logits into an online log-sum-exp, Selective checkpoint offload (SCO) keeps the one long-lived tensor of each checkpoint boundary in CPU memory, and OffloadStreamAdamW turns the serial CPU Adam update of optimizer offload into a bucket pipeline. All four change only the order and granularity of computation and data movement, so the loss and gradients stay exact. In matched component tests, they cut the MoE dispatch peak by up to 59.3% without losing throughput, the vocabulary projection peak by 86.6%, and the offloaded optimizer step by 2.05times faster. Composed on MoE models from 120B to 667B parameters, they train at 1M context length, 8--32times the reach of a tuned FSDP2 baseline, and up to 10.4times its throughput.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF    Add to collection     Community         nxphi47   Paper submitter     about 6 hours ago         We propose 4 different ways to lower peak memory consumption and improve throughput in large-scale long-context MoE distributed training.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2609.19143" target="_blank">PANORAMA: Panoptic Grounded Captioning via Mask Proposal Selection</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Panorama-grounding</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>HuggingSara, Sara Pieri, ekazakos, Evangelos Kazakos, Shizhe Chen</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2609.19143" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2609.19143" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2609.19143.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Intelligent systems that act in the world require image understanding that is both comprehensive and spatially grounded. Current vision-language models (VLMs) can generate fluent and detailed image captions, but reliably associating them with image pixels remains challenging. Existing methods that combine dense captioning with pixel-level grounding often produce either incomplete descriptions or inaccurate segmentation masks. We study this problem through panoptic grounded captioning, a task that requires a VLM to describe both foreground objects and background regions while grounding each referring phrase with pixel-level masks. We make three contributions. First, we introduce PanoCaps, a human-annotated benchmark constructed from panoptic segmentation datasets. It provides dense captions with near-complete pixel coverage and image-text alignments at the entity level, supporting both training and evaluation. We further propose a phrase-mask matching protocol and a generalized Panoptic Quality (gPQ) metric that jointly evaluates textual and mask agreement. Second, we formulate phrase grounding as selection from a phrase-conditioned pool of mask proposals and introduce PANORAMA, a VLM that conditions a pretrained segmenter on contextualized phrase representations to obtain candidate masks and learns to select those corresponding to each phrase. Training this interface jointly with caption generation enables PANORAMA to produce high-quality masks while allowing each phrase to refer to a single region or multiple instances. Third, PANORAMA achieves the best overall grounding on PanoCaps and matches or exceeds specialized models across several pixel-level grounding tasks. Experiments show that our method produces precise entity-level segmentations while maintaining detailed, mask-consistent captions. Code, data and models are available at https://www.di.ens.fr/willow/research/panorama/.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  2    Add to collection     Community         HuggingSara  Paper author  Paper submitter     about 6 hours ago         Project page: https://www.di.ens.fr/willow/research/panorama/ Code and data: https://github.com/sarapieri/panorama_grounding</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2609.18063" target="_blank">The Other Half of the Memory Wall: Serving 35B MoEs from SSD with Trained Routing Prediction</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Edge0</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>bupalinyu, Yu Lin, Yiming Wang, Runyuan Cai, Hanze Liu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2609.18063" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2609.18063" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2609.18063.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Mixture-of-experts (MoE) inference on consumer hardware is bounded by weight memory: a 35B-class model is 19.5GB at 4-bit, and sparsity shrinks the compute per token, not the bytes that must be held. Naive offloading to SSD does not help on its own, because layer N+1's experts must be chosen before layer N's output exists, so the reads cannot start early enough to hide behind compute. We present Edge0, a streaming MoE inference engine that closes the gap with a prerouter: a per-layer head predicts the next layer's routing one token ahead, and the prediction is consumed as the routing itself, so the staged expert set equals the routed set and nothing is dropped. An unmerged recovery LoRA, trained on the student path, pays back the quality lost to int4 quantization and routing replacement. On a single 24GB machine, Edge0
+  serves a 35B MoE at 20tok/s inside 3GiB of peak active memory, within a few points of its fp16 teacher on average across five public benchmarks. An 8B tier runs on the same framework, and the framework, checkpoints, and adapters are open source.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub  1.86k    Add to collection         Community         bupalinyu  Paper author  Paper submitter     about 2 hours ago         Mixture-of-experts (MoE) inference on consumer hardware is bounded by weight memory: a 35B-class model is 19.5GB at 4-bit, and sparsity shrinks the compute per token, not the bytes that must be held. Naive offloading to SSD does not help on its own, because layer N+1's experts must be chosen before layer N's output exists, so the reads cannot start early enough to hide behind compute. We present Edge0, a streaming MoE inference engine that closes the gap with a prerouter: a per-layer head predicts the next layer's routing one token ahead, and the prediction is consumed as the routing itself, so the staged expert set equals the routed set and nothing is dropped. An unmerged recovery LoRA, trained on the student path, pays back the quality lost to int4 quantization and routing replacement. On a single 24GB machine, Edge0 serves a 35B MoE at 20tok/s inside 3GiB of peak active memory, within a few points of its fp16 teacher on average across five public benchmarks. An 8B tier runs on the same framework, and the framework, checkpoints, and adapters are open source.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2609.18779" target="_blank">CERA-MoA: Co-Evolving Routing Mechanisms with Continually Learning LLM Agents</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Tsinghua University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>mj0530, Jiaxuan Jiang, Liyuan He, Zhixuan Fang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2609.18779" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2609.18779" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2609.18779.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Current Mixture-of-Agents (MoA) paradigms generally treat query routing and agent fine-tuning as separate processes, limiting their ability to respond to evolving agent capabilities. This disconnect prevents routing strategies from adapting to evolving agent capabilities during post-training and prevents agents from achieving synergistic data-driven specialization. To resolve this, we introduce CERA-MoA (Co-Evolving Router with continually learning Agents for Mixture-of-Agents), an iterative reinforcement learning framework where the dynamic router and independent agent policies co-evolve. We design a predictive familiarity estimator that leverages mid-layer hidden states to evaluate semantic competence among agents, avoiding the overhead of full rollouts. Based on these familiarity scores, a cumulative-threshold adaptive routing mechanism dynamically activates a tailored minimal agent subset, achieving a trade-off between task performance and efficiency. By proactively allocating targeted training samples to agents based on their evolving competence, CERA-MoA promotes capability differentiation. Extensive experiments across various domains demonstrate that CERA-MoA outperforms state-of-the-art static-agent routing and fix-workflow fine-tuning baselines.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub  0    Add to collection     Community         mj0530  Paper author  Paper submitter     about 1 hour ago         Most MoA systems freeze routing while agents learn — or freeze agents while the router is tuned. CERA-MoA closes that loop: a familiarity-based router and N LoRA agents co-evolve with RL. Mid-layer hidden states estimate each agent’s competence without full rollouts; cumulative-threshold routing then activates the smallest capable subset. Code : https://github.com/michaeljiang0530/CERA-MoA</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2609.15524" target="_blank">Assessing nnU-Net Generalization across Brain Tumor Populations in BraTS-GoAT 2026</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Kirscher, Tristan Kirscher, Vivian Metzger, Philippe Meyer, Xavier Coubez</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2609.15524" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2609.15524" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2609.15524.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  BraTS-GoAT evaluates tumor segmentation across heterogeneous populations. We trained a conventional 3D nnU-Net on 1,351 labeled cases using five-fold cross-validation and 1,000 epochs per fold. The final predictor averaged all folds and applied test-time mirroring. On pooled official validation, global DSC values were 0.7805, 0.8288, and 0.8854 for enhancing tumor (ET), tumor core (TC), and whole tumor (WT). Under matched fold-0 inference, mean regional Dice decreased from 0.9058 on source out-of-fold (OOF) cases to 0.8310 on pooled validation (difference--0.0747). Mirroring gave small single-fold gains but no clear ensemble benefit; a residual-encoder alternative reached 0.8282 mean Dice. In labeled OOF predictions, failure cases had substantially smaller reference ET volumes; after adjustment for ET and WT volume, lower Dice remained associated with more disconnected ET components and a smaller fraction of ET contained in the largest component.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub  0    Add to collection      Community         Kirscher  Paper author  Paper submitter     about 2 hours ago         We study the generalization of a standard 3D nnU-Net across the heterogeneous populations of BraTS-GoAT. Performance dropped from 0.9058 mean Dice on source out-of-fold cases to 0.8310 on pooled validation data, with smaller and more fragmented tumors being particularly challenging. Future work could focus on improving robustness to these morphological and population shifts.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2609.17172" target="_blank">Fingers as Legs: Learning Self-Supported Locomotion and Manipulation with an Anthropomorphic Hand</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>ETH Zurich</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Amrkzp, Amirhossein Kazemipour, Hehui Zheng, Robert Katzschmann</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2609.17172" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2609.17172" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2609.17172.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  A walking robotic hand must use the same fingers to move its body, support its weight, and interact with the environment. We show how an anthropomorphic hand can learn these skills while retaining its finger design and position controller. Onboard power and computation make the platform self-contained. Our reinforcement learning approach accounts for the hand's unequal fingers, with training in a simulator calibrated from hardware measurements. In simulation, the hand moves faster with our reward formulation than with tuned rewards originally designed for quadrupeds. On hardware, task-specific policies enable untethered crawling, steering, and fall recovery. While supporting its own weight, the hand also executes successive keyboard commands without vision and pushes an object to targets using overhead visual feedback. These results demonstrate a compact mobile manipulator that reuses its fingers for locomotion and interaction, without a separate locomotion mechanism.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page   Add to collection     Community         Amrkzp  Paper author  Paper submitter     about 1 hour ago         How can a robotic hand move to the work instead of being carried by an arm? We study an anthropomorphic hand that uses its fingers for self-supported locomotion and manipulation while carrying its own power and compute. We train task-specific reinforcement-learning policies in a simulator calibrated to hardware measurements, then deploy them on the hand. The system crawls untethered across indoor and outdoor surfaces, recovers from falls, presses keyboard keys without visual feedback, and pushes a cube to targets using overhead tracking.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2609.17652" target="_blank">Fathom: Per-Query Read Depth for Sparse Decoding over Offloaded KV Caches</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>vivekkalyanarangan, Vivek Kalyanarangan</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2609.17652" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2609.17652" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2609.17652.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  When agentic sessions run to a million tokens with many sessions resident at once, the KV cache and the index that ranks it live in host memory, and the scan that ranks all n keys for a top-k step becomes the traffic that bounds decoding. We present Fathom, a key scan in which each query decides how many bits of each key channel to read. The 4-bit K cache is stored channel-major as bit planes, so a prefix of t planes is exactly the channel's t-bit quantizer, and the query spends its bit budget by reverse water-filling over the variance-weighted importance of its channels. At one million tokens on Qwen3-8B a decode step is 1.67x faster in GPU time than with the 136-bit scans of Double Sparsity, Loki and SparQ r=32, and in the same GPU time as SparQ's 68-bit read (r=16) Fathom reads 18% fewer bytes with lower attention error on six of seven model and context settings. On RULER-style tasks every per-token scan matches exact top-k decoding, and on real coding-agent sessions Fathom reaches the step agreement of the most accurate 136-bit scan at 92 bits. The store is the 4-bit K copy a quantized serving stack already holds, and the method is not faster when the index is resident in GPU memory.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub  0    Add to collection      Community         vivekkalyanarangan  Paper author  Paper submitter     about 2 hours ago         Long agent sessions push the KV cache out of GPU memory and into host RAM. Once that happens, the thing a decode step waits on is not the model weights or the selected KV rows. It is the index scan that ranks all n keys to pick the top-k, and that scan grows with context while the fetch of the winners does not. For Qwen3-8B the 136-bit-per-token index that Double Sparsity, Loki and SparQ read is 5.1 GB per step at one million tokens against about 200 MB of winner rows.</p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+        
+        <div class="nav-buttons">
+            <a href="2026-09-16.html" class="nav-btn">← 2026-09-16</a>
+            <a href="2026-09-18.html" class="nav-btn">2026-09-18 →</a>
+        </div>
+        
+        <footer>
+            Generated by <a href="https://github.com" target="_blank">HF Papers Daily</a>
+        </footer>
+    </div>
+    
+    <script>
+        function toggleAbstract(header) {
+            const toggle = header.querySelector('.abstract-toggle');
+            const content = header.nextElementSibling;
+            toggle.classList.toggle('expanded');
+            content.classList.toggle('expanded');
+        }
+    </script>
+</html>
