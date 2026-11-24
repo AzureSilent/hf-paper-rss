@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hugging Face Papers - 2026-11-23</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .date {
+            font-size: 1.2em;
+            color: #a0a0a0;
+        }
+        
+        .stats {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #888;
+        }
+        
+        .paper-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .paper-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(102, 126, 234, 0.5);
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.2);
+        }
+        
+        .paper-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        
+        .paper-title a {
+            color: #e0e0e0;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .paper-title a:hover {
+            color: #667eea;
+        }
+        
+        .paper-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            color: #a0a0a0;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .meta-label {
+            color: #888;
+        }
+        
+        .links {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .link-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .link-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .link-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .abstract-section {
+            margin-top: 15px;
+        }
+        
+        .abstract-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .abstract-header:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .abstract-toggle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+            transition: transform 0.3s;
+        }
+        
+        .abstract-toggle.expanded {
+            transform: rotate(180deg);
+        }
+        
+        .abstract-label {
+            font-weight: 500;
+            color: #667eea;
+        }
+        
+        .abstract-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding: 0 15px;
+        }
+        
+        .abstract-content.expanded {
+            max-height: 10000px;
+            padding: 15px;
+        }
+        
+        .abstract-text {
+            line-height: 1.7;
+            color: #c0c0c0;
+        }
+        
+        .summary-box {
+            background: rgba(102, 126, 234, 0.1);
+            border-left: 3px solid #667eea;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .summary-label {
+            font-size: 0.8em;
+            color: #667eea;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .summary-text {
+            color: #b0b0b0;
+            line-height: 1.5;
+        }
+        
+        .translation-box {
+            background: rgba(118, 75, 162, 0.1);
+            border-left: 3px solid #764ba2;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .translation-label {
+            font-size: 0.8em;
+            color: #764ba2;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .translation-text {
+            color: #b0b0b0;
+            line-height: 1.5;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding: 0 10px;
+        }
+        
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .nav-btn.disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: #666;
+            pointer-events: none;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .paper-title {
+                font-size: 1.1em;
+            }
+            
+            .links {
+                flex-wrap: wrap;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-btn {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Hugging Face Papers</h1>
+            <div class="date">2026-11-23</div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number">26</div>
+                    <div class="stat-label">Papers</div>
+                </div>
+            </div>
+        </header>
+        
+        <main>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2611.27193" target="_blank">cmHC: Balancing Stream Mixing in Hyper-Connections via Geometric Contraction</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>XingChen-AGI</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Haowei He, Ziwen Zhao, Chenshuo Pan, Gang Lin, Zhihao Yang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2611.27193" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2611.27193" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2611.27193.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Constraining residual stream mixing within the Birkhoff polytope via geometric contraction improves stability and scalability of hyper-connections in large-scale dense and mixture-of-experts model pretraining.  Generated by deepseek-ai/DeepSeek-V4.1-Flash</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by deepseek-ai/DeepSeek-V4.1-Flash Manifold-constrained Hyper-Connections (mHC) extends residual connections to multiple streams and stabilizes residual propagation by constraining stream-mixing residual matrices to the Birkhoff polytope, the set of doubly stochastic matrices. In this work, we investigate how to effectively mix residual streams within the Birkhoff polytope. We reveal a mixing trade-off: when under-mixed residual matrices stay close to the vertices of the Birkhoff polytope, hyper-connections will degenerate into a set of nearly independent streams; when over-mixed residual matrices are concentrated around the uniform barycenter of the polytope, streams will become less distinguishable from each other. We theoretically validate our findings by bounding the cumulative residual mixing, stream difference and gradient difference of mixing coefficients across layers. Motivated by these findings, we propose Contraction for Manifold-Constrained Hyper-Connections (cmHC), an exact doubly stochastic method which geometrically contracts the Birkhoff polytope toward its interior. This contraction mitigates under-mixing by forcing the residual matrices to explore deeper into the polytope, with a provable stream mixing bound and no new parameterization. Moreover, we apply a moderate contraction at the shallow layers to prevent over-mixing, enabling stable gradient propagation on extremely large-scale model pretraining. Extensive experiments across dense and mixture-of-experts models at various parameter scales demonstrate the effectiveness and scalability of cmHC. We also develop fused operators for cmHC on Ascend NPUs, reducing hyper-connection execution latency by up to 44.8%.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2611.27963" target="_blank">Non-penetrating World Models</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>The Hong Kong Polytechnic University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yuhang Dai, Yinwei Wu, Ziyue Lin, Han Ji, Xingyi Yang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2611.27963" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2611.27963" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2611.27963.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract A benchmark and lightweight framework leverage hidden states from frozen diffusion transformers to detect and prevent object penetration in interactive video world models, reducing physical violations and generalizing zero-shot.  Generated by deepseek-ai/DeepSeek-V4.1-Flash</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by deepseek-ai/DeepSeek-V4.1-Flash We study a new problem of preventing object penetration in interactive video world models. To understand how existing models handle this, we introduce NoPeBench, a benchmark that evaluates how world models respond to physical obstacles. Our evaluation reveals that none of the open-source models can reliably prevent such failures. Surprisingly, however, these models already encode the information needed to predict such violations. We find that the hidden states of diffusion transformers (DiTs) can predict whether a candidate action will penetrate an obstacle. Building on this, we introduce NoPeWorld, a lightweight framework that detects and prevents penetration. Specifically, we train a small prediction head on top of a frozen DiT's hidden states to read out if a candidate action is safe or not. Unsafe actions are then replaced with safe ones that best preserve the original intent. Despite its simplicity, NoPeWorld substantially reduces the physical violation rate, averaged over six video world models, from 74% to 16%. Remarkably, our method shows zero-shot generalization to open-domain imagery, third-person viewpoints, and moving obstacles. We publicly release our code, the NoPeBench benchmark, and model weights. Project Page: https://nopeworld.github.io .</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2611.26954" target="_blank">Learning Video Foresight Reasoning from Unlabeled Videos via On-Policy Self-Distillation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>University at Buffalo</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Jingchen Sun, Jiaxing Zhang, Qingqiao Hu, Dingqiang Ye, Yuqi Jia</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2611.26954" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2611.26954" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2611.26954.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Future-OPSD trains vision-language models via on-policy self-distillation and a contrastive privilege advantage derived from a foresight score, improving video foresight prediction and planning without extra annotations or LLM supervision.  Generated by deepseek-ai/DeepSeek-V4.1-Flash</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by deepseek-ai/DeepSeek-V4.1-Flash Video foresight reasoning requires vision-language models to anticipate future events or next actions from currently observed videos. Existing methods fit future captions, rationales, or full visual states, but face two limitations. First, they rely on annotations or external large models for supervision, limiting scalability. We address this with an on-policy self-distillation framework that turns past-future video pairs into a natural self-supervised signal without extra annotations or LLM supervision. Second, they treat the whole future clip as equally valuable, although most of it is irrelevant context information. We address this by defining a foresight score, from which we obtain a contrastive privilege advantage that drives the model to learn the most valuable future information. Since the score is intractable, we optimize a tractable lower-bound surrogate that interpolates this advantage, computed between the true and a random reference future, with a teacher-student distillation advantage; together, they amplify decision-relevant content information and suppress irrelevant context information. We call the resulting framework Future-OPSD. On open-ended prediction and closed-ended planning, Future-OPSD improves base models by up to 14.2 and 15.9 points without compromising general video understanding. Code will be available at https://jingchensun.github.io/future-opsd/</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2611.24636" target="_blank">Clover-35B-A3B-Preview Technical Report</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Diffuspace</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>DiffuSpace Technical Team</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2611.24636" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2611.24636" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2611.24636.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  We introduce Clover-35B-A3B-Preview (Clover), a mixture-of-experts diffusion language model with 35 billion total parameters and 3 billion activated parameters, supporting thinking-mode generation. Clover adapts Gated Delta Networks to block diffusion by combining recurrent memory of previously generated context with bidirectional softmax attention inside the current block. Historical memory readout competes with current-block tokens in a shared softmax, with learnable block-size calibration and a separate, zero-initialized right-context convolution branch. Clover leads the seven evaluated agent metrics, including 73.6 on SWE-bench Verified and 51.7 on Terminal-Bench 2.1. On internal agent workloads, it reaches a reported generation speed of 680 tokens/s using one NVIDIA GB300 GPU at BF16 precision and batch size one. We organize the evaluation around model quality, drafting and verification costs, and deployment under constrained memory. We also describe a decision-model variant that generates answers to related questions in one denoising pass. On an internal set of 500 groups, joint prediction raises question accuracy from 90.37% to 93.88% and all-correct group accuracy from 65.4% to 77.0%.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub      Add to collection      Community         Sansa   Paper submitter    27 minutes ago           Clover-35B-A3B-Preview Technical Report</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2611.27973" target="_blank">MemOnce: A Scalable Memory Architecture for Large Language Models</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Nanjing University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Chang Nie, Chaoyou Fu, Songlin Liu, Yiqing Hu, Caifeng Shan</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2611.27973" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2611.27973" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2611.27973.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Deploying large language models (LLMs) in long-horizon and continual interactions requires maintaining reusable memory states for future inference, posing challenges for existing architectures. Standard Transformers accumulate layer-wise, token-level KV caches, incurring linear GPU memory growth and quadratic computational complexity as the context expands. In contrast, linear-time architectures compress history into fixed-size states, but struggle to retain fine-grained details. We introduce MemOnce, a foundation architecture that learns scalable memory states for language models. MemOnce is based on two core designs: (a) Memory encoder-decoder: it caches only a small subset of final-layer hidden states as compact memory representations and dynamically decodes them back into KV caches for attention layers; (b) Memory sparse attention: for each continual input, MemOnce adaptively retrieves relevant memory representations, with the sparse indices computed only once across layers. Coupling these two designs enables efficient on-the-fly memory loading and KV cache decoding, drastically reducing the GPU memory footprint and achieving linear-time complexity. We conduct extensive experiments to show that MemOnce outperforms Transformers and other architectures across varying model sizes, context lengths, and training paradigms (pretraining and post-training adaptation). In particular, adapting Qwen3.5-4B with MemOnce reduces memory state cache by 1313times and prefill latency by 6.9times at 1M context, and improves throughput by 3.5times and overall memory performance by +5.77%. Finally, MemOnce generalizes zero-shot to downstream representation tasks, achieving competitive results against specialized models.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  11     Add to collection      Community         ClareNie   Paper submitter    about 2 hours ago           MemOnce is a scalable foundation memory architecture for large language models that caches compact memory states once, retrieves relevant memory once per query, and decodes them into layer-specific KV caches on demand — eliminating multi-layer KV explosion while preserving fine-grained recall.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2611.15449" target="_blank">Reading the Unreadable: Text-Aware Image Super-Resolution Needs Reasoning</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Jaeseong Lee, Jinwoo Kim, Jinho Jeong, Seon Joo Kim</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2611.15449" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2611.15449" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2611.15449.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Text-aware image super-resolution (TAISR) aims to recover high-resolution images from low-resolution inputs while preserving textual content. Existing methods treat this as a visual restoration problem, yet severely degraded text often cannot be read from local visual evidence alone. Humans instead read it by reasoning over image context, logical patterns, and prior knowledge. This raises a fundamental question: Does TAISR need reasoning? To answer this, we introduce two diagnostic tools. The first, ReasonText, is a human-curated benchmark that separates reasoning-required text from locally recoverable text. The second, Ground-Truth Text-Crop Accuracy (GTTCA), is a recognition-based metric that measures text restoration quality without text detection errors. Evaluating twelve recent super-resolution (SR) models, we find a consistent and substantial performance drop on reasoning-required text, revealing a systematic blind spot. Two observations point to a remedy. One is that text-conditioned SR models restore text substantially better when given ground-truth text. The other is that multimodal large language models (MLLMs) can read degraded text in low-resolution images through reasoning. We therefore propose Reasoning Transfer via Captioning (RTC), a training-free plug-in that uses an external MLLM to infer the degraded text and feeds the resulting caption to a text-conditioned SR model. RTC consistently improves all six text-conditioned SR models we evaluate, especially on reasoning-required text. Surprisingly, a real-world SR model with RTC can even outperform the TAISR model with RTC, suggesting that reasoning should be a core design axis for future TAISR.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub      Add to collection      Community         Jasonleex1995   Paper submitter    1 minute ago           [TL;DR] Text-aware image super-resolution (TAISR) needs reasoning!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2611.25773" target="_blank">Duopra: From Full-Duplex Conversation to Full-Duplex Agency</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Chechen123, Chiyu Chen, Pengzhou Cheng, Yuezhao Ma, Xiaocheng Li</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2611.25773" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2611.25773" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2611.25773.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Full-duplex interaction models exhibit strong conversational agency, enabling natural, low-latency turn-taking, backchannels, and interruptions. However, completing tasks further requires task agency: timely tool invocation and argument revision following user corrections. Frontend-backend agents separate initiation from execution: the frontend decides whether and what to request, while the backend determines how. Execution can be offloaded, but unsent requests cannot be executed, and incomplete ones can misdirect the backend. On Full-Duplex-Bench v3 (FDB v3), most failures of Realtime-Venus-Audio + Harness in our streaming pipeline occur before a domain tool executes. We introduce Duopra, a full-duplex interaction model that learns task execution alongside conversational control. Duopra treats the backend as a tool, accepting a self-contained natural-language request. Direct calls and backend delegation share an action interface and requirements for faithful initiation and correct execution. Its three-stage training combines protocol SFT, full-duplex RL rewarding timely and complete execution, and projector-only repair of talker conditioning after thinker updates. With the same backend, Pass@1 rises from 4.7% to 44.7%; Duopra achieves 47.7% calling tools directly (26.0% after SFT) and 49.3% with a DeepSeek backend. It improves three FDB v1.0 takeover rates over the base model. These results show that task agency can coexist with key conversational agency.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  33     Add to collection          Community         Chechen123  Paper author Paper submitter    about 1 hour ago           We introduce Duopra, a full-duplex speech model that brings task agency into real-time conversational interaction. Duopra learns to invoke tools and delegate tasks while preserving natural turn-taking and interruption handling.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2611.21485" target="_blank">Lost in the Hallway: Benchmarking Persistent Spatial Memory Across Revisits</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Tsinghua-LeapLab</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Henry Zheng, Weibo Gong, Yang Yue, Rui Huang, Yang Zhang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2611.21485" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2611.21485" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2611.21485.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Persistent spatial understanding is essential for embodied agents to operate reliably in environments they repeatedly encounter. It requires recognizing revisited places despite viewpoint changes, distinguishing them from similar-looking rooms, and updating memories as environments change. Yet existing evaluations often leave physical place identity across separated visits implicit. We introduce ReSpaceBench, a benchmark comprising 3,244 questions across 590 synthetic and real-home scenes, organized into 9 tasks spanning room association, persistent state tracking, and downstream reasoning. Controlled walkthroughs define visits by physical room entry and deliberately include same-type room distractors and cross-session object changes. Our evaluation of 32 models and 3 agentic video-understanding frameworks reveals substantial limitations: the strongest evaluated zero-shot model achieves 50.5% overall accuracy and 52.2% on a 450-question subset, compared with 90.1% for human annotators. The evaluated agentic frameworks offer no overall improvement over direct inference with the same base model. Analysis of agent execution traces reveals evidence omissions and incorrect cross-visit room associations as major failure modes, suggesting that iterative evidence seeking alone does not ensure consistent spatial memory. Further analyses expose a gap between recognizing familiar rooms and identifying the correct visited room, while annotation-guided sampling highlights the importance of preserving intervening visits and transitions. We also provide RS-30K, a separate training dataset from synthetic sources with no template, scene, route, or video overlap with the benchmark. Fine-tuning Qwen3-VL-8B raises overall accuracy from 35.5% to 60.4%, with the largest gains in association and improvements extending to real-life scenes.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF     Add to collection      Community         Yang1213112131   Paper submitter    about 1 hour ago</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2611.27915" target="_blank">StereoVLM: Binocular Vision-Language Models for Metric 3D Spatial Reasoning</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Chi Yan, Guoyang Zhao, Wentao Yuan, Yixiao Ge, Yanning Zhou</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2611.27915" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2611.27915" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2611.27915.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract StereoVLM is a geometry-aware binocular vision-language model trained with hierarchical supervision from calibrated stereo to enable metric 3D spatial reasoning, evaluated by Stereo3D-Bench.  Generated by deepseek-ai/DeepSeek-V4.1-Flash</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by deepseek-ai/DeepSeek-V4.1-Flash Vision-language models (VLMs) exhibit strong semantic understanding but remain limited in their ability to reason about metric 3D space in the physical world. Existing VLMs typically infer 3D scene structure from one or more images without known camera calibration or cross-view geometric constraints. This makes metric 3D inference inherently ambiguous and leaves it unclear whether their spatial predictions are grounded in visual evidence or driven primarily by semantic priors. In contrast, calibrated stereo provides explicit cross-view geometry that resolves this ambiguity and offers a more reliable foundation for metric 3D perception and geometric generalization. We investigate how VLMs can learn transferable 3D representations directly from calibrated binocular observations. To this end, we introduce StereoVLM, the first geometry-aware binocular VLM for metric 3D spatial reasoning. StereoVLM follows a hierarchical learning paradigm spanning from cross-view correspondence and disparity estimation to calibration-conditioned metric depth perception and semantic spatial reasoning. We further find that disparity supervision generalizes substantially better than direct binocular depth supervision on unseen environments. To evaluate these capabilities, we introduce Stereo3D-Bench, a comprehensive benchmark across three levels, from point-level geometry to object-level spatial reasoning. StereoVLM-8B achieves 95.17% depth accuracy (δ_1) and a 66.98 average object-level score on Stereo3D-Bench. Intervention results further indicate that the model's performance on Stereo3D-Bench benefits from valid cross-view geometry and cannot be explained solely by additional visual tokens or semantic priors. Hierarchical geometric supervision also yields average gains of 3.54 points across five spatial benchmarks and 4.3 percentage points in RoboCasa manipulation success.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2611.28123" target="_blank">Seeing the Invisible: How Vision-Language Models Read, Predict and Trace Radio Fields</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Nanyang Technological University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yiyang Zhu, Xin Li, Guangyuan Liu, Ziheng Liu, Jiayi Zhang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2611.28123" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2611.28123" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2611.28123.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Operating in the physical world requires reasoning beyond what cameras directly capture. In a city, radio signals are invisible to the lens, yet their strength is governed by the buildings and streets an image does show. Given only these visible structures, can vision-language models (VLMs) infer the invisible radio field they shape? Probing true physical reasoning requires exact fields in real cities, alongside controlled interventions where a single physical factor changes. We build a label-free engine that turns any coordinate on Earth into a ray-traceable city, simulates matched single-factor counterfactuals, and computes every answer exactly. This yields RadioVISTA, a benchmark and training dataset for visual reasoning about invisible fields. Physically, a radio field is the sum of its propagation paths, yet across six continents we uncover a striking field-path dissociation: frontier VLMs accurately judge where a field is strong, but fail to tell whether a single direct or one-wall path exists. Open models fail even earlier at reading the field itself, and are systematically wrong, scoring below random guessing even when credited for any of four attempts. On unseen cities, fine-tuning brings a 9B open model close to frontier proprietary models on fields, yet neither supervised nor reinforcement fine-tuning improves path tracing. Supervising only final answers teaches models to approximate the field, yet leaves single-path geometry out of reach.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page    Add to collection      Community         ScreeperC   Paper submitter    about 8 hours ago           Operating in the physical world requires reasoning beyond what cameras directly capture. In a city, radio signals are invisible to the lens, yet their strength is governed by the buildings and streets an image does show. Given only these visible structures, can vision-language models (VLMs) infer the invisible radio field they shape? Probing true physical reasoning requires exact fields in real cities, alongside controlled interventions where a single physical factor changes. We build a label-free engine that turns any coordinate on Earth into a ray-traceable city, simulates matched single-factor counterfactuals, and computes every answer exactly. This yields RadioVISTA, a benchmark and training dataset for visual reasoning about invisible fields. Physically, a radio field is the sum of its propagation paths, yet across six continents we uncover a striking field-path dissociation: frontier VLMs accurately judge where a field is strong, but fail to tell whether a single direct or one-wall path exists. Open models fail even earlier at reading the field itself, and are systematically wrong, scoring below random guessing even when credited for any of four attempts. On unseen cities, fine-tuning brings a 9B open model close to frontier proprietary models on fields, yet neither supervised nor reinforcement fine-tuning improves path tracing. Supervising only final answers teaches models to approximate the field, yet leaves single-path geometry out of reach.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2611.24249" target="_blank">From Points to Trajectories: Rethinking Multimodal Alignment for Physical Events</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Nanyang Technological University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yiyang Zhu, Guangyuan Liu, Jingdi Lei, Li Wei, Chau Yuen</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2611.24249" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2611.24249" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2611.24249.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Advancing physical artificial intelligence (Physical AI) requires moving beyond static object recognition to ground how real-world mechanics (e.g., impact, friction, and force transfer) unfold over time. While multimodal aligners seek to capture these interactions by matching multi-sensor streams, prevailing architectures compress each temporal sequence into a single pooled embedding. We show that this paradigm fails on twin events: distinct physical executions recorded under identical task conditions. Collapsing the temporal dimension averages out transient cross-modal dynamics, effectively reducing physical event alignment to static scene recognition. Formally, we prove that as sequence length increases, any temporally pooled representation converges to the stationary recording condition. Consequently, as windows grow, no choice of loss function or embedding geometry can disambiguate twin events from pooled features alone. Instead, we show that physical events are uniquely identified by the event gap, namely the instantaneous, synchronous co-fluctuations across modalities that are erased by pooling and accumulate only along unpooled trajectories. To recover this signal, we introduce CounterPoint, a lightweight plug-in module that strips out each modality's temporal mean to score frame-level cross-modal agreement. Integrated across four state-of-the-art (SOTA) multimodal aligners, CounterPoint shifts representations from coarse condition matching to fine-grained physical event alignment, consistently outperforming existing temporal alignment methods.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF     Add to collection      Community         ScreeperC   Paper submitter    about 8 hours ago           Advancing physical artificial intelligence (Physical AI) requires moving beyond static object recognition to ground how real-world mechanics (e.g., impact, friction, and force transfer) unfold over time. While multimodal aligners seek to capture these interactions by matching multi-sensor streams, prevailing architectures compress each temporal sequence into a single pooled embedding. We show that this paradigm fails on twin events: distinct physical executions recorded under identical task conditions. Collapsing the temporal dimension averages out transient cross-modal dynamics, effectively reducing physical event alignment to static scene recognition. Formally, we prove that as sequence length increases, any temporally pooled representation converges to the stationary recording condition. Consequently, as windows grow, no choice of loss function or embedding geometry can disambiguate twin events from pooled features alone. Instead, we show that physical events are uniquely identified by the event gap, namely the instantaneous, synchronous co-fluctuations across modalities that are erased by pooling and accumulate only along unpooled trajectories. To recover this signal, we introduce CounterPoint, a lightweight plug-in module that strips out each modality's temporal mean to score frame-level cross-modal agreement. Integrated across four state-of-the-art (SOTA) multimodal aligners, CounterPoint shifts representations from coarse condition matching to fine-grained physical event alignment, consistently outperforming existing temporal alignment methods.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2611.26613" target="_blank">AgentRoboCritic: Understanding the Capability of Frontier Agents on Direct Robot Control</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Chenyan Xiong Research Group at CMU</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Yiyang Du, Yuxuan Kuang, Qitao Zhao, Yixuan Wang, Zhanqiu Guo</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2611.26613" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2611.26613" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2611.26613.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Frontier multimodal language agents such as GPT-6 Astra have demonstrated strong capabilities in controlling robots directly via low-level numerical actions without high-level primitives. However, existing benchmarks report only episode-level success rates, which show neither how these agents succeed nor where they fail. In this paper, we present a systematic action-level analysis of frontier agents on direct robot control across 12 manipulation benchmarks. We introduce AgentRoboCritic, an intent-grounded critique framework in which the policy agent states a local intent alongside each action, and a critic evaluates the action's outcome and failure mode against this intent. Our action-level analysis demonstrates the promising capabilities of frontier agents on direct robot control, including closed-loop recovery from local execution failures, reliable semantic grounding across diverse scenes, and strong zero-shot manipulation without task-specific adaptation. It also identifies their current limitations, including task-relevant physical execution bottlenecks such as grasping and alignment, and uneven recovery across failure modes. Finally, we validate our critic on a 400-action human-annotated benchmark and release a dataset of 12,844 annotated actions alongside a fine-tuned open-source critic, Muse-Glimmer-30B, whose failure-mode accuracy rises from 32.58% to 74.24%, enabling low-cost action-level analysis.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  4     Add to collection          Community         yiyangd   Paper submitter    about 2 hours ago           🤖 Can frontier agents control robots directly with low-level actions? And how do we actually tell how good they are?</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2611.24077" target="_blank">AeroRSI: Recursive Self-Improvement for Aerial Vision-Language Navigation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Tsinghua University</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>DavidWu1116, Shiwei Wu, Yuwen Pan, Zhi Li, Yaowen Li</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2611.24077" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2611.24077" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2611.24077.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Vision-language-action (VLA) models enable unmanned aerial vehicles (UAVs) to follow natural-language instructions, yet still fail frequently in closed-loop flight. Correcting these failures requires repairs, i.e., actions that avoid them at the states the policy itself reaches, which human pilots cannot label at scale and rule-based planners cannot supply reliably. In this paper, we present AeroRSI, a recursive self-improvement framework in which an aerial navigation policy iteratively learns from its own failures. Our key insight is that a failing policy should judge its own repairs by flying on from them. Judged in this way, its sampled actions and even rule-based proposals that hurt it when imitated directly become reliable supervision. Moreover, an episode terminates at its first failure, concealing subsequent failures until the earlier ones are repaired. AeroRSI thus renews its supervision in every round, anchoring the failures of the current policy, verifying repairs by its continuation, and distilling them while keeping its behavior elsewhere. On TravelUAV, three rounds raise the success rate of a supervised 2B-parameter policy from 46.4% to 67.5% and reduce collisions by half, surpassing the previous state of the art by 10.6 points from the same initialization without extra human labels or inference cost. Code and models are available at https://github.com/starsholic/AeroRSI.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  4     Add to collection                Community         DavidWu1116  Paper author Paper submitter    about 1 hour ago           Hi everyone, we're the authors! AeroRSI lets a drone navigation policy fix its own failures:before each failure, it flies on from every candidate action, learns the ones it actuallycompletes, and repeats on the failures that remain, since each repair uncovers the next one.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2611.22343" target="_blank">PURE: A Diagnostic Benchmark for Multi-Granularity Multimodal Identity Matching</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Alibaba multimodal & industrial AI</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Hengyu You, Xintong Wang, Jin Cao, alphadl, Liang Ding</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2611.22343" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2611.22343" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2611.22343.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract A diagnostic benchmark evaluates multimodal large language models on multi-granularity identity matching, revealing gaps in understanding, reasoning, and evidence-grounded judgment across base and variant levels.  Generated by deepseek-ai/DeepSeek-V4.1-Flash</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by deepseek-ai/DeepSeek-V4.1-Flash Identity matching asks whether two records denote the same identity, yet the answer depends on the target granularity. Two records may match at the base level but not at the variant level: they share an underlying design while differing in attributes such as color or size. Final matching accuracy does not separately characterize the capabilities involved. To study this problem, we use e-commerce as a challenging real-world domain. We introduce PURE, a diagnostic benchmark for multi-granularity multimodal identity matching covering four capability dimensions: Perception, Understanding, Reasoning, and Evidence-grounded Judgment. The benchmark comprises 1,457 multiple-choice questions across 14 tasks, derived from real-world matching pairs and verified by two domain experts. Across ten recent MLLMs, overall scores range from 47.1% to 86.0%. Understanding receives the highest mean score and Judgment the lowest, with weaknesses in visual difference localization and variant-level rule judgment. Modality ablations show that models benefit from multimodal evidence but can incorrectly identify conflicts between matching records. In direct matching, most models recognize matching pairs more reliably than non-matching pairs at the base level, whereas the reverse holds at the variant level. PURE therefore reveals what aggregate matching accuracy hides: not only whether models judge a pair correctly, but where they struggle to interpret evidence and apply matching criteria.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2611.27398" target="_blank">Taking Apart and Putting Together: Tracking Objects Through Physical Transformations</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Multimedia and Human Understanding Group</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>davidegarde, Davide Gardenal, Mingxuan Liu, Flavio Vella, Quentin Guimard</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2611.27398" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2611.27398" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2611.27398.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract A training-free framework tracks objects through physical assemblies and disassemblies by generating and evaluating split/merge proposals and querying a multimodal large language model for verification and labeling, achieving state-of-the-art accuracy and faster performance on a new benchmark.  Generated by deepseek-ai/DeepSeek-V4.1-Flash</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by deepseek-ai/DeepSeek-V4.1-Flash We introduce Transformation Tracking and Understanding (TTU), extending video object tracking to environments where objects undergo physical assemblies and disassemblies. TTU requires continuously tracking objects through transformations, identifying new entities, maintaining a state graph of their relationships, and assigning semantic labels to transformations. While foundation models (e.g., SAM 2/3) maintain tracklets through appearance changes, they cannot update semantic identities as objects physically evolve. Prior work addresses only disassemblies, relying on expensive searches triggered only when tracking fails. We propose Tracking Instances via Proposals and Overlaps (TIPO), a training-free framework that continuously infers transformations via a generate-evaluate-judge pipeline. TIPO generates split and merge proposals from disjoint mask components, scores them against mask-decoder priors using inner and external overlap, and queries an MLLM on the top proposal for visual verification and semantic labeling. To benchmark TTU, we curate Video Instances, States, and Transformation Annotations (VISTA), a dataset including state graphs with 124 assembly and 132 disassembly events across 50 sequences and over 26,000 frames. TIPO achieves state-of-the-art tracking and state-graph accuracy on VISTA, while operating 6times to 15times faster than prior methods. Project page: https://davidegardenal.github.io/tipo-tracking</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2611.25534" target="_blank">How Feedback-Free Self-Evolution Reshapes Agent Skills: A Systematic Study</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Litao Guo, Man Chen, Xinli Xu, Jinsong Zhou, Zixin Zhang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2611.25534" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2611.25534" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2611.25534.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Agent skills are documents in which experts write down procedural knowledge, and models increasingly maintain them by rewriting them without feedback. Such rewriting could adapt a skill to the model that uses it or erode the expert knowledge that makes it useful, yet how skills evolve under this feedback-free self-evolution has not been studied. We let models rewrite expert skills round after round without any task, run or judgment and run agents built on the same models with the rewritten skills. Our experiments show that the skills lose value rather than improve, as every model we test performs worse with them on every benchmark, by 15 points on average on SkillsBench after thirty rounds. Sampling each model's prior with skills it writes from the topic alone, we find that rewriting pulls skills toward this prior and gives up first the knowledge outside it. Putting this knowledge back recovers much of the lost pass rate, so an expert's skill is valuable largely for what the model does not write on its own. Building on this insight, SkillDiff marks this knowledge in place and raises the pass rate on SkillsBench by 4.8 points on average without feedback or any change to the skill's text. Project repository: https://github.com/LitaoGuo/How-Self-Evolution-Reshapes-Skills.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub  3     Add to collection          Community         Riversideli   Paper submitter    about 8 hours ago</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2611.26809" target="_blank">Search From the Start: Search-Native Pretraining for Language Models</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>EPFL</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Kaustubh Ponkshe, Gyung Hyun Je, Stefan Taga, Colin Raffel, Martin Jaggi</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2611.26809" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2611.26809" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2611.26809.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Modern language models (LMs) are increasingly deployed with access to search tools at inference. Yet pretraining remains predominantly focused on predicting static text, with search capabilities typically introduced during post-training. We propose Search-Native Pretraining as a practical route to teach search capability during pretraining from ordinary text corpora. Specifically, we augment pretraining corpus at scale with web-search queries and retrieve web response using a local index. Training on this augmented corpus teaches models to generate search calls and incorporate retrieved evidence during language modeling. Across Wikipedia and DCLM-Edu corpora and 360M to 3.3B parameter scales, search-pretrained models ("QueryLM") show improved performance on knowledge-intensive tasks and higher steerability toward the retrieved evidence. Crucially, their advantage persists after supervised fine-tuning of both search-pretrained and conventionally pretrained models, indicating that the tested post-training procedures do not fully recover the capabilities developed during pretraining. Throughout our experiments, we find that a 1.4B QueryLM consistently beats or matches the performance of a FLOP-matched 3.3B baseline model across all knowledge intensive tasks. These results establish search-pretraining as a practical way to develop foundational search capabilities during pretraining. We release the training artifacts, including model checkpoints and data.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF     Add to collection      Community         jjee2   Paper submitter    about 1 hour ago           We introduce Search-Native Pretraining, a practical approach to teaching language models to search the web during pretraining. We augment ordinary text corpora with synthetic web-search queries, execute these queries against a local search index, and train language models to issue search calls and incorporate retrieved evidence into language modeling. Search-pretrained models ("QueryLM") are better at knowledge-intensive tasks and show higher steerability toward the retrieved evidence. Throughout our experiments, we find that a 1.4B QueryLM consistently beats or matches the performance of a FLOP-matched 3.3B baseline model across all knowledge intensive tasks.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2611.25252" target="_blank">Moving Generality from Model to Modeler: LLM Agents for PHM on a Deployment-Style Benchmark</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>CC3369, Zhenling Chen, Zhiguo Zeng, Anne Barros</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2611.25252" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2611.25252" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2611.25252.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Coding agents built on large language models (LLMs) now help develop many models published as general solutions. Should generality instead reside in the agent that builds a model for each new task? We examine this question in prognostics and health management (PHM), where every model must work on unseen equipment. Our deployment-style benchmark, NextUnit-Bench, covers 24 public datasets split into 58 folds that hold out units or operating conditions; each agent has two hours to deliver an executable predictor, then run on the hidden units. First, frontier agents outperform AutoML, which reaches less than half the best agent's score, and faithful implementations of published methods on four datasets, of which only 6 of 30 beat the strongest agent's own design; published accuracies, where reproducible, rest on the papers' own conventions, and a single convention, capping the remaining life of test engines, can halve the reported error. Second, the agents' advantage is a design made on each machine's data; once made, a plain-text plan of a few hundred words carries most of the gap between two frontier agents, and given a weaker agent's plan, the strongest agent falls to that agent's level, often to identical predictions. Before touching the data, however, it matters little whose plan an agent carries out, and domain toolkits appear to help neither: what sets the strongest apart is how much it learns from the data. Third, such designs reach only implementers that can execute them: given the strongest agent's designs, a locally deployable open-weight model delivers half as often, even when they are lightened, and scores no higher than without them. Generality, we argue, is not disappearing but moving, from the model to the modeler.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  GitHub  1     Add to collection       Community         CC3369  Paper author Paper submitter    about 6 hours ago           Should generality live in the model, or in the agent that builds a model for each new machine? NextUnit-Bench tests coding agents on 24 PHM datasets with sealed evaluation on unseen machines. The best agents beat AutoML and foundation models, and often even state-of-the-art methods from the literature; their edge is a design made on the data, and the designs are strikingly plain: textbook methods, rarely deep networks. If agents can out-know and out-code most human experts, the next general model in PHM may not be a model at all.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2611.19247" target="_blank">GameWM: Toward Next-Generation Video Games with Interaction-Centric World Models</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Tencent</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Bing He, Runze Wang, Fei Zha, Zhongyuan Wu, Ke Xu</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2611.19247" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2611.19247" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2611.19247.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract GameWM divides game generation between an engine that preserves exact rules and state and a generative video model that creates visual and interactive detail, allowing personalized games with consistent mechanics.  Generated by deepseek-ai/DeepSeek-V4.1-Flash</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by deepseek-ai/DeepSeek-V4.1-Flash For more than half a century, video games have pursued better graphics, more natural interaction, and more engaging gameplay. Generative video models (VMs) now bear on all three. Neural networks already draw most of the pixels in shipped games, and recent world models let a lightweight game engine keep the world state while a VM turns the engine's coarse proxy video into final frames. These systems, however, treat the VM as a renderer that only restyles motion the engine has already authored, which leaves most of its generative capacity unused and limits the diversity a game can offer. We present GameWM, a design for next-generation games built on a clear division of labor. The GameWM-engine keeps what must be exact: rules, state, camera, and the layout of the world, which also spares the video model from having to remember it. The GameWM-VM generates what is expensive to author by hand: the look of the world and the detail of the player's interactions. One game mechanic can then be realized in many visually and physically distinct ways, while its outcome stays exactly as the engine computed it. To realize this division of labor, we build GameWM as a complete system: a data engine centered on interactions rather than exploration, an interface through which authored character sheets, scene art, and skill descriptions enter the model, and a model family from 5B to 33B parameters with a real-time causal variant for play. Together they give every player a fresh version of the same game: each player's own character, world, and skills turn the same engine mechanics into a new experience, while every event keeps the timing and outcome the GameWM-engine computed.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2611.24025" target="_blank">Intent Contracts: Taking Tools Away from Agents</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>zwang-devv, Ziyuan Wang, Genliang Zhu, Xiaobo Chen, Chu Wang</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2611.24025" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2611.24025" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2611.24025.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Intent contracts, in which a planner submits logged contracts and a trusted model writes tool calls, do not reduce unauthorized actions and match blind review, but complete more benign over-reach tasks than an intent-visible reviewer.  Generated by deepseek-ai/DeepSeek-V4.1-Flash</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by deepseek-ai/DeepSeek-V4.1-Flash Intent contracts are an authorization interface for tool-using LLM agents in which the planning model holds no tools. For each step it submits a short logged contract: a goal, a verbatim quotation of the user, and scope fields. Code validates the contract, and a small trusted model checks it against the user's words and writes the tool call itself. Provided the validation and dispatch code is correct, every executed call is written by the trusted model, the planner's influence on a call is confined to a contract logged before it, and the trusted side decides how much of a request to carry out. We compare contracts with two reviewers of planner-written commands: one sees only the user's words and the command, the information boundary of a reasoning-blind permission classifier, and one also sees the planner's goal and a checked quotation. With gpt-6.1-terra as planner and GLM-5.3-Flash as the trusted model on three AmPermBench task families, every object changed under contracts is named in the goal of the contract that produced the change; under review the planner names objects in its commands and rarely in its goals. When the planner adds work the user never asked for, contracts complete the user's task in 27/30 runs and the intent-visible reviewer in 16/30, because a reviewer can only refuse a whole command. Contracts do not reduce unauthorized actions. They are indistinguishable from blind review, and once the benchmark's environment terms are clarified, every condition that changes state hits a wrong target in 40-49% of those runs. That error is the planner's choice of objects for an ambiguous reference, which no trusted model here can see the environment to check; telling the executor to decline when unsure does not change it. We evaluate benign over-reach with one pair of models, not adversarial planners. We release the plugin and run records.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2611.27229" target="_blank">Prune to Expand: Training Prompt Enhancers with Less to Imitate</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>City University of Hong Kong</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Tianhe Wu, Qilin Sun, Kede Ma</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2611.27229" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2611.27229" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2611.27229.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract Prune to Expand (P2E) refines dense-caption supervision by selectively removing redundant sentences under a per-example deletion bound, improving prompt enhancement alignment with human preferences and visual quality over conventional dense-caption supervised fine-tuning.  Generated by deepseek-ai/DeepSeek-V4.1-Flash</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by deepseek-ai/DeepSeek-V4.1-Flash Prompt enhancement (PE) refines concise user prompts into detailed descriptions to improve the compositional aesthetics of generated images while preserving user intent. A common practice constructs supervised fine-tuning (SFT) pairs by deriving short, user-like prompts from dense captions, implicitly assuming that captions that improve image generation also provide effective supervision. In this paper, however, we uncover a counterintuitive finding: PE models trained on caption pairs with substantial generation gains perform comparably to those trained on pairs with only marginal gains. We argue that dense captions can impose redundant supervision by requiring PE models to reproduce image-specific details weakly related to user intent. Motivated by this discrepancy, we introduce Prune to Expand (P2E), a simple text-only method that refines dense-caption supervision by selectively removing redundant sentences under a per-example deletion bound while preserving explicit user requirements and informative visual structure. Extensive experiments under identical training configurations demonstrate that P2E improves alignment with human preferences and visual quality over conventional dense-caption SFT across diverse image categories and visual generators.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2611.22479" target="_blank">Exploited Before It Was Fixed? Vulnerability Timelines from Open, Machine-Readable Evidence</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Computer Incident Response Center Luxembourg</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Cédric Bonhomme, Alexandre Dulaunoy</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2611.22479" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2611.22479" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2611.22479.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  -05-X-03), Known Exploited Vulnerabilities (KEV) catalogs, and exploitation sightings.
+  We introduce an evidence model implemented in Vulnerability-Lookup that selects the earliest evidence for each lifecycle event, distinguishes vulnerability-specific records, preserves date precision, and ensures traceability to original sources.
+  Among 3,758 vulnerability identifiers with exploitation evidence, 98% have disclosure dates, while only 15.7% have patch evidence. Vendor-side dates required by VTEM are entirely absent. Most exploitation dates originate from catalog listings, including 1,041 entries associated with bulk catalog imports. After excluding these entries and ambiguous same-day observations, 59 vulnerabilities exhibit patch evidence following exploitation evidence, with a median interval of 7.6 days, predominantly between catalog listings and distributor fixes.
+  Evidence traceability also exposes systematic measurement errors: one collector incorrectly classified exploit publications as active exploitation, accounting for 40% of initial exploitation dates, while another catalog assigned vulnerability publication timestamps to 11% of its listings.
+  Our findings demonstrate that exploitation-to-patch intervals are computationally measurable, but their reliability depends on the availability, precision, and provenance of published evidence. We identify the additional disclosure, exploitation observation, and patch availability timestamps needed to improve vulnerability lifecycle measurements.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  2     Add to collection       Community         cedricbonhomme   Paper submitter    about 6 hours ago           How long are vulnerabilities exploited before a fix is available? We compute, for each vulnerability, the interval between exploitation and patch, and lifecycle intervals adapted from the Vulnerability Timeline and Exposure Metrics framework (VTEM), from open, machine-readable evidence: CVE and CSAF records, publisher timelines (GCVE BCP-05-X-03), several Known Exploited Vulnerabilities catalogs and sightings. An evidence model selects the earliest evidence of each lifecycle event, uses only records that describe the vulnerability itself, carries the precision of every date and traces each figure to the record that produced it; it is implemented in Vulnerability-Lookup. Over the 3,758 identifiers with exploitation evidence on one instance, disclosure is dated for 98%, patch evidence exists for 15.7%, and the vendor-side dates VTEM requires are never published. Most exploitation dates are catalog listings, 1,041 of them on days a catalog listed or imported a backlog. Setting those and unordered same-day pairs aside, 59 vulnerabilities have patch evidence after exploitation evidence, by a median of 7.6 days, mostly from a catalog listing to a distributor’s fix. Traceability made the data correctable: one collector recorded exploit publications as exploitation, 40% of the exploitation dates of a first measurement, and one catalog dated 11% of its listings with the vulnerability’s publication time.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2611.27211" target="_blank">Explicit Style Extraction for Personalized Long-Form Text Generation</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Jenitha Reddy Patel, Sameeksha Kini, Amulya Rayasam, Anisa Dye, Abhinav Sharma</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2611.27211" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2611.27211" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2611.27211.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract A method that explicitly extracts a user's stylistic profile and uses it to guide drafting and revision improves personalized long-form text generation over retrieval-augmented baselines.  Generated by deepseek-ai/DeepSeek-V4.1-Flash</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">Generated by deepseek-ai/DeepSeek-V4.1-Flash Personalized long-form generation asks a language model to write new text the way a specific user would. The standard recipe, retrieval-augmented generation, places a few of the user's past texts in the prompt but leaves the model to decide what to take from them. We introduce StylePrism, a taxonomy of 28 stylistic aspects in seven categories, and SP-Refine, an inference-time method that makes style extraction an explicit step: the model first fills StylePrism with the user's patterns, quoted evidence, and habits to avoid, then drafts from the user's samples and revises the draft twice against this profile, guided by its own style scores. On the three long-form tasks of LongLaMP with three LLMs, SP-Refine outperforms LongLaMP's retrieval-augmented baseline in 25 of 27 ROUGE and METEOR comparisons, by 10.2% on average and by up to 35.8%. Annotating users' own texts with the extracted profiles shows that StylePrism captures concrete, checkable habits, from the order of rhetorical moves to a reviewer's sign-off. Ablations show that the profile helps as revision guidance, not as a replacement for the samples: writing from the profile alone is worse in all 27 comparisons, while a single implicit-inference call is a cheaper alternative that comes close. Oracle variants that let the reviser see the reference, together with reference-free controls, show that larger refinement gains require information unavailable at inference time.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2611.27490" target="_blank">Which Dwarf Is This? Doppeldwarf-306 and Near-Identical Instance Retrieval</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Turhan Can Kargin</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2611.27490" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2611.27490" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2611.27490.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Most established instance-retrieval benchmarks emphasise landmarks; small sculptures from visually similar series offer a complementary challenge. We introduce Doppeldwarf-306: 1,691 openly licensed photographs of 306 bronze dwarf statues in Wrocław, Poland, many made in themed series that share one style, with the photographer of each image recorded. With no training, nearest-neighbour search over frozen DINOv2 features names the right statue first for 93.1% of leave-one-out queries, and the best of thirteen backbones from seven pretraining paradigms reaches 94.7%. Accuracy falls slowly as candidates are added: for DINOv2, by about 0.8 points each time their number doubles. A natural design for a phone guide compares a photograph only with statues near the user. In simulation this helps, but less than an equal number of randomly chosen statues does, so random subsampling overstates its value; a permutation test ties the penalty to the real layout (p = 0.005). Used as a weight instead of a filter, location raises DINOv2 from 93.4% to 98.7% for a simulated user 25 m from the statue. With the query's photographer withheld, learned local-feature matching raises DINOv2 accuracy from 81.8% to 85.5% and also improves DINOv3. Comparing the two best candidates cuts DINOv2's false acceptance of unknown statues from 38.3% to 19.6% at 90% known acceptance.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page GitHub  1     Add to collection       Community         turhancan97   Paper submitter    about 13 hours ago           Doppeldwarf-306 is a small instance-retrieval benchmark built from Wrocław's bronze dwarf statues: 306 statues (or fixed groups), 1,691 CC-licensed photographs from Wikimedia Commons, each with its photographer, license, and source. The statues are made in themed series, so many look almost alike, and that is the difficulty.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2611.22495" target="_blank">Motion-Aware Reward Modeling for Instruction-Guided Video Editing</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>N/A</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>Li Li, Xiangbo Gao, Bo Ni, Samyadeep Basu, Viet Dac Lai</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2611.22495" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2611.22495" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2611.22495.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  Reward models for instruction-guided video editing can favor temporal consistency at the expense of motion. We study this failure, termed motion collapse, using controlled motion-suppression variants of real edits. On VE-Bench, the evaluated composite reward prefers a motion-suppressed candidate in 97% of cases. Learned video rewards and a VLM judge also struggle with mild suppression, while latent optimization and reward-guided fine-tuning exploit this weakness to increase reward as motion declines. A linear probe of our base reward backbone performs near chance on mild suppression, motivating an explicit inter-frame dynamics input. We propose a motion-aware reward model that combines an RGB frame-difference stream with preference training against motion-suppressed and fabricated-motion negatives. A distillation anchor preserves alignment with human quality judgments. On the VE-Bench motion ladder, our model reduces the rate of selecting motion-suppressed candidates to 0% while achieving a Spearman correlation of 0.57 with human quality ratings. It also detects unseen suppression variants and preserves motion during reward-guided fine-tuning on two editing pipelines. These results support explicitly modeling motion in rewards for video editing.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF     Add to collection      Community         Franck-Dernoncourt  Paper author Paper submitter    about 8 hours ago • This comment has been hidden            EditPreview      Upload images, audio, and videos by dragging in the text input, pasting, or clicking here. Tap or paste here to upload images        Comment · Sign up or log in to comment</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h2 class="paper-title">
+                    <a href="https://huggingface.co/papers/2611.23417" target="_blank">Autoregressive View Model</a>
+                </h2>
+                
+                <div class="paper-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Institution:</span>
+                        <span>Meta</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Authors:</span>
+                        <span>jensenzhoujh, Jensen, Zhou, Samuel Rota Bulo, Denis Rozumny</span>
+                    </div>
+                </div>
+                
+                <div class="links">
+                    <a href="https://huggingface.co/papers/2611.23417" target="_blank" class="link-btn">HF Page</a>
+                    <a href="https://arxiv.org/abs/2611.23417" target="_blank" class="link-btn secondary">arXiv</a>
+                    <a href="https://arxiv.org/pdf/2611.23417.pdf" target="_blank" class="link-btn secondary">PDF</a>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-label">AI Summary</div>
+                    <div class="summary-text">Abstract  We present the Autoregressive View Model (AVM), which generates a scene as a stream of views without constructing an explicit 3D representation. Through a unified in-context interface, AVM conditions on images or videos to generate short clips along a requested camera path. Visual context grounds reconstruction and interpolation, while a learned prior enables extrapolation into unseen regions. AVM retrieves relevant views from inputs and generated history to form a bounded active context. We fine-tune a pretrained bidirectional video diffusion transformer with flow matching in an N-in-1-out formulation. We then tune a causal model on its own rollouts to improve photorealism, reduce denoising steps, and limit long-horizon drift. We scale training to approximately 8M scenes and video clips. We evaluate generation capacity and scene persistence across benchmarks for camera control, text control, visual quality, dynamics, sparse and 4D reconstruction, and long-horizon consistency. The results demonstrate that AVM adapts to diverse input and output settings through one in-context interface.</div>
+                </div>
+
+                <div class="abstract-section">
+                    <div class="abstract-header" onclick="toggleAbstract(this)">
+                        <span class="abstract-toggle">▼</span>
+                        <span class="abstract-label">Abstract (click to expand)</span>
+                    </div>
+                    <div class="abstract-content">
+                        <p class="abstract-text">View arXiv page View PDF  Project page    Add to collection      Community         jensenzhoujh  Paper author Paper submitter    about 15 hours ago           Meet AVM, a generative in-context Autoregressive View Model.</p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+        
+        <div class="nav-buttons">
+            <a href="2026-11-22.html" class="nav-btn">← 2026-11-22</a>
+            <a href="2026-11-24.html" class="nav-btn">2026-11-24 →</a>
+        </div>
+        
+        <footer>
+            Generated by <a href="https://github.com" target="_blank">HF Papers Daily</a>
+        </footer>
+    </div>
+    
+    <script>
+        function toggleAbstract(header) {
+            const toggle = header.querySelector('.abstract-toggle');
+            const content = header.nextElementSibling;
+            toggle.classList.toggle('expanded');
+            content.classList.toggle('expanded');
+        }
+    </script>
+</html>
